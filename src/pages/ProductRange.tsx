@@ -1,0 +1,886 @@
+import { useState, useRef } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import { Search, Filter, Plus, LayoutGrid, List, Upload } from "lucide-react";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { useToast } from "@/hooks/use-toast";
+import { useView } from "@/contexts/ViewContext";
+import ProductCard from "@/components/ProductCard";
+import ProductListItem from "@/components/ProductListItem";
+import bltSandwich from "@/assets/products/blt-sandwich.jpg";
+import chickenCaesarWrap from "@/assets/products/chicken-caesar-wrap.jpg";
+import avocadoHummusWrap from "@/assets/products/avocado-hummus-wrap.jpg";
+import tunaMeltPanini from "@/assets/products/tuna-melt-panini.jpg";
+import mediterraneanSalad from "@/assets/products/mediterranean-salad.jpg";
+import salmonBagel from "@/assets/products/salmon-bagel.jpg";
+import chickenBaconSandwich from "@/assets/products/chicken-bacon-sandwich.jpg";
+import veganWrap from "@/assets/products/vegan-wrap.jpg";
+import greekFetaSalad from "@/assets/products/greek-feta-salad.jpg";
+import hamCheeseCroissant from "@/assets/products/ham-cheese-croissant.jpg";
+
+// Mock product data inspired by Pret a Manger
+const initialProducts = [
+  {
+    skuId: "SK001",
+    name: "Classic BLT Sandwich",
+    category: "Sandwiches",
+    price: 4.95,
+    costPrice: 2.10,
+    inStock: true,
+    image: bltSandwich,
+    allergens: ["Gluten", "Egg"],
+    shelfLife: 2,
+    ingredients: ["Bacon", "Romaine Lettuce", "Tomato", "Whole Wheat Bread"],
+  },
+  {
+    skuId: "SK002", 
+    name: "Chicken Caesar Wrap",
+    category: "Wraps",
+    price: 5.45,
+    costPrice: 2.35,
+    inStock: true,
+    image: chickenCaesarWrap,
+    allergens: ["Gluten", "Dairy", "Fish"],
+    shelfLife: 2,
+    ingredients: ["Chicken Breast", "Romaine Lettuce", "Parmesan Cheese", "Caesar Dressing", "Tortilla Wrap"],
+  },
+  {
+    skuId: "SK003",
+    name: "Avocado & Hummus Wrap",
+    category: "Wraps", 
+    price: 4.75,
+    costPrice: 1.95,
+    inStock: true,
+    image: avocadoHummusWrap,
+    allergens: ["Gluten", "Sesame"],
+    shelfLife: 2,
+    ingredients: ["Avocado", "Hummus", "Tortilla Wrap"],
+  },
+  {
+    skuId: "SK004",
+    name: "Tuna Melt Panini",
+    category: "Hot Food",
+    price: 5.25,
+    costPrice: 2.20,
+    inStock: false,
+    image: tunaMeltPanini,
+    allergens: ["Gluten", "Fish", "Dairy"],
+    shelfLife: 1,
+    ingredients: [],
+  },
+  {
+    skuId: "SK005",
+    name: "Mediterranean Salad Bowl",
+    category: "Salads",
+    price: 6.50,
+    costPrice: 2.80,
+    inStock: true,
+    image: mediterraneanSalad,
+    allergens: ["Dairy"],
+    shelfLife: 3,
+    ingredients: [],
+  },
+  {
+    skuId: "SK006",
+    name: "Smoked Salmon Bagel",
+    category: "Bagels",
+    price: 5.95,
+    costPrice: 2.65,
+    inStock: true,
+    image: salmonBagel,
+    allergens: ["Gluten", "Fish", "Dairy"],
+    shelfLife: 2,
+    ingredients: ["Smoked Salmon", "Cream Cheese", "Bagel"],
+  },
+  {
+    skuId: "SK007",
+    name: "Chicken & Bacon Sandwich",
+    category: "Sandwiches",
+    price: 5.75,
+    costPrice: 2.45,
+    inStock: true,
+    image: chickenBaconSandwich,
+    allergens: ["Gluten"],
+    shelfLife: 2,
+    ingredients: [],
+  },
+  {
+    skuId: "SK008",
+    name: "Vegan No-Chicken Wrap",
+    category: "Wraps",
+    price: 4.95,
+    costPrice: 2.05,
+    inStock: true,
+    image: veganWrap,
+    allergens: ["Gluten", "Soya"],
+    shelfLife: 2,
+    ingredients: [],
+  },
+  {
+    skuId: "SK009",
+    name: "Greek Feta Salad",
+    category: "Salads",
+    price: 5.95,
+    costPrice: 2.55,
+    inStock: true,
+    image: greekFetaSalad,
+    allergens: ["Dairy"],
+    shelfLife: 3,
+    ingredients: ["Feta Cheese", "Tomato", "Cucumber", "Kalamata Olives"],
+  },
+  {
+    skuId: "SK010",
+    name: "Ham & Cheese Croissant",
+    category: "Pastries",
+    price: 3.75,
+    costPrice: 1.50,
+    inStock: true,
+    image: hamCheeseCroissant,
+    allergens: ["Gluten", "Dairy", "Egg"],
+    shelfLife: 1,
+    ingredients: [],
+  },
+  {
+    skuId: "SK011",
+    name: "Turkey & Cranberry Sandwich",
+    category: "Sandwiches",
+    price: 5.25,
+    costPrice: 2.30,
+    inStock: true,
+    image: bltSandwich,
+    allergens: ["Gluten"],
+    shelfLife: 2,
+    ingredients: [],
+  },
+  {
+    skuId: "SK012",
+    name: "Falafel Wrap",
+    category: "Wraps",
+    price: 4.85,
+    costPrice: 2.00,
+    inStock: true,
+    image: veganWrap,
+    allergens: ["Gluten", "Sesame"],
+    shelfLife: 2,
+    ingredients: [],
+  },
+  {
+    skuId: "SK013",
+    name: "Caprese Panini",
+    category: "Hot Food",
+    price: 5.15,
+    costPrice: 2.15,
+    inStock: true,
+    image: tunaMeltPanini,
+    allergens: ["Gluten", "Dairy"],
+    shelfLife: 1,
+    ingredients: [],
+  },
+  {
+    skuId: "SK014",
+    name: "Asian Chicken Salad",
+    category: "Salads",
+    price: 6.25,
+    costPrice: 2.70,
+    inStock: true,
+    image: mediterraneanSalad,
+    allergens: ["Soya", "Sesame"],
+    shelfLife: 3,
+    ingredients: [],
+  },
+  {
+    skuId: "SK015",
+    name: "Cream Cheese Bagel",
+    category: "Bagels",
+    price: 3.95,
+    costPrice: 1.80,
+    inStock: true,
+    image: salmonBagel,
+    allergens: ["Gluten", "Dairy"],
+    shelfLife: 2,
+    ingredients: [],
+  },
+  {
+    skuId: "SK016",
+    name: "Club Sandwich",
+    category: "Sandwiches",
+    price: 6.25,
+    costPrice: 2.75,
+    inStock: true,
+    image: chickenBaconSandwich,
+    allergens: ["Gluten", "Egg"],
+    shelfLife: 2,
+    ingredients: [],
+  },
+  {
+    skuId: "SK017",
+    name: "BBQ Chicken Wrap",
+    category: "Wraps",
+    price: 5.65,
+    costPrice: 2.40,
+    inStock: true,
+    image: chickenCaesarWrap,
+    allergens: ["Gluten", "Dairy"],
+    shelfLife: 2,
+    ingredients: [],
+  },
+  {
+    skuId: "SK018",
+    name: "Quinoa Power Salad",
+    category: "Salads",
+    price: 6.75,
+    costPrice: 2.90,
+    inStock: true,
+    image: greekFetaSalad,
+    allergens: [],
+    shelfLife: 3,
+    ingredients: [],
+  },
+  {
+    skuId: "SK019",
+    name: "Almond Croissant",
+    category: "Pastries",
+    price: 3.95,
+    costPrice: 1.60,
+    inStock: true,
+    image: hamCheeseCroissant,
+    allergens: ["Gluten", "Nuts", "Egg", "Dairy"],
+    shelfLife: 1,
+    ingredients: [],
+  },
+  {
+    skuId: "SK020",
+    name: "Mozzarella Panini",
+    category: "Hot Food",
+    price: 5.45,
+    costPrice: 2.25,
+    inStock: true,
+    image: tunaMeltPanini,
+    allergens: ["Gluten", "Dairy"],
+    shelfLife: 1,
+    ingredients: [],
+  },
+  {
+    skuId: "SK021",
+    name: "Egg & Cress Sandwich",
+    category: "Sandwiches",
+    price: 3.95,
+    costPrice: 1.75,
+    inStock: true,
+    image: bltSandwich,
+    allergens: ["Gluten", "Egg"],
+    shelfLife: 2,
+    ingredients: [],
+  },
+  {
+    skuId: "SK022",
+    name: "Sweet Chilli Chicken Wrap",
+    category: "Wraps",
+    price: 5.35,
+    costPrice: 2.30,
+    inStock: true,
+    image: chickenCaesarWrap,
+    allergens: ["Gluten", "Soya"],
+    shelfLife: 2,
+    ingredients: [],
+  },
+  {
+    skuId: "SK023",
+    name: "Caesar Salad Bowl",
+    category: "Salads",
+    price: 5.95,
+    costPrice: 2.60,
+    inStock: true,
+    image: mediterraneanSalad,
+    allergens: ["Dairy", "Fish"],
+    shelfLife: 3,
+    ingredients: [],
+  },
+  {
+    skuId: "SK024",
+    name: "Everything Bagel",
+    category: "Bagels",
+    price: 4.25,
+    costPrice: 1.90,
+    inStock: true,
+    image: salmonBagel,
+    allergens: ["Gluten", "Sesame"],
+    shelfLife: 2,
+    ingredients: [],
+  },
+  {
+    skuId: "SK025",
+    name: "Pain au Chocolat",
+    category: "Pastries",
+    price: 3.50,
+    costPrice: 1.45,
+    inStock: true,
+    image: hamCheeseCroissant,
+    allergens: ["Gluten", "Dairy", "Egg"],
+    shelfLife: 1,
+    ingredients: [],
+  },
+  {
+    skuId: "SK026",
+    name: "Prawn Marie Rose Sandwich",
+    category: "Sandwiches",
+    price: 5.95,
+    costPrice: 2.65,
+    inStock: false,
+    image: bltSandwich,
+    allergens: ["Gluten", "Crustaceans", "Egg"],
+    shelfLife: 2,
+    ingredients: [],
+  },
+  {
+    skuId: "SK027",
+    name: "Veggie Deluxe Wrap",
+    category: "Wraps",
+    price: 4.95,
+    costPrice: 2.05,
+    inStock: true,
+    image: avocadoHummusWrap,
+    allergens: ["Gluten", "Dairy"],
+    shelfLife: 2,
+    ingredients: [],
+  },
+  {
+    skuId: "SK028",
+    name: "Meatball Marinara Panini",
+    category: "Hot Food",
+    price: 5.95,
+    costPrice: 2.50,
+    inStock: true,
+    image: tunaMeltPanini,
+    allergens: ["Gluten", "Dairy"],
+    shelfLife: 1,
+    ingredients: [],
+  },
+  {
+    skuId: "SK029",
+    name: "Superfood Salad",
+    category: "Salads",
+    price: 6.95,
+    costPrice: 2.95,
+    inStock: true,
+    image: greekFetaSalad,
+    allergens: ["Nuts"],
+    shelfLife: 3,
+    ingredients: [],
+  },
+  {
+    skuId: "SK030",
+    name: "Cinnamon Swirl",
+    category: "Pastries",
+    price: 3.25,
+    costPrice: 1.35,
+    inStock: true,
+    image: hamCheeseCroissant,
+    allergens: ["Gluten", "Dairy", "Egg"],
+    shelfLife: 1,
+    ingredients: [],
+  },
+  {
+    skuId: "SK031",
+    name: "Roast Beef Sandwich",
+    category: "Sandwiches",
+    price: 6.45,
+    costPrice: 2.85,
+    inStock: true,
+    image: chickenBaconSandwich,
+    allergens: ["Gluten"],
+    shelfLife: 2,
+    ingredients: [],
+  },
+  {
+    skuId: "SK032",
+    name: "Mexican Bean Wrap",
+    category: "Wraps",
+    price: 4.65,
+    costPrice: 1.95,
+    inStock: true,
+    image: veganWrap,
+    allergens: ["Gluten"],
+    shelfLife: 2,
+    ingredients: [],
+  },
+  {
+    skuId: "SK033",
+    name: "Pesto Chicken Panini",
+    category: "Hot Food",
+    price: 5.75,
+    costPrice: 2.45,
+    inStock: true,
+    image: tunaMeltPanini,
+    allergens: ["Gluten", "Dairy", "Nuts"],
+    shelfLife: 1,
+    ingredients: [],
+  },
+  {
+    skuId: "SK034",
+    name: "Nicoise Salad",
+    category: "Salads",
+    price: 6.85,
+    costPrice: 2.95,
+    inStock: true,
+    image: mediterraneanSalad,
+    allergens: ["Fish", "Egg"],
+    shelfLife: 3,
+    ingredients: [],
+  },
+  {
+    skuId: "SK035",
+    name: "Sesame Bagel",
+    category: "Bagels",
+    price: 4.15,
+    costPrice: 1.85,
+    inStock: true,
+    image: salmonBagel,
+    allergens: ["Gluten", "Sesame", "Dairy"],
+    shelfLife: 2,
+    ingredients: [],
+  },
+  {
+    skuId: "SK036",
+    name: "Cheese Twist",
+    category: "Pastries",
+    price: 3.45,
+    costPrice: 1.40,
+    inStock: true,
+    image: hamCheeseCroissant,
+    allergens: ["Gluten", "Dairy"],
+    shelfLife: 1,
+    ingredients: [],
+  },
+  {
+    skuId: "SK037",
+    name: "Coronation Chicken Sandwich",
+    category: "Sandwiches",
+    price: 5.45,
+    costPrice: 2.35,
+    inStock: true,
+    image: bltSandwich,
+    allergens: ["Gluten", "Egg"],
+    shelfLife: 2,
+    ingredients: [],
+  },
+  {
+    skuId: "SK038",
+    name: "Halloumi & Pepper Wrap",
+    category: "Wraps",
+    price: 5.25,
+    costPrice: 2.25,
+    inStock: true,
+    image: avocadoHummusWrap,
+    allergens: ["Gluten", "Dairy"],
+    shelfLife: 2,
+    ingredients: [],
+  },
+  {
+    skuId: "SK039",
+    name: "Pulled Pork Panini",
+    category: "Hot Food",
+    price: 6.25,
+    costPrice: 2.70,
+    inStock: false,
+    image: tunaMeltPanini,
+    allergens: ["Gluten"],
+    shelfLife: 1,
+    ingredients: [],
+  },
+  {
+    skuId: "SK040",
+    name: "Cobb Salad",
+    category: "Salads",
+    price: 6.95,
+    costPrice: 2.95,
+    inStock: true,
+    image: greekFetaSalad,
+    allergens: ["Dairy", "Egg"],
+    shelfLife: 3,
+    ingredients: [],
+  },
+  {
+    skuId: "SK041",
+    name: "Blueberry Muffin",
+    category: "Pastries",
+    price: 3.25,
+    costPrice: 1.30,
+    inStock: true,
+    image: hamCheeseCroissant,
+    allergens: ["Gluten", "Dairy", "Egg"],
+    shelfLife: 1,
+    ingredients: [],
+  },
+  {
+    skuId: "SK042",
+    name: "Smoked Turkey Sandwich",
+    category: "Sandwiches",
+    price: 5.65,
+    costPrice: 2.45,
+    inStock: true,
+    image: chickenBaconSandwich,
+    allergens: ["Gluten"],
+    shelfLife: 2,
+    ingredients: [],
+  },
+  {
+    skuId: "SK043",
+    name: "Thai Prawn Wrap",
+    category: "Wraps",
+    price: 6.15,
+    costPrice: 2.75,
+    inStock: true,
+    image: chickenCaesarWrap,
+    allergens: ["Gluten", "Crustaceans", "Fish"],
+    shelfLife: 2,
+    ingredients: [],
+  },
+  {
+    skuId: "SK044",
+    name: "Chicken Tikka Panini",
+    category: "Hot Food",
+    price: 5.85,
+    costPrice: 2.50,
+    inStock: true,
+    image: tunaMeltPanini,
+    allergens: ["Gluten", "Dairy"],
+    shelfLife: 1,
+    ingredients: [],
+  },
+  {
+    skuId: "SK045",
+    name: "Garden Salad Bowl",
+    category: "Salads",
+    price: 5.45,
+    costPrice: 2.35,
+    inStock: true,
+    image: mediterraneanSalad,
+    allergens: [],
+    shelfLife: 3,
+    ingredients: [],
+  },
+  {
+    skuId: "SK046",
+    name: "Poppy Seed Bagel",
+    category: "Bagels",
+    price: 4.05,
+    costPrice: 1.80,
+    inStock: true,
+    image: salmonBagel,
+    allergens: ["Gluten", "Dairy"],
+    shelfLife: 2,
+    ingredients: [],
+  },
+  {
+    skuId: "SK047",
+    name: "Chocolate Croissant",
+    category: "Pastries",
+    price: 3.75,
+    costPrice: 1.55,
+    inStock: true,
+    image: hamCheeseCroissant,
+    allergens: ["Gluten", "Dairy", "Egg"],
+    shelfLife: 1,
+    ingredients: [],
+  },
+  {
+    skuId: "SK048",
+    name: "Pastrami Sandwich",
+    category: "Sandwiches",
+    price: 6.15,
+    costPrice: 2.70,
+    inStock: true,
+    image: bltSandwich,
+    allergens: ["Gluten"],
+    shelfLife: 2,
+    ingredients: [],
+  },
+  {
+    skuId: "SK049",
+    name: "Spicy Bean Wrap",
+    category: "Wraps",
+    price: 4.75,
+    costPrice: 2.00,
+    inStock: true,
+    image: veganWrap,
+    allergens: ["Gluten"],
+    shelfLife: 2,
+    ingredients: [],
+  },
+  {
+    skuId: "SK050",
+    name: "Lemon Drizzle Cake",
+    category: "Pastries",
+    price: 3.95,
+    costPrice: 1.65,
+    inStock: true,
+    image: hamCheeseCroissant,
+    allergens: ["Gluten", "Dairy", "Egg"],
+    shelfLife: 2,
+    ingredients: [],
+  }
+];
+
+const categories = ["All", "Sandwiches", "Wraps", "Salads", "Hot Food", "Bagels", "Pastries"];
+
+export default function ProductRange() {
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("All");
+  const [viewMode, setViewMode] = useState<"card" | "list">("card");
+  const [products, setProducts] = useState(initialProducts);
+  const [isBulkUploadOpen, setIsBulkUploadOpen] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const { toast } = useToast();
+  const { viewMode: appViewMode, selectedStore } = useView();
+
+  const filteredProducts = products.filter(product => {
+    const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         product.skuId.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesCategory = selectedCategory === "All" || product.category === selectedCategory;
+    return matchesSearch && matchesCategory;
+  });
+
+  const handleProductUpdate = (skuId: string, updates: Partial<typeof products[0]>) => {
+    setProducts(products.map(p => p.skuId === skuId ? { ...p, ...updates } : p));
+  };
+
+  const handleEdit = (skuId: string) => {
+    console.log("Edit product:", skuId);
+  };
+
+  const handleBulkUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const text = e.target?.result as string;
+        const lines = text.split('\n').filter(line => line.trim());
+        
+        if (lines.length < 2) {
+          toast({
+            title: "Invalid file",
+            description: "CSV file must contain header and at least one product",
+            variant: "destructive"
+          });
+          return;
+        }
+
+        const headers = lines[0].split(',').map(h => h.trim());
+        const newProducts = lines.slice(1).map((line, index) => {
+          const values = line.split(',').map(v => v.trim());
+          const skuId = values[0] || `SK${String(products.length + index + 1).padStart(3, '0')}`;
+          
+          return {
+            skuId,
+            name: values[1] || 'Unnamed Product',
+            category: values[2] || 'Sandwiches',
+            price: parseFloat(values[3]) || 0,
+            costPrice: parseFloat(values[4]) || 0,
+            inStock: values[5]?.toLowerCase() === 'true',
+            image: bltSandwich, // Default image
+            allergens: values[6] ? values[6].split(';') : [],
+            shelfLife: parseInt(values[7]) || 2,
+            ingredients: [],
+          };
+        });
+
+        setProducts([...products, ...newProducts]);
+        toast({
+          title: "Success",
+          description: `${newProducts.length} products uploaded successfully`
+        });
+        setIsBulkUploadOpen(false);
+      } catch (error) {
+        toast({
+          title: "Error",
+          description: "Failed to parse CSV file. Please check the format.",
+          variant: "destructive"
+        });
+      }
+    };
+    reader.readAsText(file);
+    
+    // Reset input
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
+  const downloadTemplate = () => {
+    const template = 'SKU ID,Name,Category,Price,Cost Price,In Stock,Allergens,Shelf Life\nSK999,Sample Product,Sandwiches,5.95,2.50,true,Gluten;Dairy,2';
+    const blob = new Blob([template], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'product-template.csv';
+    a.click();
+    window.URL.revokeObjectURL(url);
+  };
+
+  return (
+    <div className="flex-1 space-y-6 p-6">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold text-foreground">
+            {appViewMode === "store" ? `My Store - ${selectedStore}` : "My Products"}
+          </h1>
+          <p className="text-muted-foreground">
+            {appViewMode === "store"
+              ? `Product catalog for ${selectedStore}`
+              : "Manage your complete SKU catalog with photos and details"
+            }
+          </p>
+        </div>
+        <div className="flex gap-2">
+          <Button 
+            variant="outline"
+            onClick={() => setIsBulkUploadOpen(true)}
+            className="shadow-brand"
+          >
+            <Upload className="h-4 w-4 mr-2" />
+            Bulk Upload
+          </Button>
+          <Button className="bg-primary text-primary-foreground shadow-brand hover:bg-primary/90">
+            <Plus className="h-4 w-4 mr-2" />
+            Add Product
+          </Button>
+        </div>
+      </div>
+
+      {/* Filters */}
+      <Card className="shadow-card">
+        <CardContent className="p-4">
+          <div className="flex flex-col sm:flex-row gap-4 items-center">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Search by product name or SKU..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-9"
+              />
+            </div>
+            <div className="flex gap-2 flex-wrap">
+              {categories.map((category) => (
+                <Button
+                  key={category}
+                  variant={selectedCategory === category ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setSelectedCategory(category)}
+                  className={selectedCategory === category ? "bg-primary text-primary-foreground" : ""}
+                >
+                  {category}
+                </Button>
+              ))}
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Results Summary and View Toggle */}
+      <div className="flex items-center justify-between">
+        <p className="text-muted-foreground">
+          Showing {filteredProducts.length} of {products.length} products
+        </p>
+        <div className="flex items-center gap-4">
+          <ToggleGroup type="single" value={viewMode} onValueChange={(value) => value && setViewMode(value as "card" | "list")}>
+            <ToggleGroupItem value="card" aria-label="Card view">
+              <LayoutGrid className="h-4 w-4 mr-2" />
+              Card
+            </ToggleGroupItem>
+            <ToggleGroupItem value="list" aria-label="List view">
+              <List className="h-4 w-4 mr-2" />
+              List
+            </ToggleGroupItem>
+          </ToggleGroup>
+          <Button variant="outline" size="sm">
+            <Filter className="h-4 w-4 mr-2" />
+            More Filters
+          </Button>
+        </div>
+      </div>
+
+      {/* Product Display */}
+      {viewMode === "card" ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          {filteredProducts.map((product) => (
+            <ProductCard key={product.skuId} product={product} onEdit={handleEdit} />
+          ))}
+        </div>
+      ) : (
+        <div className="space-y-3">
+          {filteredProducts.map((product) => (
+            <ProductListItem key={product.skuId} product={product} onUpdate={handleProductUpdate} />
+          ))}
+        </div>
+      )}
+
+      {filteredProducts.length === 0 && (
+        <Card className="shadow-card">
+          <CardContent className="text-center py-12">
+            <div className="text-muted-foreground">
+              <Search className="h-12 w-12 mx-auto mb-4 opacity-50" />
+              <h3 className="text-lg font-semibold mb-2">No products found</h3>
+              <p>Try adjusting your search terms or filters</p>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Bulk Upload Dialog */}
+      <Dialog open={isBulkUploadOpen} onOpenChange={setIsBulkUploadOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Bulk Upload Products</DialogTitle>
+            <DialogDescription>
+              Upload a CSV file to add multiple products at once. Download the template to see the required format.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="border-2 border-dashed border-muted rounded-lg p-8 text-center">
+              <Upload className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
+              <p className="text-sm text-muted-foreground mb-4">
+                Click to select a CSV file or drag and drop
+              </p>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept=".csv"
+                onChange={handleBulkUpload}
+                className="hidden"
+              />
+              <Button 
+                onClick={() => fileInputRef.current?.click()}
+                variant="outline"
+              >
+                Select CSV File
+              </Button>
+            </div>
+            <div className="text-sm text-muted-foreground">
+              <p className="font-medium mb-2">CSV Format:</p>
+              <p className="font-mono text-xs bg-muted p-2 rounded">
+                SKU ID,Name,Category,Price,Cost Price,In Stock,Allergens,Shelf Life
+              </p>
+              <p className="mt-2">Allergens should be separated by semicolons (;)</p>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={downloadTemplate}>
+              Download Template
+            </Button>
+            <Button variant="outline" onClick={() => setIsBulkUploadOpen(false)}>
+              Cancel
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+}
