@@ -192,11 +192,11 @@ const baseProducts = [
   { id: "SK020", productName: "Mozzarella Panini", category: "Hot Food", storeId: "ST018", storeName: "Wimbledon", currentStock: 12, recommendedOrder: 17, finalOrder: 17, trend: "up", historicalSales: 15.2, predictedSales: 16.8 },
 ];
 
-// Day parts with typical distribution
+// Day parts matching range plan
 const dayParts = [
-  { name: "Morning", time: "6:00-11:00", percentage: 0.35 },
-  { name: "Afternoon", time: "11:00-16:00", percentage: 0.45 },
-  { name: "Evening", time: "16:00-20:00", percentage: 0.20 }
+  { name: "Breakfast", time: "Open-11am", percentage: 0.35 },
+  { name: "Lunch", time: "11am-2pm", percentage: 0.45 },
+  { name: "Afternoon", time: "2pm-Close", percentage: 0.20 }
 ];
 
 // Generate 7-day forecast with day parts
@@ -232,6 +232,14 @@ const generate7DayForecast = () => {
 
 const initialAllocations = generate7DayForecast();
 
+// Get initial day part based on current time
+const getInitialDayPart = () => {
+  const currentHour = new Date().getHours();
+  if (currentHour < 9) return "Breakfast";
+  if (currentHour >= 9 && currentHour < 11) return "Lunch";
+  return "Afternoon";
+};
+
 export default function VolumeAllocation() {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [allocations, setAllocations] = useState(initialAllocations);
@@ -239,6 +247,7 @@ export default function VolumeAllocation() {
   const { viewMode, selectedStore } = useView();
   const [selectedStores, setSelectedStores] = useState<string[]>(["All"]);
   const [selectedDay, setSelectedDay] = useState<string>("All days");
+  const [selectedDayPart, setSelectedDayPart] = useState<string>(getInitialDayPart());
   const [webhookUrl, setWebhookUrl] = useState("");
   const [isWebhookDialogOpen, setIsWebhookDialogOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -270,6 +279,9 @@ export default function VolumeAllocation() {
     const selectedDateStr = uniqueDates[dayOptions.indexOf(selectedDay) - 1];
     filtered = filtered.filter(a => a.date.toDateString() === selectedDateStr);
   }
+  
+  // Filter by day part
+  filtered = filtered.filter(a => a.dayPart === selectedDayPart);
   
   const filteredAllocations = filtered;
 
@@ -448,7 +460,7 @@ export default function VolumeAllocation() {
                 {viewMode === "store" ? selectedStore : "AI Production Recommendations"}
               </h1>
               <p className="text-secondary-foreground/80 text-lg">
-                Optimised production top-ups by day part (Morning, Afternoon, Evening) powered by machine learning
+                Optimised production top-ups by day part (Breakfast, Lunch, Afternoon) powered by machine learning
               </p>
             </div>
             <div className="flex items-center gap-3">
@@ -505,6 +517,32 @@ export default function VolumeAllocation() {
           </CardContent>
         </Card>
       )}
+
+      {/* Day Part Selector */}
+      <Card className="shadow-card border-2 border-primary/20 bg-gradient-to-r from-primary/5 to-transparent">
+        <CardHeader className="pb-4">
+          <CardTitle className="text-xl">Production Day Part</CardTitle>
+          <CardDescription>Select which part of the day to view production recommendations for</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="flex gap-3">
+            {dayParts.map((dayPart) => (
+              <Button
+                key={dayPart.name}
+                variant={selectedDayPart === dayPart.name ? "default" : "outline"}
+                size="lg"
+                onClick={() => setSelectedDayPart(dayPart.name)}
+                className="flex-1 h-16 text-base font-semibold"
+              >
+                <div className="flex flex-col items-center">
+                  <span>{dayPart.name}</span>
+                  <span className="text-xs font-normal opacity-80">{dayPart.time}</span>
+                </div>
+              </Button>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Notable Events - Only in Store View */}
       {viewMode === "store" && (

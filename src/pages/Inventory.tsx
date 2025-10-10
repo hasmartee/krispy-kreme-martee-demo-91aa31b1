@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
-import { Package, AlertCircle, CheckCircle, XCircle, Edit2, Search, ClipboardCheck, Plus, Minus } from "lucide-react";
+import { Package, AlertCircle, CheckCircle, XCircle, Edit2, Search, ClipboardCheck, Plus, Minus, Store, ChevronDown, ChevronUp } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -67,6 +67,7 @@ export default function Inventory() {
   const [stores, setStores] = useState<{ id: string; name: string; cluster: string }[]>([]);
   const [stockTakeMode, setStockTakeMode] = useState(false);
   const [editingStocks, setEditingStocks] = useState<Record<string, number>>({});
+  const [expandedStores, setExpandedStores] = useState<string[]>([]);
 
   useEffect(() => {
     loadStores();
@@ -96,7 +97,6 @@ export default function Inventory() {
 
   const loadInventory = async () => {
     setLoading(true);
-    console.log("🔍 Loading inventory - viewMode:", viewMode, "selectedStore:", selectedStore);
     try {
       if (viewMode === "store") {
         // Store view: Show products ranged in this store based on cluster
@@ -105,11 +105,8 @@ export default function Inventory() {
           .select("id, cluster")
           .eq("name", selectedStore)
           .maybeSingle();
-        
-        console.log("📍 Store data:", storeData);
 
         if (!storeData || !storeData.cluster) {
-          console.log("❌ No store data or cluster found");
           setInventory([]);
           setLoading(false);
           return;
@@ -117,15 +114,12 @@ export default function Inventory() {
 
         // Get products based on store cluster
         const clusterSkus = clusterProducts[storeData.cluster as keyof typeof clusterProducts] || [];
-        console.log("🎯 Cluster:", storeData.cluster, "SKUs:", clusterSkus);
         
         const { data: products } = await supabase
           .from("products")
           .select("*")
           .in("sku", clusterSkus)
           .order("name");
-        
-        console.log("📦 Products found:", products?.length || 0);
 
         if (!products) {
           setInventory([]);
@@ -236,6 +230,14 @@ export default function Inventory() {
       ...prev,
       [itemKey]: Math.max(0, (prev[itemKey] || 0) + delta)
     }));
+  };
+
+  const toggleStoreExpanded = (storeId: string) => {
+    setExpandedStores(prev =>
+      prev.includes(storeId)
+        ? prev.filter(id => id !== storeId)
+        : [...prev, storeId]
+    );
   };
 
   const handleSaveStocks = async () => {
@@ -390,13 +392,103 @@ export default function Inventory() {
             <div className="text-center py-12 text-muted-foreground">
               Loading inventory...
             </div>
+          ) : viewMode === "hq" ? (
+            <div className="space-y-4">
+              {stores.map((store) => {
+                const storeInventory = filteredInventory.filter(item => item.store_name === store.name);
+                const isExpanded = expandedStores.includes(store.id);
+                
+                return (
+                  <Card key={store.id} className="border-2">
+                    <CardHeader 
+                      className="cursor-pointer hover:bg-accent/50 transition-colors"
+                      onClick={() => toggleStoreExpanded(store.id)}
+                    >
+                      <div className="flex items-center justify-between">
+                        <CardTitle className="text-lg flex items-center gap-2">
+                          <Store className="h-4 w-4" />
+                          {store.name}
+                          <Badge variant="outline">{storeInventory.length} products</Badge>
+                        </CardTitle>
+                        <Button variant="ghost" size="sm">
+                          {isExpanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+                        </Button>
+                      </div>
+                    </CardHeader>
+                    {isExpanded && (
+                      <CardContent>
+                        <Table>
+                          <TableHeader>
+                            <TableRow>
+                              <TableHead>SKU</TableHead>
+                              <TableHead>Product Name</TableHead>
+                              <TableHead>Current Stock</TableHead>
+                              <TableHead>Status</TableHead>
+                              {!stockTakeMode && <TableHead>Actions</TableHead>}
+                            </TableRow>
+                          </TableHeader>
+                          <TableBody>
+                            {storeInventory.map((item) => {
+                              const itemKey = `${item.store_id}-${item.product.id}`;
+                              const displayStock = stockTakeMode ? editingStocks[itemKey] : item.current_stock;
+
+                              return (
+                                <TableRow key={itemKey}>
+                                  <TableCell className="font-medium">{item.product.sku}</TableCell>
+                                  <TableCell>{item.product.name}</TableCell>
+                                  <TableCell>
+                                    {stockTakeMode ? (
+                                      <div className="flex items-center gap-2">
+                                        <Button
+                                          size="sm"
+                                          variant="outline"
+                                          onClick={() => adjustStock(itemKey, -1)}
+                                          className="h-8 w-8 p-0"
+                                        >
+                                          <Minus className="h-4 w-4" />
+                                        </Button>
+                                        <span className={`font-bold text-lg min-w-[3rem] text-center ${stockTakeMode ? 'animate-wobble' : ''}`}>
+                                          {displayStock}
+                                        </span>
+                                        <Button
+                                          size="sm"
+                                          variant="outline"
+                                          onClick={() => adjustStock(itemKey, 1)}
+                                          className="h-8 w-8 p-0"
+                                        >
+                                          <Plus className="h-4 w-4" />
+                                        </Button>
+                                      </div>
+                                    ) : (
+                                      <span className="font-medium">{displayStock}</span>
+                                    )}
+                                  </TableCell>
+                                  <TableCell>{getStatusBadge(getStockStatus(displayStock))}</TableCell>
+                                  {!stockTakeMode && (
+                                    <TableCell>
+                                      <Button size="sm" variant="ghost">
+                                        <Edit2 className="h-4 w-4 mr-2" />
+                                        Edit
+                                      </Button>
+                                    </TableCell>
+                                  )}
+                                </TableRow>
+                              );
+                            })}
+                          </TableBody>
+                        </Table>
+                      </CardContent>
+                    )}
+                  </Card>
+                );
+              })}
+            </div>
           ) : (
             <Table>
               <TableHeader>
                 <TableRow>
                   <TableHead>SKU</TableHead>
                   <TableHead>Product Name</TableHead>
-                  {viewMode === "hq" && <TableHead>Store</TableHead>}
                   <TableHead>Current Stock</TableHead>
                   <TableHead>Status</TableHead>
                   {!stockTakeMode && <TableHead>Actions</TableHead>}
@@ -404,16 +496,13 @@ export default function Inventory() {
               </TableHeader>
               <TableBody>
                 {filteredInventory.map((item) => {
-                  const itemKey = item.store_id 
-                    ? `${item.store_id}-${item.product.id}`
-                    : item.product.id;
+                  const itemKey = item.product.id;
                   const displayStock = stockTakeMode ? editingStocks[itemKey] : item.current_stock;
 
                   return (
                     <TableRow key={itemKey}>
                       <TableCell className="font-medium">{item.product.sku}</TableCell>
                       <TableCell>{item.product.name}</TableCell>
-                      {viewMode === "hq" && <TableCell>{item.store_name}</TableCell>}
                       <TableCell>
                         {stockTakeMode ? (
                           <div className="flex items-center gap-2">
@@ -455,14 +544,6 @@ export default function Inventory() {
                 })}
               </TableBody>
             </Table>
-          )}
-          
-          {!loading && filteredInventory.length === 0 && (
-            <div className="text-center py-12 text-muted-foreground">
-              <Package className="h-12 w-12 mx-auto mb-4 opacity-50" />
-              <p className="text-lg font-medium">No products found</p>
-              <p className="text-sm">Try adjusting your search or filters</p>
-            </div>
           )}
         </CardContent>
       </Card>
