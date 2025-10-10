@@ -44,6 +44,7 @@ const initialProducts = [
     allergens: ["Gluten", "Egg"],
     shelfLife: 2,
     ingredients: ["Bacon", "Romaine Lettuce", "Tomato", "Whole Wheat Bread"],
+    dayParts: ["lunch", "afternoon"],
   },
   {
     skuId: "SK002", 
@@ -56,6 +57,7 @@ const initialProducts = [
     allergens: ["Gluten", "Dairy", "Fish"],
     shelfLife: 2,
     ingredients: ["Chicken Breast", "Romaine Lettuce", "Parmesan Cheese", "Caesar Dressing", "Tortilla Wrap"],
+    dayParts: ["lunch", "afternoon"],
   },
   {
     skuId: "SK003",
@@ -68,6 +70,7 @@ const initialProducts = [
     allergens: ["Gluten", "Sesame"],
     shelfLife: 2,
     ingredients: ["Avocado", "Hummus", "Tortilla Wrap"],
+    dayParts: ["lunch", "afternoon"],
   },
   {
     skuId: "SK004",
@@ -80,6 +83,7 @@ const initialProducts = [
     allergens: ["Gluten", "Fish", "Dairy"],
     shelfLife: 1,
     ingredients: [],
+    dayParts: ["lunch", "afternoon"],
   },
   {
     skuId: "SK005",
@@ -92,21 +96,10 @@ const initialProducts = [
     allergens: ["Dairy"],
     shelfLife: 3,
     ingredients: [],
+    dayParts: ["lunch", "afternoon"],
   },
   {
     skuId: "SK006",
-    name: "Smoked Salmon Bagel",
-    category: "Bagels",
-    price: 5.95,
-    costPrice: 2.65,
-    inStock: true,
-    image: salmonBagel,
-    allergens: ["Gluten", "Fish", "Dairy"],
-    shelfLife: 2,
-    ingredients: ["Smoked Salmon", "Cream Cheese", "Bagel"],
-  },
-  {
-    skuId: "SK007",
     name: "Chicken & Bacon Sandwich",
     category: "Sandwiches",
     price: 5.75,
@@ -116,9 +109,10 @@ const initialProducts = [
     allergens: ["Gluten"],
     shelfLife: 2,
     ingredients: [],
+    dayParts: ["lunch", "afternoon"],
   },
   {
-    skuId: "SK008",
+    skuId: "SK007",
     name: "Vegan No-Chicken Wrap",
     category: "Wraps",
     price: 4.95,
@@ -128,9 +122,10 @@ const initialProducts = [
     allergens: ["Gluten", "Soya"],
     shelfLife: 2,
     ingredients: [],
+    dayParts: ["lunch", "afternoon"],
   },
   {
-    skuId: "SK009",
+    skuId: "SK008",
     name: "Greek Feta Salad",
     category: "Salads",
     price: 5.95,
@@ -140,501 +135,11 @@ const initialProducts = [
     allergens: ["Dairy"],
     shelfLife: 3,
     ingredients: ["Feta Cheese", "Tomato", "Cucumber", "Kalamata Olives"],
+    dayParts: ["lunch", "afternoon"],
   },
+  // Breakfast items
   {
-    skuId: "SK010",
-    name: "Ham & Cheese Croissant",
-    category: "Pastries",
-    price: 3.75,
-    costPrice: 1.50,
-    inStock: true,
-    image: hamCheeseCroissant,
-    allergens: ["Gluten", "Dairy", "Egg"],
-    shelfLife: 1,
-    ingredients: [],
-  },
-  {
-    skuId: "SK011",
-    name: "Turkey & Cranberry Sandwich",
-    category: "Sandwiches",
-    price: 5.25,
-    costPrice: 2.30,
-    inStock: true,
-    image: bltSandwich,
-    allergens: ["Gluten"],
-    shelfLife: 2,
-    ingredients: [],
-  },
-  {
-    skuId: "SK012",
-    name: "Falafel Wrap",
-    category: "Wraps",
-    price: 4.85,
-    costPrice: 2.00,
-    inStock: true,
-    image: veganWrap,
-    allergens: ["Gluten", "Sesame"],
-    shelfLife: 2,
-    ingredients: [],
-  },
-  {
-    skuId: "SK013",
-    name: "Caprese Panini",
-    category: "Hot Food",
-    price: 5.15,
-    costPrice: 2.15,
-    inStock: true,
-    image: tunaMeltPanini,
-    allergens: ["Gluten", "Dairy"],
-    shelfLife: 1,
-    ingredients: [],
-  },
-  {
-    skuId: "SK014",
-    name: "Asian Chicken Salad",
-    category: "Salads",
-    price: 6.25,
-    costPrice: 2.70,
-    inStock: true,
-    image: mediterraneanSalad,
-    allergens: ["Soya", "Sesame"],
-    shelfLife: 3,
-    ingredients: [],
-  },
-  {
-    skuId: "SK015",
-    name: "Cream Cheese Bagel",
-    category: "Bagels",
-    price: 3.95,
-    costPrice: 1.80,
-    inStock: true,
-    image: salmonBagel,
-    allergens: ["Gluten", "Dairy"],
-    shelfLife: 2,
-    ingredients: [],
-  },
-  {
-    skuId: "SK016",
-    name: "Club Sandwich",
-    category: "Sandwiches",
-    price: 6.25,
-    costPrice: 2.75,
-    inStock: true,
-    image: chickenBaconSandwich,
-    allergens: ["Gluten", "Egg"],
-    shelfLife: 2,
-    ingredients: [],
-  },
-  {
-    skuId: "SK017",
-    name: "BBQ Chicken Wrap",
-    category: "Wraps",
-    price: 5.65,
-    costPrice: 2.40,
-    inStock: true,
-    image: chickenCaesarWrap,
-    allergens: ["Gluten", "Dairy"],
-    shelfLife: 2,
-    ingredients: [],
-  },
-  {
-    skuId: "SK018",
-    name: "Quinoa Power Salad",
-    category: "Salads",
-    price: 6.75,
-    costPrice: 2.90,
-    inStock: true,
-    image: greekFetaSalad,
-    allergens: [],
-    shelfLife: 3,
-    ingredients: [],
-  },
-  {
-    skuId: "SK019",
-    name: "Almond Croissant",
-    category: "Pastries",
-    price: 3.95,
-    costPrice: 1.60,
-    inStock: true,
-    image: hamCheeseCroissant,
-    allergens: ["Gluten", "Nuts", "Egg", "Dairy"],
-    shelfLife: 1,
-    ingredients: [],
-  },
-  {
-    skuId: "SK020",
-    name: "Mozzarella Panini",
-    category: "Hot Food",
-    price: 5.45,
-    costPrice: 2.25,
-    inStock: true,
-    image: tunaMeltPanini,
-    allergens: ["Gluten", "Dairy"],
-    shelfLife: 1,
-    ingredients: [],
-  },
-  {
-    skuId: "SK021",
-    name: "Egg & Cress Sandwich",
-    category: "Sandwiches",
-    price: 3.95,
-    costPrice: 1.75,
-    inStock: true,
-    image: bltSandwich,
-    allergens: ["Gluten", "Egg"],
-    shelfLife: 2,
-    ingredients: [],
-  },
-  {
-    skuId: "SK022",
-    name: "Sweet Chilli Chicken Wrap",
-    category: "Wraps",
-    price: 5.35,
-    costPrice: 2.30,
-    inStock: true,
-    image: chickenCaesarWrap,
-    allergens: ["Gluten", "Soya"],
-    shelfLife: 2,
-    ingredients: [],
-  },
-  {
-    skuId: "SK023",
-    name: "Caesar Salad Bowl",
-    category: "Salads",
-    price: 5.95,
-    costPrice: 2.60,
-    inStock: true,
-    image: mediterraneanSalad,
-    allergens: ["Dairy", "Fish"],
-    shelfLife: 3,
-    ingredients: [],
-  },
-  {
-    skuId: "SK024",
-    name: "Everything Bagel",
-    category: "Bagels",
-    price: 4.25,
-    costPrice: 1.90,
-    inStock: true,
-    image: salmonBagel,
-    allergens: ["Gluten", "Sesame"],
-    shelfLife: 2,
-    ingredients: [],
-  },
-  {
-    skuId: "SK025",
-    name: "Pain au Chocolat",
-    category: "Pastries",
-    price: 3.50,
-    costPrice: 1.45,
-    inStock: true,
-    image: hamCheeseCroissant,
-    allergens: ["Gluten", "Dairy", "Egg"],
-    shelfLife: 1,
-    ingredients: [],
-  },
-  {
-    skuId: "SK026",
-    name: "Prawn Marie Rose Sandwich",
-    category: "Sandwiches",
-    price: 5.95,
-    costPrice: 2.65,
-    inStock: false,
-    image: bltSandwich,
-    allergens: ["Gluten", "Crustaceans", "Egg"],
-    shelfLife: 2,
-    ingredients: [],
-  },
-  {
-    skuId: "SK027",
-    name: "Veggie Deluxe Wrap",
-    category: "Wraps",
-    price: 4.95,
-    costPrice: 2.05,
-    inStock: true,
-    image: avocadoHummusWrap,
-    allergens: ["Gluten", "Dairy"],
-    shelfLife: 2,
-    ingredients: [],
-  },
-  {
-    skuId: "SK028",
-    name: "Meatball Marinara Panini",
-    category: "Hot Food",
-    price: 5.95,
-    costPrice: 2.50,
-    inStock: true,
-    image: tunaMeltPanini,
-    allergens: ["Gluten", "Dairy"],
-    shelfLife: 1,
-    ingredients: [],
-  },
-  {
-    skuId: "SK029",
-    name: "Superfood Salad",
-    category: "Salads",
-    price: 6.95,
-    costPrice: 2.95,
-    inStock: true,
-    image: greekFetaSalad,
-    allergens: ["Nuts"],
-    shelfLife: 3,
-    ingredients: [],
-  },
-  {
-    skuId: "SK030",
-    name: "Cinnamon Swirl",
-    category: "Pastries",
-    price: 3.25,
-    costPrice: 1.35,
-    inStock: true,
-    image: hamCheeseCroissant,
-    allergens: ["Gluten", "Dairy", "Egg"],
-    shelfLife: 1,
-    ingredients: [],
-  },
-  {
-    skuId: "SK031",
-    name: "Roast Beef Sandwich",
-    category: "Sandwiches",
-    price: 6.45,
-    costPrice: 2.85,
-    inStock: true,
-    image: chickenBaconSandwich,
-    allergens: ["Gluten"],
-    shelfLife: 2,
-    ingredients: [],
-  },
-  {
-    skuId: "SK032",
-    name: "Mexican Bean Wrap",
-    category: "Wraps",
-    price: 4.65,
-    costPrice: 1.95,
-    inStock: true,
-    image: veganWrap,
-    allergens: ["Gluten"],
-    shelfLife: 2,
-    ingredients: [],
-  },
-  {
-    skuId: "SK033",
-    name: "Pesto Chicken Panini",
-    category: "Hot Food",
-    price: 5.75,
-    costPrice: 2.45,
-    inStock: true,
-    image: tunaMeltPanini,
-    allergens: ["Gluten", "Dairy", "Nuts"],
-    shelfLife: 1,
-    ingredients: [],
-  },
-  {
-    skuId: "SK034",
-    name: "Nicoise Salad",
-    category: "Salads",
-    price: 6.85,
-    costPrice: 2.95,
-    inStock: true,
-    image: mediterraneanSalad,
-    allergens: ["Fish", "Egg"],
-    shelfLife: 3,
-    ingredients: [],
-  },
-  {
-    skuId: "SK035",
-    name: "Sesame Bagel",
-    category: "Bagels",
-    price: 4.15,
-    costPrice: 1.85,
-    inStock: true,
-    image: salmonBagel,
-    allergens: ["Gluten", "Sesame", "Dairy"],
-    shelfLife: 2,
-    ingredients: [],
-  },
-  {
-    skuId: "SK036",
-    name: "Cheese Twist",
-    category: "Pastries",
-    price: 3.45,
-    costPrice: 1.40,
-    inStock: true,
-    image: hamCheeseCroissant,
-    allergens: ["Gluten", "Dairy"],
-    shelfLife: 1,
-    ingredients: [],
-  },
-  {
-    skuId: "SK037",
-    name: "Coronation Chicken Sandwich",
-    category: "Sandwiches",
-    price: 5.45,
-    costPrice: 2.35,
-    inStock: true,
-    image: bltSandwich,
-    allergens: ["Gluten", "Egg"],
-    shelfLife: 2,
-    ingredients: [],
-  },
-  {
-    skuId: "SK038",
-    name: "Halloumi & Pepper Wrap",
-    category: "Wraps",
-    price: 5.25,
-    costPrice: 2.25,
-    inStock: true,
-    image: avocadoHummusWrap,
-    allergens: ["Gluten", "Dairy"],
-    shelfLife: 2,
-    ingredients: [],
-  },
-  {
-    skuId: "SK039",
-    name: "Pulled Pork Panini",
-    category: "Hot Food",
-    price: 6.25,
-    costPrice: 2.70,
-    inStock: false,
-    image: tunaMeltPanini,
-    allergens: ["Gluten"],
-    shelfLife: 1,
-    ingredients: [],
-  },
-  {
-    skuId: "SK040",
-    name: "Cobb Salad",
-    category: "Salads",
-    price: 6.95,
-    costPrice: 2.95,
-    inStock: true,
-    image: greekFetaSalad,
-    allergens: ["Dairy", "Egg"],
-    shelfLife: 3,
-    ingredients: [],
-  },
-  {
-    skuId: "SK041",
-    name: "Blueberry Muffin",
-    category: "Pastries",
-    price: 3.25,
-    costPrice: 1.30,
-    inStock: true,
-    image: hamCheeseCroissant,
-    allergens: ["Gluten", "Dairy", "Egg"],
-    shelfLife: 1,
-    ingredients: [],
-  },
-  {
-    skuId: "SK042",
-    name: "Smoked Turkey Sandwich",
-    category: "Sandwiches",
-    price: 5.65,
-    costPrice: 2.45,
-    inStock: true,
-    image: chickenBaconSandwich,
-    allergens: ["Gluten"],
-    shelfLife: 2,
-    ingredients: [],
-  },
-  {
-    skuId: "SK043",
-    name: "Thai Prawn Wrap",
-    category: "Wraps",
-    price: 6.15,
-    costPrice: 2.75,
-    inStock: true,
-    image: chickenCaesarWrap,
-    allergens: ["Gluten", "Crustaceans", "Fish"],
-    shelfLife: 2,
-    ingredients: [],
-  },
-  {
-    skuId: "SK044",
-    name: "Chicken Tikka Panini",
-    category: "Hot Food",
-    price: 5.85,
-    costPrice: 2.50,
-    inStock: true,
-    image: tunaMeltPanini,
-    allergens: ["Gluten", "Dairy"],
-    shelfLife: 1,
-    ingredients: [],
-  },
-  {
-    skuId: "SK045",
-    name: "Garden Salad Bowl",
-    category: "Salads",
-    price: 5.45,
-    costPrice: 2.35,
-    inStock: true,
-    image: mediterraneanSalad,
-    allergens: [],
-    shelfLife: 3,
-    ingredients: [],
-  },
-  {
-    skuId: "SK046",
-    name: "Poppy Seed Bagel",
-    category: "Bagels",
-    price: 4.05,
-    costPrice: 1.80,
-    inStock: true,
-    image: salmonBagel,
-    allergens: ["Gluten", "Dairy"],
-    shelfLife: 2,
-    ingredients: [],
-  },
-  {
-    skuId: "SK047",
-    name: "Chocolate Croissant",
-    category: "Pastries",
-    price: 3.75,
-    costPrice: 1.55,
-    inStock: true,
-    image: hamCheeseCroissant,
-    allergens: ["Gluten", "Dairy", "Egg"],
-    shelfLife: 1,
-    ingredients: [],
-  },
-  {
-    skuId: "SK048",
-    name: "Pastrami Sandwich",
-    category: "Sandwiches",
-    price: 6.15,
-    costPrice: 2.70,
-    inStock: true,
-    image: bltSandwich,
-    allergens: ["Gluten"],
-    shelfLife: 2,
-    ingredients: [],
-  },
-  {
-    skuId: "SK049",
-    name: "Spicy Bean Wrap",
-    category: "Wraps",
-    price: 4.75,
-    costPrice: 2.00,
-    inStock: true,
-    image: veganWrap,
-    allergens: ["Gluten"],
-    shelfLife: 2,
-    ingredients: [],
-  },
-  {
-    skuId: "SK050",
-    name: "Lemon Drizzle Cake",
-    category: "Pastries",
-    price: 3.95,
-    costPrice: 1.65,
-    inStock: true,
-    image: hamCheeseCroissant,
-    allergens: ["Gluten", "Dairy", "Egg"],
-    shelfLife: 2,
-    ingredients: [],
-  },
-  {
-    skuId: "SK031",
+    skuId: "SK051",
     name: "Bacon & Egg Roll",
     category: "Breakfast",
     price: 4.25,
@@ -644,9 +149,10 @@ const initialProducts = [
     allergens: ["Gluten", "Egg"],
     shelfLife: 1,
     ingredients: ["Bacon", "Fried Egg", "Bread Roll"],
+    dayParts: ["breakfast"],
   },
   {
-    skuId: "SK032",
+    skuId: "SK052",
     name: "Avocado Toast with Poached Egg",
     category: "Breakfast",
     price: 5.95,
@@ -656,9 +162,10 @@ const initialProducts = [
     allergens: ["Gluten", "Egg"],
     shelfLife: 1,
     ingredients: ["Avocado", "Poached Egg", "Sourdough Bread"],
+    dayParts: ["breakfast"],
   },
   {
-    skuId: "SK033",
+    skuId: "SK053",
     name: "Fruit & Yogurt Parfait",
     category: "Breakfast",
     price: 4.50,
@@ -668,9 +175,10 @@ const initialProducts = [
     allergens: ["Dairy"],
     shelfLife: 2,
     ingredients: ["Yogurt", "Strawberries", "Blueberries", "Granola"],
+    dayParts: ["breakfast"],
   },
   {
-    skuId: "SK034",
+    skuId: "SK054",
     name: "Breakfast Burrito",
     category: "Breakfast",
     price: 5.75,
@@ -680,9 +188,10 @@ const initialProducts = [
     allergens: ["Gluten", "Egg", "Dairy"],
     shelfLife: 1,
     ingredients: ["Scrambled Eggs", "Cheese", "Bacon", "Tortilla"],
+    dayParts: ["breakfast"],
   },
   {
-    skuId: "SK035",
+    skuId: "SK055",
     name: "Granola Bowl with Berries",
     category: "Breakfast",
     price: 4.95,
@@ -692,9 +201,10 @@ const initialProducts = [
     allergens: ["Gluten", "Nuts", "Dairy"],
     shelfLife: 2,
     ingredients: ["Granola", "Fresh Berries", "Yogurt"],
+    dayParts: ["breakfast"],
   },
   {
-    skuId: "SK036",
+    skuId: "SK056",
     name: "Egg & Cheese Muffin",
     category: "Breakfast",
     price: 3.95,
@@ -704,9 +214,10 @@ const initialProducts = [
     allergens: ["Gluten", "Egg", "Dairy"],
     shelfLife: 1,
     ingredients: ["Fried Egg", "Cheese", "English Muffin"],
+    dayParts: ["breakfast"],
   },
   {
-    skuId: "SK037",
+    skuId: "SK057",
     name: "Almond Butter & Banana Toast",
     category: "Breakfast",
     price: 4.75,
@@ -716,9 +227,10 @@ const initialProducts = [
     allergens: ["Gluten", "Nuts"],
     shelfLife: 1,
     ingredients: ["Almond Butter", "Banana", "Bread"],
+    dayParts: ["breakfast"],
   },
   {
-    skuId: "SK038",
+    skuId: "SK058",
     name: "Coffee & Pastry Combo",
     category: "Breakfast",
     price: 5.25,
@@ -728,9 +240,10 @@ const initialProducts = [
     allergens: ["Gluten", "Dairy", "Egg"],
     shelfLife: 1,
     ingredients: ["Cappuccino", "Fresh Croissant"],
+    dayParts: ["breakfast"],
   },
   {
-    skuId: "SK041",
+    skuId: "SK059",
     name: "Scrambled Eggs on Sourdough",
     category: "Breakfast",
     price: 5.25,
@@ -740,9 +253,10 @@ const initialProducts = [
     allergens: ["Gluten", "Egg", "Dairy"],
     shelfLife: 1,
     ingredients: ["Scrambled Eggs", "Sourdough Toast"],
+    dayParts: ["breakfast"],
   },
   {
-    skuId: "SK042",
+    skuId: "SK060",
     name: "Porridge with Honey & Nuts",
     category: "Breakfast",
     price: 3.95,
@@ -752,14 +266,41 @@ const initialProducts = [
     allergens: ["Gluten", "Nuts"],
     shelfLife: 1,
     ingredients: ["Oats", "Honey", "Almonds", "Walnuts"],
+    dayParts: ["breakfast"],
+  },
+  {
+    skuId: "SK061",
+    name: "Ham & Cheese Croissant",
+    category: "Breakfast",
+    price: 3.75,
+    costPrice: 1.50,
+    inStock: true,
+    image: hamCheeseCroissant,
+    allergens: ["Gluten", "Dairy", "Egg"],
+    shelfLife: 1,
+    ingredients: [],
+    dayParts: ["breakfast"],
+  },
+  {
+    skuId: "SK062",
+    name: "Smoked Salmon Bagel",
+    category: "Breakfast",
+    price: 5.95,
+    costPrice: 2.65,
+    inStock: true,
+    image: salmonBagel,
+    allergens: ["Gluten", "Fish", "Dairy"],
+    shelfLife: 2,
+    ingredients: ["Smoked Salmon", "Cream Cheese", "Bagel"],
+    dayParts: ["breakfast"],
   }
 ];
 
-const categories = ["All", "Breakfast", "Sandwiches", "Wraps", "Salads", "Hot Food", "Bagels", "Pastries"];
+const dayParts = ["All", "Breakfast", "Lunch", "Afternoon"];
 
 export default function ProductRange() {
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("All");
+  const [selectedDayPart, setSelectedDayPart] = useState("All");
   const [viewMode, setViewMode] = useState<"card" | "list">("card");
   const [products, setProducts] = useState(initialProducts);
   const [isBulkUploadOpen, setIsBulkUploadOpen] = useState(false);
@@ -771,10 +312,10 @@ export default function ProductRange() {
     return products.filter(product => {
       const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                            product.skuId.toLowerCase().includes(searchTerm.toLowerCase());
-      const matchesCategory = selectedCategory === "All" || product.category === selectedCategory;
-      return matchesSearch && matchesCategory;
+      const matchesDayPart = selectedDayPart === "All" || product.dayParts.includes(selectedDayPart.toLowerCase());
+      return matchesSearch && matchesDayPart;
     });
-  }, [products, searchTerm, selectedCategory]);
+  }, [products, searchTerm, selectedDayPart]);
 
   const handleProductUpdate = (skuId: string, updates: Partial<typeof products[0]>) => {
     setProducts(products.map(p => p.skuId === skuId ? { ...p, ...updates } : p));
@@ -819,6 +360,7 @@ export default function ProductRange() {
             allergens: values[6] ? values[6].split(';') : [],
             shelfLife: parseInt(values[7]) || 2,
             ingredients: [],
+            dayParts: ["lunch", "afternoon"], // Default day parts
           };
         });
 
@@ -848,10 +390,12 @@ export default function ProductRange() {
     const template = 'SKU ID,Name,Category,Price,Cost Price,In Stock,Allergens,Shelf Life\nSK999,Sample Product,Sandwiches,5.95,2.50,true,Gluten;Dairy,2';
     const blob = new Blob([template], { type: 'text/csv' });
     const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'product-template.csv';
-    a.click();
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'product_template.csv';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
     window.URL.revokeObjectURL(url);
   };
 
@@ -900,15 +444,15 @@ export default function ProductRange() {
               />
             </div>
             <div className="flex gap-2 flex-wrap">
-              {categories.map((category) => (
+              {dayParts.map((dayPart) => (
                 <Button
-                  key={category}
-                  variant={selectedCategory === category ? "default" : "outline"}
+                  key={dayPart}
+                  variant={selectedDayPart === dayPart ? "default" : "outline"}
                   size="sm"
-                  onClick={() => setSelectedCategory(category)}
-                  className={selectedCategory === category ? "bg-primary text-primary-foreground" : ""}
+                  onClick={() => setSelectedDayPart(dayPart)}
+                  className={selectedDayPart === dayPart ? "bg-primary text-primary-foreground" : ""}
                 >
-                  {category}
+                  {dayPart}
                 </Button>
               ))}
             </div>
@@ -958,9 +502,9 @@ export default function ProductRange() {
         <Card className="shadow-card">
           <CardContent className="text-center py-12">
             <div className="text-muted-foreground">
-              <Search className="h-12 w-12 mx-auto mb-4 opacity-50" />
-              <h3 className="text-lg font-semibold mb-2">No products found</h3>
-              <p>Try adjusting your search terms or filters</p>
+              <Filter className="h-12 w-12 mx-auto mb-4 opacity-50" />
+              <p className="text-lg font-medium">No products found</p>
+              <p className="text-sm">Try adjusting your search or filters</p>
             </div>
           </CardContent>
         </Card>
@@ -968,18 +512,22 @@ export default function ProductRange() {
 
       {/* Bulk Upload Dialog */}
       <Dialog open={isBulkUploadOpen} onOpenChange={setIsBulkUploadOpen}>
-        <DialogContent>
+        <DialogContent className="sm:max-w-[600px]">
           <DialogHeader>
             <DialogTitle>Bulk Upload Products</DialogTitle>
             <DialogDescription>
-              Upload a CSV file to add multiple products at once. Download the template to see the required format.
+              Upload a CSV file to add multiple products at once. Make sure your file follows the template format.
             </DialogDescription>
           </DialogHeader>
+          
           <div className="space-y-4">
-            <div className="border-2 border-dashed border-muted rounded-lg p-8 text-center">
+            <div className="border-2 border-dashed rounded-lg p-8 text-center">
               <Upload className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
-              <p className="text-sm text-muted-foreground mb-4">
-                Click to select a CSV file or drag and drop
+              <p className="mb-2 text-sm text-muted-foreground">
+                Click to upload or drag and drop
+              </p>
+              <p className="text-xs text-muted-foreground mb-4">
+                CSV files only
               </p>
               <input
                 ref={fileInputRef}
@@ -987,26 +535,37 @@ export default function ProductRange() {
                 accept=".csv"
                 onChange={handleBulkUpload}
                 className="hidden"
+                id="file-upload"
               />
-              <Button 
-                onClick={() => fileInputRef.current?.click()}
+              <Button
+                type="button"
                 variant="outline"
+                onClick={() => fileInputRef.current?.click()}
               >
-                Select CSV File
+                Select File
               </Button>
             </div>
-            <div className="text-sm text-muted-foreground">
-              <p className="font-medium mb-2">CSV Format:</p>
-              <p className="font-mono text-xs bg-muted p-2 rounded">
-                SKU ID,Name,Category,Price,Cost Price,In Stock,Allergens,Shelf Life
+            
+            <div className="bg-muted p-4 rounded-lg">
+              <h4 className="font-semibold mb-2">CSV Format</h4>
+              <p className="text-sm text-muted-foreground mb-2">
+                Your CSV should include these columns:
               </p>
-              <p className="mt-2">Allergens should be separated by semicolons (;)</p>
+              <code className="text-xs block bg-background p-2 rounded">
+                SKU ID, Name, Category, Price, Cost Price, In Stock, Allergens, Shelf Life
+              </code>
+              <Button
+                variant="link"
+                size="sm"
+                onClick={downloadTemplate}
+                className="mt-2 p-0 h-auto"
+              >
+                Download Template
+              </Button>
             </div>
           </div>
+
           <DialogFooter>
-            <Button variant="outline" onClick={downloadTemplate}>
-              Download Template
-            </Button>
             <Button variant="outline" onClick={() => setIsBulkUploadOpen(false)}>
               Cancel
             </Button>
