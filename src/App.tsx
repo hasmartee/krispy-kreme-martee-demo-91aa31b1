@@ -51,6 +51,9 @@ const App = () => (
                       <Route path="/inventory" element={<Inventory />} />
                       <Route path="/recipes" element={<MyRecipes />} />
                       <Route path="/tasks" element={<MyTasks />} />
+                      <Route path="/ingredients" element={<Navigate to="/analytics" replace />} />
+                      <Route path="/suppliers" element={<Navigate to="/analytics" replace />} />
+                      <Route path="/logistics" element={<Navigate to="/analytics" replace />} />
                       <Route path="/deliveries" element={<Deliveries />} />
                       <Route path="/settings" element={<Settings />} />
                       <Route path="*" element={<NotFound />} />
