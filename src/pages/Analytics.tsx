@@ -405,7 +405,7 @@ export default function Analytics() {
                   <CardTitle className="text-sm font-medium text-muted-foreground">Revenue</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-3xl font-bold text-foreground">£{currentData.revenue.toLocaleString()}</div>
+                  <div className="text-3xl font-bold" style={{ color: 'hsl(var(--success-green))' }}>£{currentData.revenue.toLocaleString()}</div>
                   <p className="text-xs text-muted-foreground mt-2">
                     {currentData.revenueChange > 0 ? (
                       <><TrendingUp className="inline h-3 w-3 mr-1 text-success" />+{currentData.revenueChange}% from previous period</>
@@ -446,7 +446,7 @@ export default function Analytics() {
                   <CardTitle className="text-sm font-medium text-muted-foreground">Waste</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-3xl font-bold text-foreground">
+                  <div className="text-3xl font-bold" style={{ color: 'hsl(var(--warning-orange))' }}>
                     £{currentData.waste.toLocaleString()}
                     <span className="text-lg text-muted-foreground ml-2">
                       ({((currentData.waste / currentData.revenue) * 100).toFixed(1)}%)
