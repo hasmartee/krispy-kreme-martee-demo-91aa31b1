@@ -336,404 +336,167 @@ export default function Analytics() {
             Key metrics and performance insights
           </p>
         </div>
-
-        {/* Filters - Always visible for HQ view */}
-        {viewMode === "hq" && (
-          <Card className="shadow-card">
-            <CardContent className="p-4">
-              <div className="flex flex-col sm:flex-row gap-4">
-                <Select value={selectedStore} onValueChange={setSelectedStore}>
-                  <SelectTrigger className="w-[200px]">
-                    <SelectValue placeholder="Select store" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Stores</SelectItem>
-                    {stores.map((store) => (
-                      <SelectItem key={store.id} value={store.name}>
-                        {store.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button variant="outline" className="w-[280px] justify-start text-left font-normal">
-                      <CalendarIcon className="mr-2 h-4 w-4" />
-                      {dateRange?.from ? (
-                        dateRange.to ? (
-                          <>
-                            {format(dateRange.from, "LLL dd, y")} -{" "}
-                            {format(dateRange.to, "LLL dd, y")}
-                          </>
-                        ) : (
-                          format(dateRange.from, "LLL dd, y")
-                        )
-                      ) : (
-                        <span>Pick a date range</span>
-                      )}
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0" align="start">
-                    <Calendar
-                      initialFocus
-                      mode="range"
-                      defaultMonth={dateRange?.from}
-                      selected={{ from: dateRange?.from, to: dateRange?.to }}
-                      onSelect={(range: any) => range && setDateRange(range)}
-                      numberOfMonths={2}
-                      className={cn("p-3 pointer-events-auto")}
-                    />
-                  </PopoverContent>
-                </Popover>
-              </div>
-            </CardContent>
-          </Card>
-        )}
       </div>
 
-      {/* KPI Cards Row 1 */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <HoverCard openDelay={200}>
-          <HoverCardTrigger asChild>
-            <Card className="shadow-card cursor-pointer hover:shadow-lg transition-shadow">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">
-                  {viewMode === "hq" ? "This week Revenue" : "Revenue"}
-                </CardTitle>
-                <DollarSign className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold text-success">£{currentData.revenue.toLocaleString()}</div>
-                <p className="text-xs text-muted-foreground">
-                  <TrendingUp className="inline h-3 w-3 mr-1 text-success" />
-                  +{currentData.revenueChange}% from last week
-                </p>
-              </CardContent>
-            </Card>
-          </HoverCardTrigger>
-          {viewMode === "hq" && selectedStore === "all" && (
-            <HoverCardContent className="w-80 z-50 bg-popover">
-              <div className="space-y-3">
-                <h4 className="text-sm font-semibold text-foreground">Top Stores by Revenue</h4>
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-muted-foreground">King's Cross</span>
-                    <span className="font-medium text-foreground">£41,200</span>
-                  </div>
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-muted-foreground">Victoria Station</span>
-                    <span className="font-medium text-foreground">£38,200</span>
-                  </div>
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-muted-foreground">Canary Wharf</span>
-                    <span className="font-medium text-foreground">£32,100</span>
-                  </div>
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-muted-foreground">Covent Garden</span>
-                    <span className="font-medium text-foreground">£29,600</span>
-                  </div>
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-muted-foreground">London Bridge</span>
-                    <span className="font-medium text-foreground">£28,500</span>
-                  </div>
-                </div>
-              </div>
-            </HoverCardContent>
-          )}
-        </HoverCard>
+      {/* Big Pink Box with Period and Store Selectors + KPIs */}
+      <Card className="shadow-card bg-gradient-to-br from-pink-500 to-pink-600 border-0">
+        <CardContent className="p-6">
+          {/* Period and Store Selectors */}
+          <div className="flex flex-col sm:flex-row gap-4 mb-6">
+            <Select value={selectedStore} onValueChange={setSelectedStore}>
+              <SelectTrigger className="w-[200px] bg-white/90 border-white/20">
+                <SelectValue placeholder="Select store" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Stores</SelectItem>
+                {stores.map((store) => (
+                  <SelectItem key={store.id} value={store.name}>
+                    {store.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button variant="outline" className="w-[280px] justify-start text-left font-normal bg-white/90 border-white/20">
+                  <CalendarIcon className="mr-2 h-4 w-4" />
+                  {dateRange?.from ? (
+                    dateRange.to ? (
+                      <>
+                        {format(dateRange.from, "LLL dd, y")} -{" "}
+                        {format(dateRange.to, "LLL dd, y")}
+                      </>
+                    ) : (
+                      format(dateRange.from, "LLL dd, y")
+                    )
+                  ) : (
+                    <span>Pick a date range</span>
+                  )}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <Calendar
+                  initialFocus
+                  mode="range"
+                  defaultMonth={dateRange?.from}
+                  selected={{ from: dateRange?.from, to: dateRange?.to }}
+                  onSelect={(range: any) => range && setDateRange(range)}
+                  numberOfMonths={2}
+                  className={cn("p-3 pointer-events-auto")}
+                />
+              </PopoverContent>
+            </Popover>
+          </div>
 
-        <HoverCard openDelay={200}>
-          <HoverCardTrigger asChild>
-            <Card className="shadow-card cursor-pointer hover:shadow-lg transition-shadow">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">
-                  {viewMode === "hq" ? "This week Gross Profit" : "Gross Profit"}
-                </CardTitle>
-                <TrendingUp className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold text-primary">£{currentData.grossProfit.toLocaleString()}</div>
-                <p className="text-xs text-muted-foreground">
-                  <TrendingUp className="inline h-3 w-3 mr-1 text-success" />
-                  +{currentData.grossProfitChange}% from last week
-                </p>
-              </CardContent>
-            </Card>
-          </HoverCardTrigger>
-          {viewMode === "hq" && selectedStore === "all" && (
-            <HoverCardContent className="w-80 z-50 bg-popover">
-              <div className="space-y-3">
-                <h4 className="text-sm font-semibold text-foreground">Top Stores by Gross Profit</h4>
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-muted-foreground">King's Cross</span>
-                    <div className="flex items-center gap-2">
-                      <span className="font-medium text-foreground">£16,480</span>
-                      <Badge variant="outline" className="text-xs">40.0%</Badge>
+          {/* Three Main KPI Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {/* Revenue Card with Sub-cards */}
+            <div className="space-y-3">
+              <Card className="bg-white shadow-lg">
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-sm font-medium text-muted-foreground">Revenue</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-3xl font-bold text-foreground">£{currentData.revenue.toLocaleString()}</div>
+                  <p className="text-xs text-muted-foreground mt-2">
+                    {currentData.revenueChange > 0 ? (
+                      <><TrendingUp className="inline h-3 w-3 mr-1 text-success" />+{currentData.revenueChange}% from previous period</>
+                    ) : (
+                      <><TrendingDown className="inline h-3 w-3 mr-1 text-destructive" />{currentData.revenueChange}% from previous period</>
+                    )}
+                  </p>
+                </CardContent>
+              </Card>
+              
+              {/* Sub-cards: Full Price and Reduced Price */}
+              <div className="grid grid-cols-2 gap-2">
+                <Card className="bg-white/95 shadow-md">
+                  <CardContent className="p-3">
+                    <div className="text-xs text-muted-foreground mb-1">Full Price</div>
+                    <div className="text-lg font-bold text-foreground">
+                      £{isSingleStoreView ? "1,480" : "36,185"}
                     </div>
-                  </div>
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-muted-foreground">Victoria Station</span>
-                    <div className="flex items-center gap-2">
-                      <span className="font-medium text-foreground">£15,698</span>
-                      <Badge variant="outline" className="text-xs">41.1%</Badge>
+                    <div className="text-xs text-muted-foreground">80% of revenue</div>
+                  </CardContent>
+                </Card>
+                <Card className="bg-white/95 shadow-md">
+                  <CardContent className="p-3">
+                    <div className="text-xs text-muted-foreground mb-1">Reduced Price</div>
+                    <div className="text-lg font-bold text-foreground">
+                      £{isSingleStoreView ? "370" : "9,046"}
                     </div>
-                  </div>
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-muted-foreground">Canary Wharf</span>
-                    <div className="flex items-center gap-2">
-                      <span className="font-medium text-foreground">£13,482</span>
-                      <Badge variant="outline" className="text-xs">42.0%</Badge>
-                    </div>
-                  </div>
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-muted-foreground">Covent Garden</span>
-                    <div className="flex items-center gap-2">
-                      <span className="font-medium text-foreground">£12,136</span>
-                      <Badge variant="outline" className="text-xs">41.0%</Badge>
-                    </div>
-                  </div>
-                </div>
+                    <div className="text-xs text-muted-foreground">20% of revenue</div>
+                  </CardContent>
+                </Card>
               </div>
-            </HoverCardContent>
-          )}
-        </HoverCard>
+            </div>
 
-        <HoverCard openDelay={200}>
-          <HoverCardTrigger asChild>
-            <Card className="shadow-card cursor-pointer hover:shadow-lg transition-shadow">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">
-                  {viewMode === "hq" ? "This week Waste" : "Waste"}
-                </CardTitle>
-                <TrendingDown className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold text-destructive">£{currentData.waste.toLocaleString()}</div>
-                <p className="text-xs text-muted-foreground">
-                  <TrendingDown className="inline h-3 w-3 mr-1 text-success" />
-                  {currentData.wasteChange}% from last week
-                </p>
-              </CardContent>
-            </Card>
-          </HoverCardTrigger>
-          {viewMode === "hq" && selectedStore === "all" && (
-            <HoverCardContent className="w-80 z-50 bg-popover">
-              <div className="space-y-3">
-                <h4 className="text-sm font-semibold text-foreground">Highest Waste by Store</h4>
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-muted-foreground">Oxford Circus</span>
-                    <div className="flex items-center gap-2">
-                      <span className="font-medium text-destructive">£950</span>
-                      <Badge variant="outline" className="text-xs bg-destructive/10 text-destructive">3.8%</Badge>
-                    </div>
+            {/* Waste Card with Sub-cards */}
+            <div className="space-y-3">
+              <Card className="bg-white shadow-lg">
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-sm font-medium text-muted-foreground">Waste</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-3xl font-bold text-foreground">
+                    £{currentData.waste.toLocaleString()}
+                    <span className="text-lg text-muted-foreground ml-2">
+                      ({((currentData.waste / currentData.revenue) * 100).toFixed(1)}%)
+                    </span>
                   </div>
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-muted-foreground">King's Cross</span>
-                    <div className="flex items-center gap-2">
-                      <span className="font-medium text-destructive">£890</span>
-                      <Badge variant="outline" className="text-xs bg-destructive/10 text-destructive">2.2%</Badge>
+                  <p className="text-xs text-muted-foreground mt-2">
+                    {currentData.wasteChange < 0 ? (
+                      <><TrendingDown className="inline h-3 w-3 mr-1 text-success" />{currentData.wasteChange}% from previous period</>
+                    ) : (
+                      <><TrendingUp className="inline h-3 w-3 mr-1 text-destructive" />+{currentData.wasteChange}% from previous period</>
+                    )}
+                  </p>
+                </CardContent>
+              </Card>
+              
+              {/* Sub-cards: End Product and Ingredients */}
+              <div className="grid grid-cols-2 gap-2">
+                <Card className="bg-white/95 shadow-md">
+                  <CardContent className="p-3">
+                    <div className="text-xs text-muted-foreground mb-1">End Product</div>
+                    <div className="text-lg font-bold text-foreground">
+                      £{Math.round(currentData.waste * 0.65).toLocaleString()}
                     </div>
-                  </div>
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-muted-foreground">Victoria Station</span>
-                    <div className="flex items-center gap-2">
-                      <span className="font-medium text-destructive">£720</span>
-                      <Badge variant="outline" className="text-xs bg-warning/10 text-warning">1.9%</Badge>
+                    <div className="text-xs text-muted-foreground">65% of waste</div>
+                  </CardContent>
+                </Card>
+                <Card className="bg-white/95 shadow-md">
+                  <CardContent className="p-3">
+                    <div className="text-xs text-muted-foreground mb-1">Ingredients</div>
+                    <div className="text-lg font-bold text-foreground">
+                      £{Math.round(currentData.waste * 0.35).toLocaleString()}
                     </div>
-                  </div>
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-muted-foreground">Canary Wharf</span>
-                    <div className="flex items-center gap-2">
-                      <span className="font-medium text-destructive">£680</span>
-                      <Badge variant="outline" className="text-xs bg-warning/10 text-warning">2.1%</Badge>
-                    </div>
-                  </div>
-                </div>
+                    <div className="text-xs text-muted-foreground">35% of waste</div>
+                  </CardContent>
+                </Card>
               </div>
-            </HoverCardContent>
-          )}
-        </HoverCard>
-      </div>
+            </div>
 
-      {/* KPI Cards Row 2 - Sales Breakdown */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <HoverCard openDelay={200}>
-          <HoverCardTrigger asChild>
-            <Card className="shadow-card cursor-pointer hover:shadow-lg transition-shadow">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Full Price Sales</CardTitle>
-                <DollarSign className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold text-foreground">
-                  £{isSingleStoreView ? "1,480" : "36,185"}
-                </div>
-                <div className="flex items-center justify-between mt-1">
-                  <p className="text-xs text-muted-foreground">
-                    80% of total
+            {/* Availability Card */}
+            <div className="space-y-3">
+              <Card className="bg-white shadow-lg">
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-sm font-medium text-muted-foreground">Availability</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-3xl font-bold text-foreground">94.5%</div>
+                  <p className="text-xs text-muted-foreground mt-2">
+                    <TrendingUp className="inline h-3 w-3 mr-1 text-success" />
+                    +2.3% from previous period
                   </p>
-                  <p className="text-xs text-success font-medium">
-                    <TrendingUp className="inline h-3 w-3 mr-1" />
-                    +12.4%
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
-          </HoverCardTrigger>
-          {viewMode === "hq" && selectedStore === "all" && (
-            <HoverCardContent className="w-80 z-50 bg-popover">
-              <div className="space-y-3">
-                <h4 className="text-sm font-semibold text-foreground">Top Products (Full Price)</h4>
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-muted-foreground">BLT Sandwich</span>
-                    <span className="font-medium text-foreground">£6,820</span>
-                  </div>
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-muted-foreground">Caesar Wrap</span>
-                    <span className="font-medium text-foreground">£5,880</span>
-                  </div>
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-muted-foreground">Tuna Panini</span>
-                    <span className="font-medium text-foreground">£5,340</span>
-                  </div>
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-muted-foreground">Ham Croissant</span>
-                    <span className="font-medium text-foreground">£5,040</span>
-                  </div>
-                </div>
-              </div>
-            </HoverCardContent>
-          )}
-        </HoverCard>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
-        <HoverCard openDelay={200}>
-          <HoverCardTrigger asChild>
-            <Card className="shadow-card cursor-pointer hover:shadow-lg transition-shadow">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Reduced Price Sales</CardTitle>
-                <DollarSign className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold text-foreground">
-                  £{isSingleStoreView ? "318" : "7,776"}
-                </div>
-                <div className="flex items-center justify-between mt-1">
-                  <p className="text-xs text-muted-foreground">
-                    17.2% of total
-                  </p>
-                  <p className="text-xs text-destructive font-medium">
-                    <TrendingUp className="inline h-3 w-3 mr-1" />
-                    +8.1%
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
-          </HoverCardTrigger>
-          {viewMode === "hq" && selectedStore === "all" && (
-            <HoverCardContent className="w-80 z-50 bg-popover">
-              <div className="space-y-3">
-                <h4 className="text-sm font-semibold text-foreground">Most Reduced Items</h4>
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-muted-foreground">Med Salad Bowl</span>
-                    <div className="flex items-center gap-2">
-                      <span className="font-medium text-foreground">£1,680</span>
-                      <Badge variant="outline" className="text-xs">22%</Badge>
-                    </div>
-                  </div>
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-muted-foreground">Vegan Buddha Bowl</span>
-                    <div className="flex items-center gap-2">
-                      <span className="font-medium text-foreground">£1,420</span>
-                      <Badge variant="outline" className="text-xs">19%</Badge>
-                    </div>
-                  </div>
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-muted-foreground">Avocado Wrap</span>
-                    <div className="flex items-center gap-2">
-                      <span className="font-medium text-foreground">£1,248</span>
-                      <Badge variant="outline" className="text-xs">16%</Badge>
-                    </div>
-                  </div>
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-muted-foreground">Salmon Bagel</span>
-                    <div className="flex items-center gap-2">
-                      <span className="font-medium text-foreground">£1,105</span>
-                      <Badge variant="outline" className="text-xs">15%</Badge>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </HoverCardContent>
-          )}
-        </HoverCard>
-
-        <HoverCard openDelay={200}>
-          <HoverCardTrigger asChild>
-            <Card className="shadow-card cursor-pointer hover:shadow-lg transition-shadow">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Shrinkage</CardTitle>
-                <AlertCircle className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold text-foreground">
-                  £{isSingleStoreView ? "52" : "1,270"}
-                </div>
-                <div className="flex items-center justify-between mt-1">
-                  <p className="text-xs text-muted-foreground">
-                    2.8% of total
-                  </p>
-                  <p className="text-xs text-success font-medium">
-                    <TrendingDown className="inline h-3 w-3 mr-1" />
-                    -18%
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
-          </HoverCardTrigger>
-          {viewMode === "hq" && selectedStore === "all" && (
-            <HoverCardContent className="w-80 z-50 bg-popover">
-              <div className="space-y-3">
-                <h4 className="text-sm font-semibold text-foreground">Shrinkage by Category</h4>
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-muted-foreground">Salads & Bowls</span>
-                    <div className="flex items-center gap-2">
-                      <span className="font-medium text-foreground">£485</span>
-                      <Badge variant="outline" className="text-xs bg-destructive/10 text-destructive">4.2%</Badge>
-                    </div>
-                  </div>
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-muted-foreground">Sandwiches</span>
-                    <div className="flex items-center gap-2">
-                      <span className="font-medium text-foreground">£380</span>
-                      <Badge variant="outline" className="text-xs bg-warning/10 text-warning">2.8%</Badge>
-                    </div>
-                  </div>
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-muted-foreground">Wraps</span>
-                    <div className="flex items-center gap-2">
-                      <span className="font-medium text-foreground">£260</span>
-                      <Badge variant="outline" className="text-xs bg-warning/10 text-warning">2.1%</Badge>
-                    </div>
-                  </div>
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-muted-foreground">Bakery</span>
-                    <div className="flex items-center gap-2">
-                      <span className="font-medium text-foreground">£145</span>
-                      <Badge variant="outline" className="text-xs bg-success/10 text-success">1.5%</Badge>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </HoverCardContent>
-          )}
-        </HoverCard>
-      </div>
 
       {/* Charts Row */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
