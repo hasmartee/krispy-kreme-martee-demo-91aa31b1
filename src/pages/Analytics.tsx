@@ -400,7 +400,7 @@ export default function Analytics() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {/* Revenue Card with Sub-cards */}
             <div className="space-y-3">
-              <Card className="bg-white shadow-lg">
+              <Card className="bg-background shadow-lg">
                 <CardHeader className="pb-3">
                   <CardTitle className="text-sm font-medium text-muted-foreground">Revenue</CardTitle>
                 </CardHeader>
@@ -418,7 +418,7 @@ export default function Analytics() {
               
               {/* Sub-cards: Full Price and Reduced Price */}
               <div className="grid grid-cols-2 gap-2">
-                <Card className="bg-white/95 shadow-md">
+                <Card className="bg-background shadow-md">
                   <CardContent className="p-3">
                     <div className="text-xs text-muted-foreground mb-1">Full Price</div>
                     <div className="text-lg font-bold text-foreground">
@@ -427,7 +427,7 @@ export default function Analytics() {
                     <div className="text-xs text-muted-foreground">80% of revenue</div>
                   </CardContent>
                 </Card>
-                <Card className="bg-white/95 shadow-md">
+                <Card className="bg-background shadow-md">
                   <CardContent className="p-3">
                     <div className="text-xs text-muted-foreground mb-1">Reduced Price</div>
                     <div className="text-lg font-bold text-foreground">
@@ -441,7 +441,7 @@ export default function Analytics() {
 
             {/* Waste Card with Sub-cards */}
             <div className="space-y-3">
-              <Card className="bg-white shadow-lg">
+              <Card className="bg-background shadow-lg">
                 <CardHeader className="pb-3">
                   <CardTitle className="text-sm font-medium text-muted-foreground">Waste</CardTitle>
                 </CardHeader>
@@ -464,7 +464,7 @@ export default function Analytics() {
               
               {/* Sub-cards: End Product and Ingredients */}
               <div className="grid grid-cols-2 gap-2">
-                <Card className="bg-white/95 shadow-md">
+                <Card className="bg-background shadow-md">
                   <CardContent className="p-3">
                     <div className="text-xs text-muted-foreground mb-1">End Product</div>
                     <div className="text-lg font-bold text-foreground">
@@ -473,7 +473,7 @@ export default function Analytics() {
                     <div className="text-xs text-muted-foreground">65% of waste</div>
                   </CardContent>
                 </Card>
-                <Card className="bg-white/95 shadow-md">
+                <Card className="bg-background shadow-md">
                   <CardContent className="p-3">
                     <div className="text-xs text-muted-foreground mb-1">Ingredients</div>
                     <div className="text-lg font-bold text-foreground">
@@ -487,7 +487,7 @@ export default function Analytics() {
 
             {/* Availability Card */}
             <div className="space-y-3">
-              <Card className="bg-white shadow-lg">
+              <Card className="bg-background shadow-lg">
                 <CardHeader className="pb-3">
                   <CardTitle className="text-sm font-medium text-muted-foreground">Availability</CardTitle>
                 </CardHeader>
