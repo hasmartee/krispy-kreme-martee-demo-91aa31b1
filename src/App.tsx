@@ -16,10 +16,7 @@ import Analytics from "./pages/Analytics";
 import LiveSales from "./pages/LiveSales";
 import Settings from "./pages/Settings";
 import Inventory from "./pages/Inventory";
-import MyIngredients from "./pages/MyIngredients";
-import MySuppliers from "./pages/MySuppliers";
 import MyRecipes from "./pages/MyRecipes";
-import MyLogistics from "./pages/MyLogistics";
 import MyTasks from "./pages/MyTasks";
 import Deliveries from "./pages/Deliveries";
 import Auth from "./pages/Auth";
@@ -52,10 +49,7 @@ const App = () => (
                       <Route path="/store-products" element={<StoreProductRange />} />
                       <Route path="/stores" element={<StoreManagement />} />
                       <Route path="/inventory" element={<Inventory />} />
-                      <Route path="/ingredients" element={<MyIngredients />} />
-                      <Route path="/suppliers" element={<MySuppliers />} />
                       <Route path="/recipes" element={<MyRecipes />} />
-                      <Route path="/logistics" element={<MyLogistics />} />
                       <Route path="/tasks" element={<MyTasks />} />
                       <Route path="/deliveries" element={<Deliveries />} />
                       <Route path="/settings" element={<Settings />} />

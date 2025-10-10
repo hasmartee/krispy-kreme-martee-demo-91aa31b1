@@ -1,4 +1,4 @@
-import { BarChart3, Package, Store, TrendingUp, ShoppingCart, Settings, ChevronRight, Target, Wheat, Truck, BookOpen, CheckSquare, Activity } from "lucide-react";
+import { BarChart3, Package, Store, TrendingUp, ShoppingCart, Settings, ChevronRight, Target, BookOpen, CheckSquare, Activity, Truck } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import { useState } from "react";
 import {
@@ -32,10 +32,7 @@ const settingsNavigation = [
   { title: "My Products", url: "/products", icon: Package },
   { title: "My Stores", url: "/stores", icon: Store },
   { title: "My Assortments", url: "/store-products", icon: ShoppingCart },
-  { title: "My Ingredients", url: "/ingredients", icon: Wheat },
-  { title: "My Suppliers", url: "/suppliers", icon: Truck },
   { title: "My Recipes", url: "/recipes", icon: BookOpen },
-  { title: "My Logistics", url: "/logistics", icon: Truck },
 ];
 
 export function AppSidebar() {
