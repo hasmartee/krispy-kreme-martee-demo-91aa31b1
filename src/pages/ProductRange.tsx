@@ -730,7 +730,7 @@ const initialProducts = [
     ingredients: ["Cappuccino", "Fresh Croissant"],
   },
   {
-    skuId: "SK039",
+    skuId: "SK041",
     name: "Scrambled Eggs on Sourdough",
     category: "Breakfast",
     price: 5.25,
@@ -742,7 +742,7 @@ const initialProducts = [
     ingredients: ["Scrambled Eggs", "Sourdough Toast"],
   },
   {
-    skuId: "SK040",
+    skuId: "SK042",
     name: "Porridge with Honey & Nuts",
     category: "Breakfast",
     price: 3.95,
