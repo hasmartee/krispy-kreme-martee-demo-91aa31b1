@@ -20,6 +20,16 @@ import chickenBaconSandwich from "@/assets/products/chicken-bacon-sandwich.jpg";
 import veganWrap from "@/assets/products/vegan-wrap.jpg";
 import greekFetaSalad from "@/assets/products/greek-feta-salad.jpg";
 import hamCheeseCroissant from "@/assets/products/ham-cheese-croissant.jpg";
+import baconEggRoll from "@/assets/products/bacon-egg-roll.jpg";
+import avocadoToastEgg from "@/assets/products/avocado-toast-egg.jpg";
+import fruitYogurtPar from "@/assets/products/fruit-yogurt-parfait.jpg";
+import breakfastBurrito from "@/assets/products/breakfast-burrito.jpg";
+import granolaBowl from "@/assets/products/granola-bowl.jpg";
+import eggCheeseMuffin from "@/assets/products/egg-cheese-muffin.jpg";
+import almondButterBananaToast from "@/assets/products/almond-butter-banana-toast.jpg";
+import coffeePastryCombo from "@/assets/products/coffee-pastry-combo.jpg";
+import scrambledEggsSourdough from "@/assets/products/scrambled-eggs-sourdough.jpg";
+import porridgeHoneyNuts from "@/assets/products/porridge-honey-nuts.jpg";
 
 // Mock product data inspired by Pret a Manger
 const initialProducts = [
@@ -622,10 +632,130 @@ const initialProducts = [
     allergens: ["Gluten", "Dairy", "Egg"],
     shelfLife: 2,
     ingredients: [],
+  },
+  {
+    skuId: "SK031",
+    name: "Bacon & Egg Roll",
+    category: "Breakfast",
+    price: 4.25,
+    costPrice: 1.85,
+    inStock: true,
+    image: baconEggRoll,
+    allergens: ["Gluten", "Egg"],
+    shelfLife: 1,
+    ingredients: ["Bacon", "Fried Egg", "Bread Roll"],
+  },
+  {
+    skuId: "SK032",
+    name: "Avocado Toast with Poached Egg",
+    category: "Breakfast",
+    price: 5.95,
+    costPrice: 2.45,
+    inStock: true,
+    image: avocadoToastEgg,
+    allergens: ["Gluten", "Egg"],
+    shelfLife: 1,
+    ingredients: ["Avocado", "Poached Egg", "Sourdough Bread"],
+  },
+  {
+    skuId: "SK033",
+    name: "Fruit & Yogurt Parfait",
+    category: "Breakfast",
+    price: 4.50,
+    costPrice: 1.95,
+    inStock: true,
+    image: fruitYogurtPar,
+    allergens: ["Dairy"],
+    shelfLife: 2,
+    ingredients: ["Yogurt", "Strawberries", "Blueberries", "Granola"],
+  },
+  {
+    skuId: "SK034",
+    name: "Breakfast Burrito",
+    category: "Breakfast",
+    price: 5.75,
+    costPrice: 2.35,
+    inStock: true,
+    image: breakfastBurrito,
+    allergens: ["Gluten", "Egg", "Dairy"],
+    shelfLife: 1,
+    ingredients: ["Scrambled Eggs", "Cheese", "Bacon", "Tortilla"],
+  },
+  {
+    skuId: "SK035",
+    name: "Granola Bowl with Berries",
+    category: "Breakfast",
+    price: 4.95,
+    costPrice: 2.10,
+    inStock: true,
+    image: granolaBowl,
+    allergens: ["Gluten", "Nuts", "Dairy"],
+    shelfLife: 2,
+    ingredients: ["Granola", "Fresh Berries", "Yogurt"],
+  },
+  {
+    skuId: "SK036",
+    name: "Egg & Cheese Muffin",
+    category: "Breakfast",
+    price: 3.95,
+    costPrice: 1.70,
+    inStock: true,
+    image: eggCheeseMuffin,
+    allergens: ["Gluten", "Egg", "Dairy"],
+    shelfLife: 1,
+    ingredients: ["Fried Egg", "Cheese", "English Muffin"],
+  },
+  {
+    skuId: "SK037",
+    name: "Almond Butter & Banana Toast",
+    category: "Breakfast",
+    price: 4.75,
+    costPrice: 2.00,
+    inStock: true,
+    image: almondButterBananaToast,
+    allergens: ["Gluten", "Nuts"],
+    shelfLife: 1,
+    ingredients: ["Almond Butter", "Banana", "Bread"],
+  },
+  {
+    skuId: "SK038",
+    name: "Coffee & Pastry Combo",
+    category: "Breakfast",
+    price: 5.25,
+    costPrice: 2.15,
+    inStock: true,
+    image: coffeePastryCombo,
+    allergens: ["Gluten", "Dairy", "Egg"],
+    shelfLife: 1,
+    ingredients: ["Cappuccino", "Fresh Croissant"],
+  },
+  {
+    skuId: "SK039",
+    name: "Scrambled Eggs on Sourdough",
+    category: "Breakfast",
+    price: 5.25,
+    costPrice: 2.20,
+    inStock: true,
+    image: scrambledEggsSourdough,
+    allergens: ["Gluten", "Egg", "Dairy"],
+    shelfLife: 1,
+    ingredients: ["Scrambled Eggs", "Sourdough Toast"],
+  },
+  {
+    skuId: "SK040",
+    name: "Porridge with Honey & Nuts",
+    category: "Breakfast",
+    price: 3.95,
+    costPrice: 1.65,
+    inStock: true,
+    image: porridgeHoneyNuts,
+    allergens: ["Gluten", "Nuts"],
+    shelfLife: 1,
+    ingredients: ["Oats", "Honey", "Almonds", "Walnuts"],
   }
 ];
 
-const categories = ["All", "Sandwiches", "Wraps", "Salads", "Hot Food", "Bagels", "Pastries"];
+const categories = ["All", "Breakfast", "Sandwiches", "Wraps", "Salads", "Hot Food", "Bagels", "Pastries"];
 
 export default function ProductRange() {
   const [searchTerm, setSearchTerm] = useState("");
