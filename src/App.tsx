@@ -44,7 +44,6 @@ const App = () => (
                       <Route path="/analytics" element={<Analytics />} />
                       <Route path="/live-sales" element={<LiveSales />} />
                       <Route path="/suggested-production" element={<SuggestedProduction />} />
-                      <Route path="/suggested-ordering" element={<SuggestedOrdering />} />
                       <Route path="/products" element={<ProductRange />} />
                       <Route path="/store-products" element={<StoreProductRange />} />
                       <Route path="/stores" element={<StoreManagement />} />
@@ -54,7 +53,8 @@ const App = () => (
                       <Route path="/ingredients" element={<Navigate to="/analytics" replace />} />
                       <Route path="/suppliers" element={<Navigate to="/analytics" replace />} />
                       <Route path="/logistics" element={<Navigate to="/analytics" replace />} />
-                      <Route path="/deliveries" element={<Deliveries />} />
+                      <Route path="/deliveries" element={<Navigate to="/analytics" replace />} />
+                      <Route path="/suggested-ordering" element={<Navigate to="/analytics" replace />} />
                       <Route path="/settings" element={<Settings />} />
                       <Route path="*" element={<NotFound />} />
                     </Routes>

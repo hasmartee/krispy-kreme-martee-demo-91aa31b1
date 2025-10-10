@@ -79,8 +79,6 @@ export default function Inventory() {
   const { viewMode, selectedStore } = useView();
   const { toast } = useToast();
   const [inventory, setInventory] = useState<InventoryItem[]>([]);
-  const [ingredientsInventory, setIngredientsInventory] = useState<IngredientInventoryItem[]>([]);
-  const [inventoryType, setInventoryType] = useState<"prepared" | "ingredients">("prepared");
   const [loading, setLoading] = useState(true);
   const [editingPar, setEditingPar] = useState<ParLevelEdit | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
@@ -93,12 +91,8 @@ export default function Inventory() {
 
   useEffect(() => {
     loadStores();
-    if (inventoryType === "prepared") {
-      loadInventory();
-    } else {
-      loadIngredientsInventory();
-    }
-  }, [viewMode, selectedStore, inventoryType]);
+    loadInventory();
+  }, [viewMode, selectedStore]);
 
   const loadStores = async () => {
     try {
@@ -419,56 +413,44 @@ export default function Inventory() {
     itemName: string,
     newStock: number,
     oldStock: number,
-    isIngredient: boolean = false,
     storeId?: string
   ) => {
-    console.log('handleStockUpdate called:', { itemId, itemName, newStock, oldStock, isIngredient, storeId });
+    console.log('handleStockUpdate called:', { itemId, itemName, newStock, oldStock, storeId });
     
     try {
-      if (isIngredient) {
-        // For now, just update local state for ingredients (mock data)
-        setIngredientsInventory(prev =>
-          prev.map(item =>
-            item.id === itemId
-              ? { ...item, current_stock: newStock, status: getStockStatus(newStock, item.min_stock_level) }
-              : item
-          )
-        );
-      } else {
-        // Update prepared goods in database
-        if (!storeId) {
-          console.error('No store ID provided for stock update');
-          toast({
-            title: "Error",
-            description: "Store information missing",
-            variant: "destructive",
-          });
-          return;
-        }
-
-        const { error } = await supabase
-          .from("store_inventory")
-          .upsert({
-            store_id: storeId,
-            product_id: itemId,
-            current_stock: newStock,
-            updated_by: (await supabase.auth.getUser()).data.user?.id,
-          });
-
-        if (error) {
-          console.error('Supabase error:', error);
-          throw error;
-        }
-
-        // Update local state
-        setInventory(prev =>
-          prev.map(i =>
-            i.product.id === itemId
-              ? { ...i, current_stock: newStock, status: getStockStatus(newStock, i.par_level) }
-              : i
-          )
-        );
+      // Update prepared goods in database
+      if (!storeId) {
+        console.error('No store ID provided for stock update');
+        toast({
+          title: "Error",
+          description: "Store information missing",
+          variant: "destructive",
+        });
+        return;
       }
+
+      const { error } = await supabase
+        .from("store_inventory")
+        .upsert({
+          store_id: storeId,
+          product_id: itemId,
+          current_stock: newStock,
+          updated_by: (await supabase.auth.getUser()).data.user?.id,
+        });
+
+      if (error) {
+        console.error('Supabase error:', error);
+        throw error;
+      }
+
+      // Update local state
+      setInventory(prev =>
+        prev.map(i =>
+          i.product.id === itemId
+            ? { ...i, current_stock: newStock, status: getStockStatus(newStock, i.par_level) }
+            : i
+        )
+      );
 
       // Show stock update dialog
       const now = new Date();
@@ -500,65 +482,9 @@ export default function Inventory() {
     }
   };
 
-  const loadIngredientsInventory = async () => {
-    setLoading(true);
-    try {
-      // Mock ingredients inventory data
-      const mockIngredients: IngredientInventoryItem[] = [
-        { id: "1", name: "Chicken Breast", category: "Protein", current_stock: 5, min_stock_level: 20, status: "low_stock", store_name: selectedStore, suppliers: ["Premium Proteins Co"] },
-        { id: "2", name: "Romaine Lettuce", category: "Vegetables", current_stock: 12, min_stock_level: 20, status: "low_stock", store_name: selectedStore, suppliers: ["Fresh Farms Ltd"] },
-        { id: "3", name: "Parmesan Cheese", category: "Dairy", current_stock: 8, min_stock_level: 15, status: "low_stock", store_name: selectedStore, suppliers: ["Dairy Direct"] },
-        { id: "4", name: "Caesar Dressing", category: "Condiments", current_stock: 0, min_stock_level: 10, status: "sold_out", store_name: selectedStore, suppliers: ["Gourmet Condiments Ltd"] },
-        { id: "5", name: "Bacon", category: "Protein", current_stock: 0, min_stock_level: 18, status: "sold_out", store_name: selectedStore, suppliers: ["Premium Proteins Co"] },
-        { id: "6", name: "Tomato", category: "Vegetables", current_stock: 35, min_stock_level: 25, status: "in_stock", store_name: selectedStore, suppliers: ["Fresh Farms Ltd"] },
-        { id: "7", name: "Whole Wheat Bread", category: "Bakery", current_stock: 18, min_stock_level: 30, status: "low_stock", store_name: selectedStore, suppliers: ["Artisan Bakery Supply"] },
-        { id: "8", name: "Feta Cheese", category: "Dairy", current_stock: 0, min_stock_level: 12, status: "sold_out", store_name: selectedStore, suppliers: ["Mediterranean Foods Import"] },
-        { id: "9", name: "Cucumber", category: "Vegetables", current_stock: 40, min_stock_level: 30, status: "in_stock", store_name: selectedStore, suppliers: ["Fresh Farms Ltd"] },
-        { id: "10", name: "Kalamata Olives", category: "Vegetables", current_stock: 15, min_stock_level: 10, status: "in_stock", store_name: selectedStore, suppliers: ["Mediterranean Foods Import"] },
-        { id: "11", name: "Smoked Salmon", category: "Protein", current_stock: 8, min_stock_level: 15, status: "low_stock", store_name: selectedStore, suppliers: ["Premium Proteins Co"] },
-        { id: "12", name: "Cream Cheese", category: "Dairy", current_stock: 6, min_stock_level: 20, status: "low_stock", store_name: selectedStore, suppliers: ["Dairy Direct"] },
-        { id: "13", name: "Bagel", category: "Bakery", current_stock: 32, min_stock_level: 40, status: "low_stock", store_name: selectedStore, suppliers: ["Artisan Bakery Supply"] },
-        { id: "14", name: "Avocado", category: "Vegetables", current_stock: 50, min_stock_level: 35, status: "in_stock", store_name: selectedStore, suppliers: ["Fresh Farms Ltd"] },
-        { id: "15", name: "Hummus", category: "Condiments", current_stock: 20, min_stock_level: 12, status: "in_stock", store_name: selectedStore, suppliers: ["Mediterranean Foods Import"] },
-        { id: "16", name: "Tortilla Wrap", category: "Bakery", current_stock: 45, min_stock_level: 50, status: "low_stock", store_name: selectedStore, suppliers: ["Artisan Bakery Supply"] },
-        { id: "17", name: "Cherry Tomatoes", category: "Vegetables", current_stock: 0, min_stock_level: 25, status: "sold_out", store_name: selectedStore, suppliers: ["Fresh Farms Ltd"] },
-        { id: "18", name: "Olive Oil", category: "Condiments", current_stock: 3, min_stock_level: 15, status: "low_stock", store_name: selectedStore, suppliers: ["Mediterranean Foods Import"] },
-        { id: "19", name: "Ciabatta Bread", category: "Bakery", current_stock: 0, min_stock_level: 40, status: "sold_out", store_name: selectedStore, suppliers: ["Artisan Bakery Supply"] },
-      ];
-
-      if (viewMode === "store") {
-        setIngredientsInventory(mockIngredients);
-      } else {
-        // HQ view: show only out of stock ingredients
-        const outOfStockIngredients = mockIngredients.filter(ing => ing.status === "sold_out");
-        setIngredientsInventory(outOfStockIngredients);
-      }
-    } catch (error) {
-      console.error("Error loading ingredients inventory:", error);
-      toast({
-        title: "Error",
-        description: "Failed to load ingredients inventory",
-        variant: "destructive",
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const filteredInventory = inventory.filter((item) => {
     const matchesSearch = item.product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       item.product.sku.toLowerCase().includes(searchTerm.toLowerCase());
-    
-    const matchesStatus = statusFilter === "all" || item.status === statusFilter;
-    
-    const matchesStore = storeFilter === "all" || item.store_name === storeFilter;
-    
-    return matchesSearch && matchesStatus && matchesStore;
-  });
-
-  const filteredIngredientsInventory = ingredientsInventory.filter((item) => {
-    const matchesSearch = item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.category.toLowerCase().includes(searchTerm.toLowerCase());
     
     const matchesStatus = statusFilter === "all" || item.status === statusFilter;
     
@@ -577,7 +503,7 @@ export default function Inventory() {
                 <Package className="h-5 w-5 text-primary" />
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-foreground">My Inventory</h1>
+                <h1 className="text-2xl font-bold text-foreground">Live Availability</h1>
                 <p className="text-sm text-muted-foreground">
                   {viewMode === "store"
                     ? `Manage stock levels for ${selectedStore}`
@@ -591,27 +517,15 @@ export default function Inventory() {
       </div>
 
       <div className="container mx-auto px-6 py-6">
-        <div className="mb-6">
-          <Tabs value={inventoryType} onValueChange={(value) => setInventoryType(value as "prepared" | "ingredients")}>
-            <TabsList className="grid w-full max-w-md grid-cols-2">
-              <TabsTrigger value="prepared">Prepared Goods</TabsTrigger>
-              <TabsTrigger value="ingredients">Ingredients Supplies</TabsTrigger>
-            </TabsList>
-          </Tabs>
-        </div>
-
         <Card>
           <CardHeader>
             <div className="flex flex-col gap-4">
               <div className="flex items-center justify-between">
                 <CardTitle>
-                  {inventoryType === "prepared" 
-                    ? (viewMode === "store" ? "Prepared Goods Inventory" : "All Prepared Goods")
-                    : (viewMode === "store" ? "Ingredients Supplies Inventory" : "All Ingredients")
-                  }
+                  {viewMode === "store" ? "Prepared Goods Inventory" : "All Prepared Goods"}
                 </CardTitle>
                 <Input
-                  placeholder={`Search ${inventoryType === "prepared" ? "products" : "ingredients"}...`}
+                  placeholder="Search products..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="max-w-xs"
@@ -654,7 +568,7 @@ export default function Inventory() {
               <div className="text-center py-8 text-muted-foreground">
                 Loading inventory...
               </div>
-            ) : inventoryType === "prepared" ? (
+            ) : (
               filteredInventory.length === 0 ? (
                 <div className="text-center py-8 text-muted-foreground">
                   No products match your filters
@@ -714,7 +628,6 @@ export default function Inventory() {
                                     item.product.name,
                                     newValue,
                                     item.current_stock,
-                                    false,
                                     storeId
                                   );
                                 } else {
@@ -784,97 +697,8 @@ export default function Inventory() {
                   </TableBody>
                 </Table>
               )
-            ) : (
-              filteredIngredientsInventory.length === 0 ? (
-                <div className="text-center py-8 text-muted-foreground">
-                  No ingredients match your filters
-                </div>
-              ) : (
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Ingredient</TableHead>
-                      <TableHead>Category</TableHead>
-                      {viewMode === "hq" && <TableHead>Store</TableHead>}
-                      <TableHead>Current Stock</TableHead>
-                      {viewMode === "store" && <TableHead>Min Stock Level</TableHead>}
-                      {viewMode === "store" && <TableHead>Suppliers</TableHead>}
-                      <TableHead>Status</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {filteredIngredientsInventory.map((item) => (
-                      <TableRow key={item.id} className="group">
-                        <TableCell className="font-medium">{item.name}</TableCell>
-                        <TableCell>
-                          <Badge variant="outline">{item.category}</Badge>
-                        </TableCell>
-                        {viewMode === "hq" && <TableCell>{item.store_name}</TableCell>}
-                        <TableCell 
-                          className="cursor-pointer hover:bg-muted/50 font-semibold"
-                          onClick={() => {
-                            console.log('Clicked to edit ingredient stock for:', item.id, item.name);
-                            setEditingStock(`ingredient-${item.id}`);
-                          }}
-                        >
-                          {editingStock === `ingredient-${item.id}` ? (
-                            <Input
-                              type="number"
-                              defaultValue={item.current_stock}
-                              autoFocus
-                              className="w-24"
-                              onClick={(e) => e.stopPropagation()}
-                              onBlur={(e) => {
-                                const newValue = parseInt(e.target.value) || 0;
-                                console.log('Ingredient blur - newValue:', newValue, 'current:', item.current_stock);
-                                if (newValue !== item.current_stock) {
-                                  handleStockUpdate(
-                                    item.id,
-                                    item.name,
-                                    newValue,
-                                    item.current_stock,
-                                    true
-                                  );
-                                } else {
-                                  setEditingStock(null);
-                                }
-                              }}
-                              onKeyDown={(e) => {
-                                if (e.key === 'Enter') {
-                                  e.currentTarget.blur();
-                                } else if (e.key === 'Escape') {
-                                  setEditingStock(null);
-                                }
-                              }}
-                            />
-                          ) : (
-                            <div className="flex items-center gap-2">
-                              <span>{item.current_stock} kg</span>
-                              <Edit2 className="h-3 w-3 text-muted-foreground opacity-0 group-hover:opacity-100" />
-                            </div>
-                          )}
-                        </TableCell>
-                        {viewMode === "store" && (
-                          <TableCell className="text-muted-foreground">{item.min_stock_level} kg</TableCell>
-                        )}
-                        {viewMode === "store" && (
-                          <TableCell>
-                            <div className="flex flex-wrap gap-1">
-                              {item.suppliers.map((supplier) => (
-                                <Badge key={supplier} variant="secondary" className="text-xs">
-                                  {supplier}
-                                </Badge>
-                              ))}
-                            </div>
-                          </TableCell>
-                        )}
-                        <TableCell>{getStatusBadge(item.status)}</TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              )
-            )}
+            )
+          }
           </CardContent>
         </Card>
       </div>
