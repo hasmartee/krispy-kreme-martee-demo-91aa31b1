@@ -166,57 +166,6 @@ export default function Analytics() {
   // Determine if we're showing a single store (either in store view or filtered in HQ view)
   const isSingleStoreView = viewMode === "store" || (viewMode === "hq" && selectedStore !== "all");
   
-  // Calculate aggregated data for filtered stores
-  const getAggregatedData = () => {
-    if (viewMode === "store") {
-      return storeData;
-    }
-    
-    if (selectedStore === "all") {
-      return hqData;
-    }
-    
-    // Single store selected in HQ view - use store-like data scaled appropriately
-    const storeInfo = filteredStorePerformance[0];
-    if (!storeInfo) return hqData;
-    
-    return {
-      revenue: Math.round(storeInfo.revenue / 100) * 10, // Scale to weekly
-      revenueChange: 18.2,
-      grossProfit: Math.round(storeInfo.grossProfit / 10),
-      grossProfitChange: 16.5,
-      waste: Math.round(storeInfo.waste / 10),
-      wasteChange: -18,
-      salesWasteData: storeData.salesWasteData.map(d => ({
-        ...d,
-        sales: Math.round(d.sales * (storeInfo.revenue / 1850)),
-        waste: Math.round(d.waste * (storeInfo.waste / 52))
-      })),
-      revenueComparisonData: storeData.revenueComparisonData.map(d => ({
-        ...d,
-        predicted: Math.round(d.predicted * (storeInfo.revenue / 1850)),
-        actual: Math.round(d.actual * (storeInfo.revenue / 1850))
-      })),
-      volumeComparisonData: storeData.volumeComparisonData
-    };
-  };
-  
-  const currentData = getAggregatedData();
-
-  const getVarianceBadge = (variance: number) => {
-    if (variance > 5) return <Badge className="bg-success text-success-foreground">+{variance.toFixed(1)}%</Badge>;
-    if (variance < -5) return <Badge className="bg-destructive text-destructive-foreground">{variance.toFixed(1)}%</Badge>;
-    return <Badge variant="outline">{variance > 0 ? '+' : ''}{variance.toFixed(1)}%</Badge>;
-  };
-
-  const getTrendIcon = (trend: string) => {
-    return trend === "up" ? (
-      <TrendingUp className="h-4 w-4 text-success" />
-    ) : (
-      <TrendingDown className="h-4 w-4 text-destructive" />
-    );
-  };
-  
   // Store-specific data (for Store View)
   const storeData = {
     revenue: 1850,
@@ -287,6 +236,57 @@ export default function Analytics() {
       { product: "Med Salad", recommended: 35, actual: 35, optimal: 0 },
       { product: "Salmon Bagel", recommended: 25, actual: 22, missed: 3 },
     ]
+  };
+  
+  // Calculate aggregated data for filtered stores
+  const getAggregatedData = () => {
+    if (viewMode === "store") {
+      return storeData;
+    }
+    
+    if (selectedStore === "all") {
+      return hqData;
+    }
+    
+    // Single store selected in HQ view - use store-like data scaled appropriately
+    const storeInfo = filteredStorePerformance[0];
+    if (!storeInfo) return hqData;
+    
+    return {
+      revenue: Math.round(storeInfo.revenue / 100) * 10, // Scale to weekly
+      revenueChange: 18.2,
+      grossProfit: Math.round(storeInfo.grossProfit / 10),
+      grossProfitChange: 16.5,
+      waste: Math.round(storeInfo.waste / 10),
+      wasteChange: -18,
+      salesWasteData: storeData.salesWasteData.map(d => ({
+        ...d,
+        sales: Math.round(d.sales * (storeInfo.revenue / 1850)),
+        waste: Math.round(d.waste * (storeInfo.waste / 52))
+      })),
+      revenueComparisonData: storeData.revenueComparisonData.map(d => ({
+        ...d,
+        predicted: Math.round(d.predicted * (storeInfo.revenue / 1850)),
+        actual: Math.round(d.actual * (storeInfo.revenue / 1850))
+      })),
+      volumeComparisonData: storeData.volumeComparisonData
+    };
+  };
+  
+  const currentData = getAggregatedData();
+
+  const getVarianceBadge = (variance: number) => {
+    if (variance > 5) return <Badge className="bg-success text-success-foreground">+{variance.toFixed(1)}%</Badge>;
+    if (variance < -5) return <Badge className="bg-destructive text-destructive-foreground">{variance.toFixed(1)}%</Badge>;
+    return <Badge variant="outline">{variance > 0 ? '+' : ''}{variance.toFixed(1)}%</Badge>;
+  };
+
+  const getTrendIcon = (trend: string) => {
+    return trend === "up" ? (
+      <TrendingUp className="h-4 w-4 text-success" />
+    ) : (
+      <TrendingDown className="h-4 w-4 text-destructive" />
+    );
   };
   
   const revenueForecast = isSingleStoreView ? revenueForecastStore : revenueForecastHQ;
