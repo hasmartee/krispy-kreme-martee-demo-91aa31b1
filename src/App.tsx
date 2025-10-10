@@ -21,10 +21,7 @@ import MySuppliers from "./pages/MySuppliers";
 import MyRecipes from "./pages/MyRecipes";
 import MyLogistics from "./pages/MyLogistics";
 import MyTasks from "./pages/MyTasks";
-import Compliance from "./pages/Compliance";
 import Deliveries from "./pages/Deliveries";
-import MyTeam from "./pages/MyTeam";
-import SuggestedStaffing from "./pages/SuggestedStaffing";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 
@@ -50,7 +47,6 @@ const App = () => (
                       <Route path="/analytics" element={<Analytics />} />
                       <Route path="/live-sales" element={<LiveSales />} />
                       <Route path="/suggested-production" element={<SuggestedProduction />} />
-                      <Route path="/suggested-staffing" element={<SuggestedStaffing />} />
                       <Route path="/suggested-ordering" element={<SuggestedOrdering />} />
                       <Route path="/products" element={<ProductRange />} />
                       <Route path="/store-products" element={<StoreProductRange />} />
@@ -61,8 +57,6 @@ const App = () => (
                       <Route path="/recipes" element={<MyRecipes />} />
                       <Route path="/logistics" element={<MyLogistics />} />
                       <Route path="/tasks" element={<MyTasks />} />
-                      <Route path="/team" element={<MyTeam />} />
-                      <Route path="/compliance" element={<Compliance />} />
                       <Route path="/deliveries" element={<Deliveries />} />
                       <Route path="/settings" element={<Settings />} />
                       <Route path="*" element={<NotFound />} />

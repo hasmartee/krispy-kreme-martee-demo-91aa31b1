@@ -1,4 +1,4 @@
-import { BarChart3, Package, Store, TrendingUp, ShoppingCart, Settings, ChevronRight, Target, Wheat, Truck, BookOpen, CheckSquare, Shield, Users, CalendarClock, Activity } from "lucide-react";
+import { BarChart3, Package, Store, TrendingUp, ShoppingCart, Settings, ChevronRight, Target, Wheat, Truck, BookOpen, CheckSquare, Activity } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import { useState } from "react";
 import {
@@ -22,11 +22,9 @@ const mainNavigation = [
   { title: "Dashboard", url: "/analytics", icon: BarChart3 },
   { title: "Live Sales", url: "/live-sales", icon: Activity },
   { title: "Suggested Production", url: "/suggested-production", icon: TrendingUp },
-  { title: "Suggested Staffing", url: "/suggested-staffing", icon: CalendarClock },
   { title: "Suggested Ordering", url: "/suggested-ordering", icon: ShoppingCart },
   { title: "Live Inventory", url: "/inventory", icon: Package },
   { title: "Deliveries", url: "/deliveries", icon: Truck },
-  { title: "Compliance", url: "/compliance", icon: Shield },
   { title: "Settings", url: "/settings", icon: Settings },
 ];
 
@@ -38,7 +36,6 @@ const settingsNavigation = [
   { title: "My Suppliers", url: "/suppliers", icon: Truck },
   { title: "My Recipes", url: "/recipes", icon: BookOpen },
   { title: "My Logistics", url: "/logistics", icon: Truck },
-  { title: "My Team", url: "/team", icon: Users },
 ];
 
 export function AppSidebar() {
