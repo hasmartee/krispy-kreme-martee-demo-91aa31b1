@@ -20,11 +20,11 @@ import {
 const mainNavigation = [
   { title: "My Tasks", url: "/tasks", icon: CheckSquare, highlight: true },
   { title: "Dashboard", url: "/analytics", icon: BarChart3 },
-  { title: "Live Sales", url: "/live-sales", icon: Activity },
   { title: "Suggested Production", url: "/suggested-production", icon: TrendingUp },
   { title: "Suggested Ordering", url: "/suggested-ordering", icon: ShoppingCart },
   { title: "Live Inventory", url: "/inventory", icon: Package },
   { title: "Deliveries", url: "/deliveries", icon: Truck },
+  { title: "Live Sales", url: "/live-sales", icon: Activity },
   { title: "Settings", url: "/settings", icon: Settings },
 ];
 

@@ -16,7 +16,7 @@ interface Sale {
 }
 
 // Generate mock sales data with current timestamps
-const generateMockSale = (): Sale => {
+const generateMockSale = (forStore?: string): Sale => {
   const products = [
     { name: "Classic BLT Sandwich", price: 5.50 },
     { name: "Chicken Caesar Wrap", price: 6.00 },
@@ -44,7 +44,7 @@ const generateMockSale = (): Sale => {
     id: `SAL-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
     timestamp: new Date(),
     product: product.name,
-    store: stores[Math.floor(Math.random() * stores.length)],
+    store: forStore || stores[Math.floor(Math.random() * stores.length)],
     quantity,
     price: product.price,
     total: product.price * quantity
@@ -73,7 +73,7 @@ export default function LiveSales() {
     if (!isLive) return;
 
     const addNewSale = () => {
-      const newSale = generateMockSale();
+      const newSale = generateMockSale(viewMode === "store" ? selectedStore : undefined);
       setSales(prevSales => [newSale, ...prevSales].slice(0, 50)); // Keep only last 50 sales
     };
 
@@ -86,7 +86,7 @@ export default function LiveSales() {
     }, Math.random() * 4000 + 3000); // Random interval between 3-7 seconds
 
     return () => clearInterval(interval);
-  }, [isLive]);
+  }, [isLive, viewMode, selectedStore]);
 
   // Filter sales by store if in store view
   const filteredSales = viewMode === "store" 
