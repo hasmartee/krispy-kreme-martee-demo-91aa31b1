@@ -96,6 +96,7 @@ export default function Inventory() {
 
   const loadInventory = async () => {
     setLoading(true);
+    console.log("🔍 Loading inventory - viewMode:", viewMode, "selectedStore:", selectedStore);
     try {
       if (viewMode === "store") {
         // Store view: Show products ranged in this store based on cluster
@@ -104,8 +105,11 @@ export default function Inventory() {
           .select("id, cluster")
           .eq("name", selectedStore)
           .maybeSingle();
+        
+        console.log("📍 Store data:", storeData);
 
         if (!storeData || !storeData.cluster) {
+          console.log("❌ No store data or cluster found");
           setInventory([]);
           setLoading(false);
           return;
@@ -113,12 +117,15 @@ export default function Inventory() {
 
         // Get products based on store cluster
         const clusterSkus = clusterProducts[storeData.cluster as keyof typeof clusterProducts] || [];
+        console.log("🎯 Cluster:", storeData.cluster, "SKUs:", clusterSkus);
         
         const { data: products } = await supabase
           .from("products")
           .select("*")
           .in("sku", clusterSkus)
           .order("name");
+        
+        console.log("📦 Products found:", products?.length || 0);
 
         if (!products) {
           setInventory([]);
