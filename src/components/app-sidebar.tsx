@@ -31,7 +31,7 @@ const mainNavigation = [
 const settingsNavigation = [
   { title: "My Products", url: "/products", icon: Package },
   { title: "My Stores", url: "/stores", icon: Store },
-  { title: "My Assortments", url: "/store-products", icon: ShoppingCart },
+  { title: "My Range Plans", url: "/store-products", icon: ShoppingCart },
   { title: "My Recipes", url: "/recipes", icon: BookOpen },
 ];
 
