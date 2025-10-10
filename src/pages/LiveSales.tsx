@@ -72,10 +72,18 @@ export default function LiveSales() {
   useEffect(() => {
     if (!isLive) return;
 
-    const interval = setInterval(() => {
+    const addNewSale = () => {
       const newSale = generateMockSale();
       setSales(prevSales => [newSale, ...prevSales].slice(0, 50)); // Keep only last 50 sales
-    }, Math.random() * 5000 + 2000); // Random interval between 2-7 seconds
+    };
+
+    // Add a sale immediately
+    addNewSale();
+
+    // Then continue adding at random intervals
+    const interval = setInterval(() => {
+      addNewSale();
+    }, Math.random() * 4000 + 3000); // Random interval between 3-7 seconds
 
     return () => clearInterval(interval);
   }, [isLive]);
