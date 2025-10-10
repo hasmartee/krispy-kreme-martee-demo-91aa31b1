@@ -5,14 +5,13 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { ClipboardCheck, Package, ChefHat, Thermometer, Clock, ArrowRight, Truck, Trophy, Zap, Star, Sparkles } from "lucide-react";
+import { ClipboardCheck, ChefHat, Clock, ArrowRight, Trophy, Zap, Star, Sparkles } from "lucide-react";
 import { useView } from "@/contexts/ViewContext";
-import { format } from "date-fns";
 import { useToast } from "@/hooks/use-toast";
 
 interface Task {
   id: string;
-  type: "order" | "production" | "stock_check" | "temperature" | "delivery";
+  type: "production" | "stock_check";
   title: string;
   time: string;
   completed: boolean;
@@ -27,164 +26,68 @@ export default function MyTasks() {
   const [streak, setStreak] = useState(0);
   const [showConfetti, setShowConfetti] = useState(false);
   
-  // Generate delivery tasks based on current day
-  const generateDeliveryTasks = () => {
-    const today = format(new Date(), "EEEE");
-    const deliverySchedules = [
-      { supplier: "Fresh Farms Ltd", days: ["Monday", "Thursday"], time: "09:00", store: "London Bridge" },
-      { supplier: "Premium Proteins Co", days: ["Tuesday", "Friday"], time: "11:00", store: "London Bridge" },
-      { supplier: "Dairy Direct", days: ["Monday", "Wednesday", "Friday"], time: "10:00", store: "London Bridge" },
-      { supplier: "Artisan Bakery Supply", days: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"], time: "07:00", store: "London Bridge" },
-    ];
-
-    return deliverySchedules
-      .filter(schedule => schedule.days.includes(today) && schedule.store === selectedStore)
-      .map((schedule, index) => ({
-        id: `delivery-${index}`,
-        type: "delivery" as const,
-        title: `Receive Delivery - ${schedule.supplier}`,
-        time: schedule.time,
-        completed: false,
-        details: `Expected delivery from ${schedule.supplier}`,
-        priority: "high" as const,
-      }));
-  };
-
   const [tasks, setTasks] = useState<Task[]>([]);
   
   useEffect(() => {
-    // Initialize tasks with static tasks + dynamic delivery tasks
-    const staticTasks: Task[] = [
+    // Initialize tasks with preparation and stock check tasks
+    const tasksList: Task[] = [
       {
         id: "1",
-        type: "order",
-        title: "Place Ingredients Order - Fresh Direct",
-        time: "09:00",
+        type: "production",
+        title: "Prepare Breakfast Items",
+        time: "05:30",
         completed: false,
-        details: "Order fresh produce, dairy items",
+        details: "Prepare breakfast sandwiches, bagels, and parfaits",
         priority: "high"
       },
-    {
-      id: "2",
-      type: "order",
-      title: "Place Ingredients Order - Sysco",
-      time: "10:00",
-      completed: false,
-      details: "Order meats, bread supplies",
-      priority: "high"
-    },
-    {
-      id: "3",
-      type: "production",
-      title: "Prepare Sandwiches",
-      time: "06:00",
-      completed: false,
-      details: "BLT, Chicken Caesar wraps - 45 units",
-      priority: "high"
-    },
-    {
-      id: "4",
-      type: "production",
-      title: "Prepare Salads",
-      time: "07:00",
-      completed: false,
-      details: "Mediterranean, Greek Feta - 30 units",
-      priority: "medium"
-    },
-    {
-      id: "5",
-      type: "stock_check",
-      title: "Stock Check - Morning",
-      time: "08:00",
-      completed: false,
-      details: "Count all inventory items",
-      priority: "medium"
-    },
-    {
-      id: "6",
-      type: "stock_check",
-      title: "Stock Check - Mid-Morning",
-      time: "10:00",
-      completed: false,
-      details: "Count all inventory items",
-      priority: "medium"
-    },
-    {
-      id: "7",
-      type: "stock_check",
-      title: "Stock Check - Midday",
-      time: "12:00",
-      completed: false,
-      details: "Count all inventory items",
-      priority: "medium"
-    },
-    {
-      id: "8",
-      type: "stock_check",
-      title: "Stock Check - Afternoon",
-      time: "14:00",
-      completed: false,
-      details: "Count all inventory items",
-      priority: "medium"
-    },
-    {
-      id: "9",
-      type: "stock_check",
-      title: "Stock Check - Late Afternoon",
-      time: "16:00",
-      completed: false,
-      details: "Count all inventory items",
-      priority: "medium"
-    },
-    {
-      id: "10",
-      type: "temperature",
-      title: "Temperature Check - Refrigerators",
-      time: "08:00",
-      completed: false,
-      details: "Check all fridge units (must be <5°C)",
-      priority: "high"
-    },
-    {
-      id: "11",
-      type: "temperature",
-      title: "Temperature Check - Refrigerators",
-      time: "12:00",
-      completed: false,
-      details: "Check all fridge units (must be <5°C)",
-      priority: "high"
-    },
-    {
-      id: "12",
-      type: "temperature",
-      title: "Temperature Check - Refrigerators",
-      time: "16:00",
-      completed: false,
-      details: "Check all fridge units (must be <5°C)",
-      priority: "high"
-    },
-    {
-      id: "13",
-      type: "temperature",
-      title: "Temperature Check - Hot Food Display",
-      time: "11:00",
-      completed: false,
-      details: "Check hot display (must be >63°C)",
-      priority: "high"
-    },
-    {
-      id: "14",
-      type: "temperature",
-      title: "Temperature Check - Hot Food Display",
-      time: "15:00",
-      completed: false,
-      details: "Check hot display (must be >63°C)",
-      priority: "high"
-    },
-  ];
+      {
+        id: "2",
+        type: "production",
+        title: "Prepare Lunch Items",
+        time: "09:00",
+        completed: false,
+        details: "Prepare sandwiches, wraps, and salads for lunch service",
+        priority: "high"
+      },
+      {
+        id: "3",
+        type: "stock_check",
+        title: "Stock Take - Morning",
+        time: "08:00",
+        completed: false,
+        details: "Count all product inventory items",
+        priority: "high"
+      },
+      {
+        id: "4",
+        type: "stock_check",
+        title: "Stock Take - Midday",
+        time: "12:00",
+        completed: false,
+        details: "Count all product inventory items",
+        priority: "medium"
+      },
+      {
+        id: "5",
+        type: "stock_check",
+        title: "Stock Take - Afternoon",
+        time: "14:00",
+        completed: false,
+        details: "Count all product inventory items",
+        priority: "medium"
+      },
+      {
+        id: "6",
+        type: "stock_check",
+        title: "Stock Take - Evening",
+        time: "16:00",
+        completed: false,
+        details: "Count all product inventory items",
+        priority: "medium"
+      },
+    ];
 
-    const deliveryTasks = generateDeliveryTasks();
-    setTasks([...staticTasks, ...deliveryTasks]);
+    setTasks(tasksList);
   }, [selectedStore]);
 
   const toggleTask = (taskId: string) => {
@@ -212,7 +115,7 @@ export default function MyTasks() {
           
           const message = messages[Math.floor(Math.random() * messages.length)];
           
-          if (newStreak > 0 && newStreak % 5 === 0) {
+          if (newStreak > 0 && newStreak % 3 === 0) {
             toast({
               title: `🔥 ${newStreak} Task Streak! 🔥`,
               description: "You're absolutely crushing it!",
@@ -236,51 +139,30 @@ export default function MyTasks() {
 
   const handleTaskClick = (task: Task) => {
     switch (task.type) {
-      case "order":
-        navigate("/suggested-ordering");
-        break;
       case "production":
-        navigate("/suggested-production");
+        navigate("/recipes");
         break;
       case "stock_check":
         navigate("/inventory");
-        break;
-      case "temperature":
-        navigate("/compliance");
-        break;
-      case "delivery":
-        navigate("/deliveries");
         break;
     }
   };
 
   const getTaskIcon = (type: Task["type"]) => {
     switch (type) {
-      case "order":
-        return <Package className="h-5 w-5" />;
       case "production":
         return <ChefHat className="h-5 w-5" />;
       case "stock_check":
         return <ClipboardCheck className="h-5 w-5" />;
-      case "temperature":
-        return <Thermometer className="h-5 w-5" />;
-      case "delivery":
-        return <Truck className="h-5 w-5" />;
     }
   };
 
   const getTaskColor = (type: Task["type"]) => {
     switch (type) {
-      case "order":
-        return "text-blue-600";
       case "production":
         return "text-green-600";
       case "stock_check":
         return "text-orange-600";
-      case "temperature":
-        return "text-red-600";
-      case "delivery":
-        return "text-purple-600";
     }
   };
 
