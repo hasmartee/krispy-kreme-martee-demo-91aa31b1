@@ -202,10 +202,10 @@ export default function Inventory() {
 
         setInventory(inventoryItems);
       } else {
-        // HQ view: Show all items across all stores
+        // HQ view: Show all products across all stores
         const { data: stores } = await supabase
           .from("stores")
-          .select("id, name")
+          .select("id, name, cluster")
           .order("name");
 
         if (!stores) {
@@ -214,17 +214,23 @@ export default function Inventory() {
           return;
         }
 
+        // Get all products first
+        const { data: allProducts } = await supabase
+          .from("products")
+          .select("*")
+          .order("name");
+
+        if (!allProducts) {
+          setInventory([]);
+          setLoading(false);
+          return;
+        }
+
         const allItems: InventoryItem[] = [];
 
+        // For each store, show all products
         for (const store of stores) {
-          const { data: products } = await supabase
-            .from("products")
-            .select("*")
-            .order("name");
-
-          if (!products) continue;
-
-          for (const product of products) {
+          for (const product of allProducts) {
             const { dayOfWeek, month } = getCurrentParLevel(store.id, product.id);
 
             // Get inventory
