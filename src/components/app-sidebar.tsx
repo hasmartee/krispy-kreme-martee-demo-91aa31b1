@@ -25,6 +25,7 @@ const mainNavigation = [
   { title: "Suggested Ordering", url: "/suggested-ordering", icon: ShoppingCart },
   { title: "Live Inventory", url: "/inventory", icon: Package },
   { title: "Deliveries", url: "/deliveries", icon: Truck },
+  { title: "Settings", url: "/settings", icon: Settings },
 ];
 
 const settingsNavigation = [
@@ -132,33 +133,6 @@ export function AppSidebar() {
             </CollapsibleContent>
           </SidebarGroup>
         </Collapsible>
-
-        <SidebarGroup>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              <SidebarMenuItem>
-                <NavLink 
-                  to="/settings" 
-                  className={({ isActive }) => `
-                    flex items-center gap-3 px-3 py-2 rounded-lg transition-all
-                    ${isActive 
-                      ? "bg-primary text-primary-foreground font-semibold shadow-md" 
-                      : "text-muted-foreground hover:bg-muted hover:text-foreground"
-                    }
-                  `}
-                >
-                  {({ isActive }) => (
-                    <>
-                      <Settings className="h-4 w-4 shrink-0" />
-                      <span className="flex-1">Settings</span>
-                      {isActive && <ChevronRight className="h-4 w-4" />}
-                    </>
-                  )}
-                </NavLink>
-              </SidebarMenuItem>
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
       </SidebarContent>
     </Sidebar>
   );
