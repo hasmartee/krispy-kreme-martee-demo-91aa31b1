@@ -18,20 +18,35 @@ export function ViewProvider({ children }: { children: ReactNode }) {
 
   // Load first store on mount
   useEffect(() => {
+    let mounted = true;
+    
     const loadFirstStore = async () => {
-      const { data } = await supabase
-        .from('stores')
-        .select('name')
-        .order('name')
-        .limit(1)
-        .maybeSingle();
-      
-      if (data) {
-        setSelectedStore(data.name);
+      try {
+        const { data, error } = await supabase
+          .from('stores')
+          .select('name')
+          .order('name')
+          .limit(1)
+          .maybeSingle();
+        
+        if (error) {
+          console.error('Error loading store:', error);
+          return;
+        }
+        
+        if (mounted && data?.name) {
+          setSelectedStore(data.name);
+        }
+      } catch (error) {
+        console.error('Error loading store:', error);
       }
     };
     
     loadFirstStore();
+    
+    return () => {
+      mounted = false;
+    };
   }, []);
 
   return (
