@@ -582,53 +582,177 @@ export default function StoreProductRange() {
         </div>
       )}
 
-      {/* Store Product Mappings */}
-      <div className="space-y-4">
+      {/* Store Product Mappings - Grouped by Cluster */}
+      <div className="space-y-6">
         <h2 className="text-2xl font-bold text-foreground flex items-center gap-2">
           <Store className="h-6 w-6" />
-          Store Product Ranges
+          Store Product Ranges by Cluster
         </h2>
-        {filteredStores.map((store) => {
-          const isExpanded = expandedStores.includes(store.storeId);
-          return (
-            <Card key={store.storeId} className="shadow-card hover:shadow-lg transition-all">
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <div 
-                    className="flex-1 cursor-pointer hover:bg-muted/20 -m-6 p-6 rounded-lg transition-colors"
-                    onClick={() => toggleStoreExpanded(store.storeId)}
-                  >
-                    <CardTitle className="flex items-center gap-3">
-                      <Store className="h-5 w-5" />
-                      {store.storeName}
-                      {getClusterBadge(store.cluster)}
-                    </CardTitle>
-                    <CardDescription>
-                      {store.storeId} • {store.postcode} • 
-                      {store.activeProducts.filter(p => p.active).length} of {store.activeProducts.length} products active
-                    </CardDescription>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    {viewMode === "hq" && (
-                      <Select
-                        value={store.cluster}
-                        onValueChange={(value) => handleChangeStoreCluster(store.storeId, value)}
+        
+        {viewMode === "hq" ? (
+          // HQ View: Group stores by cluster
+          storeClusters.map((cluster) => {
+            const clusterStores = filteredStores.filter(store => store.cluster === cluster.id);
+            
+            if (clusterStores.length === 0 && selectedCluster !== "all" && selectedCluster !== cluster.id) {
+              return null;
+            }
+            
+            return (
+              <div key={cluster.id} className="space-y-4">
+                {/* Cluster Header */}
+                <div className="flex items-center gap-3 pb-2 border-b-2 border-primary/20">
+                  <Badge className={`${cluster.color} text-lg px-4 py-2`}>
+                    {cluster.name}
+                  </Badge>
+                  <span className="text-sm text-muted-foreground">
+                    {clusterStores.length} {clusterStores.length === 1 ? 'store' : 'stores'}
+                  </span>
+                </div>
+                
+                {/* Stores in this cluster */}
+                {clusterStores.length === 0 ? (
+                  <Card className="shadow-card">
+                    <CardContent className="py-8 text-center text-muted-foreground">
+                      <Store className="h-12 w-12 mx-auto mb-2 opacity-30" />
+                      <p>No stores assigned to this cluster yet</p>
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        className="mt-4"
+                        onClick={() => handleClusterClick(cluster.id)}
                       >
-                        <SelectTrigger className="w-[200px]" onClick={(e) => e.stopPropagation()}>
-                          <SelectValue placeholder="Select cluster" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {storeClusters.map((cluster) => (
-                            <SelectItem key={cluster.id} value={cluster.id}>
-                              <div className="flex items-center gap-2">
-                                <div className={`w-3 h-3 rounded-full ${cluster.color}`} />
-                                {cluster.name}
-                              </div>
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    )}
+                        Assign Stores
+                      </Button>
+                    </CardContent>
+                  </Card>
+                ) : (
+                  clusterStores.map((store) => {
+                    const isExpanded = expandedStores.includes(store.storeId);
+                    return (
+                      <Card key={store.storeId} className="shadow-card hover:shadow-lg transition-all">
+                        <CardHeader>
+                          <div className="flex items-center justify-between">
+                            <div 
+                              className="flex-1 cursor-pointer hover:bg-muted/20 -m-6 p-6 rounded-lg transition-colors"
+                              onClick={() => toggleStoreExpanded(store.storeId)}
+                            >
+                              <CardTitle className="flex items-center gap-3">
+                                <Store className="h-5 w-5" />
+                                {store.storeName}
+                              </CardTitle>
+                              <CardDescription>
+                                {store.storeId} • {store.postcode} • 
+                                {store.activeProducts.filter(p => p.active).length} of {store.activeProducts.length} products active
+                              </CardDescription>
+                            </div>
+                            <div className="flex items-center gap-3">
+                              <Select
+                                value={store.cluster}
+                                onValueChange={(value) => handleChangeStoreCluster(store.storeId, value)}
+                              >
+                                <SelectTrigger className="w-[200px]" onClick={(e) => e.stopPropagation()}>
+                                  <SelectValue placeholder="Select cluster" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  {storeClusters.map((c) => (
+                                    <SelectItem key={c.id} value={c.id}>
+                                      <div className="flex items-center gap-2">
+                                        <div className={`w-3 h-3 rounded-full ${c.color}`} />
+                                        {c.name}
+                                      </div>
+                                    </SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+                              <Button 
+                                variant="ghost" 
+                                size="sm"
+                                onClick={() => toggleStoreExpanded(store.storeId)}
+                              >
+                                {isExpanded ? (
+                                  <ChevronUp className="h-5 w-5" />
+                                ) : (
+                                  <ChevronDown className="h-5 w-5" />
+                                )}
+                              </Button>
+                            </div>
+                          </div>
+                        </CardHeader>
+                        {isExpanded && (
+                          <CardContent className="animate-accordion-down">
+                            <Table>
+                              <TableHeader>
+                                <TableRow>
+                                  <TableHead>Product</TableHead>
+                                  <TableHead>Category</TableHead>
+                                  <TableHead>Status</TableHead>
+                                  <TableHead>Action</TableHead>
+                                </TableRow>
+                              </TableHeader>
+                              <TableBody>
+                                {store.activeProducts
+                                  .filter(product => selectedDayPart === "all" || product.dayParts?.includes(selectedDayPart))
+                                  .map((product) => (
+                                  <TableRow key={product.id}>
+                                    <TableCell>
+                                      <div>
+                                        <div className="font-medium">{product.name}</div>
+                                        <div className="text-sm text-muted-foreground">{product.id}</div>
+                                      </div>
+                                    </TableCell>
+                                    <TableCell>
+                                      {getCategoryBadge(product.category)}
+                                    </TableCell>
+                                    <TableCell>
+                                      <Badge variant={product.active ? "default" : "secondary"}>
+                                        {product.active ? "Active" : "Inactive"}
+                                      </Badge>
+                                    </TableCell>
+                                    <TableCell>
+                                      <Button
+                                        size="sm"
+                                        variant={product.active ? "outline" : "default"}
+                                        onClick={() => toggleProductStatus(store.storeId, product.id)}
+                                      >
+                                        {product.active ? "Disable" : "Enable"}
+                                      </Button>
+                                    </TableCell>
+                                  </TableRow>
+                                ))}
+                              </TableBody>
+                            </Table>
+                          </CardContent>
+                        )}
+                      </Card>
+                    );
+                  })
+                )}
+              </div>
+            );
+          })
+        ) : (
+          // Store View: Show only the selected store
+          filteredStores.map((store) => {
+            const isExpanded = expandedStores.includes(store.storeId);
+            return (
+              <Card key={store.storeId} className="shadow-card hover:shadow-lg transition-all">
+                <CardHeader>
+                  <div className="flex items-center justify-between">
+                    <div 
+                      className="flex-1 cursor-pointer hover:bg-muted/20 -m-6 p-6 rounded-lg transition-colors"
+                      onClick={() => toggleStoreExpanded(store.storeId)}
+                    >
+                      <CardTitle className="flex items-center gap-3">
+                        <Store className="h-5 w-5" />
+                        {store.storeName}
+                        {getClusterBadge(store.cluster)}
+                      </CardTitle>
+                      <CardDescription>
+                        {store.storeId} • {store.postcode} • 
+                        {store.activeProducts.filter(p => p.active).length} of {store.activeProducts.length} products active
+                      </CardDescription>
+                    </div>
                     <Button 
                       variant="ghost" 
                       size="sm"
@@ -641,56 +765,56 @@ export default function StoreProductRange() {
                       )}
                     </Button>
                   </div>
-                </div>
-              </CardHeader>
-              {isExpanded && (
-                <CardContent className="animate-accordion-down">
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Product</TableHead>
-                        <TableHead>Category</TableHead>
-                        <TableHead>Status</TableHead>
-                        <TableHead>Action</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {store.activeProducts
-                        .filter(product => selectedDayPart === "all" || product.dayParts?.includes(selectedDayPart))
-                        .map((product) => (
-                        <TableRow key={product.id}>
-                          <TableCell>
-                            <div>
-                              <div className="font-medium">{product.name}</div>
-                              <div className="text-sm text-muted-foreground">{product.id}</div>
-                            </div>
-                          </TableCell>
-                          <TableCell>
-                            {getCategoryBadge(product.category)}
-                          </TableCell>
-                          <TableCell>
-                            <Badge variant={product.active ? "default" : "secondary"}>
-                              {product.active ? "Active" : "Inactive"}
-                            </Badge>
-                          </TableCell>
-                          <TableCell>
-                            <Button
-                              size="sm"
-                              variant={product.active ? "outline" : "default"}
-                              onClick={() => toggleProductStatus(store.storeId, product.id)}
-                            >
-                              {product.active ? "Disable" : "Enable"}
-                            </Button>
-                          </TableCell>
+                </CardHeader>
+                {isExpanded && (
+                  <CardContent className="animate-accordion-down">
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Product</TableHead>
+                          <TableHead>Category</TableHead>
+                          <TableHead>Status</TableHead>
+                          <TableHead>Action</TableHead>
                         </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </CardContent>
-              )}
-            </Card>
-          );
-        })}
+                      </TableHeader>
+                      <TableBody>
+                        {store.activeProducts
+                          .filter(product => selectedDayPart === "all" || product.dayParts?.includes(selectedDayPart))
+                          .map((product) => (
+                          <TableRow key={product.id}>
+                            <TableCell>
+                              <div>
+                                <div className="font-medium">{product.name}</div>
+                                <div className="text-sm text-muted-foreground">{product.id}</div>
+                              </div>
+                            </TableCell>
+                            <TableCell>
+                              {getCategoryBadge(product.category)}
+                            </TableCell>
+                            <TableCell>
+                              <Badge variant={product.active ? "default" : "secondary"}>
+                                {product.active ? "Active" : "Inactive"}
+                              </Badge>
+                            </TableCell>
+                            <TableCell>
+                              <Button
+                                size="sm"
+                                variant={product.active ? "outline" : "default"}
+                                onClick={() => toggleProductStatus(store.storeId, product.id)}
+                              >
+                                {product.active ? "Disable" : "Enable"}
+                              </Button>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </CardContent>
+                )}
+              </Card>
+            );
+          })
+        )}
       </div>
 
       {/* Template Edit Dialog */}
