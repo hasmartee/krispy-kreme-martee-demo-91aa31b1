@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { Layout } from "@/components/ui/layout";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { ViewProvider } from "@/contexts/ViewContext";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import SuggestedProduction from "./pages/SuggestedProduction";
 import SuggestedOrdering from "./pages/SuggestedOrdering";
@@ -36,13 +37,14 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <AuthProvider>
-          <Routes>
-            <Route path="/auth" element={<Auth />} />
-            <Route
-              path="/*"
-              element={
-                <ProtectedRoute>
-                  <Layout>
+          <ViewProvider>
+            <Routes>
+              <Route path="/auth" element={<Auth />} />
+              <Route
+                path="/*"
+                element={
+                  <ProtectedRoute>
+                    <Layout>
                     <Routes>
                       <Route path="/" element={<Navigate to="/analytics" replace />} />
                       <Route path="/analytics" element={<Analytics />} />
@@ -70,6 +72,7 @@ const App = () => (
               }
             />
           </Routes>
+          </ViewProvider>
         </AuthProvider>
       </BrowserRouter>
     </TooltipProvider>
