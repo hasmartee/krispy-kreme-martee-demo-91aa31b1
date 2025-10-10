@@ -338,9 +338,16 @@ export default function Analytics() {
         </div>
       </div>
 
-      {/* Big Pink Box with Period and Store Selectors + KPIs */}
-      <Card className="shadow-card bg-gradient-to-br from-pink-500 to-pink-600 border-0">
+      {/* Big Peachy Pink Box with Period and Store Selectors + KPIs */}
+      <Card className="shadow-card border-0" style={{ background: 'var(--gradient-brand)' }}>
         <CardContent className="p-6">
+          {/* Heading */}
+          <div className="mb-4">
+            <h2 className="text-2xl font-bold text-secondary">
+              {selectedStore === "all" ? "All Stores" : selectedStore} • Last 7 Days
+            </h2>
+          </div>
+
           {/* Period and Store Selectors */}
           <div className="flex flex-col sm:flex-row gap-4 mb-6">
             <Select value={selectedStore} onValueChange={setSelectedStore}>
