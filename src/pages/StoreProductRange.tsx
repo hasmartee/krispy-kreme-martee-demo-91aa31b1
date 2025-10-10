@@ -57,31 +57,47 @@ const generateProducts = (cluster: string) => {
     { id: "SK005", name: "Mediterranean Salad Bowl", category: "Salad", active: true, dayParts: ["lunch", "afternoon"] },
   ];
 
+  const breakfastProducts = [
+    { id: "SK011", name: "Ham & Cheese Croissant", category: "Breakfast", active: true, dayParts: ["breakfast"] },
+    { id: "SK012", name: "Bacon & Egg Roll", category: "Breakfast", active: true, dayParts: ["breakfast"] },
+    { id: "SK013", name: "Avocado Toast with Poached Egg", category: "Breakfast", active: true, dayParts: ["breakfast"] },
+    { id: "SK014", name: "Fruit & Yogurt Parfait", category: "Breakfast", active: true, dayParts: ["breakfast"] },
+    { id: "SK015", name: "Breakfast Burrito", category: "Breakfast", active: true, dayParts: ["breakfast"] },
+    { id: "SK016", name: "Granola Bowl with Berries", category: "Breakfast", active: true, dayParts: ["breakfast"] },
+    { id: "SK017", name: "Egg & Cheese Muffin", category: "Breakfast", active: true, dayParts: ["breakfast"] },
+    { id: "SK018", name: "Smoked Salmon Bagel", category: "Breakfast", active: true, dayParts: ["breakfast"] },
+    { id: "SK019", name: "Almond Butter & Banana Toast", category: "Breakfast", active: true, dayParts: ["breakfast"] },
+    { id: "SK020", name: "Coffee & Pastry Combo", category: "Breakfast", active: true, dayParts: ["breakfast"] },
+    { id: "SK021", name: "Scrambled Eggs on Sourdough", category: "Breakfast", active: true, dayParts: ["breakfast"] },
+    { id: "SK022", name: "Porridge with Honey & Nuts", category: "Breakfast", active: true, dayParts: ["breakfast"] },
+  ];
+
   switch (cluster) {
     case "residential":
       return [
+        ...breakfastProducts.slice(0, 8),
         ...baseProducts,
         { id: "SK010", name: "Vegan Buddha Bowl", category: "Salad", active: true, dayParts: ["lunch", "afternoon"] },
-        { id: "SK011", name: "Ham & Cheese Croissant", category: "Breakfast", active: true, dayParts: ["breakfast"] },
       ];
     case "business_district":
       return [
+        ...breakfastProducts.slice(0, 6),
         ...baseProducts,
         { id: "SK006", name: "Prosciutto & Mozzarella Ciabatta", category: "Sandwich", active: true, dayParts: ["lunch", "afternoon"] },
-        { id: "SK008", name: "Smoked Salmon Bagel", category: "Breakfast", active: true, dayParts: ["breakfast"] },
       ];
     case "transport_hub":
       return [
+        ...breakfastProducts.slice(0, 5),
         ...baseProducts,
-        { id: "SK009", name: "Coffee & Pastry Combo", category: "Breakfast", active: true, dayParts: ["breakfast"] },
       ];
     case "high_street":
       return [
+        ...breakfastProducts.slice(0, 7),
         ...baseProducts,
         { id: "SK010", name: "Vegan Buddha Bowl", category: "Salad", active: true, dayParts: ["lunch", "afternoon"] },
       ];
     default:
-      return baseProducts;
+      return [...breakfastProducts.slice(0, 4), ...baseProducts];
   }
 };
 
@@ -389,7 +405,66 @@ export default function StoreProductRange() {
         </div>
       </div>
 
-      {/* Filters */}
+      {/* Day Part Filter - Prominent */}
+      {viewMode === "hq" && (
+        <Card className="shadow-card border-2 border-primary/20 bg-gradient-to-r from-primary/5 to-transparent">
+          <CardHeader className="pb-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle className="text-xl flex items-center gap-2">
+                  <Filter className="h-5 w-5 text-primary" />
+                  Day Part Filter
+                </CardTitle>
+                <CardDescription>
+                  {selectedDayPart === "all" 
+                    ? "Showing products for all day parts" 
+                    : `Showing ${dayParts.find(d => d.id === selectedDayPart)?.name} products (${dayParts.find(d => d.id === selectedDayPart)?.timeRange})`
+                  }
+                </CardDescription>
+              </div>
+              {selectedDayPart !== "all" && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setSelectedDayPart("all")}
+                  className="text-muted-foreground hover:text-foreground"
+                >
+                  Clear Filter
+                </Button>
+              )}
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="flex flex-wrap gap-3">
+              <Button
+                variant={selectedDayPart === "all" ? "default" : "outline"}
+                size="lg"
+                onClick={() => setSelectedDayPart("all")}
+                className="flex-1 min-w-[160px] h-16 text-base font-semibold"
+              >
+                <Package className="mr-2 h-5 w-5" />
+                All Day Parts
+              </Button>
+              {dayParts.map((dayPart) => (
+                <Button
+                  key={dayPart.id}
+                  variant={selectedDayPart === dayPart.id ? "default" : "outline"}
+                  size="lg"
+                  onClick={() => setSelectedDayPart(dayPart.id)}
+                  className="flex-1 min-w-[160px] h-16 text-base font-semibold"
+                >
+                  <div className="flex flex-col items-start">
+                    <span>{dayPart.name}</span>
+                    <span className="text-xs font-normal opacity-80">{dayPart.timeRange}</span>
+                  </div>
+                </Button>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Search and Cluster Filters */}
       <Card className="shadow-card">
         <CardContent className="pt-6">
           <div className="flex flex-col md:flex-row gap-4">
@@ -406,34 +481,19 @@ export default function StoreProductRange() {
               </div>
             </div>
             {viewMode === "hq" && (
-              <>
-                <Select value={selectedCluster} onValueChange={setSelectedCluster}>
-                  <SelectTrigger className="w-[200px]">
-                    <SelectValue placeholder="Filter by cluster" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-background border shadow-lg z-50">
-                    <SelectItem value="all">All Clusters</SelectItem>
-                    {storeClusters.map((cluster) => (
-                      <SelectItem key={cluster.id} value={cluster.id}>
-                        {cluster.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <Select value={selectedDayPart} onValueChange={setSelectedDayPart}>
-                  <SelectTrigger className="w-[220px]">
-                    <SelectValue placeholder="Filter by day part" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-background border shadow-lg z-50">
-                    <SelectItem value="all">All Day Parts</SelectItem>
-                    {dayParts.map((dayPart) => (
-                      <SelectItem key={dayPart.id} value={dayPart.id}>
-                        {dayPart.name} ({dayPart.timeRange})
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </>
+              <Select value={selectedCluster} onValueChange={setSelectedCluster}>
+                <SelectTrigger className="w-[200px]">
+                  <SelectValue placeholder="Filter by cluster" />
+                </SelectTrigger>
+                <SelectContent className="bg-background border shadow-lg z-50">
+                  <SelectItem value="all">All Clusters</SelectItem>
+                  {storeClusters.map((cluster) => (
+                    <SelectItem key={cluster.id} value={cluster.id}>
+                      {cluster.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             )}
           </div>
         </CardContent>
