@@ -40,38 +40,45 @@ const storeClusters = [
   },
 ];
 
+// Day parts
+const dayParts = [
+  { id: "breakfast", name: "Breakfast", timeRange: "Open-11am" },
+  { id: "lunch", name: "Lunch", timeRange: "11am-2pm" },
+  { id: "afternoon", name: "Afternoon", timeRange: "2pm-Close" },
+];
+
 // Generate sample products based on cluster type
 const generateProducts = (cluster: string) => {
   const baseProducts = [
-    { id: "SK001", name: "Classic BLT Sandwich", category: "Sandwich", active: true },
-    { id: "SK002", name: "Chicken Caesar Wrap", category: "Wrap", active: true },
-    { id: "SK003", name: "Avocado & Hummus Wrap", category: "Wrap", active: true },
-    { id: "SK004", name: "Tuna Melt Panini", category: "Hot Food", active: true },
-    { id: "SK005", name: "Mediterranean Salad Bowl", category: "Salad", active: true },
+    { id: "SK001", name: "Classic BLT Sandwich", category: "Sandwich", active: true, dayParts: ["lunch", "afternoon"] },
+    { id: "SK002", name: "Chicken Caesar Wrap", category: "Wrap", active: true, dayParts: ["lunch", "afternoon"] },
+    { id: "SK003", name: "Avocado & Hummus Wrap", category: "Wrap", active: true, dayParts: ["lunch", "afternoon"] },
+    { id: "SK004", name: "Tuna Melt Panini", category: "Hot Food", active: true, dayParts: ["lunch", "afternoon"] },
+    { id: "SK005", name: "Mediterranean Salad Bowl", category: "Salad", active: true, dayParts: ["lunch", "afternoon"] },
   ];
 
   switch (cluster) {
     case "residential":
       return [
         ...baseProducts,
-        { id: "SK010", name: "Vegan Buddha Bowl", category: "Salad", active: true },
-        { id: "SK011", name: "Ham & Cheese Croissant", category: "Breakfast", active: true },
+        { id: "SK010", name: "Vegan Buddha Bowl", category: "Salad", active: true, dayParts: ["lunch", "afternoon"] },
+        { id: "SK011", name: "Ham & Cheese Croissant", category: "Breakfast", active: true, dayParts: ["breakfast"] },
       ];
     case "business_district":
       return [
         ...baseProducts,
-        { id: "SK006", name: "Prosciutto & Mozzarella Ciabatta", category: "Sandwich", active: true },
-        { id: "SK008", name: "Smoked Salmon Bagel", category: "Breakfast", active: true },
+        { id: "SK006", name: "Prosciutto & Mozzarella Ciabatta", category: "Sandwich", active: true, dayParts: ["lunch", "afternoon"] },
+        { id: "SK008", name: "Smoked Salmon Bagel", category: "Breakfast", active: true, dayParts: ["breakfast"] },
       ];
     case "transport_hub":
       return [
         ...baseProducts,
-        { id: "SK009", name: "Coffee & Pastry Combo", category: "Breakfast", active: true },
+        { id: "SK009", name: "Coffee & Pastry Combo", category: "Breakfast", active: true, dayParts: ["breakfast"] },
       ];
     case "high_street":
       return [
         ...baseProducts,
-        { id: "SK010", name: "Vegan Buddha Bowl", category: "Salad", active: true },
+        { id: "SK010", name: "Vegan Buddha Bowl", category: "Salad", active: true, dayParts: ["lunch", "afternoon"] },
       ];
     default:
       return baseProducts;
@@ -128,6 +135,7 @@ interface StoreInfo {
 export default function StoreProductRange() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCluster, setSelectedCluster] = useState<string>("all");
+  const [selectedDayPart, setSelectedDayPart] = useState<string>("all");
   const [storeData, setStoreData] = useState<any[]>([]);
   const [allStores, setAllStores] = useState<StoreInfo[]>([]);
   const [isClusterDialogOpen, setIsClusterDialogOpen] = useState(false);
@@ -381,6 +389,56 @@ export default function StoreProductRange() {
         </div>
       </div>
 
+      {/* Filters */}
+      <Card className="shadow-card">
+        <CardContent className="pt-6">
+          <div className="flex flex-col md:flex-row gap-4">
+            <div className="flex-1">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  type="text"
+                  placeholder="Search stores by name, postcode, or ID..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-10"
+                />
+              </div>
+            </div>
+            {viewMode === "hq" && (
+              <>
+                <Select value={selectedCluster} onValueChange={setSelectedCluster}>
+                  <SelectTrigger className="w-[200px]">
+                    <SelectValue placeholder="Filter by cluster" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-background border shadow-lg z-50">
+                    <SelectItem value="all">All Clusters</SelectItem>
+                    {storeClusters.map((cluster) => (
+                      <SelectItem key={cluster.id} value={cluster.id}>
+                        {cluster.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <Select value={selectedDayPart} onValueChange={setSelectedDayPart}>
+                  <SelectTrigger className="w-[220px]">
+                    <SelectValue placeholder="Filter by day part" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-background border shadow-lg z-50">
+                    <SelectItem value="all">All Day Parts</SelectItem>
+                    {dayParts.map((dayPart) => (
+                      <SelectItem key={dayPart.id} value={dayPart.id}>
+                        {dayPart.name} ({dayPart.timeRange})
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </>
+            )}
+          </div>
+        </CardContent>
+      </Card>
+
       {/* Cluster Overview - Only show in HQ View */}
       {viewMode === "hq" && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -437,11 +495,13 @@ export default function StoreProductRange() {
                         <h4 className="text-sm font-semibold text-foreground">Range Template</h4>
                       </div>
                       <Badge variant="outline" className="text-xs font-semibold bg-background">
-                        {clusterProducts.length} products
+                        {clusterProducts.filter(p => selectedDayPart === "all" || p.dayParts?.includes(selectedDayPart)).length} products
                       </Badge>
                     </div>
                     <div className="space-y-2 max-h-[300px] overflow-y-auto pr-2 scrollbar-thin">
-                      {clusterProducts.map((product) => (
+                      {clusterProducts
+                        .filter(product => selectedDayPart === "all" || product.dayParts?.includes(selectedDayPart))
+                        .map((product) => (
                         <div 
                           key={product.id}
                           className="flex items-center justify-between p-3 rounded-lg bg-gradient-to-r from-muted/40 to-transparent hover:from-muted/60 hover:to-muted/20 transition-all border border-transparent hover:border-primary/20"
@@ -535,7 +595,9 @@ export default function StoreProductRange() {
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {store.activeProducts.map((product) => (
+                      {store.activeProducts
+                        .filter(product => selectedDayPart === "all" || product.dayParts?.includes(selectedDayPart))
+                        .map((product) => (
                         <TableRow key={product.id}>
                           <TableCell>
                             <div>
