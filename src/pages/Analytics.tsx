@@ -101,24 +101,24 @@ const footfallForecastHQ = [
 
 // Mock store performance data (from Performance page)
 const mockStorePerformance = [
-  { id: "ST001", name: "Paris Charles de Gaulle Airport", revenue: 28500, target: 26000, variance: 9.6, grossProfit: 11400, grossProfitMargin: 40.0, waste: 520, wastePercentage: 1.8, topProduct: "Ham Baguette" },
-  { id: "ST002", name: "Paris Gare du Nord", revenue: 32100, target: 31000, variance: 3.5, grossProfit: 13482, grossProfitMargin: 42.0, waste: 680, wastePercentage: 2.1, topProduct: "Chicken Salad" },
-  { id: "ST003", name: "Lyon Part-Dieu Station", revenue: 41200, target: 40000, variance: 3.0, grossProfit: 16480, grossProfitMargin: 40.0, waste: 890, wastePercentage: 2.2, topProduct: "Salmon Bloomer" },
-  { id: "ST004", name: "Marseille Airport", revenue: 24800, target: 28000, variance: -11.4, grossProfit: 9672, grossProfitMargin: 39.0, waste: 950, wastePercentage: 3.8, topProduct: "Mezze Pot" },
-  { id: "ST005", name: "Nice Côte d'Azur Airport", revenue: 29600, target: 28000, variance: 5.7, grossProfit: 12136, grossProfitMargin: 41.0, waste: 610, wastePercentage: 2.1, topProduct: "Chicken Salad" },
-  { id: "ST006", name: "Paris Gare de Lyon", revenue: 38200, target: 36000, variance: 6.1, grossProfit: 15698, grossProfitMargin: 41.1, waste: 720, wastePercentage: 1.9, topProduct: "Tuna Baguette" },
+  { id: "ST001", name: "London Bridge", revenue: 28500, target: 26000, variance: 9.6, grossProfit: 11400, grossProfitMargin: 40.0, waste: 520, wastePercentage: 1.8, topProduct: "BLT Sandwich" },
+  { id: "ST002", name: "Canary Wharf", revenue: 32100, target: 31000, variance: 3.5, grossProfit: 13482, grossProfitMargin: 42.0, waste: 680, wastePercentage: 2.1, topProduct: "Caesar Wrap" },
+  { id: "ST003", name: "King's Cross", revenue: 41200, target: 40000, variance: 3.0, grossProfit: 16480, grossProfitMargin: 40.0, waste: 890, wastePercentage: 2.2, topProduct: "Salmon Bagel" },
+  { id: "ST004", name: "Oxford Circus", revenue: 24800, target: 28000, variance: -11.4, grossProfit: 9672, grossProfitMargin: 39.0, waste: 950, wastePercentage: 3.8, topProduct: "Med Salad" },
+  { id: "ST005", name: "Covent Garden", revenue: 29600, target: 28000, variance: 5.7, grossProfit: 12136, grossProfitMargin: 41.0, waste: 610, wastePercentage: 2.1, topProduct: "Chicken Wrap" },
+  { id: "ST006", name: "Victoria Station", revenue: 38200, target: 36000, variance: 6.1, grossProfit: 15698, grossProfitMargin: 41.1, waste: 720, wastePercentage: 1.9, topProduct: "Tuna Panini" },
 ];
 
 // Mock product performance data (from Performance page)
 const mockProductPerformance = [
-  { id: "SK001", name: "Classic Ham & Cheese Baguette", soldUnits: 1240, revenue: 6820, margin: 58.2, waste: 45, wastePercentage: 3.5, trend: "up" },
-  { id: "SK002", name: "Chicken Avocado Salad", soldUnits: 980, revenue: 5880, margin: 62.1, waste: 32, wastePercentage: 3.2, trend: "up" },
-  { id: "SK003", name: "Veggie Pesto Pasta", soldUnits: 760, revenue: 4560, margin: 61.8, waste: 28, wastePercentage: 3.6, trend: "down" },
-  { id: "SK004", name: "Tuna Baguette", soldUnits: 890, revenue: 5340, margin: 59.5, waste: 38, wastePercentage: 4.1, trend: "up" },
-  { id: "SK005", name: "Mediterranean Mezze Pot", soldUnits: 720, revenue: 4680, margin: 64.2, waste: 42, wastePercentage: 5.5, trend: "down" },
-  { id: "SK006", name: "Smoked Salmon & Cream Cheese Bloomer", soldUnits: 650, revenue: 4875, margin: 68.5, waste: 25, wastePercentage: 3.7, trend: "up" },
-  { id: "SK007", name: "Croissant Jambon", soldUnits: 1120, revenue: 5040, margin: 55.3, waste: 52, wastePercentage: 4.4, trend: "up" },
-  { id: "SK008", name: "Falafel & Houmous Wrap", soldUnits: 580, revenue: 4060, margin: 66.8, waste: 35, wastePercentage: 5.7, trend: "down" },
+  { id: "SK001", name: "Classic BLT Sandwich", soldUnits: 1240, revenue: 6820, margin: 58.2, waste: 45, wastePercentage: 3.5, trend: "up" },
+  { id: "SK002", name: "Chicken Caesar Wrap", soldUnits: 980, revenue: 5880, margin: 62.1, waste: 32, wastePercentage: 3.2, trend: "up" },
+  { id: "SK003", name: "Avocado & Hummus Wrap", soldUnits: 760, revenue: 4560, margin: 61.8, waste: 28, wastePercentage: 3.6, trend: "down" },
+  { id: "SK004", name: "Tuna Melt Panini", soldUnits: 890, revenue: 5340, margin: 59.5, waste: 38, wastePercentage: 4.1, trend: "up" },
+  { id: "SK005", name: "Mediterranean Salad Bowl", soldUnits: 720, revenue: 4680, margin: 64.2, waste: 42, wastePercentage: 5.5, trend: "down" },
+  { id: "SK006", name: "Smoked Salmon Bagel", soldUnits: 650, revenue: 4875, margin: 68.5, waste: 25, wastePercentage: 3.7, trend: "up" },
+  { id: "SK007", name: "Ham & Cheese Croissant", soldUnits: 1120, revenue: 5040, margin: 55.3, waste: 52, wastePercentage: 4.4, trend: "up" },
+  { id: "SK008", name: "Vegan Buddha Bowl", soldUnits: 580, revenue: 4060, margin: 66.8, waste: 35, wastePercentage: 5.7, trend: "down" },
 ];
 
 // Mock daily trend data
@@ -418,23 +418,23 @@ export default function Analytics() {
                 <h4 className="text-sm font-semibold text-foreground">Top Stores by Revenue</h4>
                 <div className="space-y-2">
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-muted-foreground">Lyon Part-Dieu Station</span>
+                    <span className="text-muted-foreground">King's Cross</span>
                     <span className="font-medium text-foreground">£41,200</span>
                   </div>
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-muted-foreground">Paris Gare de Lyon</span>
+                    <span className="text-muted-foreground">Victoria Station</span>
                     <span className="font-medium text-foreground">£38,200</span>
                   </div>
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-muted-foreground">Paris Gare du Nord</span>
+                    <span className="text-muted-foreground">Canary Wharf</span>
                     <span className="font-medium text-foreground">£32,100</span>
                   </div>
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-muted-foreground">Nice Côte d'Azur Airport</span>
+                    <span className="text-muted-foreground">Covent Garden</span>
                     <span className="font-medium text-foreground">£29,600</span>
                   </div>
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-muted-foreground">Paris Charles de Gaulle Airport</span>
+                    <span className="text-muted-foreground">London Bridge</span>
                     <span className="font-medium text-foreground">£28,500</span>
                   </div>
                 </div>
@@ -467,28 +467,28 @@ export default function Analytics() {
                 <h4 className="text-sm font-semibold text-foreground">Top Stores by Gross Profit</h4>
                 <div className="space-y-2">
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-muted-foreground">Lyon Part-Dieu Station</span>
+                    <span className="text-muted-foreground">King's Cross</span>
                     <div className="flex items-center gap-2">
                       <span className="font-medium text-foreground">£16,480</span>
                       <Badge variant="outline" className="text-xs">40.0%</Badge>
                     </div>
                   </div>
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-muted-foreground">Paris Gare de Lyon</span>
+                    <span className="text-muted-foreground">Victoria Station</span>
                     <div className="flex items-center gap-2">
                       <span className="font-medium text-foreground">£15,698</span>
                       <Badge variant="outline" className="text-xs">41.1%</Badge>
                     </div>
                   </div>
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-muted-foreground">Paris Gare du Nord</span>
+                    <span className="text-muted-foreground">Canary Wharf</span>
                     <div className="flex items-center gap-2">
                       <span className="font-medium text-foreground">£13,482</span>
                       <Badge variant="outline" className="text-xs">42.0%</Badge>
                     </div>
                   </div>
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-muted-foreground">Nice Côte d'Azur Airport</span>
+                    <span className="text-muted-foreground">Covent Garden</span>
                     <div className="flex items-center gap-2">
                       <span className="font-medium text-foreground">£12,136</span>
                       <Badge variant="outline" className="text-xs">41.0%</Badge>
@@ -524,28 +524,28 @@ export default function Analytics() {
                 <h4 className="text-sm font-semibold text-foreground">Highest Waste by Store</h4>
                 <div className="space-y-2">
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-muted-foreground">Marseille Airport</span>
+                    <span className="text-muted-foreground">Oxford Circus</span>
                     <div className="flex items-center gap-2">
                       <span className="font-medium text-destructive">£950</span>
                       <Badge variant="outline" className="text-xs bg-destructive/10 text-destructive">3.8%</Badge>
                     </div>
                   </div>
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-muted-foreground">Lyon Part-Dieu Station</span>
+                    <span className="text-muted-foreground">King's Cross</span>
                     <div className="flex items-center gap-2">
                       <span className="font-medium text-destructive">£890</span>
                       <Badge variant="outline" className="text-xs bg-destructive/10 text-destructive">2.2%</Badge>
                     </div>
                   </div>
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-muted-foreground">Paris Gare de Lyon</span>
+                    <span className="text-muted-foreground">Victoria Station</span>
                     <div className="flex items-center gap-2">
                       <span className="font-medium text-destructive">£720</span>
                       <Badge variant="outline" className="text-xs bg-warning/10 text-warning">1.9%</Badge>
                     </div>
                   </div>
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-muted-foreground">Paris Gare du Nord</span>
+                    <span className="text-muted-foreground">Canary Wharf</span>
                     <div className="flex items-center gap-2">
                       <span className="font-medium text-destructive">£680</span>
                       <Badge variant="outline" className="text-xs bg-warning/10 text-warning">2.1%</Badge>
@@ -639,21 +639,21 @@ export default function Analytics() {
                 <h4 className="text-sm font-semibold text-foreground">Most Reduced Items</h4>
                 <div className="space-y-2">
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-muted-foreground">Mezze Pot</span>
+                    <span className="text-muted-foreground">Med Salad Bowl</span>
                     <div className="flex items-center gap-2">
                       <span className="font-medium text-foreground">£1,680</span>
                       <Badge variant="outline" className="text-xs">22%</Badge>
                     </div>
                   </div>
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-muted-foreground">Falafel & Houmous Wrap</span>
+                    <span className="text-muted-foreground">Vegan Buddha Bowl</span>
                     <div className="flex items-center gap-2">
                       <span className="font-medium text-foreground">£1,420</span>
                       <Badge variant="outline" className="text-xs">19%</Badge>
                     </div>
                   </div>
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-muted-foreground">Veggie Pesto Pasta</span>
+                    <span className="text-muted-foreground">Avocado Wrap</span>
                     <div className="flex items-center gap-2">
                       <span className="font-medium text-foreground">£1,248</span>
                       <Badge variant="outline" className="text-xs">16%</Badge>
@@ -1451,7 +1451,7 @@ export default function Analytics() {
                   <div className="flex items-center gap-2">
                     <Award className="h-5 w-5 text-warning" />
                     <div className="text-lg font-bold text-foreground">
-                      {viewMode === "store" ? "#3 of 50" : "Lyon Part-Dieu Station"}
+                      {viewMode === "store" ? "#3 of 50" : "King's Cross"}
                     </div>
                   </div>
                   <p className="text-xs text-muted-foreground">

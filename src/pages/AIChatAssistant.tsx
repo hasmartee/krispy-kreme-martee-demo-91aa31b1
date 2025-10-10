@@ -8,13 +8,13 @@ import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, L
 // Mock sales database with actual data
 const salesDatabase = {
   dailySales: [
-    { date: "2025-01-20", day: "Monday", products: { "Ham Baguette": 45, "Chicken Avocado Salad": 38, "Mediterranean Mezze Pot": 32, "Tuna Baguette": 28, "Veggie Pasta": 35 }, total: 178 },
-    { date: "2025-01-21", day: "Tuesday", products: { "Ham Baguette": 42, "Chicken Avocado Salad": 40, "Mediterranean Mezze Pot": 28, "Tuna Baguette": 30, "Veggie Pasta": 32 }, total: 172 },
-    { date: "2025-01-22", day: "Wednesday", products: { "Ham Baguette": 48, "Chicken Avocado Salad": 42, "Mediterranean Mezze Pot": 35, "Tuna Baguette": 32, "Veggie Pasta": 38 }, total: 195 },
-    { date: "2025-01-23", day: "Thursday", products: { "Ham Baguette": 52, "Chicken Avocado Salad": 45, "Mediterranean Mezze Pot": 38, "Tuna Baguette": 35, "Veggie Pasta": 40 }, total: 210 },
-    { date: "2025-01-24", day: "Friday", products: { "Ham Baguette": 58, "Chicken Avocado Salad": 48, "Mediterranean Mezze Pot": 42, "Tuna Baguette": 38, "Veggie Pasta": 45 }, total: 231 },
-    { date: "2025-01-25", day: "Saturday", products: { "Ham Baguette": 55, "Chicken Avocado Salad": 52, "Mediterranean Mezze Pot": 45, "Tuna Baguette": 40, "Veggie Pasta": 48 }, total: 240 },
-    { date: "2025-01-26", day: "Sunday", products: { "Ham Baguette": 48, "Chicken Avocado Salad": 45, "Mediterranean Mezze Pot": 38, "Tuna Baguette": 35, "Veggie Pasta": 42 }, total: 208 },
+    { date: "2025-01-20", day: "Monday", products: { "BLT Sandwich": 45, "Chicken Caesar Wrap": 38, "Mediterranean Salad": 32, "Tuna Melt Panini": 28, "Avocado Wrap": 35 }, total: 178 },
+    { date: "2025-01-21", day: "Tuesday", products: { "BLT Sandwich": 42, "Chicken Caesar Wrap": 40, "Mediterranean Salad": 28, "Tuna Melt Panini": 30, "Avocado Wrap": 32 }, total: 172 },
+    { date: "2025-01-22", day: "Wednesday", products: { "BLT Sandwich": 48, "Chicken Caesar Wrap": 42, "Mediterranean Salad": 35, "Tuna Melt Panini": 32, "Avocado Wrap": 38 }, total: 195 },
+    { date: "2025-01-23", day: "Thursday", products: { "BLT Sandwich": 52, "Chicken Caesar Wrap": 45, "Mediterranean Salad": 38, "Tuna Melt Panini": 35, "Avocado Wrap": 40 }, total: 210 },
+    { date: "2025-01-24", day: "Friday", products: { "BLT Sandwich": 58, "Chicken Caesar Wrap": 48, "Mediterranean Salad": 42, "Tuna Melt Panini": 38, "Avocado Wrap": 45 }, total: 231 },
+    { date: "2025-01-25", day: "Saturday", products: { "BLT Sandwich": 55, "Chicken Caesar Wrap": 52, "Mediterranean Salad": 45, "Tuna Melt Panini": 40, "Avocado Wrap": 48 }, total: 240 },
+    { date: "2025-01-26", day: "Sunday", products: { "BLT Sandwich": 48, "Chicken Caesar Wrap": 45, "Mediterranean Salad": 38, "Tuna Melt Panini": 35, "Avocado Wrap": 42 }, total: 208 },
   ],
   categories: [
     { name: "Sandwiches", sales: 450, waste: 8 },
@@ -23,10 +23,10 @@ const salesDatabase = {
     { name: "Hot Food", sales: 220, waste: 10 },
   ],
   stores: [
-    { name: "Paris Charles de Gaulle Airport", cluster: "Airport", sales: 285, availability: 96 },
-    { name: "Paris Gare du Nord", cluster: "Train Station", sales: 268, availability: 94 },
-    { name: "Lyon Part-Dieu Station", cluster: "Train Station", sales: 242, availability: 92 },
-    { name: "Marseille Airport", cluster: "Airport", sales: 225, availability: 95 },
+    { name: "London Bridge", cluster: "Flagship", sales: 285, availability: 96 },
+    { name: "Canary Wharf", cluster: "Business District", sales: 268, availability: 94 },
+    { name: "King's Cross", cluster: "Transport Hub", sales: 242, availability: 92 },
+    { name: "Shoreditch", cluster: "High Street", sales: 225, availability: 95 },
   ]
 };
 
