@@ -14,6 +14,7 @@ import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { useView } from "@/contexts/ViewContext";
 import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 // Mock data for charts
 const salesWasteData = [
@@ -140,6 +141,8 @@ export default function Analytics() {
     from: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
     to: new Date()
   });
+  const [aiInsights, setAiInsights] = useState<any[]>([]);
+  const [loadingInsights, setLoadingInsights] = useState(false);
 
   useEffect(() => {
     const loadStores = async () => {
@@ -155,6 +158,34 @@ export default function Analytics() {
     
     loadStores();
   }, []);
+
+  const fetchAIInsights = async () => {
+    setLoadingInsights(true);
+    try {
+      const ingredientData = [
+        { name: "Chicken Breast", category: "Protein", expected: isSingleStoreView ? 45.2 : 1108, actual: isSingleStoreView ? 43.8 : 1072, variance: -3.1 },
+        { name: "Lettuce", category: "Vegetables", expected: isSingleStoreView ? 28.5 : 698, actual: isSingleStoreView ? 29.2 : 715, variance: 2.5 },
+        { name: "Avocado", category: "Vegetables", expected: isSingleStoreView ? 32.0 : 784, actual: isSingleStoreView ? 31.8 : 779, variance: -0.6 },
+        { name: "Tomatoes", category: "Vegetables", expected: isSingleStoreView ? 24.8 : 608, actual: isSingleStoreView ? 26.4 : 647, variance: 6.5 },
+        { name: "Bread", category: "Bakery", expected: isSingleStoreView ? 52.0 : 1274, actual: isSingleStoreView ? 51.2 : 1254, variance: -1.5 }
+      ];
+
+      const { data, error } = await supabase.functions.invoke('ingredient-insights', {
+        body: { ingredientData }
+      });
+
+      if (error) throw error;
+      
+      if (data?.insights) {
+        setAiInsights(data.insights);
+      }
+    } catch (error) {
+      console.error('Error fetching AI insights:', error);
+      toast.error('Failed to load AI insights');
+    } finally {
+      setLoadingInsights(false);
+    }
+  };
 
   // Filter data based on view mode and selected store
   const filteredStorePerformance = viewMode === "store" 
@@ -1171,6 +1202,78 @@ export default function Analytics() {
             </CardContent>
           </Card>
         </div>
+
+        {/* AI Insights Card */}
+        <Card className="shadow-card border-primary/20 bg-gradient-to-br from-background via-background to-primary/5">
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Sparkles className="h-5 w-5 text-primary" />
+                <CardTitle className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+                  AI-Powered Insights
+                </CardTitle>
+              </div>
+              <Button
+                onClick={fetchAIInsights}
+                disabled={loadingInsights}
+                size="sm"
+                variant="outline"
+                className="gap-2"
+              >
+                <BrainCircuit className="h-4 w-4" />
+                {loadingInsights ? "Analyzing..." : "Generate Insights"}
+              </Button>
+            </div>
+            <CardDescription>
+              AI analysis of ingredient usage patterns and recommendations
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            {aiInsights.length === 0 && !loadingInsights ? (
+              <div className="text-center py-8 text-muted-foreground">
+                <BrainCircuit className="h-12 w-12 mx-auto mb-3 opacity-50" />
+                <p>Click "Generate Insights" to get AI-powered recommendations</p>
+              </div>
+            ) : loadingInsights ? (
+              <div className="space-y-3">
+                {[1, 2, 3].map((i) => (
+                  <div key={i} className="h-20 bg-muted animate-pulse rounded-lg" />
+                ))}
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {aiInsights.map((insight, index) => (
+                  <div
+                    key={index}
+                    className={`p-4 rounded-lg border ${
+                      insight.type === 'success'
+                        ? 'bg-success/5 border-success/20'
+                        : insight.type === 'warning'
+                        ? 'bg-warning/5 border-warning/20'
+                        : 'bg-destructive/5 border-destructive/20'
+                    }`}
+                  >
+                    <div className="flex items-start gap-3">
+                      <div className="flex-shrink-0 mt-0.5">
+                        {insight.type === 'success' ? (
+                          <CheckCircle className="h-5 w-5 text-success" />
+                        ) : insight.type === 'warning' ? (
+                          <AlertTriangle className="h-5 w-5 text-warning" />
+                        ) : (
+                          <AlertCircle className="h-5 w-5 text-destructive" />
+                        )}
+                      </div>
+                      <div className="flex-1">
+                        <h4 className="font-semibold text-sm mb-1">{insight.title}</h4>
+                        <p className="text-sm text-muted-foreground">{insight.message}</p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
 
         {/* Top Ingredients Usage Table */}
         <Card className="shadow-card">

@@ -1,1 +1,7 @@
 project_id = "mwgdtvcfklwmmizgkiev"
+
+[functions.suggest-par-level]
+verify_jwt = false
+
+[functions.ingredient-insights]
+verify_jwt = false
