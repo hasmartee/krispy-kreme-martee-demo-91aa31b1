@@ -18,23 +18,23 @@ interface Sale {
 // Generate mock sales data with current timestamps
 const generateMockSale = (forStore?: string): Sale => {
   const products = [
-    { name: "Classic BLT Sandwich", price: 5.50 },
-    { name: "Chicken Caesar Wrap", price: 6.00 },
-    { name: "Avocado & Hummus Wrap", price: 6.00 },
-    { name: "Tuna Melt Panini", price: 6.00 },
-    { name: "Mediterranean Salad Bowl", price: 6.50 },
-    { name: "Smoked Salmon Bagel", price: 7.50 },
-    { name: "Ham & Cheese Croissant", price: 4.50 },
-    { name: "Vegan Buddha Bowl", price: 7.00 },
+    { name: "Classic Ham & Cheese Baguette", price: 5.50 },
+    { name: "Chicken Avocado Salad", price: 6.00 },
+    { name: "Veggie Pesto Pasta", price: 6.00 },
+    { name: "Tuna Baguette", price: 6.00 },
+    { name: "Mediterranean Mezze Pot", price: 6.50 },
+    { name: "Smoked Salmon & Cream Cheese Bloomer", price: 7.50 },
+    { name: "Croissant Jambon", price: 4.50 },
+    { name: "Falafel & Houmous Wrap", price: 7.00 },
   ];
 
   const stores = [
-    "London Bridge",
-    "Canary Wharf",
-    "King's Cross",
-    "Oxford Circus",
-    "Covent Garden",
-    "Victoria Station"
+    "Paris Charles de Gaulle Airport",
+    "Paris Gare du Nord",
+    "Lyon Part-Dieu Station",
+    "Marseille Airport",
+    "Nice Côte d'Azur Airport",
+    "Paris Gare de Lyon"
   ];
 
   const product = products[Math.floor(Math.random() * products.length)];
