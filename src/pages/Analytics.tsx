@@ -9,7 +9,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
 import { Button } from "@/components/ui/button";
 import { TrendingUp, TrendingDown, DollarSign, AlertCircle, CheckCircle, Sparkles, BrainCircuit, Users, CalendarIcon, Award, AlertTriangle } from "lucide-react";
-import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Area, AreaChart, ComposedChart } from "recharts";
+import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Area, AreaChart, ComposedChart, PieChart, Pie, Cell } from "recharts";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { useView } from "@/contexts/ViewContext";
@@ -132,6 +132,51 @@ const mockDailyTrend = [
   { date: "Sun", revenue: 30200, target: 26000 },
 ];
 
+// Meal period revenue breakdown (Store view)
+const mealPeriodRevenueStore = [
+  { name: "Breakfast", value: 580, percentage: 31.4 },
+  { name: "Lunch", value: 890, percentage: 48.1 },
+  { name: "Afternoon", value: 380, percentage: 20.5 },
+];
+
+// Meal period revenue breakdown (HQ view)
+const mealPeriodRevenueHQ = [
+  { name: "Breakfast", value: 14200, percentage: 31.4 },
+  { name: "Lunch", value: 21750, percentage: 48.1 },
+  { name: "Afternoon", value: 9281, percentage: 20.5 },
+];
+
+// Product category revenue by day (Store view)
+const categoryRevenueStore = [
+  { day: "Mon", sandwiches: 68, wraps: 52, salads: 28, breakfast: 17 },
+  { day: "Tue", sandwiches: 61, wraps: 48, salads: 24, breakfast: 15 },
+  { day: "Wed", sandwiches: 72, wraps: 55, salads: 32, breakfast: 19 },
+  { day: "Thu", sandwiches: 65, wraps: 51, salads: 29, breakfast: 17 },
+  { day: "Fri", sandwiches: 78, wraps: 62, salads: 35, breakfast: 20 },
+  { day: "Sat", sandwiches: 88, wraps: 68, salads: 40, breakfast: 22 },
+  { day: "Sun", sandwiches: 70, wraps: 54, salads: 31, breakfast: 19 },
+];
+
+// Product category revenue by day (HQ view)
+const categoryRevenueHQ = [
+  { day: "Mon", sandwiches: 1680, wraps: 1280, salads: 690, breakfast: 420 },
+  { day: "Tue", sandwiches: 1510, wraps: 1180, salads: 590, breakfast: 370 },
+  { day: "Wed", sandwiches: 1800, wraps: 1360, salads: 790, breakfast: 470 },
+  { day: "Thu", sandwiches: 1620, wraps: 1260, salads: 720, breakfast: 420 },
+  { day: "Fri", sandwiches: 1940, wraps: 1530, salads: 860, breakfast: 490 },
+  { day: "Sat", sandwiches: 2180, wraps: 1680, salads: 990, breakfast: 550 },
+  { day: "Sun", sandwiches: 1740, wraps: 1330, salads: 760, breakfast: 470 },
+];
+
+const CHART_COLORS = {
+  breakfast: "hsl(18 85% 78%)", // primary/peach
+  lunch: "hsl(88 32% 62%)", // accent/green
+  afternoon: "hsl(23 100% 65%)", // warning/orange
+  sandwiches: "hsl(18 85% 78%)",
+  wraps: "hsl(88 32% 62%)",
+  salads: "hsl(140 24% 24%)",
+  breakfastItems: "hsl(23 100% 65%)",
+};
 
 export default function Analytics() {
   const { viewMode, selectedStore: contextSelectedStore } = useView();
@@ -504,6 +549,104 @@ export default function Analytics() {
         </CardContent>
       </Card>
 
+      {/* Revenue Analysis Charts */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Meal Period Revenue Breakdown Pie Chart */}
+        <Card className="shadow-card">
+          <CardHeader>
+            <CardTitle>Revenue by Meal Period</CardTitle>
+            <CardDescription>Breakdown of revenue across Breakfast, Lunch, and Afternoon</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <ResponsiveContainer width="100%" height={300}>
+              <PieChart>
+                <Pie
+                  data={isSingleStoreView ? mealPeriodRevenueStore : mealPeriodRevenueHQ}
+                  cx="50%"
+                  cy="50%"
+                  labelLine={false}
+                  label={({ name, percentage }) => `${name} ${percentage}%`}
+                  outerRadius={100}
+                  fill="#8884d8"
+                  dataKey="value"
+                >
+                  <Cell fill={CHART_COLORS.breakfast} />
+                  <Cell fill={CHART_COLORS.lunch} />
+                  <Cell fill={CHART_COLORS.afternoon} />
+                </Pie>
+                <Tooltip 
+                  formatter={(value: number) => `£${value.toLocaleString()}`}
+                  contentStyle={{ 
+                    backgroundColor: "hsl(var(--popover))", 
+                    border: "1px solid hsl(var(--border))",
+                    borderRadius: "8px"
+                  }}
+                />
+                <Legend />
+              </PieChart>
+            </ResponsiveContainer>
+            <div className="mt-4 grid grid-cols-3 gap-3">
+              {(isSingleStoreView ? mealPeriodRevenueStore : mealPeriodRevenueHQ).map((period, index) => (
+                <div key={period.name} className="text-center p-3 rounded-lg border" style={{ borderColor: [CHART_COLORS.breakfast, CHART_COLORS.lunch, CHART_COLORS.afternoon][index] }}>
+                  <div className="text-sm text-muted-foreground">{period.name}</div>
+                  <div className="text-lg font-bold text-foreground">£{period.value.toLocaleString()}</div>
+                  <div className="text-xs text-muted-foreground">{period.percentage}%</div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Product Category Revenue Stacked Bar Chart */}
+        <Card className="shadow-card">
+          <CardHeader>
+            <CardTitle>Revenue by Product Category</CardTitle>
+            <CardDescription>Daily revenue contribution from each product category</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart data={isSingleStoreView ? categoryRevenueStore : categoryRevenueHQ}>
+                <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
+                <XAxis dataKey="day" stroke="hsl(var(--muted-foreground))" />
+                <YAxis stroke="hsl(var(--muted-foreground))" />
+                <Tooltip 
+                  formatter={(value: number) => `£${value.toLocaleString()}`}
+                  contentStyle={{ 
+                    backgroundColor: "hsl(var(--popover))", 
+                    border: "1px solid hsl(var(--border))",
+                    borderRadius: "8px"
+                  }}
+                />
+                <Legend />
+                <Bar dataKey="sandwiches" stackId="a" fill={CHART_COLORS.sandwiches} name="Sandwiches" />
+                <Bar dataKey="wraps" stackId="a" fill={CHART_COLORS.wraps} name="Wraps" />
+                <Bar dataKey="salads" stackId="a" fill={CHART_COLORS.salads} name="Salads" />
+                <Bar dataKey="breakfast" stackId="a" fill={CHART_COLORS.breakfastItems} name="Breakfast Items" />
+              </BarChart>
+            </ResponsiveContainer>
+            <div className="mt-4 p-4 rounded-lg bg-muted/30 border">
+              <div className="grid grid-cols-2 gap-3 text-sm">
+                <div className="flex items-center gap-2">
+                  <div className="h-3 w-3 rounded" style={{ backgroundColor: CHART_COLORS.sandwiches }}></div>
+                  <span className="text-muted-foreground">Sandwiches</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="h-3 w-3 rounded" style={{ backgroundColor: CHART_COLORS.wraps }}></div>
+                  <span className="text-muted-foreground">Wraps</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="h-3 w-3 rounded" style={{ backgroundColor: CHART_COLORS.salads }}></div>
+                  <span className="text-muted-foreground">Salads</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="h-3 w-3 rounded" style={{ backgroundColor: CHART_COLORS.breakfastItems }}></div>
+                  <span className="text-muted-foreground">Breakfast Items</span>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
 
       {/* Charts Row */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
