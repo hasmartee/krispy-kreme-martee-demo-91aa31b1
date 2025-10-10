@@ -27,6 +27,54 @@ const salesWasteData = [
   { date: "Sun", sales: 4600, waste: 170 },
 ];
 
+// Mock cluster performance data
+const clusterPerformanceData = [
+  {
+    id: "high_street",
+    name: "High Street",
+    storeCount: 12,
+    revenue: 52400,
+    grossProfit: 23580,
+    target: 50000,
+    waste: 2890,
+    topProduct: "Classic BLT",
+    avgRevenue: 4367,
+  },
+  {
+    id: "transport_hub",
+    name: "Transport Hub",
+    storeCount: 8,
+    revenue: 38200,
+    grossProfit: 17190,
+    target: 36000,
+    waste: 2140,
+    topProduct: "Coffee & Pastry Combo",
+    avgRevenue: 4775,
+  },
+  {
+    id: "business_district",
+    name: "Business District",
+    storeCount: 15,
+    revenue: 68500,
+    grossProfit: 30825,
+    target: 65000,
+    waste: 3280,
+    topProduct: "Mediterranean Salad",
+    avgRevenue: 4567,
+  },
+  {
+    id: "residential",
+    name: "Residential",
+    storeCount: 15,
+    revenue: 45800,
+    grossProfit: 20610,
+    target: 48000,
+    waste: 2450,
+    topProduct: "Avocado Toast",
+    avgRevenue: 3053,
+  },
+];
+
 const volumeComparisonData = [
   { product: "BLT Sand", recommended: 45, actual: 42, missed: 3 },
   { product: "Caesar Wrap", recommended: 38, actual: 40, waste: 2 },
@@ -751,6 +799,7 @@ export default function Analytics() {
           <TabsList>
             <TabsTrigger value="store">Store Performance</TabsTrigger>
             <TabsTrigger value="product">Product Performance</TabsTrigger>
+            <TabsTrigger value="cluster">Cluster Performance</TabsTrigger>
           </TabsList>
 
           {/* Store Performance Tab */}
@@ -1075,6 +1124,227 @@ export default function Analytics() {
                         </TableCell>
                       </TableRow>
                     ))}
+                  </TableBody>
+                </Table>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Cluster Performance Tab */}
+          <TabsContent value="cluster" className="space-y-4">
+            {/* Cluster Summary Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+              <Card className="shadow-card">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-sm font-medium text-muted-foreground">
+                    Total Clusters
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold text-foreground">
+                    {clusterPerformanceData.length}
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    {clusterPerformanceData.reduce((acc, c) => acc + c.storeCount, 0)} stores total
+                  </p>
+                </CardContent>
+              </Card>
+
+              <Card className="shadow-card">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-sm font-medium text-muted-foreground">
+                    Total Revenue
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold text-success">
+                    £{clusterPerformanceData.reduce((acc, c) => acc + c.revenue, 0).toLocaleString()}
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    <TrendingUp className="inline h-3 w-3 mr-1 text-success" />
+                    +7.3% from last period
+                  </p>
+                </CardContent>
+              </Card>
+
+              <Card className="shadow-card">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-sm font-medium text-muted-foreground">
+                    Gross Profit
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold text-primary">
+                    £{clusterPerformanceData.reduce((acc, c) => acc + c.grossProfit, 0).toLocaleString()}
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    {((clusterPerformanceData.reduce((acc, c) => acc + c.grossProfit, 0) / 
+                      clusterPerformanceData.reduce((acc, c) => acc + c.revenue, 0)) * 100).toFixed(1)}% margin
+                  </p>
+                </CardContent>
+              </Card>
+
+              <Card className="shadow-card">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-sm font-medium text-muted-foreground">
+                    Total Waste
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold text-destructive">
+                    £{clusterPerformanceData.reduce((acc, c) => acc + c.waste, 0).toLocaleString()}
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    {((clusterPerformanceData.reduce((acc, c) => acc + c.waste, 0) / 
+                      clusterPerformanceData.reduce((acc, c) => acc + c.revenue, 0)) * 100).toFixed(1)}% of revenue
+                  </p>
+                </CardContent>
+              </Card>
+
+              <Card className="shadow-card">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-sm font-medium text-muted-foreground">
+                    Top Cluster
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex items-center gap-2">
+                    <Award className="h-5 w-5 text-warning" />
+                    <div className="text-lg font-bold text-foreground">
+                      {clusterPerformanceData.reduce((prev, current) => 
+                        prev.revenue > current.revenue ? prev : current
+                      ).name}
+                    </div>
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    £{clusterPerformanceData.reduce((prev, current) => 
+                      prev.revenue > current.revenue ? prev : current
+                    ).revenue.toLocaleString()} revenue
+                  </p>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Cluster Performance Chart */}
+            <Card className="shadow-card">
+              <CardHeader>
+                <CardTitle>Cluster Revenue Comparison</CardTitle>
+                <CardDescription>Revenue performance across different clusters</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ResponsiveContainer width="100%" height={300}>
+                  <BarChart data={clusterPerformanceData}>
+                    <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
+                    <XAxis dataKey="name" />
+                    <YAxis />
+                    <Tooltip 
+                      formatter={(value: number) => `£${value.toLocaleString()}`}
+                      contentStyle={{ 
+                        backgroundColor: "hsl(var(--popover))", 
+                        border: "1px solid hsl(var(--border))",
+                        borderRadius: "8px"
+                      }}
+                    />
+                    <Legend />
+                    <Bar dataKey="revenue" fill="hsl(var(--primary))" name="Revenue (£)" />
+                    <Bar dataKey="target" fill="hsl(var(--accent))" name="Target (£)" />
+                  </BarChart>
+                </ResponsiveContainer>
+              </CardContent>
+            </Card>
+
+            {/* Cluster Performance Table */}
+            <Card className="shadow-card">
+              <CardHeader>
+                <CardTitle>Cluster Performance Breakdown</CardTitle>
+                <CardDescription>
+                  Detailed metrics for each cluster
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Cluster</TableHead>
+                      <TableHead>Stores</TableHead>
+                      <TableHead>Revenue</TableHead>
+                      <TableHead>Avg/Store</TableHead>
+                      <TableHead>Gross Profit</TableHead>
+                      <TableHead>Target</TableHead>
+                      <TableHead>Variance</TableHead>
+                      <TableHead>Waste</TableHead>
+                      <TableHead>Top Product</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {clusterPerformanceData.map((cluster) => {
+                      const variance = cluster.revenue - cluster.target;
+                      const variancePercent = ((variance / cluster.target) * 100);
+                      const wastePercent = ((cluster.waste / cluster.revenue) * 100);
+                      
+                      return (
+                        <TableRow key={cluster.id}>
+                          <TableCell>
+                            <div>
+                              <div className="font-medium">{cluster.name}</div>
+                              <div className="text-sm text-muted-foreground capitalize">
+                                {cluster.id.replace('_', ' ')}
+                              </div>
+                            </div>
+                          </TableCell>
+                          <TableCell className="font-mono">
+                            {cluster.storeCount}
+                          </TableCell>
+                          <TableCell className="font-mono text-success">
+                            £{cluster.revenue.toLocaleString()}
+                          </TableCell>
+                          <TableCell className="font-mono">
+                            £{cluster.avgRevenue.toLocaleString()}
+                          </TableCell>
+                          <TableCell className="font-mono text-primary">
+                            £{cluster.grossProfit.toLocaleString()}
+                          </TableCell>
+                          <TableCell className="font-mono text-muted-foreground">
+                            £{cluster.target.toLocaleString()}
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex items-center gap-2">
+                              {variance > 0 ? (
+                                <TrendingUp className="h-4 w-4 text-success" />
+                              ) : (
+                                <TrendingDown className="h-4 w-4 text-destructive" />
+                              )}
+                              <span className={variance > 0 ? "text-success font-medium" : "text-destructive font-medium"}>
+                                {variancePercent > 0 ? '+' : ''}{variancePercent.toFixed(1)}%
+                              </span>
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex items-center gap-2">
+                              {wastePercent > 5 && (
+                                <AlertTriangle className="h-4 w-4 text-warning" />
+                              )}
+                              <div>
+                                <div className="font-mono text-destructive">
+                                  £{cluster.waste.toLocaleString()}
+                                </div>
+                                <div className={cn(
+                                  "text-xs",
+                                  wastePercent > 5 ? "text-warning font-medium" : "text-muted-foreground"
+                                )}>
+                                  {wastePercent.toFixed(1)}%
+                                </div>
+                              </div>
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <Badge variant="outline" className="font-medium">
+                              {cluster.topProduct}
+                            </Badge>
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })}
                   </TableBody>
                 </Table>
               </CardContent>
