@@ -83,7 +83,7 @@ const initialProducts = [
     allergens: ["Gluten", "Fish", "Dairy"],
     shelfLife: 1,
     ingredients: [],
-    dayParts: ["lunch", "afternoon"],
+    dayParts: ["lunch"],
   },
   {
     skuId: "SK005",
@@ -96,7 +96,7 @@ const initialProducts = [
     allergens: ["Dairy"],
     shelfLife: 3,
     ingredients: [],
-    dayParts: ["lunch", "afternoon"],
+    dayParts: ["lunch"],
   },
   {
     skuId: "SK006",
@@ -122,7 +122,7 @@ const initialProducts = [
     allergens: ["Gluten", "Soya"],
     shelfLife: 2,
     ingredients: [],
-    dayParts: ["lunch", "afternoon"],
+    dayParts: ["lunch"],
   },
   {
     skuId: "SK008",
@@ -135,7 +135,7 @@ const initialProducts = [
     allergens: ["Dairy"],
     shelfLife: 3,
     ingredients: ["Feta Cheese", "Tomato", "Cucumber", "Kalamata Olives"],
-    dayParts: ["lunch", "afternoon"],
+    dayParts: ["lunch"],
   },
   // Breakfast items
   {
