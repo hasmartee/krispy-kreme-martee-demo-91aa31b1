@@ -36,20 +36,23 @@ interface InventoryItem {
 // Cluster product mapping from StoreProductRange
 const clusterProducts = {
   residential: [
-    "SK051", "SK052", "SK053", "SK054", "SK055", "SK056", "SK057", "SK058", // Breakfast items
-    "SK001", "SK002", "SK003", "SK004", "SK005", "SK006", "SK007", "SK008" // Lunch/Afternoon items
+    "SK011", "SK012", "SK013", "SK014", "SK015", "SK016", "SK017", "SK018", // 8 Breakfast items
+    "SK001", "SK002", "SK003", "SK004", "SK005", // 5 Lunch/Afternoon items
+    "SK010" // Vegan Buddha Bowl
   ],
   business_district: [
-    "SK051", "SK052", "SK053", "SK054", "SK055", "SK056", // Breakfast items
-    "SK001", "SK002", "SK003", "SK004", "SK005", "SK006" // Lunch/Afternoon items
+    "SK011", "SK012", "SK013", "SK014", "SK015", "SK016", // 6 Breakfast items
+    "SK001", "SK002", "SK003", "SK004", "SK005", // 5 Lunch/Afternoon items
+    "SK006" // Prosciutto & Mozzarella Ciabatta
   ],
   transport_hub: [
-    "SK051", "SK052", "SK053", "SK054", "SK055", // Breakfast items
-    "SK001", "SK002", "SK003", "SK004", "SK005" // Lunch/Afternoon items
+    "SK011", "SK012", "SK013", "SK014", "SK015", // 5 Breakfast items
+    "SK001", "SK002", "SK003", "SK004", "SK005" // 5 Lunch/Afternoon items
   ],
   high_street: [
-    "SK051", "SK052", "SK053", "SK054", "SK055", "SK056", "SK057", // Breakfast items
-    "SK001", "SK002", "SK003", "SK004", "SK005", "SK006", "SK007", "SK008" // Lunch/Afternoon items
+    "SK011", "SK012", "SK013", "SK014", "SK015", "SK016", "SK017", // 7 Breakfast items
+    "SK001", "SK002", "SK003", "SK004", "SK005", // 5 Lunch/Afternoon items
+    "SK010" // Vegan Buddha Bowl
   ],
 };
 
