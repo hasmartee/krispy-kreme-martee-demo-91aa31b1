@@ -192,20 +192,38 @@ const baseProducts = [
   { id: "SK020", productName: "Mozzarella Panini", category: "Hot Food", storeId: "ST018", storeName: "Wimbledon", currentStock: 12, recommendedOrder: 17, finalOrder: 17, trend: "up", historicalSales: 15.2, predictedSales: 16.8 },
 ];
 
-// Generate 7-day forecast
+// Day parts with typical distribution
+const dayParts = [
+  { name: "Morning", time: "6:00-11:00", percentage: 0.35 },
+  { name: "Afternoon", time: "11:00-16:00", percentage: 0.45 },
+  { name: "Evening", time: "16:00-20:00", percentage: 0.20 }
+];
+
+// Generate 7-day forecast with day parts
 const generate7DayForecast = () => {
   const forecast = [];
   for (let dayOffset = 0; dayOffset < 7; dayOffset++) {
     const date = new Date(Date.now() + (dayOffset + 1) * 86400000); // Starting from tomorrow
     baseProducts.forEach(product => {
       // Add some variation for each day
-      const variation = 0.9 + Math.random() * 0.2; // 90% to 110%
-      forecast.push({
-        ...product,
-        date,
-        recommendedOrder: Math.round(product.recommendedOrder * variation),
-        finalOrder: Math.round(product.finalOrder * variation),
-        predictedSales: product.predictedSales * variation,
+      const dailyVariation = 0.9 + Math.random() * 0.2; // 90% to 110%
+      const totalDaily = Math.round(product.recommendedOrder * dailyVariation);
+      
+      // Split into day parts
+      dayParts.forEach(dayPart => {
+        // Add slight variation per day part
+        const dayPartVariation = 0.95 + Math.random() * 0.1; // 95% to 105%
+        const recommendedTopUp = Math.round(totalDaily * dayPart.percentage * dayPartVariation);
+        
+        forecast.push({
+          ...product,
+          date,
+          dayPart: dayPart.name,
+          dayPartTime: dayPart.time,
+          recommendedOrder: recommendedTopUp,
+          finalOrder: recommendedTopUp,
+          predictedSales: product.predictedSales * dailyVariation * dayPart.percentage,
+        });
       });
     });
   }
@@ -260,18 +278,23 @@ export default function VolumeAllocation() {
     setTimeout(() => setIsRefreshing(false), 2000);
   };
 
-  const updateFinalOrder = (id: string, storeId: string, date: Date, delta: number) => {
+  const updateFinalOrder = (id: string, storeId: string, date: Date, dayPart: string, delta: number) => {
     setAllocations(prev => prev.map(allocation => 
-      allocation.id === id && allocation.storeId === storeId && allocation.date.toDateString() === date.toDateString()
+      allocation.id === id && 
+      allocation.storeId === storeId && 
+      allocation.date.toDateString() === date.toDateString() &&
+      allocation.dayPart === dayPart
         ? { ...allocation, finalOrder: Math.max(0, allocation.finalOrder + delta) }
         : allocation
     ));
   };
 
   const handleExportCSV = () => {
-    const headers = ['Date', 'Product ID', 'Product Name', 'Category', 'Store', 'Current Stock', 'Predicted Sales', 'AI Recommended Production', 'Final Production'];
+    const headers = ['Date', 'Day Part', 'Time', 'Product ID', 'Product Name', 'Category', 'Store', 'Current Stock', 'Predicted Sales', 'AI Recommended Top-Up', 'Final Top-Up'];
     const rows = filteredAllocations.map(a => [
       format(a.date, "yyyy-MM-dd"),
+      a.dayPart,
+      a.dayPartTime,
       a.id,
       a.productName,
       a.category,
@@ -287,7 +310,7 @@ export default function VolumeAllocation() {
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `production-recommendations-7day-forecast.csv`;
+    a.download = `production-recommendations-by-daypart.csv`;
     a.click();
     window.URL.revokeObjectURL(url);
   };
@@ -384,14 +407,14 @@ export default function VolumeAllocation() {
   };
 
   const handleConfirmProduction = async (allocation: typeof allocations[0]) => {
-    setConfirmingProduction(`${allocation.id}-${allocation.storeId}-${allocation.date.toDateString()}`);
+    setConfirmingProduction(`${allocation.id}-${allocation.storeId}-${allocation.date.toDateString()}-${allocation.dayPart}`);
     
     try {
       // For now, just show success since we're working with mock data
       // In production, this would update the database
       toast({
         title: "Production Confirmed",
-        description: `${allocation.finalOrder} units of ${allocation.productName} confirmed for ${format(allocation.date, "EEE, MMM d")}. Prepared goods inventory updated.`,
+        description: `${allocation.finalOrder} units of ${allocation.productName} confirmed for ${allocation.dayPart} (${allocation.dayPartTime}) on ${format(allocation.date, "EEE, MMM d")}. Prepared goods inventory updated.`,
       });
       
       // Note: When database is populated, the code below would:
@@ -425,7 +448,7 @@ export default function VolumeAllocation() {
                 {viewMode === "store" ? selectedStore : "AI Production Recommendations"}
               </h1>
               <p className="text-secondary-foreground/80 text-lg">
-                Optimised daily production quantities powered by machine learning
+                Optimised production top-ups by day part (Morning, Afternoon, Evening) powered by machine learning
               </p>
             </div>
             <div className="flex items-center gap-3">
@@ -531,10 +554,10 @@ export default function VolumeAllocation() {
           <div className="flex items-center justify-between">
             <div>
               <CardTitle className="text-xl">
-                7-Day Rolling Forecast - Production Recommendations
+                Production Top-Ups by Day Part
               </CardTitle>
               <CardDescription>
-                AI-powered production volumes for the next 7 days based on historical data, weather, events, and trends
+                AI-powered production quantities split by morning, afternoon, and evening to optimize freshness and reduce waste
               </CardDescription>
             </div>
             <div className="flex items-center gap-2">
@@ -573,6 +596,7 @@ export default function VolumeAllocation() {
             <TableHeader>
               <TableRow>
                 <TableHead>Date</TableHead>
+                <TableHead>Day Part</TableHead>
                 <TableHead>Product</TableHead>
                 <TableHead>Category</TableHead>
                 <TableHead>Store</TableHead>
@@ -583,21 +607,38 @@ export default function VolumeAllocation() {
                     <div className="absolute inset-0 bg-[#ff914d]/5 blur-sm" />
                     <Sparkles className="h-4 w-4 text-[#ff914d] relative z-10 animate-pulse" />
                     <span className="relative z-10 font-semibold bg-gradient-to-r from-[#ff914d] to-[#ff914d]/70 bg-clip-text text-transparent">
-                      AI Recommended Production
+                      AI Top-Up Qty
                     </span>
                     <Sparkles className="h-3 w-3 text-[#ff914d] relative z-10 animate-spin" style={{ animationDuration: '3s' }} />
                   </div>
                 </TableHead>
-                <TableHead className="bg-brand-green/10">Final Production</TableHead>
+                <TableHead className="bg-brand-green/10">Final Top-Up</TableHead>
                 <TableHead>Action</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {filteredAllocations.map((allocation) => (
-                <TableRow key={`${allocation.id}-${allocation.storeId}-${allocation.date.toDateString()}`}>
+                <TableRow key={`${allocation.id}-${allocation.storeId}-${allocation.date.toDateString()}-${allocation.dayPart}`}>
                   <TableCell>
                     <div className="font-medium whitespace-nowrap">
                       {format(allocation.date, "EEE, MMM d")}
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <div>
+                      <Badge 
+                        variant="outline" 
+                        className={`font-medium ${
+                          allocation.dayPart === 'Morning' 
+                            ? 'bg-amber-50 text-amber-700 border-amber-200' 
+                            : allocation.dayPart === 'Afternoon' 
+                            ? 'bg-orange-50 text-orange-700 border-orange-200' 
+                            : 'bg-indigo-50 text-indigo-700 border-indigo-200'
+                        }`}
+                      >
+                        {allocation.dayPart}
+                      </Badge>
+                      <div className="text-xs text-muted-foreground mt-1">{allocation.dayPartTime}</div>
                     </div>
                   </TableCell>
                   <TableCell>
@@ -646,7 +687,7 @@ export default function VolumeAllocation() {
                       <Button
                         size="sm"
                         variant="outline"
-                        onClick={() => updateFinalOrder(allocation.id, allocation.storeId, allocation.date, -1)}
+                        onClick={() => updateFinalOrder(allocation.id, allocation.storeId, allocation.date, allocation.dayPart, -1)}
                         className="h-8 w-8 p-0 rounded-full border-brand-green hover:bg-brand-green hover:text-white transition-colors"
                       >
                         <Minus className="h-4 w-4" />
@@ -657,7 +698,7 @@ export default function VolumeAllocation() {
                       <Button
                         size="sm"
                         variant="outline"
-                        onClick={() => updateFinalOrder(allocation.id, allocation.storeId, allocation.date, 1)}
+                        onClick={() => updateFinalOrder(allocation.id, allocation.storeId, allocation.date, allocation.dayPart, 1)}
                         className="h-8 w-8 p-0 rounded-full border-brand-green hover:bg-brand-green hover:text-white transition-colors"
                       >
                         <Plus className="h-4 w-4" />
@@ -671,7 +712,7 @@ export default function VolumeAllocation() {
                       disabled={!!confirmingProduction}
                       onClick={() => handleConfirmProduction(allocation)}
                     >
-                      {confirmingProduction === `${allocation.id}-${allocation.storeId}-${allocation.date.toDateString()}` ? (
+                      {confirmingProduction === `${allocation.id}-${allocation.storeId}-${allocation.date.toDateString()}-${allocation.dayPart}` ? (
                         <>
                           <Loader2 className="h-4 w-4 mr-2 animate-spin" />
                           Confirming...
