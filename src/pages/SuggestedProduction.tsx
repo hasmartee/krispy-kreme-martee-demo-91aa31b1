@@ -667,30 +667,36 @@ export default function VolumeAllocation() {
                   <TableHead>Category</TableHead>
                   <TableHead>Current Stock</TableHead>
                   <TableHead className="bg-gradient-to-r from-[#ff914d]/20 to-[#ff914d]/10 relative text-center">
-                    <div className="flex items-center justify-center gap-2 relative">
+                    <div className="flex flex-col items-center gap-1 relative">
                       <div className="absolute inset-0 bg-[#ff914d]/5 blur-sm" />
-                      <Sparkles className="h-4 w-4 text-[#ff914d] relative z-10 animate-pulse" />
-                      <span className="relative z-10 font-semibold bg-gradient-to-r from-[#ff914d] to-[#ff914d]/70 bg-clip-text text-transparent">
-                        Morning
-                      </span>
+                      <div className="flex items-center gap-2 relative z-10">
+                        <Sparkles className="h-4 w-4 text-[#ff914d] animate-pulse" />
+                        <span className="font-semibold bg-gradient-to-r from-[#ff914d] to-[#ff914d]/70 bg-clip-text text-transparent">
+                          Morning
+                        </span>
+                      </div>
                     </div>
                   </TableHead>
                   <TableHead className="bg-gradient-to-r from-[#ff914d]/20 to-[#ff914d]/10 relative text-center">
-                    <div className="flex items-center justify-center gap-2 relative">
+                    <div className="flex flex-col items-center gap-1 relative">
                       <div className="absolute inset-0 bg-[#ff914d]/5 blur-sm" />
-                      <Sparkles className="h-4 w-4 text-[#ff914d] relative z-10 animate-pulse" />
-                      <span className="relative z-10 font-semibold bg-gradient-to-r from-[#ff914d] to-[#ff914d]/70 bg-clip-text text-transparent">
-                        Lunchtime
-                      </span>
+                      <div className="flex items-center gap-2 relative z-10">
+                        <Sparkles className="h-4 w-4 text-[#ff914d] animate-pulse" />
+                        <span className="font-semibold bg-gradient-to-r from-[#ff914d] to-[#ff914d]/70 bg-clip-text text-transparent">
+                          Lunchtime
+                        </span>
+                      </div>
                     </div>
                   </TableHead>
                   <TableHead className="bg-gradient-to-r from-[#ff914d]/20 to-[#ff914d]/10 relative text-center">
-                    <div className="flex items-center justify-center gap-2 relative">
+                    <div className="flex flex-col items-center gap-1 relative">
                       <div className="absolute inset-0 bg-[#ff914d]/5 blur-sm" />
-                      <Sparkles className="h-4 w-4 text-[#ff914d] relative z-10 animate-pulse" />
-                      <span className="relative z-10 font-semibold bg-gradient-to-r from-[#ff914d] to-[#ff914d]/70 bg-clip-text text-transparent">
-                        Afternoon
-                      </span>
+                      <div className="flex items-center gap-2 relative z-10">
+                        <Sparkles className="h-4 w-4 text-[#ff914d] animate-pulse" />
+                        <span className="font-semibold bg-gradient-to-r from-[#ff914d] to-[#ff914d]/70 bg-clip-text text-transparent">
+                          Afternoon
+                        </span>
+                      </div>
                     </div>
                   </TableHead>
                   <TableHead className="bg-primary/10 text-center font-semibold">Total</TableHead>
@@ -725,25 +731,42 @@ export default function VolumeAllocation() {
                       {/* Morning */}
                       <TableCell className="bg-gradient-to-r from-[#ff914d]/10 to-transparent">
                         {product.breakfast && (
-                          <div className="flex items-center gap-2 justify-center">
+                          <div className="flex flex-col items-center gap-2">
+                            <div className="flex items-center gap-2">
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => updateFinalOrder(product.id, product.storeId, product.date, "Breakfast", -1)}
+                                className="h-8 w-8 p-0 rounded-full border-[#ff914d]/50 hover:bg-[#ff914d] hover:text-white transition-colors"
+                              >
+                                <Minus className="h-4 w-4" />
+                              </Button>
+                              <span className="font-mono font-bold text-[#ff914d] min-w-[2.5rem] text-center text-lg">
+                                {breakfastQty}
+                              </span>
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => updateFinalOrder(product.id, product.storeId, product.date, "Breakfast", 1)}
+                                className="h-8 w-8 p-0 rounded-full border-[#ff914d]/50 hover:bg-[#ff914d] hover:text-white transition-colors"
+                              >
+                                <Plus className="h-4 w-4" />
+                              </Button>
+                            </div>
                             <Button
                               size="sm"
-                              variant="outline"
-                              onClick={() => updateFinalOrder(product.id, product.storeId, product.date, "Breakfast", -1)}
-                              className="h-8 w-8 p-0 rounded-full border-[#ff914d]/50 hover:bg-[#ff914d] hover:text-white transition-colors"
+                              className="bg-primary text-primary-foreground w-full"
+                              disabled={!!confirmingProduction}
+                              onClick={() => handleConfirmProduction(product.breakfast!)}
                             >
-                              <Minus className="h-4 w-4" />
-                            </Button>
-                            <span className="font-mono font-bold text-[#ff914d] min-w-[2.5rem] text-center text-lg">
-                              {breakfastQty}
-                            </span>
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() => updateFinalOrder(product.id, product.storeId, product.date, "Breakfast", 1)}
-                              className="h-8 w-8 p-0 rounded-full border-[#ff914d]/50 hover:bg-[#ff914d] hover:text-white transition-colors"
-                            >
-                              <Plus className="h-4 w-4" />
+                              {confirmingProduction === `${product.id}-${product.storeId}-${product.date.toDateString()}-Breakfast` ? (
+                                <>
+                                  <Loader2 className="h-3 w-3 mr-1 animate-spin" />
+                                  Confirming
+                                </>
+                              ) : (
+                                'Confirm'
+                              )}
                             </Button>
                           </div>
                         )}
@@ -751,25 +774,42 @@ export default function VolumeAllocation() {
                       {/* Lunchtime */}
                       <TableCell className="bg-gradient-to-r from-[#ff914d]/10 to-transparent">
                         {product.lunch && (
-                          <div className="flex items-center gap-2 justify-center">
+                          <div className="flex flex-col items-center gap-2">
+                            <div className="flex items-center gap-2">
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => updateFinalOrder(product.id, product.storeId, product.date, "Lunch", -1)}
+                                className="h-8 w-8 p-0 rounded-full border-[#ff914d]/50 hover:bg-[#ff914d] hover:text-white transition-colors"
+                              >
+                                <Minus className="h-4 w-4" />
+                              </Button>
+                              <span className="font-mono font-bold text-[#ff914d] min-w-[2.5rem] text-center text-lg">
+                                {lunchQty}
+                              </span>
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => updateFinalOrder(product.id, product.storeId, product.date, "Lunch", 1)}
+                                className="h-8 w-8 p-0 rounded-full border-[#ff914d]/50 hover:bg-[#ff914d] hover:text-white transition-colors"
+                              >
+                                <Plus className="h-4 w-4" />
+                              </Button>
+                            </div>
                             <Button
                               size="sm"
-                              variant="outline"
-                              onClick={() => updateFinalOrder(product.id, product.storeId, product.date, "Lunch", -1)}
-                              className="h-8 w-8 p-0 rounded-full border-[#ff914d]/50 hover:bg-[#ff914d] hover:text-white transition-colors"
+                              className="bg-primary text-primary-foreground w-full"
+                              disabled={!!confirmingProduction}
+                              onClick={() => handleConfirmProduction(product.lunch!)}
                             >
-                              <Minus className="h-4 w-4" />
-                            </Button>
-                            <span className="font-mono font-bold text-[#ff914d] min-w-[2.5rem] text-center text-lg">
-                              {lunchQty}
-                            </span>
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() => updateFinalOrder(product.id, product.storeId, product.date, "Lunch", 1)}
-                              className="h-8 w-8 p-0 rounded-full border-[#ff914d]/50 hover:bg-[#ff914d] hover:text-white transition-colors"
-                            >
-                              <Plus className="h-4 w-4" />
+                              {confirmingProduction === `${product.id}-${product.storeId}-${product.date.toDateString()}-Lunch` ? (
+                                <>
+                                  <Loader2 className="h-3 w-3 mr-1 animate-spin" />
+                                  Confirming
+                                </>
+                              ) : (
+                                'Confirm'
+                              )}
                             </Button>
                           </div>
                         )}
@@ -777,25 +817,42 @@ export default function VolumeAllocation() {
                       {/* Afternoon */}
                       <TableCell className="bg-gradient-to-r from-[#ff914d]/10 to-transparent">
                         {product.afternoon && (
-                          <div className="flex items-center gap-2 justify-center">
+                          <div className="flex flex-col items-center gap-2">
+                            <div className="flex items-center gap-2">
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => updateFinalOrder(product.id, product.storeId, product.date, "Afternoon", -1)}
+                                className="h-8 w-8 p-0 rounded-full border-[#ff914d]/50 hover:bg-[#ff914d] hover:text-white transition-colors"
+                              >
+                                <Minus className="h-4 w-4" />
+                              </Button>
+                              <span className="font-mono font-bold text-[#ff914d] min-w-[2.5rem] text-center text-lg">
+                                {afternoonQty}
+                              </span>
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => updateFinalOrder(product.id, product.storeId, product.date, "Afternoon", 1)}
+                                className="h-8 w-8 p-0 rounded-full border-[#ff914d]/50 hover:bg-[#ff914d] hover:text-white transition-colors"
+                              >
+                                <Plus className="h-4 w-4" />
+                              </Button>
+                            </div>
                             <Button
                               size="sm"
-                              variant="outline"
-                              onClick={() => updateFinalOrder(product.id, product.storeId, product.date, "Afternoon", -1)}
-                              className="h-8 w-8 p-0 rounded-full border-[#ff914d]/50 hover:bg-[#ff914d] hover:text-white transition-colors"
+                              className="bg-primary text-primary-foreground w-full"
+                              disabled={!!confirmingProduction}
+                              onClick={() => handleConfirmProduction(product.afternoon!)}
                             >
-                              <Minus className="h-4 w-4" />
-                            </Button>
-                            <span className="font-mono font-bold text-[#ff914d] min-w-[2.5rem] text-center text-lg">
-                              {afternoonQty}
-                            </span>
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() => updateFinalOrder(product.id, product.storeId, product.date, "Afternoon", 1)}
-                              className="h-8 w-8 p-0 rounded-full border-[#ff914d]/50 hover:bg-[#ff914d] hover:text-white transition-colors"
-                            >
-                              <Plus className="h-4 w-4" />
+                              {confirmingProduction === `${product.id}-${product.storeId}-${product.date.toDateString()}-Afternoon` ? (
+                                <>
+                                  <Loader2 className="h-3 w-3 mr-1 animate-spin" />
+                                  Confirming
+                                </>
+                              ) : (
+                                'Confirm'
+                              )}
                             </Button>
                           </div>
                         )}
