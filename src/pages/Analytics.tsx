@@ -226,8 +226,17 @@ const CHART_COLORS = {
   breakfastItems: "hsl(23 100% 65%)",
 };
 
+// Brand to store mapping
+const brandStoreMap = {
+  "All Brands": ["London Bridge", "Kings Cross", "Victoria Station", "Oxford Street", "Canary Wharf", "Liverpool Street", "Paddington", "Waterloo", "Bond Street", "Leicester Square", "Covent Garden", "Bank", "Monument", "Tower Hill", "Holborn"],
+  "Pret a Manger": ["London Bridge", "Kings Cross", "Victoria Station", "Liverpool Street", "Paddington", "Waterloo", "Bank", "Monument"],
+  "Brioche Dorée": ["Oxford Street", "Canary Wharf", "Bond Street", "Leicester Square", "Covent Garden"],
+  "Starbucks": ["London Bridge", "Oxford Street", "Tower Hill", "Holborn", "Canary Wharf"]
+};
+
 export default function Analytics() {
   const { viewMode, selectedStore: contextSelectedStore } = useView();
+  const [selectedBrand, setSelectedBrand] = useState<string>("All Brands");
   const [selectedStore, setSelectedStore] = useState<string>("all");
   const [stores, setStores] = useState<Array<{ name: string; id: string }>>([]);
   const [dateRange, setDateRange] = useState<{ from: Date; to: Date }>({
@@ -236,6 +245,11 @@ export default function Analytics() {
   });
   const [aiInsights, setAiInsights] = useState<any[]>([]);
   const [loadingInsights, setLoadingInsights] = useState(false);
+
+  // Available stores based on selected brand
+  const availableStores = selectedBrand === "All Brands" 
+    ? stores
+    : stores.filter(s => brandStoreMap[selectedBrand as keyof typeof brandStoreMap]?.includes(s.name));
 
   useEffect(() => {
     const loadStores = async () => {
@@ -437,57 +451,129 @@ export default function Analytics() {
           {/* Heading */}
           <div className="mb-4">
             <h2 className="text-2xl font-bold text-secondary">
+              {viewMode === "hq" && selectedBrand !== "All Brands" ? `${selectedBrand} • ` : ""}
               {selectedStore === "all" ? "All Stores" : selectedStore} • Last 7 Days
             </h2>
           </div>
 
           {/* Period and Store Selectors */}
-          <div className="flex flex-col sm:flex-row gap-4 mb-6">
-            <Select value={selectedStore} onValueChange={setSelectedStore}>
-              <SelectTrigger className="w-[200px] bg-white/90 border-white/20">
-                <SelectValue placeholder="Select store" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Stores</SelectItem>
-                {stores.map((store) => (
-                  <SelectItem key={store.id} value={store.name}>
-                    {store.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button variant="outline" className="w-[280px] justify-start text-left font-normal bg-white/90 border-white/20">
-                  <CalendarIcon className="mr-2 h-4 w-4" />
-                  {dateRange?.from ? (
-                    dateRange.to ? (
-                      <>
-                        {format(dateRange.from, "LLL dd, y")} -{" "}
-                        {format(dateRange.to, "LLL dd, y")}
-                      </>
+          {viewMode === "hq" ? (
+            <div className="flex flex-col gap-4 mb-6">
+              {/* Brand Filter - Higher Level */}
+              <div className="flex items-center gap-4">
+                <label className="text-sm font-medium text-secondary">My Brand:</label>
+                <Select value={selectedBrand} onValueChange={(v) => {
+                  setSelectedBrand(v);
+                  setSelectedStore("all");
+                }}>
+                  <SelectTrigger className="w-[200px] bg-white/90 border-white/20 font-semibold">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="All Brands">All Brands</SelectItem>
+                    <SelectItem value="Pret a Manger">Pret a Manger</SelectItem>
+                    <SelectItem value="Brioche Dorée">Brioche Dorée</SelectItem>
+                    <SelectItem value="Starbucks">Starbucks</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Store and Date Filters */}
+              <div className="flex flex-col sm:flex-row gap-4">
+                <Select value={selectedStore} onValueChange={setSelectedStore}>
+                  <SelectTrigger className="w-[200px] bg-white/90 border-white/20">
+                    <SelectValue placeholder="Select store" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Stores</SelectItem>
+                    {availableStores.map((store) => (
+                      <SelectItem key={store.id} value={store.name}>
+                        {store.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button variant="outline" className="w-[280px] justify-start text-left font-normal bg-white/90 border-white/20">
+                      <CalendarIcon className="mr-2 h-4 w-4" />
+                      {dateRange?.from ? (
+                        dateRange.to ? (
+                          <>
+                            {format(dateRange.from, "LLL dd, y")} -{" "}
+                            {format(dateRange.to, "LLL dd, y")}
+                          </>
+                        ) : (
+                          format(dateRange.from, "LLL dd, y")
+                        )
+                      ) : (
+                        <span>Pick a date range</span>
+                      )}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <Calendar
+                      initialFocus
+                      mode="range"
+                      defaultMonth={dateRange?.from}
+                      selected={{ from: dateRange?.from, to: dateRange?.to }}
+                      onSelect={(range: any) => range && setDateRange(range)}
+                      numberOfMonths={2}
+                      className={cn("p-3 pointer-events-auto")}
+                    />
+                  </PopoverContent>
+                </Popover>
+              </div>
+            </div>
+          ) : (
+            <div className="flex flex-col sm:flex-row gap-4 mb-6">
+              <Select value={selectedStore} onValueChange={setSelectedStore}>
+                <SelectTrigger className="w-[200px] bg-white/90 border-white/20">
+                  <SelectValue placeholder="Select store" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Stores</SelectItem>
+                  {stores.map((store) => (
+                    <SelectItem key={store.id} value={store.name}>
+                      {store.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button variant="outline" className="w-[280px] justify-start text-left font-normal bg-white/90 border-white/20">
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {dateRange?.from ? (
+                      dateRange.to ? (
+                        <>
+                          {format(dateRange.from, "LLL dd, y")} -{" "}
+                          {format(dateRange.to, "LLL dd, y")}
+                        </>
+                      ) : (
+                        format(dateRange.from, "LLL dd, y")
+                      )
                     ) : (
-                      format(dateRange.from, "LLL dd, y")
-                    )
-                  ) : (
-                    <span>Pick a date range</span>
-                  )}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0" align="start">
-                <Calendar
-                  initialFocus
-                  mode="range"
-                  defaultMonth={dateRange?.from}
-                  selected={{ from: dateRange?.from, to: dateRange?.to }}
-                  onSelect={(range: any) => range && setDateRange(range)}
-                  numberOfMonths={2}
-                  className={cn("p-3 pointer-events-auto")}
-                />
-              </PopoverContent>
-            </Popover>
-          </div>
+                      <span>Pick a date range</span>
+                    )}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    initialFocus
+                    mode="range"
+                    defaultMonth={dateRange?.from}
+                    selected={{ from: dateRange?.from, to: dateRange?.to }}
+                    onSelect={(range: any) => range && setDateRange(range)}
+                    numberOfMonths={2}
+                    className={cn("p-3 pointer-events-auto")}
+                  />
+                </PopoverContent>
+              </Popover>
+            </div>
+          )}
 
           {/* Three Main KPI Cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
