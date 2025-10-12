@@ -80,7 +80,6 @@ interface Task {
   time: string;
   completed: boolean;
   details?: string;
-  priority?: "high" | "medium" | "low";
 }
 
 export default function MyTasks() {
@@ -105,8 +104,7 @@ export default function MyTasks() {
           title: "Confirm Morning Production",
           time: "06:30",
           completed: false,
-          details: "Confirm all breakfast items production",
-          priority: "high"
+          details: "Confirm all breakfast items production"
         },
         {
           id: "2",
@@ -114,8 +112,7 @@ export default function MyTasks() {
           title: "Confirm Lunchtime Production",
           time: "11:00",
           completed: false,
-          details: "Confirm sandwiches, wraps, and salads for lunch service",
-          priority: "high"
+          details: "Confirm sandwiches, wraps, and salads for lunch service"
         },
         {
           id: "3",
@@ -123,8 +120,7 @@ export default function MyTasks() {
           title: "Confirm Afternoon Production",
           time: "14:00",
           completed: false,
-          details: "Confirm afternoon snacks and light meals",
-          priority: "medium"
+          details: "Confirm afternoon snacks and light meals"
         },
         {
           id: "4",
@@ -132,8 +128,7 @@ export default function MyTasks() {
           title: "End of Day Stock Check",
           time: "18:00",
           completed: false,
-          details: "Complete end of day inventory count and waste tracking",
-          priority: "high"
+          details: "Complete end of day inventory count and waste tracking"
         }
       ];
     } else {
@@ -145,8 +140,7 @@ export default function MyTasks() {
           title: "Complete Morning Production",
           time: "06:30",
           completed: false,
-          details: "Complete all breakfast items production",
-          priority: "high"
+          details: "Complete all breakfast items production"
         },
         {
           id: "2",
@@ -154,8 +148,7 @@ export default function MyTasks() {
           title: "Complete Lunchtime Production",
           time: "11:00",
           completed: false,
-          details: "Complete sandwiches, wraps, and salads for lunch service",
-          priority: "high"
+          details: "Complete sandwiches, wraps, and salads for lunch service"
         },
         {
           id: "3",
@@ -163,8 +156,7 @@ export default function MyTasks() {
           title: "Complete Afternoon Production",
           time: "14:00",
           completed: false,
-          details: "Complete afternoon snacks and light meals",
-          priority: "medium"
+          details: "Complete afternoon snacks and light meals"
         }
       ];
     }
@@ -412,7 +404,6 @@ export default function MyTasks() {
                     <h3 className={`font-medium ${task.completed ? "line-through" : ""}`}>
                       {task.title}
                     </h3>
-                    {getPriorityBadge(task.priority)}
                   </div>
                   {task.details && (
                     <p className="text-sm text-muted-foreground mt-1">

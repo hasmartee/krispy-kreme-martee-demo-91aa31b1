@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { DollarSign, TrendingUp, Trash2, CheckCircle, ArrowRight, ClipboardCheck, BrainCircuit, Sparkles, Users } from "lucide-react";
+import { DollarSign, TrendingUp, Trash2, CheckCircle, ArrowRight, ClipboardCheck, BrainCircuit, Sparkles, Users, CloudRain, AlertTriangle } from "lucide-react";
 import { useView } from "@/contexts/ViewContext";
 import { useNavigate } from "react-router-dom";
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Area, AreaChart, ComposedChart } from "recharts";
@@ -90,7 +90,6 @@ export default function Home() {
   const nextTask = {
     title: "Morning Production - BLT Sandwiches",
     time: "08:00 AM",
-    priority: "high" as const,
     type: "production" as const,
   };
 
@@ -191,9 +190,6 @@ export default function Home() {
                 <div className="space-y-2">
                   <div className="flex items-center gap-2">
                     <h3 className="font-semibold text-foreground">{nextTask.title}</h3>
-                    <Badge variant="destructive" className="text-xs">
-                      {nextTask.priority}
-                    </Badge>
                   </div>
                   <p className="text-sm text-muted-foreground">
                     Scheduled for {nextTask.time}
@@ -494,6 +490,43 @@ export default function Home() {
           </Card>
         </div>
       </div>
+
+      {/* Notable Events - Only in Store View */}
+      {viewMode === "store_manager" && (
+        <>
+          <div className="pt-2">
+            <h2 className="text-2xl font-bold text-foreground mb-4">
+              Notable events on Monday 13 October 2025
+            </h2>
+          </div>
+
+          <Card className="shadow-card border-l-4 border-l-warning bg-warning/5">
+            <CardContent className="p-4">
+              <div className="flex flex-col md:flex-row items-start md:items-center gap-4 md:gap-8">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 rounded-lg bg-primary/10">
+                    <CloudRain className="h-5 w-5 text-primary" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-muted-foreground">Predicted Weather</p>
+                    <p className="text-base font-semibold text-foreground">Rainy, 12°C - Lower footfall expected</p>
+                  </div>
+                </div>
+                <div className="h-8 w-px bg-border hidden md:block" />
+                <div className="flex items-center gap-3">
+                  <div className="p-2 rounded-lg bg-destructive/10">
+                    <AlertTriangle className="h-5 w-5 text-destructive" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-muted-foreground">Key Events</p>
+                    <p className="text-base font-semibold text-foreground">Train strike in Central London - Reduced commuter traffic</p>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </>
+      )}
     </div>
   );
 }
