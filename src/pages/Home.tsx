@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { DollarSign, TrendingUp, Trash2, CheckCircle, ArrowRight, ClipboardCheck, BrainCircuit, Sparkles, Users, CloudRain, AlertTriangle } from "lucide-react";
+import { DollarSign, TrendingUp, Trash2, CheckCircle, ArrowRight, ClipboardCheck, BrainCircuit, Sparkles, Users, CloudRain, AlertTriangle, Clock } from "lucide-react";
 import { useView } from "@/contexts/ViewContext";
 import { useNavigate } from "react-router-dom";
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Area, AreaChart, ComposedChart } from "recharts";
@@ -208,36 +208,47 @@ export default function Home() {
       )}
 
       {/* Next Task */}
-      <div>
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-semibold text-foreground">Your Next Task</h2>
-          <Button onClick={() => navigate("/tasks")} variant="outline" className="gap-2">
-            View All Tasks
-            <ArrowRight className="h-4 w-4" />
-          </Button>
-        </div>
-
-        <Card className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => navigate("/tasks")}>
-          <CardContent className="p-6">
-            <div className="flex items-start justify-between">
-              <div className="flex items-start gap-4">
-                <div className="mt-1">
-                  <ClipboardCheck className="h-5 w-5 text-primary" />
-                </div>
-                <div className="space-y-2">
-                  <div className="flex items-center gap-2">
-                    <h3 className="font-semibold text-foreground">{nextTask.title}</h3>
-                  </div>
-                  <p className="text-sm text-muted-foreground">
-                    Scheduled for {nextTask.time}
-                  </p>
+      <Card className="shadow-lg border-2 border-primary/30">
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <CardTitle className="flex items-center gap-2">
+              <ClipboardCheck className="h-6 w-6 text-primary" />
+              Your Next Task
+            </CardTitle>
+            <Button onClick={() => navigate("/tasks")} variant="outline" className="gap-2">
+              View All Tasks
+              <ArrowRight className="h-4 w-4" />
+            </Button>
+          </div>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="p-6 rounded-lg bg-gradient-to-br from-primary/10 via-accent/5 to-transparent border-2 border-primary/20">
+            <div className="flex items-start justify-between mb-3">
+              <div className="flex-1">
+                <div className="flex items-center gap-2 mb-2">
+                  <h3 className="text-2xl font-bold text-foreground">{nextTask.title}</h3>
                 </div>
               </div>
-              <ArrowRight className="h-5 w-5 text-muted-foreground" />
             </div>
-          </CardContent>
-        </Card>
-      </div>
+            
+            <div className="flex items-center justify-between pt-4 border-t border-border">
+              <div className="flex items-center gap-2 text-muted-foreground">
+                <Clock className="h-5 w-5" />
+                <span className="text-lg font-semibold">Scheduled: {nextTask.time}</span>
+              </div>
+              
+              <Button 
+                size="lg"
+                onClick={() => navigate("/tasks")}
+                className="shadow-brand"
+              >
+                View Task
+                <ArrowRight className="h-5 w-5 ml-2" />
+              </Button>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
       {/* AI Forecasts Section */}
       <div className="space-y-6">
