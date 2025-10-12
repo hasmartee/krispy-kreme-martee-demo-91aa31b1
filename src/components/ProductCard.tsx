@@ -36,12 +36,6 @@ export default function ProductCard({ product, onEdit }: ProductCardProps) {
               {product.skuId}
             </p>
           </div>
-          <Badge 
-            variant={product.inStock ? "default" : "destructive"}
-            className={product.inStock ? "bg-success text-white" : ""}
-          >
-            {product.inStock ? "In Stock" : "Out of Stock"}
-          </Badge>
         </div>
       </CardHeader>
       <CardContent className="pt-0 space-y-3">

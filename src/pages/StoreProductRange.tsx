@@ -215,7 +215,7 @@ export default function StoreProductRange() {
                          store.postcode.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          store.storeId.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesCluster = selectedCluster === "all" || store.cluster === selectedCluster;
-    const matchesViewMode = viewMode === "hq" || store.storeName === selectedStore;
+    const matchesViewMode = viewMode === "hq" || viewMode === "store_manager" || viewMode === "store_team" ? (store.storeName === selectedStore || viewMode === "hq") : false;
     return matchesSearch && matchesCluster && matchesViewMode;
   });
 
@@ -394,10 +394,10 @@ export default function StoreProductRange() {
       <div className="flex flex-col gap-4">
         <div>
           <h1 className="text-3xl font-bold text-foreground">
-            {viewMode === "store_manager" ? `My Store - ${selectedStore}` : "My Range Manager"}
+            {viewMode === "store_manager" || viewMode === "store_team" ? `My Store - ${selectedStore}` : "My Range Manager"}
           </h1>
           <p className="text-muted-foreground">
-            {viewMode === "store_manager" 
+            {viewMode === "store_manager" || viewMode === "store_team"
               ? `Manage product availability for ${selectedStore}`
               : "Manage product availability across store clusters and individual locations"
             }

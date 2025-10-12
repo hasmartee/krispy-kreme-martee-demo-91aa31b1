@@ -136,13 +136,6 @@ export default function ProductListItem({ product, onUpdate }: ProductListItemPr
             </div>
 
             <div className="flex items-center gap-2 justify-end">
-              <Badge 
-                variant={product.inStock ? "default" : "destructive"}
-                className={product.inStock ? "bg-success text-white" : ""}
-              >
-                {product.inStock ? "In Stock" : "Out of Stock"}
-              </Badge>
-              
               {isEditing ? (
                 <>
                   <Button size="sm" variant="default" onClick={handleSave}>
