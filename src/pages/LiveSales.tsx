@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Activity, CheckCircle } from "lucide-react";
 import { useView } from "@/contexts/ViewContext";
 
@@ -10,13 +11,32 @@ interface Sale {
   timestamp: Date;
   product: string;
   store: string;
+  brand: string;
   quantity: number;
   price: number;
   total: number;
 }
 
+// Brand to store mapping
+const brandStoreMap = {
+  "All Brands": ["London Bridge", "Kings Cross", "Victoria Station", "Oxford Street", "Canary Wharf", "Liverpool Street", "Paddington", "Waterloo", "Bond Street", "Leicester Square", "Covent Garden", "Bank", "Monument", "Tower Hill", "Holborn"],
+  "Pret a Manger": ["London Bridge", "Kings Cross", "Victoria Station", "Liverpool Street", "Paddington", "Waterloo", "Bank", "Monument"],
+  "Brioche Dorée": ["Oxford Street", "Canary Wharf", "Bond Street", "Leicester Square", "Covent Garden"],
+  "Starbucks": ["London Bridge", "Oxford Street", "Tower Hill", "Holborn", "Canary Wharf"]
+};
+
+// Store to brand mapping
+const storeToBrand: Record<string, string> = {};
+Object.entries(brandStoreMap).forEach(([brand, stores]) => {
+  if (brand !== "All Brands") {
+    stores.forEach(store => {
+      storeToBrand[store] = brand;
+    });
+  }
+});
+
 // Generate mock sales data with current timestamps
-const generateMockSale = (forStore?: string): Sale => {
+const generateMockSale = (forStore?: string, forBrand?: string): Sale => {
   const products = [
     { name: "Classic BLT Sandwich", price: 5.50 },
     { name: "Chicken Caesar Wrap", price: 6.00 },
@@ -28,23 +48,22 @@ const generateMockSale = (forStore?: string): Sale => {
     { name: "Vegan Buddha Bowl", price: 7.00 },
   ];
 
-  const stores = [
-    "London Bridge",
-    "Canary Wharf",
-    "King's Cross",
-    "Oxford Circus",
-    "Covent Garden",
-    "Victoria Station"
-  ];
+  let stores = brandStoreMap["All Brands"];
+  if (forBrand && forBrand !== "All Brands") {
+    stores = brandStoreMap[forBrand as keyof typeof brandStoreMap] || stores;
+  }
 
   const product = products[Math.floor(Math.random() * products.length)];
   const quantity = Math.floor(Math.random() * 3) + 1;
+  const selectedStore = forStore || stores[Math.floor(Math.random() * stores.length)];
+  const brand = storeToBrand[selectedStore] || "Pret a Manger";
 
   return {
     id: `SAL-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
     timestamp: new Date(),
     product: product.name,
-    store: forStore || stores[Math.floor(Math.random() * stores.length)],
+    store: selectedStore,
+    brand,
     quantity,
     price: product.price,
     total: product.price * quantity
@@ -55,6 +74,13 @@ export default function LiveSales() {
   const { viewMode, selectedStore } = useView();
   const [sales, setSales] = useState<Sale[]>([]);
   const [isLive, setIsLive] = useState(true);
+  const [selectedBrand, setSelectedBrand] = useState<string>("All Brands");
+  const [selectedStoreFilter, setSelectedStoreFilter] = useState<string>("All");
+
+  // Available stores based on selected brand
+  const availableStores = selectedBrand === "All Brands" 
+    ? ["All", ...brandStoreMap["All Brands"]]
+    : ["All", ...brandStoreMap[selectedBrand as keyof typeof brandStoreMap]];
 
   // Initialize with some sales
   useEffect(() => {
@@ -73,7 +99,10 @@ export default function LiveSales() {
     if (!isLive) return;
 
     const addNewSale = () => {
-      const newSale = generateMockSale(viewMode === "store_manager" ? selectedStore : undefined);
+      const newSale = generateMockSale(
+        viewMode === "store_manager" ? selectedStore : undefined,
+        viewMode === "hq" ? selectedBrand : undefined
+      );
       setSales(prevSales => [newSale, ...prevSales].slice(0, 50)); // Keep only last 50 sales
     };
 
@@ -86,12 +115,22 @@ export default function LiveSales() {
     }, Math.random() * 4000 + 3000); // Random interval between 3-7 seconds
 
     return () => clearInterval(interval);
-  }, [isLive, viewMode, selectedStore]);
+  }, [isLive, viewMode, selectedStore, selectedBrand]);
 
   // Filter sales by store if in store view
-  const filteredSales = viewMode === "store_manager" 
+  let filteredSales = viewMode === "store_manager" 
     ? sales.filter(sale => sale.store === selectedStore)
     : sales;
+  
+  // Apply brand and store filters for HQ view
+  if (viewMode === "hq") {
+    if (selectedBrand !== "All Brands") {
+      filteredSales = filteredSales.filter(sale => sale.brand === selectedBrand);
+    }
+    if (selectedStoreFilter !== "All") {
+      filteredSales = filteredSales.filter(sale => sale.store === selectedStoreFilter);
+    }
+  }
 
   const formatTime = (date: Date) => {
     return date.toLocaleTimeString('en-GB', { 
@@ -125,6 +164,57 @@ export default function LiveSales() {
           Real-time sales data from POS system integration
         </p>
       </div>
+
+      {/* Brand and Store Filters for HQ View */}
+      {viewMode === "hq" && (
+        <Card className="shadow-card border-l-4 border-l-[#7e9f57]">
+          <CardContent className="py-4">
+            <div className="space-y-4">
+              {/* Brand Filter - Higher Level */}
+              <div className="flex items-center gap-4">
+                <label className="text-sm font-medium">My Brand:</label>
+                <Select value={selectedBrand} onValueChange={(v) => {
+                  setSelectedBrand(v);
+                  setSelectedStoreFilter("All");
+                }}>
+                  <SelectTrigger className="w-[200px] h-9 border-[#7e9f57] focus:ring-[#7e9f57] font-semibold">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="All Brands">All Brands</SelectItem>
+                    <SelectItem value="Pret a Manger">Pret a Manger</SelectItem>
+                    <SelectItem value="Brioche Dorée">Brioche Dorée</SelectItem>
+                    <SelectItem value="Starbucks">Starbucks</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Store Filter */}
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                  <label className="text-sm font-medium">Filter by Store:</label>
+                  <Select value={selectedStoreFilter} onValueChange={setSelectedStoreFilter}>
+                    <SelectTrigger className="w-[180px] h-9 border-[#7e9f57] focus:ring-[#7e9f57]">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {availableStores.map(store => (
+                        <SelectItem key={store} value={store}>{store}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm text-muted-foreground">Viewing:</span>
+                  <Badge className="bg-[#7e9f57] text-white font-semibold">
+                    {selectedBrand} • {selectedStoreFilter}
+                  </Badge>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* POS Integration Status */}
       <Card className="shadow-card border-success/20 bg-gradient-to-r from-background to-success/5">

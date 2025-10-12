@@ -56,6 +56,14 @@ const clusterProducts = {
   ],
 };
 
+// Brand to store mapping
+const brandStoreMap = {
+  "All Brands": ["London Bridge", "Kings Cross", "Victoria Station", "Oxford Street", "Canary Wharf", "Liverpool Street", "Paddington", "Waterloo", "Bond Street", "Leicester Square", "Covent Garden", "Bank", "Monument", "Tower Hill", "Holborn"],
+  "Pret a Manger": ["London Bridge", "Kings Cross", "Victoria Station", "Liverpool Street", "Paddington", "Waterloo", "Bank", "Monument"],
+  "Brioche Dorée": ["Oxford Street", "Canary Wharf", "Bond Street", "Leicester Square", "Covent Garden"],
+  "Starbucks": ["London Bridge", "Oxford Street", "Tower Hill", "Holborn", "Canary Wharf"]
+};
+
 export default function Inventory() {
   const { viewMode, selectedStore } = useView();
   const { toast } = useToast();
@@ -63,6 +71,7 @@ export default function Inventory() {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<"all" | "in_stock" | "low_stock" | "sold_out">("all");
+  const [selectedBrand, setSelectedBrand] = useState<string>("All Brands");
   const [storeFilter, setStoreFilter] = useState<string>("all");
   const [stores, setStores] = useState<{ id: string; name: string; cluster: string }[]>([]);
   const [stockTakeMode, setStockTakeMode] = useState(false);
@@ -70,6 +79,11 @@ export default function Inventory() {
   const [editingStocks, setEditingStocks] = useState<Record<string, number>>({});
   const [editingWaste, setEditingWaste] = useState<Record<string, number>>({});
   const [expandedStores, setExpandedStores] = useState<string[]>([]);
+
+  // Available stores based on selected brand
+  const availableStores = selectedBrand === "All Brands" 
+    ? stores
+    : stores.filter(s => brandStoreMap[selectedBrand as keyof typeof brandStoreMap]?.includes(s.name));
 
   useEffect(() => {
     loadStores();
@@ -455,43 +469,88 @@ export default function Inventory() {
       {/* Filters */}
       <Card className="shadow-card">
         <CardContent className="p-4">
-          <div className="flex flex-col md:flex-row gap-4">
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Search by product name or SKU..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-9"
-              />
+          {viewMode === "hq" ? (
+            <div className="space-y-4">
+              {/* Brand Filter - Higher Level */}
+              <div className="flex items-center gap-4">
+                <label className="text-sm font-medium">My Brand:</label>
+                <Select value={selectedBrand} onValueChange={(v) => {
+                  setSelectedBrand(v);
+                  setStoreFilter("all");
+                }}>
+                  <SelectTrigger className="w-[200px] h-9 border-[#7e9f57] focus:ring-[#7e9f57] font-semibold">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="All Brands">All Brands</SelectItem>
+                    <SelectItem value="Pret a Manger">Pret a Manger</SelectItem>
+                    <SelectItem value="Brioche Dorée">Brioche Dorée</SelectItem>
+                    <SelectItem value="Starbucks">Starbucks</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Search and Filters */}
+              <div className="flex flex-col md:flex-row gap-4">
+                <div className="relative flex-1">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    placeholder="Search by product name or SKU..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="pl-9"
+                  />
+                </div>
+                <Select value={statusFilter} onValueChange={(value: any) => setStatusFilter(value)}>
+                  <SelectTrigger className="w-[180px]">
+                    <SelectValue placeholder="Filter by status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Status</SelectItem>
+                    <SelectItem value="in_stock">In Stock</SelectItem>
+                    <SelectItem value="low_stock">Low Stock</SelectItem>
+                    <SelectItem value="sold_out">Out of Stock</SelectItem>
+                  </SelectContent>
+                </Select>
+                <Select value={storeFilter} onValueChange={setStoreFilter}>
+                  <SelectTrigger className="w-[200px]">
+                    <SelectValue placeholder="Filter by store" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Stores</SelectItem>
+                    {availableStores.map(store => (
+                      <SelectItem key={store.id} value={store.name}>
+                        {store.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
-            <Select value={statusFilter} onValueChange={(value: any) => setStatusFilter(value)}>
-              <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="Filter by status" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Status</SelectItem>
-                <SelectItem value="in_stock">In Stock</SelectItem>
-                <SelectItem value="low_stock">Low Stock</SelectItem>
-                <SelectItem value="sold_out">Out of Stock</SelectItem>
-              </SelectContent>
-            </Select>
-            {viewMode === "hq" && (
-              <Select value={storeFilter} onValueChange={setStoreFilter}>
-                <SelectTrigger className="w-[200px]">
-                  <SelectValue placeholder="Filter by store" />
+          ) : (
+            <div className="flex flex-col md:flex-row gap-4">
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  placeholder="Search by product name or SKU..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-9"
+                />
+              </div>
+              <Select value={statusFilter} onValueChange={(value: any) => setStatusFilter(value)}>
+                <SelectTrigger className="w-[180px]">
+                  <SelectValue placeholder="Filter by status" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All Stores</SelectItem>
-                  {stores.map(store => (
-                    <SelectItem key={store.id} value={store.name}>
-                      {store.name}
-                    </SelectItem>
-                  ))}
+                  <SelectItem value="all">All Status</SelectItem>
+                  <SelectItem value="in_stock">In Stock</SelectItem>
+                  <SelectItem value="low_stock">Low Stock</SelectItem>
+                  <SelectItem value="sold_out">Out of Stock</SelectItem>
                 </SelectContent>
               </Select>
-            )}
-          </div>
+            </div>
+          )}
         </CardContent>
       </Card>
 
