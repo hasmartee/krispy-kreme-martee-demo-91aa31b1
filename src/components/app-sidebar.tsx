@@ -25,7 +25,6 @@ const mainNavigationStoreManager = [
   { title: "Suggested Production", url: "/suggested-production", icon: TrendingUp },
   { title: "Live Availability", url: "/inventory", icon: Package },
   { title: "Live Sales", url: "/live-sales", icon: Activity },
-  { title: "Settings", url: "/settings", icon: Settings },
 ];
 
 const mainNavigationStoreTeam = [
@@ -42,7 +41,6 @@ const mainNavigationHQ = [
   { title: "Suggested Production", url: "/suggested-production", icon: TrendingUp },
   { title: "Live Availability", url: "/inventory", icon: Package },
   { title: "Live Sales", url: "/live-sales", icon: Activity },
-  { title: "Settings", url: "/settings", icon: Settings },
 ];
 
 const settingsNavigationHQ = [
