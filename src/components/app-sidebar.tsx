@@ -58,7 +58,7 @@ export function AppSidebar() {
           </div>
           <div>
             <h2 className="text-lg font-bold text-foreground">Martee AI</h2>
-            <p className="text-xs text-muted-foreground">Moto Hospitality</p>
+            <p className="text-xs text-muted-foreground">SSP</p>
           </div>
         </div>
       </SidebarHeader>

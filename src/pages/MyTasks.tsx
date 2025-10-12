@@ -96,21 +96,21 @@ export default function MyTasks() {
     // Initialize tasks with preparation and stock check tasks
     const tasksList: Task[] = [
       {
-        id: "1",
-        type: "production",
-        title: "Prepare Breakfast Items",
-        time: "05:30",
-        completed: false,
-        details: "Prepare breakfast sandwiches, bagels, and parfaits",
-        priority: "high"
-      },
-      {
         id: "7",
         type: "production",
         title: "Confirm morning production",
         time: "06:30",
         completed: false,
         details: "Verify all breakfast items are prepared and displayed",
+        priority: "high"
+      },
+      {
+        id: "1",
+        type: "production",
+        title: "Prepare Breakfast Items",
+        time: "05:30",
+        completed: false,
+        details: "Prepare breakfast sandwiches, bagels, and parfaits",
         priority: "high"
       },
       {
