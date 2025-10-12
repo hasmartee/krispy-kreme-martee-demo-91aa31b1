@@ -88,7 +88,7 @@ export default function Home() {
 
   // Mock next task data
   const nextTask = {
-    title: "Morning Production - BLT Sandwiches",
+    title: "Complete Morning Production",
     time: "08:00 AM",
     type: "production" as const,
   };
@@ -243,7 +243,7 @@ export default function Home() {
       <div className="space-y-6">
         <div className="flex items-center gap-2">
           <BrainCircuit className="h-6 w-6 text-primary" />
-          <h2 className="text-2xl font-bold text-foreground">AI-Powered Forecasts</h2>
+          <h2 className="text-xl font-semibold text-foreground">AI-Powered Forecasts</h2>
           <Sparkles className="h-5 w-5 text-primary animate-pulse" />
         </div>
 

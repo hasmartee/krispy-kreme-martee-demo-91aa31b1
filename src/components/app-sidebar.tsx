@@ -20,7 +20,7 @@ import {
 
 const mainNavigationStoreManager = [
   { title: "Home", url: "/", icon: Home },
-  { title: "My Tasks", url: "/tasks", icon: CheckSquare, highlight: true },
+  { title: "My Tasks", url: "/tasks", icon: CheckSquare },
   { title: "Performance", url: "/analytics", icon: BarChart3 },
   { title: "Suggested Production", url: "/suggested-production", icon: TrendingUp },
   { title: "Live Availability", url: "/inventory", icon: Package },
@@ -29,14 +29,14 @@ const mainNavigationStoreManager = [
 
 const mainNavigationStoreTeam = [
   { title: "Home", url: "/store-team-home", icon: Home },
-  { title: "My Tasks", url: "/tasks", icon: CheckSquare, highlight: true },
+  { title: "My Tasks", url: "/tasks", icon: CheckSquare },
   { title: "Production", url: "/production", icon: ChefHat },
   { title: "Live Availability", url: "/inventory", icon: Package },
 ];
 
 const mainNavigationHQ = [
   { title: "Home", url: "/", icon: Home },
-  { title: "My Tasks", url: "/tasks", icon: CheckSquare, highlight: true },
+  { title: "My Tasks", url: "/tasks", icon: CheckSquare },
   { title: "Performance", url: "/analytics", icon: BarChart3 },
   { title: "Suggested Production", url: "/suggested-production", icon: TrendingUp },
   { title: "Live Availability", url: "/inventory", icon: Package },
@@ -105,18 +105,15 @@ export function AppSidebar() {
           <SidebarGroupContent>
             <SidebarMenu>
               {mainNavigation.map((item) => {
-                const isHighlight = item.highlight;
                 return (
                   <SidebarMenuItem key={item.title}>
                     <NavLink 
                       to={item.url} 
                       className={({ isActive }) => `
                         flex items-center gap-3 px-3 py-2 rounded-lg transition-all
-                        ${isHighlight && !isActive 
-                          ? "bg-gradient-to-r from-primary/10 to-accent/10 border border-primary/20 text-foreground font-semibold hover:from-primary/20 hover:to-accent/20" 
-                          : isActive 
-                            ? "bg-primary text-primary-foreground font-semibold shadow-md" 
-                            : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                        ${isActive 
+                          ? "bg-primary text-primary-foreground font-semibold shadow-md" 
+                          : "text-muted-foreground hover:bg-muted hover:text-foreground"
                         }
                       `}
                     >
