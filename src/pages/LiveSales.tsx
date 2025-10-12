@@ -57,8 +57,9 @@ const generateMockSale = (forStore?: string, forBrand?: string): Sale => {
     { name: "Vegan Buddha Bowl", price: 7.00 },
   ];
 
-  let stores = brandStoreMap["All Brands"];
-  if (forBrand && forBrand !== "All Brands") {
+  // Get all stores from all brands
+  let stores = Object.values(brandStoreMap).flat();
+  if (forBrand) {
     stores = brandStoreMap[forBrand as keyof typeof brandStoreMap] || stores;
   }
 
