@@ -7,6 +7,7 @@ import { Layout } from "@/components/ui/layout";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { ViewProvider } from "@/contexts/ViewContext";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
+import Home from "./pages/Home";
 import SuggestedProduction from "./pages/SuggestedProduction";
 import SuggestedOrdering from "./pages/SuggestedOrdering";
 import ProductRange from "./pages/ProductRange";
@@ -40,7 +41,7 @@ const App = () => (
                   <ProtectedRoute>
                     <Layout>
                     <Routes>
-                      <Route path="/" element={<Navigate to="/analytics" replace />} />
+                      <Route path="/" element={<Home />} />
                       <Route path="/analytics" element={<Analytics />} />
                       <Route path="/live-sales" element={<LiveSales />} />
                       <Route path="/suggested-production" element={<SuggestedProduction />} />

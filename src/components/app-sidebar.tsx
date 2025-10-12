@@ -1,4 +1,4 @@
-import { BarChart3, Package, Store, TrendingUp, ShoppingCart, Settings, ChevronRight, Target, BookOpen, CheckSquare, Activity, Truck } from "lucide-react";
+import { BarChart3, Package, Store, TrendingUp, ShoppingCart, Settings, ChevronRight, Target, BookOpen, CheckSquare, Activity, Truck, Home } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import { useState } from "react";
 import {
@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/collapsible";
 
 const mainNavigation = [
+  { title: "Home", url: "/", icon: Home },
   { title: "My Tasks", url: "/tasks", icon: CheckSquare, highlight: true },
   { title: "Performance", url: "/analytics", icon: BarChart3 },
   { title: "Suggested Production", url: "/suggested-production", icon: TrendingUp },
