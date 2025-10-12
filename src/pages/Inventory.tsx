@@ -98,28 +98,32 @@ export default function Inventory() {
   const loadInventory = async () => {
     setLoading(true);
     try {
-      if (viewMode === "store_manager") {
-        // Store view: Show products ranged in this store based on cluster
+      if (viewMode === "store_manager" || viewMode === "store_team") {
+        // Store view: Show ALL products for store team, or cluster-based for manager
         const { data: storeData } = await supabase
           .from("stores")
           .select("id, cluster")
           .eq("name", selectedStore)
           .maybeSingle();
 
-        if (!storeData || !storeData.cluster) {
+        if (!storeData) {
           setInventory([]);
           setLoading(false);
           return;
         }
 
-        // Get products based on store cluster
-        const clusterSkus = clusterProducts[storeData.cluster as keyof typeof clusterProducts] || [];
-        
-        const { data: products } = await supabase
+        // For store_team, get ALL products; for store_manager, filter by cluster
+        let productsQuery = supabase
           .from("products")
           .select("*")
-          .in("sku", clusterSkus)
-          .order("name");
+          .order("sku");
+
+        if (viewMode === "store_manager" && storeData.cluster) {
+          const clusterSkus = clusterProducts[storeData.cluster as keyof typeof clusterProducts] || [];
+          productsQuery = productsQuery.in("sku", clusterSkus);
+        }
+
+        const { data: products } = await productsQuery;
 
         if (!products) {
           setInventory([]);
@@ -311,10 +315,10 @@ export default function Inventory() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-foreground">
-            {viewMode === "store_manager" ? `${selectedStore} - Live Availability` : "Live Availability - All Stores"}
+            {viewMode === "store_manager" || viewMode === "store_team" ? `${selectedStore} - Live Availability` : "Live Availability - All Stores"}
           </h1>
           <p className="text-muted-foreground">
-            {viewMode === "store_manager" 
+            {viewMode === "store_manager" || viewMode === "store_team"
               ? "Real-time product availability for your store"
               : "Monitor product availability across all stores"
             }

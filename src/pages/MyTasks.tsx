@@ -101,7 +101,7 @@ export default function MyTasks() {
         title: "Morning Production",
         time: "06:30",
         completed: false,
-        details: "Prepare and verify all breakfast items are ready",
+        details: "Complete all breakfast items production",
         priority: "high"
       },
       {
@@ -110,7 +110,7 @@ export default function MyTasks() {
         title: "Lunchtime Production",
         time: "11:00",
         completed: false,
-        details: "Prepare sandwiches, wraps, and salads for lunch service",
+        details: "Complete sandwiches, wraps, and salads for lunch service",
         priority: "high"
       },
       {
@@ -119,7 +119,7 @@ export default function MyTasks() {
         title: "Afternoon Production",
         time: "14:00",
         completed: false,
-        details: "Prepare afternoon snacks and light meals",
+        details: "Complete afternoon snacks and light meals",
         priority: "medium"
       },
       {
