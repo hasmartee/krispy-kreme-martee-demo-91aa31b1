@@ -544,62 +544,6 @@ export default function VolumeAllocation() {
         </Card>
       )}
 
-      {/* Day Part Tabs - Only for Store Manager View */}
-      {viewMode === "store_manager" && (
-        <Card className="shadow-card border-2 border-primary/20 bg-gradient-to-r from-primary/5 to-transparent">
-          <CardHeader className="pb-4">
-            <CardTitle className="text-xl">Production Day Part</CardTitle>
-            <CardDescription>Select which part of the day to view production recommendations for</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="flex gap-3">
-              {dayParts.map((dayPart) => (
-                <Button
-                  key={dayPart.name}
-                  variant={selectedDayPart === dayPart.name ? "default" : "outline"}
-                  size="lg"
-                  onClick={() => setSelectedDayPart(dayPart.name)}
-                  className="flex-1 h-16 text-base font-semibold"
-                >
-                  <div className="flex flex-col items-center">
-                    <span>{dayPart.name}</span>
-                    <span className="text-xs font-normal opacity-80">{dayPart.time}</span>
-                  </div>
-                </Button>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      )}
-
-      {/* Day Part Selector - Only for HQ View */}
-      {viewMode !== "store_manager" && (
-        <Card className="shadow-card border-2 border-primary/20 bg-gradient-to-r from-primary/5 to-transparent">
-          <CardHeader className="pb-4">
-            <CardTitle className="text-xl">Production Day Part</CardTitle>
-            <CardDescription>Select which part of the day to view production recommendations for</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="flex gap-3">
-              {dayParts.map((dayPart) => (
-                <Button
-                  key={dayPart.name}
-                  variant={selectedDayPart === dayPart.name ? "default" : "outline"}
-                  size="lg"
-                  onClick={() => setSelectedDayPart(dayPart.name)}
-                  className="flex-1 h-16 text-base font-semibold"
-                >
-                  <div className="flex flex-col items-center">
-                    <span>{dayPart.name}</span>
-                    <span className="text-xs font-normal opacity-80">{dayPart.time}</span>
-                  </div>
-                </Button>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      )}
-
       {/* Notable Events - Only in Store View */}
       {viewMode === "store_manager" && (
         <>
@@ -686,6 +630,50 @@ export default function VolumeAllocation() {
           </div>
         </CardHeader>
         <CardContent>
+          {/* Day Part Tabs - Store Manager View */}
+          {viewMode === "store_manager" && (
+            <div className="mb-6 p-4 bg-gradient-to-r from-primary/5 to-transparent rounded-lg border-2 border-primary/20">
+              <div className="flex gap-3">
+                {dayParts.map((dayPart) => (
+                  <Button
+                    key={dayPart.name}
+                    variant={selectedDayPart === dayPart.name ? "default" : "outline"}
+                    size="lg"
+                    onClick={() => setSelectedDayPart(dayPart.name)}
+                    className="flex-1 h-14 text-base font-semibold"
+                  >
+                    <div className="flex flex-col items-center">
+                      <span>{dayPart.name}</span>
+                      <span className="text-xs font-normal opacity-80">{dayPart.time}</span>
+                    </div>
+                  </Button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Day Part Selector - HQ View */}
+          {viewMode !== "store_manager" && (
+            <div className="mb-6 p-4 bg-gradient-to-r from-primary/5 to-transparent rounded-lg border-2 border-primary/20">
+              <div className="flex gap-3">
+                {dayParts.map((dayPart) => (
+                  <Button
+                    key={dayPart.name}
+                    variant={selectedDayPart === dayPart.name ? "default" : "outline"}
+                    size="lg"
+                    onClick={() => setSelectedDayPart(dayPart.name)}
+                    className="flex-1 h-14 text-base font-semibold"
+                  >
+                    <div className="flex flex-col items-center">
+                      <span>{dayPart.name}</span>
+                      <span className="text-xs font-normal opacity-80">{dayPart.time}</span>
+                    </div>
+                  </Button>
+                ))}
+              </div>
+            </div>
+          )}
+
           {viewMode === "store_manager" ? (
             // Store Manager View - Products as rows with single day part showing
             <Table>
