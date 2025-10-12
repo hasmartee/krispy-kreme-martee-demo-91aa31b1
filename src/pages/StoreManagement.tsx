@@ -40,6 +40,47 @@ interface DeliverySchedule {
   is_active: boolean;
 }
 
+// Brand-specific store counts (matching homepage)
+const brandStoreCounts = {
+  "Pret a Manger": 156,
+  "Brioche Dorée": 118,
+  "Starbucks": 112
+};
+
+// Brand to store name mapping (which stores belong to which brand)
+const storeBrands: Record<string, string> = {
+  // Pret a Manger stores (London locations)
+  "London Bridge": "Pret a Manger",
+  "Kings Cross": "Pret a Manger",
+  "Victoria Station": "Pret a Manger",
+  "Liverpool Street": "Pret a Manger",
+  "Paddington": "Pret a Manger",
+  "Waterloo": "Pret a Manger",
+  "Bank": "Pret a Manger",
+  "Monument": "Pret a Manger",
+  "Shoreditch": "Pret a Manger",
+  "Camden": "Pret a Manger",
+  "Clapham": "Pret a Manger",
+  "Wimbledon": "Pret a Manger",
+  "Greenwich": "Pret a Manger",
+  
+  // Brioche Dorée stores
+  "Oxford Street": "Brioche Dorée",
+  "Canary Wharf": "Brioche Dorée",
+  "Bond Street": "Brioche Dorée",
+  "Leicester Square": "Brioche Dorée",
+  "Covent Garden": "Brioche Dorée",
+  "Notting Hill": "Brioche Dorée",
+  "Chelsea": "Brioche Dorée",
+  "Hampstead": "Brioche Dorée",
+  
+  // Starbucks stores
+  "Tower Hill": "Starbucks",
+  "Holborn": "Starbucks",
+  "Richmond": "Starbucks",
+  "Brixton": "Starbucks"
+};
+
 // Mock store data inspired by Pret a Manger locations
 const initialMockStores: Store[] = [
   {
@@ -930,8 +971,15 @@ export default function StoreManagement() {
     
     const matchesViewMode = viewMode === "hq" || store.name === contextSelectedStore;
     
-    return matchesSearch && matchesViewMode;
+    // Filter by brand
+    const storeBrand = storeBrands[store.name] || "Pret a Manger";
+    const matchesBrand = selectedBrand === storeBrand;
+    
+    return matchesSearch && matchesViewMode && (viewMode === "store_manager" || matchesBrand);
   });
+
+  // Get the total store count for the selected brand
+  const totalBrandStores = brandStoreCounts[selectedBrand as keyof typeof brandStoreCounts] || 0;
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -1131,9 +1179,14 @@ export default function StoreManagement() {
             <div className="text-2xl font-bold text-foreground">
               {viewMode === "store_manager" && filteredStores.length > 0 
                 ? filteredStores[0].status === 'active' ? 'Active' : filteredStores[0].status
-                : filteredStores.length
+                : totalBrandStores
               }
             </div>
+            {viewMode === "hq" && (
+              <p className="text-xs text-muted-foreground mt-1">
+                Showing {filteredStores.length} sample stores
+              </p>
+            )}
           </CardContent>
         </Card>
         

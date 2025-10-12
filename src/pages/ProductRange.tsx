@@ -1,4 +1,4 @@
-import { useState, useRef, useMemo } from "react";
+import { useState, useRef, useMemo, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -32,270 +32,76 @@ import coffeePastryCombo from "@/assets/products/coffee-pastry-combo.jpg";
 import scrambledEggsSourdough from "@/assets/products/scrambled-eggs-sourdough.jpg";
 import porridgeHoneyNuts from "@/assets/products/porridge-honey-nuts.jpg";
 
-// Mock product data inspired by Pret a Manger
-const initialProducts = [
-  {
-    skuId: "SK001",
-    name: "Classic BLT Sandwich",
-    category: "Sandwiches",
-    price: 4.95,
-    costPrice: 2.10,
-    inStock: true,
-    image: bltSandwich,
-    allergens: ["Gluten", "Egg"],
-    shelfLife: 2,
-    ingredients: ["Bacon", "Romaine Lettuce", "Tomato", "Whole Wheat Bread"],
-    dayParts: ["lunch", "afternoon"],
-  },
-  {
-    skuId: "SK002", 
-    name: "Chicken Caesar Wrap",
-    category: "Wraps",
-    price: 5.45,
-    costPrice: 2.35,
-    inStock: true,
-    image: chickenCaesarWrap,
-    allergens: ["Gluten", "Dairy", "Fish"],
-    shelfLife: 2,
-    ingredients: ["Chicken Breast", "Romaine Lettuce", "Parmesan Cheese", "Caesar Dressing", "Tortilla Wrap"],
-    dayParts: ["lunch", "afternoon"],
-  },
-  {
-    skuId: "SK003",
-    name: "Avocado & Hummus Wrap",
-    category: "Wraps", 
-    price: 4.75,
-    costPrice: 1.95,
-    inStock: true,
-    image: avocadoHummusWrap,
-    allergens: ["Gluten", "Sesame"],
-    shelfLife: 2,
-    ingredients: ["Avocado", "Hummus", "Tortilla Wrap"],
-    dayParts: ["lunch", "afternoon"],
-  },
-  {
-    skuId: "SK004",
-    name: "Tuna Melt Panini",
-    category: "Hot Food",
-    price: 5.25,
-    costPrice: 2.20,
-    inStock: false,
-    image: tunaMeltPanini,
-    allergens: ["Gluten", "Fish", "Dairy"],
-    shelfLife: 1,
-    ingredients: [],
-    dayParts: ["lunch"],
-  },
-  {
-    skuId: "SK005",
-    name: "Mediterranean Salad Bowl",
-    category: "Salads",
-    price: 6.50,
-    costPrice: 2.80,
-    inStock: true,
-    image: mediterraneanSalad,
-    allergens: ["Dairy"],
-    shelfLife: 3,
-    ingredients: [],
-    dayParts: ["lunch"],
-  },
-  {
-    skuId: "SK006",
-    name: "Chicken & Bacon Sandwich",
-    category: "Sandwiches",
-    price: 5.75,
-    costPrice: 2.45,
-    inStock: true,
-    image: chickenBaconSandwich,
-    allergens: ["Gluten"],
-    shelfLife: 2,
-    ingredients: [],
-    dayParts: ["lunch", "afternoon"],
-  },
-  {
-    skuId: "SK007",
-    name: "Vegan No-Chicken Wrap",
-    category: "Wraps",
-    price: 4.95,
-    costPrice: 2.05,
-    inStock: true,
-    image: veganWrap,
-    allergens: ["Gluten", "Soya"],
-    shelfLife: 2,
-    ingredients: [],
-    dayParts: ["lunch"],
-  },
-  {
-    skuId: "SK008",
-    name: "Greek Feta Salad",
-    category: "Salads",
-    price: 5.95,
-    costPrice: 2.55,
-    inStock: true,
-    image: greekFetaSalad,
-    allergens: ["Dairy"],
-    shelfLife: 3,
-    ingredients: ["Feta Cheese", "Tomato", "Cucumber", "Kalamata Olives"],
-    dayParts: ["lunch"],
-  },
-  // Breakfast items
-  {
-    skuId: "SK051",
-    name: "Bacon & Egg Roll",
-    category: "Breakfast",
-    price: 4.25,
-    costPrice: 1.85,
-    inStock: true,
-    image: baconEggRoll,
-    allergens: ["Gluten", "Egg"],
-    shelfLife: 1,
-    ingredients: ["Bacon", "Fried Egg", "Bread Roll"],
-    dayParts: ["breakfast"],
-  },
-  {
-    skuId: "SK052",
-    name: "Avocado Toast with Poached Egg",
-    category: "Breakfast",
-    price: 5.95,
-    costPrice: 2.45,
-    inStock: true,
-    image: avocadoToastEgg,
-    allergens: ["Gluten", "Egg"],
-    shelfLife: 1,
-    ingredients: ["Avocado", "Poached Egg", "Sourdough Bread"],
-    dayParts: ["breakfast"],
-  },
-  {
-    skuId: "SK053",
-    name: "Fruit & Yogurt Parfait",
-    category: "Breakfast",
-    price: 4.50,
-    costPrice: 1.95,
-    inStock: true,
-    image: fruitYogurtPar,
-    allergens: ["Dairy"],
-    shelfLife: 2,
-    ingredients: ["Yogurt", "Strawberries", "Blueberries", "Granola"],
-    dayParts: ["breakfast"],
-  },
-  {
-    skuId: "SK054",
-    name: "Breakfast Burrito",
-    category: "Breakfast",
-    price: 5.75,
-    costPrice: 2.35,
-    inStock: true,
-    image: breakfastBurrito,
-    allergens: ["Gluten", "Egg", "Dairy"],
-    shelfLife: 1,
-    ingredients: ["Scrambled Eggs", "Cheese", "Bacon", "Tortilla"],
-    dayParts: ["breakfast"],
-  },
-  {
-    skuId: "SK055",
-    name: "Granola Bowl with Berries",
-    category: "Breakfast",
-    price: 4.95,
-    costPrice: 2.10,
-    inStock: true,
-    image: granolaBowl,
-    allergens: ["Gluten", "Nuts", "Dairy"],
-    shelfLife: 2,
-    ingredients: ["Granola", "Fresh Berries", "Yogurt"],
-    dayParts: ["breakfast"],
-  },
-  {
-    skuId: "SK056",
-    name: "Egg & Cheese Muffin",
-    category: "Breakfast",
-    price: 3.95,
-    costPrice: 1.70,
-    inStock: true,
-    image: eggCheeseMuffin,
-    allergens: ["Gluten", "Egg", "Dairy"],
-    shelfLife: 1,
-    ingredients: ["Fried Egg", "Cheese", "English Muffin"],
-    dayParts: ["breakfast"],
-  },
-  {
-    skuId: "SK057",
-    name: "Almond Butter & Banana Toast",
-    category: "Breakfast",
-    price: 4.75,
-    costPrice: 2.00,
-    inStock: true,
-    image: almondButterBananaToast,
-    allergens: ["Gluten", "Nuts"],
-    shelfLife: 1,
-    ingredients: ["Almond Butter", "Banana", "Bread"],
-    dayParts: ["breakfast"],
-  },
-  {
-    skuId: "SK058",
-    name: "Coffee & Pastry Combo",
-    category: "Breakfast",
-    price: 5.25,
-    costPrice: 2.15,
-    inStock: true,
-    image: coffeePastryCombo,
-    allergens: ["Gluten", "Dairy", "Egg"],
-    shelfLife: 1,
-    ingredients: ["Cappuccino", "Fresh Croissant"],
-    dayParts: ["breakfast"],
-  },
-  {
-    skuId: "SK059",
-    name: "Scrambled Eggs on Sourdough",
-    category: "Breakfast",
-    price: 5.25,
-    costPrice: 2.20,
-    inStock: true,
-    image: scrambledEggsSourdough,
-    allergens: ["Gluten", "Egg", "Dairy"],
-    shelfLife: 1,
-    ingredients: ["Scrambled Eggs", "Sourdough Toast"],
-    dayParts: ["breakfast"],
-  },
-  {
-    skuId: "SK060",
-    name: "Porridge with Honey & Nuts",
-    category: "Breakfast",
-    price: 3.95,
-    costPrice: 1.65,
-    inStock: true,
-    image: porridgeHoneyNuts,
-    allergens: ["Gluten", "Nuts"],
-    shelfLife: 1,
-    ingredients: ["Oats", "Honey", "Almonds", "Walnuts"],
-    dayParts: ["breakfast"],
-  },
-  {
-    skuId: "SK061",
-    name: "Ham & Cheese Croissant",
-    category: "Breakfast",
-    price: 3.75,
-    costPrice: 1.50,
-    inStock: true,
-    image: hamCheeseCroissant,
-    allergens: ["Gluten", "Dairy", "Egg"],
-    shelfLife: 1,
-    ingredients: [],
-    dayParts: ["breakfast"],
-  },
-  {
-    skuId: "SK062",
-    name: "Smoked Salmon Bagel",
-    category: "Breakfast",
-    price: 5.95,
-    costPrice: 2.65,
-    inStock: true,
-    image: salmonBagel,
-    allergens: ["Gluten", "Fish", "Dairy"],
-    shelfLife: 2,
-    ingredients: ["Smoked Salmon", "Cream Cheese", "Bagel"],
-    dayParts: ["breakfast"],
-  }
-];
+// Brand-specific product catalogs
+const brandProducts = {
+  "Pret a Manger": [
+    // Breakfast/Morning Baguettes
+    { skuId: "PRET-001", name: "Bacon & Egg Baguette", category: "Breakfast", price: 4.75, costPrice: 2.10, inStock: true, image: baconEggRoll, allergens: ["Gluten", "Egg"], shelfLife: 1, ingredients: [], dayParts: ["breakfast"] },
+    { skuId: "PRET-002", name: "Sausage & Egg Baguette", category: "Breakfast", price: 4.75, costPrice: 2.10, inStock: true, image: hamCheeseCroissant, allergens: ["Gluten", "Egg"], shelfLife: 1, ingredients: [], dayParts: ["breakfast"] },
+    { skuId: "PRET-003", name: "Ham & Cheese Croissant", category: "Breakfast", price: 3.75, costPrice: 1.50, inStock: true, image: hamCheeseCroissant, allergens: ["Gluten", "Dairy", "Egg"], shelfLife: 1, ingredients: [], dayParts: ["breakfast"] },
+    { skuId: "PRET-004", name: "Almond Croissant", category: "Breakfast", price: 3.25, costPrice: 1.35, inStock: true, image: coffeePastryCombo, allergens: ["Gluten", "Nuts", "Dairy"], shelfLife: 1, ingredients: [], dayParts: ["breakfast"] },
+    { skuId: "PRET-005", name: "Porridge with Honey", category: "Breakfast", price: 3.45, costPrice: 1.45, inStock: true, image: porridgeHoneyNuts, allergens: ["Gluten", "Dairy"], shelfLife: 1, ingredients: [], dayParts: ["breakfast"] },
+    { skuId: "PRET-006", name: "Granola & Yogurt Pot", category: "Breakfast", price: 3.95, costPrice: 1.65, inStock: true, image: granolaBowl, allergens: ["Dairy", "Nuts"], shelfLife: 2, ingredients: [], dayParts: ["breakfast"] },
+    
+    // Lunch/Afternoon Baguettes & Sandwiches
+    { skuId: "PRET-010", name: "Brie, Tomato & Basil Baguette", category: "Sandwiches", price: 4.75, costPrice: 2.00, inStock: true, image: bltSandwich, allergens: ["Gluten", "Dairy"], shelfLife: 2, ingredients: [], dayParts: ["lunch", "afternoon"] },
+    { skuId: "PRET-011", name: "Tuna Baguette", category: "Sandwiches", price: 4.95, costPrice: 2.10, inStock: true, image: tunaMeltPanini, allergens: ["Gluten", "Fish", "Egg"], shelfLife: 2, ingredients: [], dayParts: ["lunch", "afternoon"] },
+    { skuId: "PRET-012", name: "Classic BLT", category: "Sandwiches", price: 4.95, costPrice: 2.10, inStock: true, image: bltSandwich, allergens: ["Gluten", "Egg"], shelfLife: 2, ingredients: [], dayParts: ["lunch", "afternoon"] },
+    { skuId: "PRET-013", name: "Chicken & Bacon", category: "Sandwiches", price: 5.45, costPrice: 2.35, inStock: true, image: chickenBaconSandwich, allergens: ["Gluten"], shelfLife: 2, ingredients: [], dayParts: ["lunch", "afternoon"] },
+    { skuId: "PRET-014", name: "Ham & Cheese Sandwich", category: "Sandwiches", price: 4.25, costPrice: 1.85, inStock: true, image: hamCheeseCroissant, allergens: ["Gluten", "Dairy"], shelfLife: 2, ingredients: [], dayParts: ["lunch", "afternoon"] },
+    { skuId: "PRET-015", name: "Egg Mayo Sandwich", category: "Sandwiches", price: 3.95, costPrice: 1.65, inStock: true, image: eggCheeseMuffin, allergens: ["Gluten", "Egg"], shelfLife: 2, ingredients: [], dayParts: ["lunch", "afternoon"] },
+    
+    // Wraps & Flatbreads
+    { skuId: "PRET-020", name: "Chicken Caesar Wrap", category: "Wraps", price: 5.45, costPrice: 2.35, inStock: true, image: chickenCaesarWrap, allergens: ["Gluten", "Dairy", "Fish"], shelfLife: 2, ingredients: [], dayParts: ["lunch", "afternoon"] },
+    { skuId: "PRET-021", name: "Falafel & Hummus Wrap", category: "Wraps", price: 4.75, costPrice: 1.95, inStock: true, image: avocadoHummusWrap, allergens: ["Gluten", "Sesame"], shelfLife: 2, ingredients: [], dayParts: ["lunch", "afternoon"] },
+    { skuId: "PRET-022", name: "No Chicken Salad Wrap", category: "Wraps", price: 4.95, costPrice: 2.05, inStock: true, image: veganWrap, allergens: ["Gluten", "Soya"], shelfLife: 2, ingredients: [], dayParts: ["lunch", "afternoon"] },
+    { skuId: "PRET-023", name: "Mexican Chicken Flatbread", category: "Wraps", price: 5.25, costPrice: 2.20, inStock: true, image: breakfastBurrito, allergens: ["Gluten", "Dairy"], shelfLife: 2, ingredients: [], dayParts: ["lunch", "afternoon"] },
+    
+    // Salads
+    { skuId: "PRET-030", name: "Pret's Superfood Salad", category: "Salads", price: 6.25, costPrice: 2.65, inStock: true, image: mediterraneanSalad, allergens: ["Nuts"], shelfLife: 3, ingredients: [], dayParts: ["lunch", "afternoon"] },
+    { skuId: "PRET-031", name: "Greek Mezze Salad", category: "Salads", price: 5.95, costPrice: 2.55, inStock: true, image: greekFetaSalad, allergens: ["Dairy"], shelfLife: 3, ingredients: [], dayParts: ["lunch", "afternoon"] },
+  ],
+  
+  "Brioche Dorée": [
+    // Breakfast
+    { skuId: "BD-001", name: "Croissant au Beurre", category: "Breakfast", price: 2.50, costPrice: 1.10, inStock: true, image: hamCheeseCroissant, allergens: ["Gluten", "Dairy"], shelfLife: 1, ingredients: [], dayParts: ["breakfast"] },
+    { skuId: "BD-002", name: "Pain au Chocolat", category: "Breakfast", price: 2.75, costPrice: 1.20, inStock: true, image: coffeePastryCombo, allergens: ["Gluten", "Dairy"], shelfLife: 1, ingredients: [], dayParts: ["breakfast"] },
+    { skuId: "BD-003", name: "Croissant Jambon Fromage", category: "Breakfast", price: 4.50, costPrice: 1.90, inStock: true, image: hamCheeseCroissant, allergens: ["Gluten", "Dairy"], shelfLife: 1, ingredients: [], dayParts: ["breakfast"] },
+    { skuId: "BD-004", name: "Tartine Avocat", category: "Breakfast", price: 5.25, costPrice: 2.20, inStock: true, image: avocadoToastEgg, allergens: ["Gluten"], shelfLife: 1, ingredients: [], dayParts: ["breakfast"] },
+    { skuId: "BD-005", name: "Brioche Perdue", category: "Breakfast", price: 4.95, costPrice: 2.05, inStock: true, image: coffeePastryCombo, allergens: ["Gluten", "Dairy", "Egg"], shelfLife: 1, ingredients: [], dayParts: ["breakfast"] },
+    
+    // Lunch/Afternoon
+    { skuId: "BD-010", name: "Croque Monsieur", category: "Hot Food", price: 5.95, costPrice: 2.50, inStock: true, image: hamCheeseCroissant, allergens: ["Gluten", "Dairy"], shelfLife: 1, ingredients: [], dayParts: ["lunch", "afternoon"] },
+    { skuId: "BD-011", name: "Croque Madame", category: "Hot Food", price: 6.45, costPrice: 2.70, inStock: true, image: hamCheeseCroissant, allergens: ["Gluten", "Dairy", "Egg"], shelfLife: 1, ingredients: [], dayParts: ["lunch", "afternoon"] },
+    { skuId: "BD-012", name: "Quiche Lorraine", category: "Hot Food", price: 5.75, costPrice: 2.40, inStock: true, image: eggCheeseMuffin, allergens: ["Gluten", "Dairy", "Egg"], shelfLife: 2, ingredients: [], dayParts: ["lunch", "afternoon"] },
+    { skuId: "BD-013", name: "Sandwich Poulet Pesto", category: "Sandwiches", price: 5.50, costPrice: 2.30, inStock: true, image: chickenBaconSandwich, allergens: ["Gluten", "Dairy"], shelfLife: 2, ingredients: [], dayParts: ["lunch", "afternoon"] },
+    { skuId: "BD-014", name: "Baguette Jambon Beurre", category: "Sandwiches", price: 4.75, costPrice: 2.00, inStock: true, image: hamCheeseCroissant, allergens: ["Gluten", "Dairy"], shelfLife: 2, ingredients: [], dayParts: ["lunch", "afternoon"] },
+    { skuId: "BD-015", name: "Salade Niçoise", category: "Salads", price: 6.95, costPrice: 2.95, inStock: true, image: mediterraneanSalad, allergens: ["Fish", "Egg"], shelfLife: 3, ingredients: [], dayParts: ["lunch", "afternoon"] },
+    { skuId: "BD-016", name: "Salade César", category: "Salads", price: 6.50, costPrice: 2.75, inStock: true, image: greekFetaSalad, allergens: ["Gluten", "Dairy", "Fish"], shelfLife: 3, ingredients: [], dayParts: ["lunch", "afternoon"] },
+  ],
+  
+  "Starbucks": [
+    // Breakfast
+    { skuId: "SB-001", name: "Bacon & Gouda Sandwich", category: "Breakfast", price: 4.95, costPrice: 2.10, inStock: true, image: baconEggRoll, allergens: ["Gluten", "Dairy", "Egg"], shelfLife: 1, ingredients: [], dayParts: ["breakfast"] },
+    { skuId: "SB-002", name: "Sausage & Cheddar Sandwich", category: "Breakfast", price: 4.95, costPrice: 2.10, inStock: true, image: hamCheeseCroissant, allergens: ["Gluten", "Dairy", "Egg"], shelfLife: 1, ingredients: [], dayParts: ["breakfast"] },
+    { skuId: "SB-003", name: "Spinach Feta Wrap", category: "Breakfast", price: 4.50, costPrice: 1.90, inStock: true, image: avocadoHummusWrap, allergens: ["Gluten", "Dairy", "Egg"], shelfLife: 1, ingredients: [], dayParts: ["breakfast"] },
+    { skuId: "SB-004", name: "Butter Croissant", category: "Breakfast", price: 2.95, costPrice: 1.25, inStock: true, image: hamCheeseCroissant, allergens: ["Gluten", "Dairy"], shelfLife: 1, ingredients: [], dayParts: ["breakfast"] },
+    { skuId: "SB-005", name: "Blueberry Muffin", category: "Breakfast", price: 3.25, costPrice: 1.35, inStock: true, image: coffeePastryCombo, allergens: ["Gluten", "Dairy", "Egg"], shelfLife: 2, ingredients: [], dayParts: ["breakfast"] },
+    { skuId: "SB-006", name: "Greek Yogurt Parfait", category: "Breakfast", price: 4.25, costPrice: 1.80, inStock: true, image: fruitYogurtPar, allergens: ["Dairy"], shelfLife: 2, ingredients: [], dayParts: ["breakfast"] },
+    
+    // Lunch/Afternoon
+    { skuId: "SB-010", name: "Turkey Pesto Panini", category: "Sandwiches", price: 6.45, costPrice: 2.70, inStock: true, image: tunaMeltPanini, allergens: ["Gluten", "Dairy"], shelfLife: 2, ingredients: [], dayParts: ["lunch", "afternoon"] },
+    { skuId: "SB-011", name: "Chicken Caprese Panini", category: "Sandwiches", price: 6.45, costPrice: 2.70, inStock: true, image: chickenBaconSandwich, allergens: ["Gluten", "Dairy"], shelfLife: 2, ingredients: [], dayParts: ["lunch", "afternoon"] },
+    { skuId: "SB-012", name: "Ham & Swiss Panini", category: "Sandwiches", price: 5.95, costPrice: 2.50, inStock: true, image: hamCheeseCroissant, allergens: ["Gluten", "Dairy"], shelfLife: 2, ingredients: [], dayParts: ["lunch", "afternoon"] },
+    { skuId: "SB-013", name: "Tomato Mozzarella Panini", category: "Sandwiches", price: 5.75, costPrice: 2.40, inStock: true, image: bltSandwich, allergens: ["Gluten", "Dairy"], shelfLife: 2, ingredients: [], dayParts: ["lunch", "afternoon"] },
+    { skuId: "SB-014", name: "Chicken & Hummus Protein Box", category: "Salads", price: 6.95, costPrice: 2.95, inStock: true, image: mediterraneanSalad, allergens: ["Sesame"], shelfLife: 3, ingredients: [], dayParts: ["lunch", "afternoon"] },
+    { skuId: "SB-015", name: "Eggs & Cheese Protein Box", category: "Salads", price: 5.95, costPrice: 2.50, inStock: true, image: eggCheeseMuffin, allergens: ["Egg", "Dairy"], shelfLife: 3, ingredients: [], dayParts: ["lunch", "afternoon"] },
+    { skuId: "SB-016", name: "Chickpea Bites & Avocado Protein Box", category: "Salads", price: 6.50, costPrice: 2.75, inStock: true, image: avocadoHummusWrap, allergens: ["Sesame"], shelfLife: 3, ingredients: [], dayParts: ["lunch", "afternoon"] },
+  ]
+};
+
+// Get initial products based on brand
+const getInitialProducts = (brand: string) => brandProducts[brand as keyof typeof brandProducts] || brandProducts["Pret a Manger"];
 
 const dayParts = ["All", "Breakfast", "Lunch", "Afternoon"];
 
@@ -311,11 +117,16 @@ export default function ProductRange() {
   const [selectedDayPart, setSelectedDayPart] = useState("All");
   const [selectedBrand, setSelectedBrand] = useState("Pret a Manger");
   const [viewMode, setViewMode] = useState<"card" | "list">("card");
-  const [products, setProducts] = useState(initialProducts);
+  const [products, setProducts] = useState(getInitialProducts("Pret a Manger"));
   const [isBulkUploadOpen, setIsBulkUploadOpen] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
   const { viewMode: appViewMode, selectedStore } = useView();
+
+  // Update products when brand changes
+  useEffect(() => {
+    setProducts(getInitialProducts(selectedBrand));
+  }, [selectedBrand]);
 
   const filteredProducts = useMemo(() => {
     return products.filter(product => {
