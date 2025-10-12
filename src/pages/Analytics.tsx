@@ -322,20 +322,20 @@ export default function Analytics() {
   
   // Store-specific data (for Store View)
   const storeData = {
-    revenue: 1850,
+    revenue: 1286,
     revenueChange: 18.2,
-    grossProfit: 740,
+    grossProfit: 772,
     grossProfitChange: 16.5,
-    waste: 52,
+    waste: 45,
     wasteChange: -22.1,
     salesWasteData: [
-      { date: "Mon", sales: 165, waste: 8 },
-      { date: "Tue", sales: 148, waste: 7 },
-      { date: "Wed", sales: 178, waste: 6 },
-      { date: "Thu", sales: 162, waste: 9 },
-      { date: "Fri", sales: 195, waste: 10 },
-      { date: "Sat", sales: 218, waste: 11 },
-      { date: "Sun", sales: 174, waste: 8 },
+      { date: "Mon", sales: 165, waste: 6 },
+      { date: "Tue", sales: 148, waste: 5 },
+      { date: "Wed", sales: 178, waste: 5 },
+      { date: "Thu", sales: 162, waste: 7 },
+      { date: "Fri", sales: 195, waste: 8 },
+      { date: "Sat", sales: 218, waste: 9 },
+      { date: "Sun", sales: 174, waste: 5 },
     ],
     revenueComparisonData: [
       { date: "Mon", predicted: 170, actual: 165 },
@@ -358,11 +358,11 @@ export default function Analytics() {
   
   // HQ data (all stores combined)
   const hqData = {
-    revenue: 45231,
+    revenue: 12260000,
     revenueChange: 20.1,
-    grossProfit: 18092,
+    grossProfit: 5151000,
     grossProfitChange: 15.3,
-    waste: 1270,
+    waste: 413062,
     wasteChange: -18,
     salesWasteData: [
       { date: "Mon", sales: 4200, waste: 180 },
@@ -468,7 +468,7 @@ export default function Analytics() {
           <div className="mb-4">
             <h2 className="text-2xl font-bold text-secondary">
               {viewMode === "hq" && selectedBrand !== "All Brands" ? `${selectedBrand} • ` : ""}
-              {selectedStore === "all" ? "All Stores" : selectedStore} • Last 7 Days
+              {selectedStore === "all" ? "All Stores" : selectedStore} • This Week's Performance
             </h2>
           </div>
 
