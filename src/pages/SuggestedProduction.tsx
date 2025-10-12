@@ -247,7 +247,7 @@ export default function VolumeAllocation() {
   const { viewMode, selectedStore } = useView();
   const [selectedStores, setSelectedStores] = useState<string[]>(["All"]);
   const [selectedDay, setSelectedDay] = useState<string>("All days");
-  const [selectedDayPart, setSelectedDayPart] = useState<string>(getInitialDayPart());
+  const [selectedDayPart, setSelectedDayPart] = useState<string>("Breakfast");
   const [webhookUrl, setWebhookUrl] = useState("");
   const [isWebhookDialogOpen, setIsWebhookDialogOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -544,6 +544,34 @@ export default function VolumeAllocation() {
         </Card>
       )}
 
+      {/* Day Part Tabs - Only for Store Manager View */}
+      {viewMode === "store_manager" && (
+        <Card className="shadow-card border-2 border-primary/20 bg-gradient-to-r from-primary/5 to-transparent">
+          <CardHeader className="pb-4">
+            <CardTitle className="text-xl">Production Day Part</CardTitle>
+            <CardDescription>Select which part of the day to view production recommendations for</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="flex gap-3">
+              {dayParts.map((dayPart) => (
+                <Button
+                  key={dayPart.name}
+                  variant={selectedDayPart === dayPart.name ? "default" : "outline"}
+                  size="lg"
+                  onClick={() => setSelectedDayPart(dayPart.name)}
+                  className="flex-1 h-16 text-base font-semibold"
+                >
+                  <div className="flex flex-col items-center">
+                    <span>{dayPart.name}</span>
+                    <span className="text-xs font-normal opacity-80">{dayPart.time}</span>
+                  </div>
+                </Button>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       {/* Day Part Selector - Only for HQ View */}
       {viewMode !== "store_manager" && (
         <Card className="shadow-card border-2 border-primary/20 bg-gradient-to-r from-primary/5 to-transparent">
@@ -659,7 +687,7 @@ export default function VolumeAllocation() {
         </CardHeader>
         <CardContent>
           {viewMode === "store_manager" ? (
-            // Store Manager View - Products as rows, Day parts as columns
+            // Store Manager View - Products as rows with single day part showing
             <Table>
               <TableHeader>
                 <TableRow>
@@ -667,50 +695,31 @@ export default function VolumeAllocation() {
                   <TableHead>Category</TableHead>
                   <TableHead>Current Stock</TableHead>
                   <TableHead className="bg-gradient-to-r from-[#ff914d]/20 to-[#ff914d]/10 relative text-center">
-                    <div className="flex flex-col items-center gap-1 relative">
+                    <div className="flex items-center justify-center gap-2 relative">
                       <div className="absolute inset-0 bg-[#ff914d]/5 blur-sm" />
-                      <div className="flex items-center gap-2 relative z-10">
-                        <Sparkles className="h-4 w-4 text-[#ff914d] animate-pulse" />
-                        <span className="font-semibold bg-gradient-to-r from-[#ff914d] to-[#ff914d]/70 bg-clip-text text-transparent">
-                          Morning
-                        </span>
-                      </div>
+                      <Sparkles className="h-4 w-4 text-[#ff914d] relative z-10 animate-pulse" />
+                      <span className="relative z-10 font-semibold bg-gradient-to-r from-[#ff914d] to-[#ff914d]/70 bg-clip-text text-transparent">
+                        AI Recommended Qty
+                      </span>
                     </div>
                   </TableHead>
-                  <TableHead className="bg-gradient-to-r from-[#ff914d]/20 to-[#ff914d]/10 relative text-center">
-                    <div className="flex flex-col items-center gap-1 relative">
-                      <div className="absolute inset-0 bg-[#ff914d]/5 blur-sm" />
-                      <div className="flex items-center gap-2 relative z-10">
-                        <Sparkles className="h-4 w-4 text-[#ff914d] animate-pulse" />
-                        <span className="font-semibold bg-gradient-to-r from-[#ff914d] to-[#ff914d]/70 bg-clip-text text-transparent">
-                          Lunchtime
-                        </span>
-                      </div>
-                    </div>
-                  </TableHead>
-                  <TableHead className="bg-gradient-to-r from-[#ff914d]/20 to-[#ff914d]/10 relative text-center">
-                    <div className="flex flex-col items-center gap-1 relative">
-                      <div className="absolute inset-0 bg-[#ff914d]/5 blur-sm" />
-                      <div className="flex items-center gap-2 relative z-10">
-                        <Sparkles className="h-4 w-4 text-[#ff914d] animate-pulse" />
-                        <span className="font-semibold bg-gradient-to-r from-[#ff914d] to-[#ff914d]/70 bg-clip-text text-transparent">
-                          Afternoon
-                        </span>
-                      </div>
-                    </div>
-                  </TableHead>
-                  <TableHead className="bg-primary/10 text-center font-semibold">Total</TableHead>
+                  <TableHead className="bg-brand-green/10 text-center">Final Qty</TableHead>
+                  <TableHead>Action</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {groupedProducts.map((product) => {
-                  const breakfastQty = product.breakfast?.finalOrder || 0;
-                  const lunchQty = product.lunch?.finalOrder || 0;
-                  const afternoonQty = product.afternoon?.finalOrder || 0;
-                  const total = breakfastQty + lunchQty + afternoonQty;
+                  // Get the allocation for the selected day part
+                  const allocation = selectedDayPart === "Breakfast" 
+                    ? product.breakfast 
+                    : selectedDayPart === "Lunch" 
+                    ? product.lunch 
+                    : product.afternoon;
+
+                  if (!allocation) return null;
 
                   return (
-                    <TableRow key={product.id}>
+                    <TableRow key={`${product.id}-${selectedDayPart}`}>
                       <TableCell>
                         <div>
                           <div 
@@ -728,142 +737,54 @@ export default function VolumeAllocation() {
                       <TableCell>
                         <span className="font-mono">{product.currentStock}</span>
                       </TableCell>
-                      {/* Morning */}
-                      <TableCell className="bg-gradient-to-r from-[#ff914d]/10 to-transparent">
-                        {product.breakfast && (
-                          <div className="flex flex-col items-center gap-2">
-                            <div className="flex items-center gap-2">
-                              <Button
-                                size="sm"
-                                variant="outline"
-                                onClick={() => updateFinalOrder(product.id, product.storeId, product.date, "Breakfast", -1)}
-                                className="h-8 w-8 p-0 rounded-full border-[#ff914d]/50 hover:bg-[#ff914d] hover:text-white transition-colors"
-                              >
-                                <Minus className="h-4 w-4" />
-                              </Button>
-                              <span className="font-mono font-bold text-[#ff914d] min-w-[2.5rem] text-center text-lg">
-                                {breakfastQty}
-                              </span>
-                              <Button
-                                size="sm"
-                                variant="outline"
-                                onClick={() => updateFinalOrder(product.id, product.storeId, product.date, "Breakfast", 1)}
-                                className="h-8 w-8 p-0 rounded-full border-[#ff914d]/50 hover:bg-[#ff914d] hover:text-white transition-colors"
-                              >
-                                <Plus className="h-4 w-4" />
-                              </Button>
-                            </div>
-                            <Button
-                              size="sm"
-                              className="bg-primary text-primary-foreground w-full"
-                              disabled={!!confirmingProduction}
-                              onClick={() => handleConfirmProduction(product.breakfast!)}
-                            >
-                              {confirmingProduction === `${product.id}-${product.storeId}-${product.date.toDateString()}-Breakfast` ? (
-                                <>
-                                  <Loader2 className="h-3 w-3 mr-1 animate-spin" />
-                                  Confirming
-                                </>
-                              ) : (
-                                'Confirm'
-                              )}
-                            </Button>
-                          </div>
-                        )}
-                      </TableCell>
-                      {/* Lunchtime */}
-                      <TableCell className="bg-gradient-to-r from-[#ff914d]/10 to-transparent">
-                        {product.lunch && (
-                          <div className="flex flex-col items-center gap-2">
-                            <div className="flex items-center gap-2">
-                              <Button
-                                size="sm"
-                                variant="outline"
-                                onClick={() => updateFinalOrder(product.id, product.storeId, product.date, "Lunch", -1)}
-                                className="h-8 w-8 p-0 rounded-full border-[#ff914d]/50 hover:bg-[#ff914d] hover:text-white transition-colors"
-                              >
-                                <Minus className="h-4 w-4" />
-                              </Button>
-                              <span className="font-mono font-bold text-[#ff914d] min-w-[2.5rem] text-center text-lg">
-                                {lunchQty}
-                              </span>
-                              <Button
-                                size="sm"
-                                variant="outline"
-                                onClick={() => updateFinalOrder(product.id, product.storeId, product.date, "Lunch", 1)}
-                                className="h-8 w-8 p-0 rounded-full border-[#ff914d]/50 hover:bg-[#ff914d] hover:text-white transition-colors"
-                              >
-                                <Plus className="h-4 w-4" />
-                              </Button>
-                            </div>
-                            <Button
-                              size="sm"
-                              className="bg-primary text-primary-foreground w-full"
-                              disabled={!!confirmingProduction}
-                              onClick={() => handleConfirmProduction(product.lunch!)}
-                            >
-                              {confirmingProduction === `${product.id}-${product.storeId}-${product.date.toDateString()}-Lunch` ? (
-                                <>
-                                  <Loader2 className="h-3 w-3 mr-1 animate-spin" />
-                                  Confirming
-                                </>
-                              ) : (
-                                'Confirm'
-                              )}
-                            </Button>
-                          </div>
-                        )}
-                      </TableCell>
-                      {/* Afternoon */}
-                      <TableCell className="bg-gradient-to-r from-[#ff914d]/10 to-transparent">
-                        {product.afternoon && (
-                          <div className="flex flex-col items-center gap-2">
-                            <div className="flex items-center gap-2">
-                              <Button
-                                size="sm"
-                                variant="outline"
-                                onClick={() => updateFinalOrder(product.id, product.storeId, product.date, "Afternoon", -1)}
-                                className="h-8 w-8 p-0 rounded-full border-[#ff914d]/50 hover:bg-[#ff914d] hover:text-white transition-colors"
-                              >
-                                <Minus className="h-4 w-4" />
-                              </Button>
-                              <span className="font-mono font-bold text-[#ff914d] min-w-[2.5rem] text-center text-lg">
-                                {afternoonQty}
-                              </span>
-                              <Button
-                                size="sm"
-                                variant="outline"
-                                onClick={() => updateFinalOrder(product.id, product.storeId, product.date, "Afternoon", 1)}
-                                className="h-8 w-8 p-0 rounded-full border-[#ff914d]/50 hover:bg-[#ff914d] hover:text-white transition-colors"
-                              >
-                                <Plus className="h-4 w-4" />
-                              </Button>
-                            </div>
-                            <Button
-                              size="sm"
-                              className="bg-primary text-primary-foreground w-full"
-                              disabled={!!confirmingProduction}
-                              onClick={() => handleConfirmProduction(product.afternoon!)}
-                            >
-                              {confirmingProduction === `${product.id}-${product.storeId}-${product.date.toDateString()}-Afternoon` ? (
-                                <>
-                                  <Loader2 className="h-3 w-3 mr-1 animate-spin" />
-                                  Confirming
-                                </>
-                              ) : (
-                                'Confirm'
-                              )}
-                            </Button>
-                          </div>
-                        )}
-                      </TableCell>
-                      {/* Total */}
-                      <TableCell className="bg-primary/5">
-                        <div className="text-center">
-                          <span className="font-mono font-bold text-primary text-lg">
-                            {total}
+                      <TableCell className="bg-gradient-to-r from-[#ff914d]/10 to-transparent relative group">
+                        <div className="absolute inset-0 bg-gradient-to-r from-[#ff914d]/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                        <div className="flex items-center justify-center gap-2 relative z-10">
+                          <span className="font-mono font-semibold text-foreground">
+                            {allocation.recommendedOrder}
                           </span>
+                          <Sparkles className="h-3 w-3 text-[#ff914d] opacity-0 group-hover:opacity-100 transition-opacity" />
                         </div>
+                      </TableCell>
+                      <TableCell className="bg-brand-green/5">
+                        <div className="flex items-center gap-2 justify-center">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => updateFinalOrder(product.id, product.storeId, product.date, selectedDayPart, -1)}
+                            className="h-8 w-8 p-0 rounded-full border-brand-green hover:bg-brand-green hover:text-white transition-colors"
+                          >
+                            <Minus className="h-4 w-4" />
+                          </Button>
+                          <span className="font-mono font-bold text-brand-green min-w-[2.5rem] text-center text-lg">
+                            {allocation.finalOrder}
+                          </span>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => updateFinalOrder(product.id, product.storeId, product.date, selectedDayPart, 1)}
+                            className="h-8 w-8 p-0 rounded-full border-brand-green hover:bg-brand-green hover:text-white transition-colors"
+                          >
+                            <Plus className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <Button
+                          size="sm"
+                          className="bg-primary text-primary-foreground"
+                          disabled={!!confirmingProduction}
+                          onClick={() => handleConfirmProduction(allocation)}
+                        >
+                          {confirmingProduction === `${product.id}-${product.storeId}-${product.date.toDateString()}-${selectedDayPart}` ? (
+                            <>
+                              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                              Confirming...
+                            </>
+                          ) : (
+                            'Confirm'
+                          )}
+                        </Button>
                       </TableCell>
                     </TableRow>
                   );
