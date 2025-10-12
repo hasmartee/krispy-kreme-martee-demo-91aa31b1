@@ -19,7 +19,7 @@ import {
 
 const mainNavigation = [
   { title: "My Tasks", url: "/tasks", icon: CheckSquare, highlight: true },
-  { title: "Dashboard", url: "/analytics", icon: BarChart3 },
+  { title: "Performance", url: "/analytics", icon: BarChart3 },
   { title: "Suggested Production", url: "/suggested-production", icon: TrendingUp },
   { title: "Live Availability", url: "/inventory", icon: Package },
   { title: "Live Sales", url: "/live-sales", icon: Activity },

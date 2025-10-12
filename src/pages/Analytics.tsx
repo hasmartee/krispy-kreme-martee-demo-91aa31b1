@@ -423,7 +423,7 @@ export default function Analytics() {
       <div className="flex flex-col gap-4">
         <div>
           <h1 className="text-3xl font-bold text-foreground">
-            Dashboard {viewMode === "store" ? `- ${contextSelectedStore}` : ""}
+            Performance {viewMode === "store" ? `- ${contextSelectedStore}` : ""}
           </h1>
           <p className="text-muted-foreground">
             Key metrics and performance insights

@@ -88,7 +88,7 @@ export default function Auth() {
           </CardTitle>
           <CardDescription>
             {isLogin 
-              ? "Sign in to access your Martee AI dashboard" 
+              ? "Sign in to access your Martee AI performance dashboard" 
               : "Sign up to get started with Martee AI"}
           </CardDescription>
         </CardHeader>
