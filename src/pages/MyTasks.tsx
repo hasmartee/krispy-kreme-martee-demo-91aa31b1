@@ -93,75 +93,84 @@ export default function MyTasks() {
   const [tasks, setTasks] = useState<Task[]>([]);
   
   useEffect(() => {
-    // Initialize tasks with preparation and stock check tasks
-    const tasksList: Task[] = [
-      {
-        id: "7",
-        type: "production",
-        title: "Morning Production",
-        time: "06:30",
-        completed: false,
-        details: "Complete all breakfast items production",
-        priority: "high"
-      },
-      {
-        id: "2",
-        type: "production",
-        title: "Lunchtime Production",
-        time: "11:00",
-        completed: false,
-        details: "Complete sandwiches, wraps, and salads for lunch service",
-        priority: "high"
-      },
-      {
-        id: "8",
-        type: "production",
-        title: "Afternoon Production",
-        time: "14:00",
-        completed: false,
-        details: "Complete afternoon snacks and light meals",
-        priority: "medium"
-      },
-      {
-        id: "3",
-        type: "stock_check",
-        title: "Stock Take - Morning",
-        time: "08:00",
-        completed: false,
-        details: "Count all product inventory items",
-        priority: "high"
-      },
-      {
-        id: "4",
-        type: "stock_check",
-        title: "Stock Take - Midday",
-        time: "12:00",
-        completed: false,
-        details: "Count all product inventory items",
-        priority: "medium"
-      },
-      {
-        id: "5",
-        type: "stock_check",
-        title: "Stock Take - Afternoon",
-        time: "14:00",
-        completed: false,
-        details: "Count all product inventory items",
-        priority: "medium"
-      },
-      {
-        id: "6",
-        type: "stock_check",
-        title: "Stock Take - Evening",
-        time: "16:00",
-        completed: false,
-        details: "Count all product inventory items",
-        priority: "medium"
-      },
-    ];
+    // Initialize tasks based on view mode
+    let tasksList: Task[] = [];
+    
+    if (viewMode === "store_manager") {
+      // Store Manager only sees production tasks and end of day stock check
+      tasksList = [
+        {
+          id: "1",
+          type: "production",
+          title: "Morning Production",
+          time: "06:30",
+          completed: false,
+          details: "Confirm all breakfast items production",
+          priority: "high"
+        },
+        {
+          id: "2",
+          type: "production",
+          title: "Lunchtime Production",
+          time: "11:00",
+          completed: false,
+          details: "Confirm sandwiches, wraps, and salads for lunch service",
+          priority: "high"
+        },
+        {
+          id: "3",
+          type: "production",
+          title: "Afternoon Production",
+          time: "14:00",
+          completed: false,
+          details: "Confirm afternoon snacks and light meals",
+          priority: "medium"
+        },
+        {
+          id: "4",
+          type: "stock_check",
+          title: "End of Day Stock Check",
+          time: "18:00",
+          completed: false,
+          details: "Complete end of day inventory count and waste tracking",
+          priority: "high"
+        }
+      ];
+    } else {
+      // Store Team only sees production tasks
+      tasksList = [
+        {
+          id: "1",
+          type: "production",
+          title: "Morning Production",
+          time: "06:30",
+          completed: false,
+          details: "Complete all breakfast items production",
+          priority: "high"
+        },
+        {
+          id: "2",
+          type: "production",
+          title: "Lunchtime Production",
+          time: "11:00",
+          completed: false,
+          details: "Complete sandwiches, wraps, and salads for lunch service",
+          priority: "high"
+        },
+        {
+          id: "3",
+          type: "production",
+          title: "Afternoon Production",
+          time: "14:00",
+          completed: false,
+          details: "Complete afternoon snacks and light meals",
+          priority: "medium"
+        }
+      ];
+    }
 
     setTasks(tasksList);
-  }, [selectedStore]);
+  }, [selectedStore, viewMode]);
 
   const toggleTask = (taskId: string) => {
     setTasks(tasks.map(task => {
@@ -213,7 +222,7 @@ export default function MyTasks() {
   const handleTaskClick = (task: Task) => {
     switch (task.type) {
       case "production":
-        navigate("/recipes");
+        navigate("/production");
         break;
       case "stock_check":
         navigate("/inventory");
@@ -265,10 +274,8 @@ export default function MyTasks() {
   const volumeForecast = isSingleStoreView ? volumeForecastStore : volumeForecastHQ;
   const footfallForecast = isSingleStoreView ? footfallForecastStore : footfallForecastHQ;
 
-  // Filter tasks based on view mode
-  const displayTasks = viewMode === "store_team" 
-    ? sortedTasks.filter(t => t.type === "production")
-    : sortedTasks;
+  // All tasks are already filtered in useEffect based on viewMode
+  const displayTasks = sortedTasks;
 
   if (viewMode === "hq") {
     return (

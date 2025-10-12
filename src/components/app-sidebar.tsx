@@ -1,4 +1,4 @@
-import { BarChart3, Package, Store, TrendingUp, ShoppingCart, Settings, ChevronRight, Target, BookOpen, CheckSquare, Activity, Truck, Home } from "lucide-react";
+import { BarChart3, Package, Store, TrendingUp, ShoppingCart, Settings, ChevronRight, Target, BookOpen, CheckSquare, Activity, Truck, Home, ChefHat } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import { useState } from "react";
 import { useView } from "@/contexts/ViewContext";
@@ -29,8 +29,9 @@ const mainNavigationStoreManager = [
 ];
 
 const mainNavigationStoreTeam = [
+  { title: "Home", url: "/store-team-home", icon: Home },
   { title: "My Tasks", url: "/tasks", icon: CheckSquare, highlight: true },
-  { title: "Production", url: "/production", icon: Target },
+  { title: "Production", url: "/production", icon: ChefHat },
   { title: "Live Availability", url: "/inventory", icon: Package },
 ];
 

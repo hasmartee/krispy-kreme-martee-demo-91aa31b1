@@ -734,7 +734,7 @@ export default function StoreProductRange() {
         ) : null}
         
         {/* Store View: Show ranges split by day parts */}
-        {viewMode === "store_manager" && filteredStores.map((store) => {
+        {(viewMode === "store_manager" || viewMode === "store_team") && filteredStores.map((store) => {
         const breakfastProducts = store.activeProducts.filter(p => p.dayParts?.includes('breakfast'));
         const lunchProducts = store.activeProducts.filter(p => p.dayParts?.includes('lunch'));
         const afternoonProducts = store.activeProducts.filter(p => p.dayParts?.includes('afternoon'));
