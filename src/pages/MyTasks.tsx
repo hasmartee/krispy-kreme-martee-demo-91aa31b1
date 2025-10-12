@@ -105,6 +105,15 @@ export default function MyTasks() {
         priority: "high"
       },
       {
+        id: "7",
+        type: "production",
+        title: "Confirm morning production",
+        time: "06:30",
+        completed: false,
+        details: "Verify all breakfast items are prepared and displayed",
+        priority: "high"
+      },
+      {
         id: "2",
         type: "production",
         title: "Prepare Lunch Items",
