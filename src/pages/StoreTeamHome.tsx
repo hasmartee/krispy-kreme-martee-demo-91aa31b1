@@ -1,8 +1,8 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ChefHat, Clock, ArrowRight, CheckCircle, AlertCircle } from "lucide-react";
+import { ChefHat, ArrowRight, CheckCircle, AlertCircle } from "lucide-react";
 import { useView } from "@/contexts/ViewContext";
 
 interface Task {
@@ -17,7 +17,6 @@ interface Task {
 export default function StoreTeamHome() {
   const { selectedStore } = useView();
   const navigate = useNavigate();
-  const [currentTime, setCurrentTime] = useState(new Date());
   
   const [tasks] = useState<Task[]>([
     {
@@ -46,14 +45,9 @@ export default function StoreTeamHome() {
     }
   ]);
 
-  useEffect(() => {
-    const timer = setInterval(() => setCurrentTime(new Date()), 1000);
-    return () => clearInterval(timer);
-  }, []);
-
   // Find the next task based on current time
   const getNextTask = () => {
-    const now = currentTime.getHours() * 60 + currentTime.getMinutes();
+    const now = new Date().getHours() * 60 + new Date().getMinutes();
     
     for (const task of tasks) {
       const [hours, minutes] = task.time.split(':').map(Number);
@@ -71,7 +65,7 @@ export default function StoreTeamHome() {
   const nextTask = getNextTask();
 
   const getGreeting = () => {
-    const hour = currentTime.getHours();
+    const hour = new Date().getHours();
     if (hour < 12) return "Good Morning";
     if (hour < 18) return "Good Afternoon";
     return "Good Evening";
@@ -91,59 +85,46 @@ export default function StoreTeamHome() {
       </div>
 
       {/* Next Task Card */}
-      <Card className="shadow-lg border-2 border-primary/30">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <ChefHat className="h-6 w-6 text-primary" />
-            My Next Task
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="p-6 rounded-lg bg-gradient-to-br from-primary/10 via-accent/5 to-transparent border-2 border-primary/20">
-            <div className="flex items-start justify-between mb-3">
-              <div className="flex-1">
-                <div className="flex items-center gap-2 mb-2">
-                  <h3 className="text-2xl font-bold text-foreground">{nextTask.title}</h3>
-                </div>
-                <p className="text-muted-foreground">{nextTask.details}</p>
-              </div>
-            </div>
-            
-            <div className="flex items-center justify-between pt-4 border-t border-border">
-              <div className="flex items-center gap-2 text-muted-foreground">
-                <Clock className="h-5 w-5" />
-                <span className="text-lg font-semibold">Scheduled: {nextTask.time}</span>
-              </div>
-              
-              <Button 
-                size="lg"
-                onClick={() => navigate("/production")}
-                className="shadow-brand"
-              >
-                Start Task
-                <ArrowRight className="h-5 w-5 ml-2" />
-              </Button>
-            </div>
-          </div>
+      <div>
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-xl font-semibold text-foreground">My Next Task</h2>
+          <Button onClick={() => navigate("/tasks")} variant="outline" className="gap-2">
+            View All Tasks
+            <ArrowRight className="h-4 w-4" />
+          </Button>
+        </div>
 
-          {/* Progress Summary */}
-          <div className="flex items-center justify-between p-4 rounded-lg bg-muted/50">
-            <div className="flex items-center gap-2">
-              {completedCount === totalCount ? (
-                <CheckCircle className="h-5 w-5 text-success" />
-              ) : (
-                <AlertCircle className="h-5 w-5 text-warning" />
-              )}
-              <span className="font-medium">
-                Today's Progress: {completedCount}/{totalCount} tasks completed
-              </span>
+        <Card className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => navigate("/production")}>
+          <CardContent className="p-6">
+            <div className="flex items-start justify-between">
+              <div className="flex items-start gap-4">
+                <div className="mt-1">
+                  <ChefHat className="h-5 w-5 text-primary" />
+                </div>
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2">
+                    <h3 className="font-semibold text-foreground">{nextTask.title}</h3>
+                  </div>
+                  <p className="text-sm text-muted-foreground">
+                    Scheduled for {nextTask.time}
+                  </p>
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground mt-2">
+                    {completedCount === totalCount ? (
+                      <CheckCircle className="h-4 w-4 text-success" />
+                    ) : (
+                      <AlertCircle className="h-4 w-4 text-warning" />
+                    )}
+                    <span>
+                      Today's Progress: {completedCount}/{totalCount} tasks completed
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <ArrowRight className="h-5 w-5 text-muted-foreground" />
             </div>
-            <Button variant="outline" onClick={() => navigate("/tasks")}>
-              View All Tasks
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      </div>
 
       {/* Quick Actions */}
       <Card className="shadow-card">
