@@ -97,6 +97,7 @@ export default function Inventory() {
 
   const loadInventory = async () => {
     setLoading(true);
+    console.log('Loading inventory - viewMode:', viewMode, 'selectedStore:', selectedStore);
     try {
       if (viewMode === "store_manager" || viewMode === "store_team") {
         // Store view: Show ALL products for store team, or cluster-based for manager
@@ -106,7 +107,10 @@ export default function Inventory() {
           .eq("name", selectedStore)
           .maybeSingle();
 
+        console.log('Store data:', storeData);
+
         if (!storeData) {
+          console.log('No store data found');
           setInventory([]);
           setLoading(false);
           return;
@@ -123,9 +127,12 @@ export default function Inventory() {
           productsQuery = productsQuery.in("sku", clusterSkus);
         }
 
-        const { data: products } = await productsQuery;
+        const { data: products, error: productsError } = await productsQuery;
 
-        if (!products) {
+        console.log('Products query result:', { products, error: productsError, count: products?.length });
+
+        if (!products || products.length === 0) {
+          console.log('No products found');
           setInventory([]);
           setLoading(false);
           return;
@@ -151,6 +158,7 @@ export default function Inventory() {
           });
         }
 
+        console.log('Final inventory items:', inventoryItems.length);
         setInventory(inventoryItems);
       } else {
         // HQ view: Show all products across all stores
@@ -499,9 +507,22 @@ export default function Inventory() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredInventory.map((item) => {
-                  const itemKey = item.product.id;
-                  const displayStock = stockTakeMode ? editingStocks[itemKey] : item.current_stock;
+                {filteredInventory.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={stockTakeMode ? 4 : 5} className="text-center py-12">
+                      <div className="flex flex-col items-center gap-2 text-muted-foreground">
+                        <Package className="h-12 w-12 opacity-50" />
+                        <p>No products found</p>
+                        {inventory.length > 0 && (
+                          <p className="text-sm">Try adjusting your filters</p>
+                        )}
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  filteredInventory.map((item) => {
+                    const itemKey = item.product.id;
+                    const displayStock = stockTakeMode ? editingStocks[itemKey] : item.current_stock;
 
                   return (
                     <TableRow key={itemKey}>
@@ -545,7 +566,8 @@ export default function Inventory() {
                       )}
                     </TableRow>
                   );
-                })}
+                })
+                )}
               </TableBody>
             </Table>
           )}
