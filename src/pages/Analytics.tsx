@@ -226,12 +226,28 @@ const CHART_COLORS = {
   breakfastItems: "hsl(23 100% 65%)",
 };
 
-// Brand to store mapping
+// Brand to store mapping - expanded with more stores
 const brandStoreMap = {
-  "All Brands": ["London Bridge", "Kings Cross", "Victoria Station", "Oxford Street", "Canary Wharf", "Liverpool Street", "Paddington", "Waterloo", "Bond Street", "Leicester Square", "Covent Garden", "Bank", "Monument", "Tower Hill", "Holborn"],
-  "Pret a Manger": ["London Bridge", "Kings Cross", "Victoria Station", "Liverpool Street", "Paddington", "Waterloo", "Bank", "Monument"],
-  "Brioche Dorée": ["Oxford Street", "Canary Wharf", "Bond Street", "Leicester Square", "Covent Garden"],
-  "Starbucks": ["London Bridge", "Oxford Street", "Tower Hill", "Holborn", "Canary Wharf"]
+  "All Brands": [
+    "London Bridge", "Kings Cross", "Victoria Station", "Oxford Street", "Canary Wharf", 
+    "Liverpool Street", "Paddington", "Waterloo", "Bond Street", "Leicester Square", 
+    "Covent Garden", "Bank", "Monument", "Tower Hill", "Holborn", "Shoreditch",
+    "Camden", "Brixton", "Clapham", "Wimbledon", "Richmond", "Greenwich",
+    "Hampstead", "Notting Hill", "Chelsea"
+  ],
+  "Pret a Manger": [
+    "London Bridge", "Kings Cross", "Victoria Station", "Liverpool Street", 
+    "Paddington", "Waterloo", "Bank", "Monument", "Shoreditch", "Camden",
+    "Clapham", "Wimbledon", "Greenwich"
+  ],
+  "Brioche Dorée": [
+    "Oxford Street", "Canary Wharf", "Bond Street", "Leicester Square", 
+    "Covent Garden", "Notting Hill", "Chelsea", "Hampstead"
+  ],
+  "Starbucks": [
+    "London Bridge", "Oxford Street", "Tower Hill", "Holborn", "Canary Wharf",
+    "Richmond", "Brixton", "Camden"
+  ]
 };
 
 export default function Analytics() {
@@ -575,8 +591,8 @@ export default function Analytics() {
             </div>
           )}
 
-          {/* Three Main KPI Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {/* Four Main KPI Cards - Added Gross Profit */}
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             {/* Revenue Card with Sub-cards */}
             <div className="space-y-3">
               <Card className="bg-background shadow-lg">
@@ -616,6 +632,30 @@ export default function Analytics() {
                   </CardContent>
                 </Card>
               </div>
+            </div>
+
+            {/* Gross Profit Card */}
+            <div className="space-y-3">
+              <Card className="bg-background shadow-lg">
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-sm font-medium text-muted-foreground">Gross Profit</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-3xl font-bold text-primary">
+                    £{currentData.grossProfit.toLocaleString()}
+                    <span className="text-lg text-muted-foreground ml-2">
+                      ({((currentData.grossProfit / currentData.revenue) * 100).toFixed(1)}%)
+                    </span>
+                  </div>
+                  <p className="text-xs text-muted-foreground mt-2">
+                    {currentData.grossProfitChange > 0 ? (
+                      <><TrendingUp className="inline h-3 w-3 mr-1 text-success" />+{currentData.grossProfitChange}% from previous period</>
+                    ) : (
+                      <><TrendingDown className="inline h-3 w-3 mr-1 text-destructive" />{currentData.grossProfitChange}% from previous period</>
+                    )}
+                  </p>
+                </CardContent>
+              </Card>
             </div>
 
             {/* Waste Card with Sub-cards */}

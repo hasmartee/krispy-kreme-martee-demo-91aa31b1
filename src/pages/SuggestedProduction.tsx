@@ -251,10 +251,26 @@ const getInitialDayPart = () => {
 
 // Brand to store mapping
 const brandStoreMap = {
-  "All Brands": ["All", "London Bridge", "Kings Cross", "Victoria Station", "Oxford Street", "Canary Wharf", "Liverpool Street", "Paddington", "Waterloo", "Bond Street", "Leicester Square", "Covent Garden", "Bank", "Monument", "Tower Hill", "Holborn"],
-  "Pret a Manger": ["All", "London Bridge", "Kings Cross", "Victoria Station", "Liverpool Street", "Paddington", "Waterloo", "Bank", "Monument"],
-  "Brioche Dorée": ["All", "Oxford Street", "Canary Wharf", "Bond Street", "Leicester Square", "Covent Garden"],
-  "Starbucks": ["All", "London Bridge", "Oxford Street", "Tower Hill", "Holborn", "Canary Wharf"]
+  "All Brands": [
+    "All", "London Bridge", "Kings Cross", "Victoria Station", "Oxford Street", "Canary Wharf", 
+    "Liverpool Street", "Paddington", "Waterloo", "Bond Street", "Leicester Square", 
+    "Covent Garden", "Bank", "Monument", "Tower Hill", "Holborn", "Shoreditch",
+    "Camden", "Brixton", "Clapham", "Wimbledon", "Richmond", "Greenwich",
+    "Hampstead", "Notting Hill", "Chelsea"
+  ],
+  "Pret a Manger": [
+    "All", "London Bridge", "Kings Cross", "Victoria Station", "Liverpool Street", 
+    "Paddington", "Waterloo", "Bank", "Monument", "Shoreditch", "Camden",
+    "Clapham", "Wimbledon", "Greenwich"
+  ],
+  "Brioche Dorée": [
+    "All", "Oxford Street", "Canary Wharf", "Bond Street", "Leicester Square", 
+    "Covent Garden", "Notting Hill", "Chelsea", "Hampstead"
+  ],
+  "Starbucks": [
+    "All", "London Bridge", "Oxford Street", "Tower Hill", "Holborn", "Canary Wharf",
+    "Richmond", "Brixton", "Camden"
+  ]
 };
 
 export default function VolumeAllocation() {

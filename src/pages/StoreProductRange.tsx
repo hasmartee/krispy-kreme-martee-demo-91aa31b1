@@ -148,8 +148,17 @@ interface StoreInfo {
   cluster: string;
 }
 
+// Brand to store mapping
+const brandStoreMap = {
+  "All Brands": ["All Brands"],
+  "Pret a Manger": ["Pret a Manger"],
+  "Brioche Dorée": ["Brioche Dorée"],
+  "Starbucks": ["Starbucks"]
+};
+
 export default function StoreProductRange() {
   const [searchTerm, setSearchTerm] = useState("");
+  const [selectedBrand, setSelectedBrand] = useState("All Brands");
   const [selectedCluster, setSelectedCluster] = useState<string>("all");
   const [selectedDayPart, setSelectedDayPart] = useState<string>("all");
   const [storeData, setStoreData] = useState<any[]>([]);
@@ -405,63 +414,84 @@ export default function StoreProductRange() {
         </div>
       </div>
 
-      {/* Day Part Filter - Prominent */}
+      {/* Brand and Day Part Filter - Prominent */}
       {viewMode === "hq" && (
-        <Card className="shadow-card border-2 border-primary/20 bg-gradient-to-r from-primary/5 to-transparent">
-          <CardHeader className="pb-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <CardTitle className="text-xl flex items-center gap-2">
-                  <Filter className="h-5 w-5 text-primary" />
-                  Day Part Filter
-                </CardTitle>
-                <CardDescription>
-                  {selectedDayPart === "all" 
-                    ? "Showing products for all day parts" 
-                    : `Showing ${dayParts.find(d => d.id === selectedDayPart)?.name} products (${dayParts.find(d => d.id === selectedDayPart)?.timeRange})`
-                  }
-                </CardDescription>
+        <>
+          <Card className="shadow-card">
+            <CardContent className="p-4">
+              <div className="flex items-center gap-4">
+                <label className="text-sm font-medium">My Brand:</label>
+                <Select value={selectedBrand} onValueChange={setSelectedBrand}>
+                  <SelectTrigger className="w-[200px] h-9 border-[#7e9f57] focus:ring-[#7e9f57] font-semibold">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="All Brands">All Brands</SelectItem>
+                    <SelectItem value="Pret a Manger">Pret a Manger</SelectItem>
+                    <SelectItem value="Brioche Dorée">Brioche Dorée</SelectItem>
+                    <SelectItem value="Starbucks">Starbucks</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
-              {selectedDayPart !== "all" && (
+            </CardContent>
+          </Card>
+
+          <Card className="shadow-card border-2 border-primary/20 bg-gradient-to-r from-primary/5 to-transparent">
+            <CardHeader className="pb-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle className="text-xl flex items-center gap-2">
+                    <Filter className="h-5 w-5 text-primary" />
+                    Day Part Filter
+                  </CardTitle>
+                  <CardDescription>
+                    {selectedDayPart === "all" 
+                      ? "Showing products for all day parts" 
+                      : `Showing ${dayParts.find(d => d.id === selectedDayPart)?.name} products (${dayParts.find(d => d.id === selectedDayPart)?.timeRange})`
+                    }
+                  </CardDescription>
+                </div>
+                {selectedDayPart !== "all" && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setSelectedDayPart("all")}
+                    className="text-muted-foreground hover:text-foreground"
+                  >
+                    Clear Filter
+                  </Button>
+                )}
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="flex flex-wrap gap-3">
                 <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setSelectedDayPart("all")}
-                  className="text-muted-foreground hover:text-foreground"
-                >
-                  Clear Filter
-                </Button>
-              )}
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="flex flex-wrap gap-3">
-              <Button
-                variant={selectedDayPart === "all" ? "default" : "outline"}
-                size="lg"
-                onClick={() => setSelectedDayPart("all")}
-                className="flex-1 min-w-[160px] h-16 text-base font-semibold"
-              >
-                <Package className="mr-2 h-5 w-5" />
-                All Day Parts
-              </Button>
-              {dayParts.map((dayPart) => (
-                <Button
-                  key={dayPart.id}
-                  variant={selectedDayPart === dayPart.id ? "default" : "outline"}
+                  variant={selectedDayPart === "all" ? "default" : "outline"}
                   size="lg"
-                  onClick={() => setSelectedDayPart(dayPart.id)}
+                  onClick={() => setSelectedDayPart("all")}
                   className="flex-1 min-w-[160px] h-16 text-base font-semibold"
                 >
-                  <div className="flex flex-col items-start">
-                    <span>{dayPart.name}</span>
-                    <span className="text-xs font-normal opacity-80">{dayPart.timeRange}</span>
-                  </div>
+                  <Package className="mr-2 h-5 w-5" />
+                  All Day Parts
                 </Button>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
+                {dayParts.map((dayPart) => (
+                  <Button
+                    key={dayPart.id}
+                    variant={selectedDayPart === dayPart.id ? "default" : "outline"}
+                    size="lg"
+                    onClick={() => setSelectedDayPart(dayPart.id)}
+                    className="flex-1 min-w-[160px] h-16 text-base font-semibold"
+                  >
+                    <div className="flex flex-col items-start">
+                      <span>{dayPart.name}</span>
+                      <span className="text-xs font-normal opacity-80">{dayPart.timeRange}</span>
+                    </div>
+                  </Button>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </>
       )}
 
       {/* Search and Cluster Filters - Only show in HQ view */}

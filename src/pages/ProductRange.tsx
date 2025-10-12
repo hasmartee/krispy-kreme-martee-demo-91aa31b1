@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Search, Filter, Plus, LayoutGrid, List, Upload } from "lucide-react";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -298,9 +299,18 @@ const initialProducts = [
 
 const dayParts = ["All", "Breakfast", "Lunch", "Afternoon"];
 
+// Brand to store mapping
+const brandStoreMap = {
+  "All Brands": ["All Brands"],
+  "Pret a Manger": ["Pret a Manger"],
+  "Brioche Dorée": ["Brioche Dorée"],
+  "Starbucks": ["Starbucks"]
+};
+
 export default function ProductRange() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedDayPart, setSelectedDayPart] = useState("All");
+  const [selectedBrand, setSelectedBrand] = useState("All Brands");
   const [viewMode, setViewMode] = useState<"card" | "list">("card");
   const [products, setProducts] = useState(initialProducts);
   const [isBulkUploadOpen, setIsBulkUploadOpen] = useState(false);
@@ -433,34 +443,84 @@ export default function ProductRange() {
       </div>
 
       {/* Filters */}
-      <Card className="shadow-card">
-        <CardContent className="p-4">
-          <div className="flex flex-col sm:flex-row gap-4 items-center">
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Search by product name or SKU..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-9"
-              />
+      {appViewMode === "hq" ? (
+        <Card className="shadow-card">
+          <CardContent className="p-4">
+            <div className="space-y-4">
+              {/* Brand Filter - Higher Level */}
+              <div className="flex items-center gap-4">
+                <label className="text-sm font-medium">My Brand:</label>
+                <Select value={selectedBrand} onValueChange={setSelectedBrand}>
+                  <SelectTrigger className="w-[200px] h-9 border-[#7e9f57] focus:ring-[#7e9f57] font-semibold">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="All Brands">All Brands</SelectItem>
+                    <SelectItem value="Pret a Manger">Pret a Manger</SelectItem>
+                    <SelectItem value="Brioche Dorée">Brioche Dorée</SelectItem>
+                    <SelectItem value="Starbucks">Starbucks</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Search and Day Parts */}
+              <div className="flex flex-col sm:flex-row gap-4 items-center">
+                <div className="relative flex-1">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    placeholder="Search by product name or SKU..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="pl-9"
+                  />
+                </div>
+                <div className="flex gap-2 flex-wrap">
+                  {dayParts.map((dayPart) => (
+                    <Button
+                      key={dayPart}
+                      variant={selectedDayPart === dayPart ? "default" : "outline"}
+                      size="sm"
+                      onClick={() => setSelectedDayPart(dayPart)}
+                      className={selectedDayPart === dayPart ? "bg-primary text-primary-foreground" : ""}
+                    >
+                      {dayPart}
+                    </Button>
+                  ))}
+                </div>
+              </div>
             </div>
-            <div className="flex gap-2 flex-wrap">
-              {dayParts.map((dayPart) => (
-                <Button
-                  key={dayPart}
-                  variant={selectedDayPart === dayPart ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => setSelectedDayPart(dayPart)}
-                  className={selectedDayPart === dayPart ? "bg-primary text-primary-foreground" : ""}
-                >
-                  {dayPart}
-                </Button>
-              ))}
+          </CardContent>
+        </Card>
+      ) : (
+        <Card className="shadow-card">
+          <CardContent className="p-4">
+            <div className="flex flex-col sm:flex-row gap-4 items-center">
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  placeholder="Search by product name or SKU..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-9"
+                />
+              </div>
+              <div className="flex gap-2 flex-wrap">
+                {dayParts.map((dayPart) => (
+                  <Button
+                    key={dayPart}
+                    variant={selectedDayPart === dayPart ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => setSelectedDayPart(dayPart)}
+                    className={selectedDayPart === dayPart ? "bg-primary text-primary-foreground" : ""}
+                  >
+                    {dayPart}
+                  </Button>
+                ))}
+              </div>
             </div>
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Results Summary and View Toggle */}
       <div className="flex items-center justify-between">

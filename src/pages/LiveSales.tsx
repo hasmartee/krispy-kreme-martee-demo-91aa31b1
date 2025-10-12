@@ -19,10 +19,26 @@ interface Sale {
 
 // Brand to store mapping
 const brandStoreMap = {
-  "All Brands": ["London Bridge", "Kings Cross", "Victoria Station", "Oxford Street", "Canary Wharf", "Liverpool Street", "Paddington", "Waterloo", "Bond Street", "Leicester Square", "Covent Garden", "Bank", "Monument", "Tower Hill", "Holborn"],
-  "Pret a Manger": ["London Bridge", "Kings Cross", "Victoria Station", "Liverpool Street", "Paddington", "Waterloo", "Bank", "Monument"],
-  "Brioche Dorée": ["Oxford Street", "Canary Wharf", "Bond Street", "Leicester Square", "Covent Garden"],
-  "Starbucks": ["London Bridge", "Oxford Street", "Tower Hill", "Holborn", "Canary Wharf"]
+  "All Brands": [
+    "London Bridge", "Kings Cross", "Victoria Station", "Oxford Street", "Canary Wharf", 
+    "Liverpool Street", "Paddington", "Waterloo", "Bond Street", "Leicester Square", 
+    "Covent Garden", "Bank", "Monument", "Tower Hill", "Holborn", "Shoreditch",
+    "Camden", "Brixton", "Clapham", "Wimbledon", "Richmond", "Greenwich",
+    "Hampstead", "Notting Hill", "Chelsea"
+  ],
+  "Pret a Manger": [
+    "London Bridge", "Kings Cross", "Victoria Station", "Liverpool Street", 
+    "Paddington", "Waterloo", "Bank", "Monument", "Shoreditch", "Camden",
+    "Clapham", "Wimbledon", "Greenwich"
+  ],
+  "Brioche Dorée": [
+    "Oxford Street", "Canary Wharf", "Bond Street", "Leicester Square", 
+    "Covent Garden", "Notting Hill", "Chelsea", "Hampstead"
+  ],
+  "Starbucks": [
+    "London Bridge", "Oxford Street", "Tower Hill", "Holborn", "Canary Wharf",
+    "Richmond", "Brixton", "Camden"
+  ]
 };
 
 // Store to brand mapping

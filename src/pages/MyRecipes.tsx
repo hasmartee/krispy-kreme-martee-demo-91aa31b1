@@ -3,12 +3,14 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Search, ChevronDown, Plus, Upload } from "lucide-react";
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
+import { useView } from "@/contexts/ViewContext";
 import bltSandwich from "@/assets/products/blt-sandwich.jpg";
 import chickenCaesarWrap from "@/assets/products/chicken-caesar-wrap.jpg";
 import avocadoHummusWrap from "@/assets/products/avocado-hummus-wrap.jpg";
@@ -49,6 +51,8 @@ interface Recipe {
 const MyRecipes = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [openRecipe, setOpenRecipe] = useState<string | null>(null);
+  const [selectedBrand, setSelectedBrand] = useState("All Brands");
+  const { viewMode } = useView();
 
   const recipes: Recipe[] = [
     
@@ -634,6 +638,27 @@ const MyRecipes = () => {
             </Button>
           </div>
         </div>
+
+        {viewMode === "hq" && (
+          <Card className="shadow-card">
+            <CardContent className="p-4">
+              <div className="flex items-center gap-4">
+                <label className="text-sm font-medium">My Brand:</label>
+                <Select value={selectedBrand} onValueChange={setSelectedBrand}>
+                  <SelectTrigger className="w-[200px] h-9 border-[#7e9f57] focus:ring-[#7e9f57] font-semibold">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="All Brands">All Brands</SelectItem>
+                    <SelectItem value="Pret a Manger">Pret a Manger</SelectItem>
+                    <SelectItem value="Brioche Dorée">Brioche Dorée</SelectItem>
+                    <SelectItem value="Starbucks">Starbucks</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
         <Card>
           <CardHeader>
