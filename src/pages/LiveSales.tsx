@@ -19,13 +19,6 @@ interface Sale {
 
 // Brand to store mapping
 const brandStoreMap = {
-  "All Brands": [
-    "London Bridge", "Kings Cross", "Victoria Station", "Oxford Street", "Canary Wharf", 
-    "Liverpool Street", "Paddington", "Waterloo", "Bond Street", "Leicester Square", 
-    "Covent Garden", "Bank", "Monument", "Tower Hill", "Holborn", "Shoreditch",
-    "Camden", "Brixton", "Clapham", "Wimbledon", "Richmond", "Greenwich",
-    "Hampstead", "Notting Hill", "Chelsea"
-  ],
   "Pret a Manger": [
     "London Bridge", "Kings Cross", "Victoria Station", "Liverpool Street", 
     "Paddington", "Waterloo", "Bank", "Monument", "Shoreditch", "Camden",
@@ -90,13 +83,11 @@ export default function LiveSales() {
   const { viewMode, selectedStore } = useView();
   const [sales, setSales] = useState<Sale[]>([]);
   const [isLive, setIsLive] = useState(true);
-  const [selectedBrand, setSelectedBrand] = useState<string>("All Brands");
+  const [selectedBrand, setSelectedBrand] = useState<string>("Pret a Manger");
   const [selectedStoreFilter, setSelectedStoreFilter] = useState<string>("All");
 
   // Available stores based on selected brand
-  const availableStores = selectedBrand === "All Brands" 
-    ? ["All", ...brandStoreMap["All Brands"]]
-    : ["All", ...brandStoreMap[selectedBrand as keyof typeof brandStoreMap]];
+  const availableStores = ["All", ...brandStoreMap[selectedBrand as keyof typeof brandStoreMap]];
 
   // Initialize with some sales
   useEffect(() => {
@@ -140,9 +131,7 @@ export default function LiveSales() {
   
   // Apply brand and store filters for HQ view
   if (viewMode === "hq") {
-    if (selectedBrand !== "All Brands") {
-      filteredSales = filteredSales.filter(sale => sale.brand === selectedBrand);
-    }
+    filteredSales = filteredSales.filter(sale => sale.brand === selectedBrand);
     if (selectedStoreFilter !== "All") {
       filteredSales = filteredSales.filter(sale => sale.store === selectedStoreFilter);
     }
@@ -197,7 +186,6 @@ export default function LiveSales() {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="All Brands">All Brands</SelectItem>
                     <SelectItem value="Pret a Manger">Pret a Manger</SelectItem>
                     <SelectItem value="Brioche Dorée">Brioche Dorée</SelectItem>
                     <SelectItem value="Starbucks">Starbucks</SelectItem>

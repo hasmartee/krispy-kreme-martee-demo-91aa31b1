@@ -51,7 +51,7 @@ interface Recipe {
 const MyRecipes = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [openRecipe, setOpenRecipe] = useState<string | null>(null);
-  const [selectedBrand, setSelectedBrand] = useState("All Brands");
+  const [selectedBrand, setSelectedBrand] = useState("Pret a Manger");
   const { viewMode } = useView();
 
   const recipes: Recipe[] = [
@@ -649,7 +649,6 @@ const MyRecipes = () => {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="All Brands">All Brands</SelectItem>
                     <SelectItem value="Pret a Manger">Pret a Manger</SelectItem>
                     <SelectItem value="Brioche Dorée">Brioche Dorée</SelectItem>
                     <SelectItem value="Starbucks">Starbucks</SelectItem>

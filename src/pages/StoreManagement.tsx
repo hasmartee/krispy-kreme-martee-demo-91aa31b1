@@ -696,7 +696,7 @@ const initialMockStores: Store[] = [
 
 export default function StoreManagement() {
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedBrand, setSelectedBrand] = useState("All Brands");
+  const [selectedBrand, setSelectedBrand] = useState("Pret a Manger");
   const [stores, setStores] = useState<Store[]>([]);
   const [editingStore, setEditingStore] = useState<Store | null>(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
@@ -1166,7 +1166,6 @@ export default function StoreManagement() {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="All Brands">All Brands</SelectItem>
                     <SelectItem value="Pret a Manger">Pret a Manger</SelectItem>
                     <SelectItem value="Brioche Dorée">Brioche Dorée</SelectItem>
                     <SelectItem value="Starbucks">Starbucks</SelectItem>

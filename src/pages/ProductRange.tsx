@@ -301,7 +301,6 @@ const dayParts = ["All", "Breakfast", "Lunch", "Afternoon"];
 
 // Brand to store mapping
 const brandStoreMap = {
-  "All Brands": ["All Brands"],
   "Pret a Manger": ["Pret a Manger"],
   "Brioche Dorée": ["Brioche Dorée"],
   "Starbucks": ["Starbucks"]
@@ -310,7 +309,7 @@ const brandStoreMap = {
 export default function ProductRange() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedDayPart, setSelectedDayPart] = useState("All");
-  const [selectedBrand, setSelectedBrand] = useState("All Brands");
+  const [selectedBrand, setSelectedBrand] = useState("Pret a Manger");
   const [viewMode, setViewMode] = useState<"card" | "list">("card");
   const [products, setProducts] = useState(initialProducts);
   const [isBulkUploadOpen, setIsBulkUploadOpen] = useState(false);
@@ -455,7 +454,6 @@ export default function ProductRange() {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="All Brands">All Brands</SelectItem>
                     <SelectItem value="Pret a Manger">Pret a Manger</SelectItem>
                     <SelectItem value="Brioche Dorée">Brioche Dorée</SelectItem>
                     <SelectItem value="Starbucks">Starbucks</SelectItem>

@@ -150,7 +150,6 @@ interface StoreInfo {
 
 // Brand to store mapping
 const brandStoreMap = {
-  "All Brands": ["All Brands"],
   "Pret a Manger": ["Pret a Manger"],
   "Brioche Dorée": ["Brioche Dorée"],
   "Starbucks": ["Starbucks"]
@@ -158,7 +157,7 @@ const brandStoreMap = {
 
 export default function StoreProductRange() {
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedBrand, setSelectedBrand] = useState("All Brands");
+  const [selectedBrand, setSelectedBrand] = useState("Pret a Manger");
   const [selectedCluster, setSelectedCluster] = useState<string>("all");
   const [selectedDayPart, setSelectedDayPart] = useState<string>("all");
   const [storeData, setStoreData] = useState<any[]>([]);
@@ -426,7 +425,6 @@ export default function StoreProductRange() {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="All Brands">All Brands</SelectItem>
                     <SelectItem value="Pret a Manger">Pret a Manger</SelectItem>
                     <SelectItem value="Brioche Dorée">Brioche Dorée</SelectItem>
                     <SelectItem value="Starbucks">Starbucks</SelectItem>

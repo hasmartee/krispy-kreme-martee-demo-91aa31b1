@@ -58,13 +58,6 @@ const clusterProducts = {
 
 // Brand to store mapping
 const brandStoreMap = {
-  "All Brands": [
-    "London Bridge", "Kings Cross", "Victoria Station", "Oxford Street", "Canary Wharf", 
-    "Liverpool Street", "Paddington", "Waterloo", "Bond Street", "Leicester Square", 
-    "Covent Garden", "Bank", "Monument", "Tower Hill", "Holborn", "Shoreditch",
-    "Camden", "Brixton", "Clapham", "Wimbledon", "Richmond", "Greenwich",
-    "Hampstead", "Notting Hill", "Chelsea"
-  ],
   "Pret a Manger": [
     "London Bridge", "Kings Cross", "Victoria Station", "Liverpool Street", 
     "Paddington", "Waterloo", "Bank", "Monument", "Shoreditch", "Camden",
@@ -87,7 +80,7 @@ export default function Inventory() {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<"all" | "in_stock" | "low_stock" | "sold_out">("all");
-  const [selectedBrand, setSelectedBrand] = useState<string>("All Brands");
+  const [selectedBrand, setSelectedBrand] = useState<string>("Pret a Manger");
   const [storeFilter, setStoreFilter] = useState<string>("all");
   const [stores, setStores] = useState<{ id: string; name: string; cluster: string }[]>([]);
   const [stockTakeMode, setStockTakeMode] = useState(false);
@@ -97,9 +90,7 @@ export default function Inventory() {
   const [expandedStores, setExpandedStores] = useState<string[]>([]);
 
   // Available stores based on selected brand
-  const availableStores = selectedBrand === "All Brands" 
-    ? stores
-    : stores.filter(s => brandStoreMap[selectedBrand as keyof typeof brandStoreMap]?.includes(s.name));
+  const availableStores = stores.filter(s => brandStoreMap[selectedBrand as keyof typeof brandStoreMap]?.includes(s.name));
 
   useEffect(() => {
     loadStores();
@@ -498,10 +489,27 @@ export default function Inventory() {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="All Brands">All Brands</SelectItem>
                     <SelectItem value="Pret a Manger">Pret a Manger</SelectItem>
                     <SelectItem value="Brioche Dorée">Brioche Dorée</SelectItem>
                     <SelectItem value="Starbucks">Starbucks</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Store Filter */}
+              <div className="flex items-center gap-4">
+                <label className="text-sm font-medium">My Store:</label>
+                <Select value={storeFilter} onValueChange={setStoreFilter}>
+                  <SelectTrigger className="w-[200px] h-9 border-[#7e9f57] focus:ring-[#7e9f57]">
+                    <SelectValue placeholder="Filter by store" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Stores</SelectItem>
+                    {availableStores.map(store => (
+                      <SelectItem key={store.id} value={store.name}>
+                        {store.name}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>
@@ -526,19 +534,6 @@ export default function Inventory() {
                     <SelectItem value="in_stock">In Stock</SelectItem>
                     <SelectItem value="low_stock">Low Stock</SelectItem>
                     <SelectItem value="sold_out">Out of Stock</SelectItem>
-                  </SelectContent>
-                </Select>
-                <Select value={storeFilter} onValueChange={setStoreFilter}>
-                  <SelectTrigger className="w-[200px]">
-                    <SelectValue placeholder="Filter by store" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Stores</SelectItem>
-                    {availableStores.map(store => (
-                      <SelectItem key={store.id} value={store.name}>
-                        {store.name}
-                      </SelectItem>
-                    ))}
                   </SelectContent>
                 </Select>
               </div>

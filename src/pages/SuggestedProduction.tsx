@@ -251,13 +251,6 @@ const getInitialDayPart = () => {
 
 // Brand to store mapping
 const brandStoreMap = {
-  "All Brands": [
-    "All", "London Bridge", "Kings Cross", "Victoria Station", "Oxford Street", "Canary Wharf", 
-    "Liverpool Street", "Paddington", "Waterloo", "Bond Street", "Leicester Square", 
-    "Covent Garden", "Bank", "Monument", "Tower Hill", "Holborn", "Shoreditch",
-    "Camden", "Brixton", "Clapham", "Wimbledon", "Richmond", "Greenwich",
-    "Hampstead", "Notting Hill", "Chelsea"
-  ],
   "Pret a Manger": [
     "All", "London Bridge", "Kings Cross", "Victoria Station", "Liverpool Street", 
     "Paddington", "Waterloo", "Bank", "Monument", "Shoreditch", "Camden",
@@ -278,7 +271,7 @@ export default function VolumeAllocation() {
   const [allocations, setAllocations] = useState(initialAllocations);
   const [selectedDate, setSelectedDate] = useState<Date>(new Date(Date.now() + 86400000)); // Tomorrow
   const { viewMode, selectedStore } = useView();
-  const [selectedBrand, setSelectedBrand] = useState<string>("All Brands");
+  const [selectedBrand, setSelectedBrand] = useState<string>("Pret a Manger");
   const [selectedStores, setSelectedStores] = useState<string[]>(["All"]);
   const [selectedDay, setSelectedDay] = useState<string>("All days");
   const [selectedDayPart, setSelectedDayPart] = useState<string>("Morning Range");
@@ -293,7 +286,7 @@ export default function VolumeAllocation() {
   const formattedDate = tomorrow.toLocaleDateString('en-GB', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
   
   // Filter stores based on selected brand
-  const availableStores = brandStoreMap[selectedBrand as keyof typeof brandStoreMap] || brandStoreMap["All Brands"];
+  const availableStores = brandStoreMap[selectedBrand as keyof typeof brandStoreMap];
   
   // Get unique dates for the day filter
   const uniqueDates = Array.from(new Set(allocations.map(a => a.date.toDateString())));
@@ -306,7 +299,7 @@ export default function VolumeAllocation() {
   let filtered = viewMode === "store_manager" 
     ? allocations.slice(0, 36) // Show first 12 products x 3 day parts for store view
     : selectedStores.includes("All") 
-      ? allocations.filter(a => selectedBrand === "All Brands" || availableStores.includes(a.storeName))
+      ? allocations.filter(a => availableStores.includes(a.storeName))
       : allocations.filter(a => selectedStores.includes(a.storeName));
   
   // Filter by day
@@ -547,7 +540,6 @@ export default function VolumeAllocation() {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="All Brands">All Brands</SelectItem>
                     <SelectItem value="Pret a Manger">Pret a Manger</SelectItem>
                     <SelectItem value="Brioche Dorée">Brioche Dorée</SelectItem>
                     <SelectItem value="Starbucks">Starbucks</SelectItem>
