@@ -94,42 +94,25 @@ interface StoreInfo {
   cluster: string;
 }
 
-// Brand to store name mapping (which stores belong to which brand)
+// Brand to store name mapping (using actual database store names)
 const storeBrands: Record<string, string> = {
-  // Pret a Manger stores
-  "London Bridge": "Pret a Manger",
-  "King's Cross": "Pret a Manger",
-  "Victoria Station": "Pret a Manger",
-  "Liverpool Street": "Pret a Manger",
-  "Paddington": "Pret a Manger",
-  "Waterloo Station": "Pret a Manger",
-  "Bank": "Pret a Manger",
-  "Monument": "Pret a Manger",
-  "Shoreditch": "Pret a Manger",
+  // Pret a Manger stores (transport hubs & high street)
+  "Kings Cross Station": "Pret a Manger",
+  "Liverpool Street Station": "Pret a Manger",
+  "St Pancras International": "Pret a Manger",
+  "Shoreditch High Street": "Pret a Manger",
   "Camden Town": "Pret a Manger",
-  "Clapham Junction": "Pret a Manger",
-  "Wimbledon": "Pret a Manger",
-  "Greenwich": "Pret a Manger",
   
-  // Brioche Dorée stores
-  "Oxford Circus": "Brioche Dorée",
-  "Canary Wharf": "Brioche Dorée",
+  // Brioche Dorée stores (residential & upscale areas)
   "Bond Street": "Brioche Dorée",
-  "Leicester Square": "Brioche Dorée",
-  "Covent Garden": "Brioche Dorée",
-  "Notting Hill": "Brioche Dorée",
-  "Chelsea": "Brioche Dorée",
-  "Soho": "Brioche Dorée",
+  "Notting Hill Gate": "Brioche Dorée",
+  "Greenwich Village": "Brioche Dorée",
+  "Wimbledon Village": "Brioche Dorée",
   
-  // Starbucks stores
-  "Tower Hill": "Starbucks",
-  "Holborn": "Starbucks",
-  "Richmond": "Starbucks",
-  "Brixton": "Starbucks",
-  "Stratford": "Starbucks",
-  "Kensington": "Starbucks",
-  "Moorgate": "Starbucks",
-  "Farringdon": "Starbucks"
+  // Starbucks stores (business district)
+  "Bank Station": "Starbucks",
+  "Canary Wharf Plaza": "Starbucks",
+  "The City - Leadenhall": "Starbucks"
 };
 
 // Brand-specific product templates
