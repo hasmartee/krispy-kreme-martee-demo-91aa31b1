@@ -104,21 +104,6 @@ export default function StoreTeamHome() {
         </p>
       </div>
 
-      {/* Current Time */}
-      <Card className="shadow-card bg-gradient-to-r from-primary/10 to-transparent">
-        <CardContent className="p-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-muted-foreground mb-1">Current Time</p>
-              <p className="text-3xl font-bold text-foreground">
-                {currentTime.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })}
-              </p>
-            </div>
-            <Clock className="h-12 w-12 text-primary opacity-50" />
-          </div>
-        </CardContent>
-      </Card>
-
       {/* Next Task Card */}
       <Card className="shadow-lg border-2 border-primary/30">
         <CardHeader>
