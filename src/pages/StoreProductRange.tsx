@@ -47,60 +47,6 @@ const dayParts = [
   { id: "afternoon", name: "Afternoon", timeRange: "2pm-Close" },
 ];
 
-// Generate sample products based on cluster type
-const generateProducts = (cluster: string) => {
-  const baseProducts = [
-    { id: "SK001", name: "Classic BLT Sandwich", category: "Sandwich", active: true, dayParts: ["lunch", "afternoon"] },
-    { id: "SK002", name: "Chicken Caesar Wrap", category: "Wrap", active: true, dayParts: ["lunch", "afternoon"] },
-    { id: "SK003", name: "Avocado & Hummus Wrap", category: "Wrap", active: true, dayParts: ["lunch", "afternoon"] },
-    { id: "SK004", name: "Tuna Melt Panini", category: "Hot Food", active: true, dayParts: ["lunch", "afternoon"] },
-    { id: "SK005", name: "Mediterranean Salad Bowl", category: "Salad", active: true, dayParts: ["lunch", "afternoon"] },
-  ];
-
-  const breakfastProducts = [
-    { id: "SK011", name: "Ham & Cheese Croissant", category: "Breakfast", active: true, dayParts: ["breakfast"] },
-    { id: "SK012", name: "Bacon & Egg Roll", category: "Breakfast", active: true, dayParts: ["breakfast"] },
-    { id: "SK013", name: "Avocado Toast with Poached Egg", category: "Breakfast", active: true, dayParts: ["breakfast"] },
-    { id: "SK014", name: "Fruit & Yogurt Parfait", category: "Breakfast", active: true, dayParts: ["breakfast"] },
-    { id: "SK015", name: "Breakfast Burrito", category: "Breakfast", active: true, dayParts: ["breakfast"] },
-    { id: "SK016", name: "Granola Bowl with Berries", category: "Breakfast", active: true, dayParts: ["breakfast"] },
-    { id: "SK017", name: "Egg & Cheese Muffin", category: "Breakfast", active: true, dayParts: ["breakfast"] },
-    { id: "SK018", name: "Smoked Salmon Bagel", category: "Breakfast", active: true, dayParts: ["breakfast"] },
-    { id: "SK019", name: "Almond Butter & Banana Toast", category: "Breakfast", active: true, dayParts: ["breakfast"] },
-    { id: "SK020", name: "Coffee & Pastry Combo", category: "Breakfast", active: true, dayParts: ["breakfast"] },
-    { id: "SK021", name: "Scrambled Eggs on Sourdough", category: "Breakfast", active: true, dayParts: ["breakfast"] },
-    { id: "SK022", name: "Porridge with Honey & Nuts", category: "Breakfast", active: true, dayParts: ["breakfast"] },
-  ];
-
-  switch (cluster) {
-    case "residential":
-      return [
-        ...breakfastProducts.slice(0, 8),
-        ...baseProducts,
-        { id: "SK010", name: "Vegan Buddha Bowl", category: "Salad", active: true, dayParts: ["lunch", "afternoon"] },
-      ];
-    case "business_district":
-      return [
-        ...breakfastProducts.slice(0, 6),
-        ...baseProducts,
-        { id: "SK006", name: "Prosciutto & Mozzarella Ciabatta", category: "Sandwich", active: true, dayParts: ["lunch", "afternoon"] },
-      ];
-    case "transport_hub":
-      return [
-        ...breakfastProducts.slice(0, 5),
-        ...baseProducts,
-      ];
-    case "high_street":
-      return [
-        ...breakfastProducts.slice(0, 7),
-        ...baseProducts,
-        { id: "SK010", name: "Vegan Buddha Bowl", category: "Salad", active: true, dayParts: ["lunch", "afternoon"] },
-      ];
-    default:
-      return [...breakfastProducts.slice(0, 4), ...baseProducts];
-  }
-};
-
 const rangingInsights = [
   {
     store: "King's Cross",
@@ -148,11 +94,112 @@ interface StoreInfo {
   cluster: string;
 }
 
-// Brand to store mapping
-const brandStoreMap = {
-  "Pret a Manger": ["Pret a Manger"],
-  "Brioche Dorée": ["Brioche Dorée"],
-  "Starbucks": ["Starbucks"]
+// Brand to store name mapping (which stores belong to which brand)
+const storeBrands: Record<string, string> = {
+  // Pret a Manger stores (London locations)
+  "London Bridge": "Pret a Manger",
+  "Kings Cross": "Pret a Manger",
+  "Victoria Station": "Pret a Manger",
+  "Liverpool Street": "Pret a Manger",
+  "Paddington": "Pret a Manger",
+  "Waterloo": "Pret a Manger",
+  "Bank": "Pret a Manger",
+  "Monument": "Pret a Manger",
+  "Shoreditch": "Pret a Manger",
+  "Camden": "Pret a Manger",
+  "Clapham": "Pret a Manger",
+  "Wimbledon": "Pret a Manger",
+  "Greenwich": "Pret a Manger",
+  
+  // Brioche Dorée stores
+  "Oxford Street": "Brioche Dorée",
+  "Canary Wharf": "Brioche Dorée",
+  "Bond Street": "Brioche Dorée",
+  "Leicester Square": "Brioche Dorée",
+  "Covent Garden": "Brioche Dorée",
+  "Notting Hill": "Brioche Dorée",
+  "Chelsea": "Brioche Dorée",
+  "Hampstead": "Brioche Dorée",
+  
+  // Starbucks stores
+  "Tower Hill": "Starbucks",
+  "Holborn": "Starbucks",
+  "Richmond": "Starbucks",
+  "Brixton": "Starbucks"
+};
+
+// Brand-specific product templates
+const brandProductTemplates = {
+  "Pret a Manger": {
+    breakfast: [
+      { id: "PRET-B001", name: "Bacon & Egg Baguette", category: "Breakfast", active: true, dayParts: ["breakfast"] },
+      { id: "PRET-B002", name: "Ham & Cheese Croissant", category: "Breakfast", active: true, dayParts: ["breakfast"] },
+      { id: "PRET-B003", name: "Avocado Toast with Egg", category: "Breakfast", active: true, dayParts: ["breakfast"] },
+      { id: "PRET-B004", name: "Granola Bowl", category: "Breakfast", active: true, dayParts: ["breakfast"] },
+      { id: "PRET-B005", name: "Breakfast Burrito", category: "Breakfast", active: true, dayParts: ["breakfast"] },
+    ],
+    lunch: [
+      { id: "PRET-L001", name: "Classic BLT", category: "Sandwich", active: true, dayParts: ["lunch", "afternoon"] },
+      { id: "PRET-L002", name: "Chicken Caesar Wrap", category: "Wrap", active: true, dayParts: ["lunch", "afternoon"] },
+      { id: "PRET-L003", name: "Tuna Melt Panini", category: "Hot Food", active: true, dayParts: ["lunch", "afternoon"] },
+      { id: "PRET-L004", name: "Mediterranean Salad", category: "Salad", active: true, dayParts: ["lunch", "afternoon"] },
+      { id: "PRET-L005", name: "Chicken Bacon Sandwich", category: "Sandwich", active: true, dayParts: ["lunch", "afternoon"] },
+    ]
+  },
+  "Brioche Dorée": {
+    breakfast: [
+      { id: "BD-B001", name: "Croissant au Beurre", category: "Breakfast", active: true, dayParts: ["breakfast"] },
+      { id: "BD-B002", name: "Pain au Chocolat", category: "Breakfast", active: true, dayParts: ["breakfast"] },
+      { id: "BD-B003", name: "Croque Monsieur", category: "Breakfast", active: true, dayParts: ["breakfast"] },
+      { id: "BD-B004", name: "Brioche with Jam", category: "Breakfast", active: true, dayParts: ["breakfast"] },
+      { id: "BD-B005", name: "French Toast", category: "Breakfast", active: true, dayParts: ["breakfast"] },
+    ],
+    lunch: [
+      { id: "BD-L001", name: "Jambon-Beurre Sandwich", category: "Sandwich", active: true, dayParts: ["lunch", "afternoon"] },
+      { id: "BD-L002", name: "Quiche Lorraine", category: "Hot Food", active: true, dayParts: ["lunch", "afternoon"] },
+      { id: "BD-L003", name: "Croque Madame", category: "Hot Food", active: true, dayParts: ["lunch", "afternoon"] },
+      { id: "BD-L004", name: "Salade Niçoise", category: "Salad", active: true, dayParts: ["lunch", "afternoon"] },
+      { id: "BD-L005", name: "Baguette Poulet", category: "Sandwich", active: true, dayParts: ["lunch", "afternoon"] },
+    ]
+  },
+  "Starbucks": {
+    breakfast: [
+      { id: "SB-B001", name: "Bacon Egg Bites", category: "Breakfast", active: true, dayParts: ["breakfast"] },
+      { id: "SB-B002", name: "Breakfast Sandwich", category: "Breakfast", active: true, dayParts: ["breakfast"] },
+      { id: "SB-B003", name: "Oatmeal with Toppings", category: "Breakfast", active: true, dayParts: ["breakfast"] },
+      { id: "SB-B004", name: "Blueberry Muffin", category: "Breakfast", active: true, dayParts: ["breakfast"] },
+      { id: "SB-B005", name: "Avocado Spread", category: "Breakfast", active: true, dayParts: ["breakfast"] },
+    ],
+    lunch: [
+      { id: "SB-L001", name: "Turkey Pesto Panini", category: "Sandwich", active: true, dayParts: ["lunch", "afternoon"] },
+      { id: "SB-L002", name: "Chicken Caprese Sandwich", category: "Sandwich", active: true, dayParts: ["lunch", "afternoon"] },
+      { id: "SB-L003", name: "Protein Box", category: "Salad", active: true, dayParts: ["lunch", "afternoon"] },
+      { id: "SB-L004", name: "Grilled Cheese", category: "Hot Food", active: true, dayParts: ["lunch", "afternoon"] },
+      { id: "SB-L005", name: "Chicken Wrap", category: "Wrap", active: true, dayParts: ["lunch", "afternoon"] },
+    ]
+  }
+};
+
+// Generate products for a brand and cluster
+const generateBrandProducts = (brand: string, cluster: string) => {
+  const brandTemplate = brandProductTemplates[brand as keyof typeof brandProductTemplates];
+  if (!brandTemplate) return [];
+  
+  const allProducts = [...brandTemplate.breakfast, ...brandTemplate.lunch];
+  
+  // Customize based on cluster
+  switch (cluster) {
+    case "transport_hub":
+      return allProducts.slice(0, 8); // Fewer SKUs for quick service
+    case "business_district":
+      return allProducts.slice(0, 10);
+    case "residential":
+      return allProducts;
+    case "high_street":
+      return allProducts;
+    default:
+      return allProducts.slice(0, 7);
+  }
 };
 
 export default function StoreProductRange() {
@@ -207,13 +254,16 @@ export default function StoreProductRange() {
       setAllStores(storesInfo);
       
       // Update store data with actual stores
-      const updatedStoreData = storesInfo.map(store => ({
-        storeId: store.storeId,
-        storeName: store.storeName,
-        postcode: store.postcode,
-        cluster: store.cluster,
-        activeProducts: generateProducts(store.cluster)
-      }));
+      const updatedStoreData = storesInfo.map(store => {
+        const storeBrand = storeBrands[store.storeName] || "Pret a Manger";
+        return {
+          storeId: store.storeId,
+          storeName: store.storeName,
+          postcode: store.postcode,
+          cluster: store.cluster,
+          activeProducts: generateBrandProducts(storeBrand, store.cluster)
+        };
+      });
       setStoreData(updatedStoreData);
     }
   };
@@ -224,7 +274,12 @@ export default function StoreProductRange() {
                          store.storeId.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesCluster = selectedCluster === "all" || store.cluster === selectedCluster;
     const matchesViewMode = viewMode === "hq" || viewMode === "store_manager" || viewMode === "store_team" ? (store.storeName === selectedStore || viewMode === "hq") : false;
-    return matchesSearch && matchesCluster && matchesViewMode;
+    
+    // Filter by brand
+    const storeBrand = storeBrands[store.storeName] || "Pret a Manger";
+    const matchesBrand = selectedBrand === storeBrand;
+    
+    return matchesSearch && matchesCluster && matchesViewMode && (viewMode !== "hq" || matchesBrand);
   });
 
   const handleClusterClick = (clusterId: string) => {
@@ -310,7 +365,7 @@ export default function StoreProductRange() {
 
   const handleEditTemplate = (clusterId: string) => {
     setEditingTemplateCluster(clusterId);
-    setTemplateProducts(generateProducts(clusterId));
+    setTemplateProducts(generateBrandProducts(selectedBrand, clusterId));
     setIsEditTemplateOpen(true);
   };
 
@@ -531,8 +586,8 @@ export default function StoreProductRange() {
       {viewMode === "hq" && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {storeClusters.map((cluster) => {
-            const storesInCluster = storeData.filter(store => store.cluster === cluster.id).length;
-            const clusterProducts = generateProducts(cluster.id);
+            const storesInCluster = filteredStores.filter(store => store.cluster === cluster.id).length;
+            const clusterProducts = generateBrandProducts(selectedBrand, cluster.id);
             return (
               <Card 
                 key={cluster.id} 
@@ -569,7 +624,7 @@ export default function StoreProductRange() {
                         className="opacity-0 group-hover:opacity-100 transition-opacity"
                       >
                         <Settings className="h-4 w-4 mr-2" />
-                        Manage
+                        Manage Stores
                       </Button>
                     </div>
                   </div>
