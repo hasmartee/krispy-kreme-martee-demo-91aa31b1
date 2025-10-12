@@ -170,6 +170,43 @@ export default function Home() {
         </div>
       </div>
 
+      {/* Notable Events - Only in Store View */}
+      {viewMode === "store_manager" && (
+        <>
+          <div className="pt-2">
+            <h2 className="text-2xl font-bold text-foreground mb-4">
+              Notable events on Monday 13 October 2025
+            </h2>
+          </div>
+
+          <Card className="shadow-card border-l-4 border-l-warning bg-warning/5">
+            <CardContent className="p-4">
+              <div className="flex flex-col md:flex-row items-start md:items-center gap-4 md:gap-8">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 rounded-lg bg-primary/10">
+                    <CloudRain className="h-5 w-5 text-primary" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-muted-foreground">Predicted Weather</p>
+                    <p className="text-base font-semibold text-foreground">Rainy, 12°C - Lower footfall expected</p>
+                  </div>
+                </div>
+                <div className="h-8 w-px bg-border hidden md:block" />
+                <div className="flex items-center gap-3">
+                  <div className="p-2 rounded-lg bg-destructive/10">
+                    <AlertTriangle className="h-5 w-5 text-destructive" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-muted-foreground">Key Events</p>
+                    <p className="text-base font-semibold text-foreground">Train strike in Central London - Reduced commuter traffic</p>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </>
+      )}
+
       {/* Next Task */}
       <div>
         <div className="flex items-center justify-between mb-4">
@@ -490,43 +527,6 @@ export default function Home() {
           </Card>
         </div>
       </div>
-
-      {/* Notable Events - Only in Store View */}
-      {viewMode === "store_manager" && (
-        <>
-          <div className="pt-2">
-            <h2 className="text-2xl font-bold text-foreground mb-4">
-              Notable events on Monday 13 October 2025
-            </h2>
-          </div>
-
-          <Card className="shadow-card border-l-4 border-l-warning bg-warning/5">
-            <CardContent className="p-4">
-              <div className="flex flex-col md:flex-row items-start md:items-center gap-4 md:gap-8">
-                <div className="flex items-center gap-3">
-                  <div className="p-2 rounded-lg bg-primary/10">
-                    <CloudRain className="h-5 w-5 text-primary" />
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium text-muted-foreground">Predicted Weather</p>
-                    <p className="text-base font-semibold text-foreground">Rainy, 12°C - Lower footfall expected</p>
-                  </div>
-                </div>
-                <div className="h-8 w-px bg-border hidden md:block" />
-                <div className="flex items-center gap-3">
-                  <div className="p-2 rounded-lg bg-destructive/10">
-                    <AlertTriangle className="h-5 w-5 text-destructive" />
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium text-muted-foreground">Key Events</p>
-                    <p className="text-base font-semibold text-foreground">Train strike in Central London - Reduced commuter traffic</p>
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </>
-      )}
     </div>
   );
 }
