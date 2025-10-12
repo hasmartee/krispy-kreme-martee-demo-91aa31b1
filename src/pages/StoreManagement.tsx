@@ -971,21 +971,15 @@ export default function StoreManagement() {
     
     const matchesViewMode = viewMode === "hq" || store.name === contextSelectedStore;
     
-    // For HQ view, show all stores across all brands (no brand filtering)
-    // For store manager view, filter by brand
-    if (viewMode === "hq") {
-      return matchesSearch && matchesViewMode;
-    } else {
-      const storeBrand = storeBrands[store.name] || "Pret a Manger";
-      const matchesBrand = selectedBrand === storeBrand;
-      return matchesSearch && matchesViewMode && matchesBrand;
-    }
+    // Filter by brand for both HQ and store manager views
+    const storeBrand = storeBrands[store.name] || "Pret a Manger";
+    const matchesBrand = selectedBrand === storeBrand;
+    
+    return matchesSearch && matchesViewMode && (viewMode === "store_manager" || matchesBrand);
   });
 
-  // Get the total store count - for HQ show all stores, otherwise show selected brand
-  const totalBrandStores = viewMode === "hq" 
-    ? Object.values(brandStoreCounts).reduce((sum, count) => sum + count, 0)
-    : brandStoreCounts[selectedBrand as keyof typeof brandStoreCounts] || 0;
+  // Get the total store count for the selected brand
+  const totalBrandStores = brandStoreCounts[selectedBrand as keyof typeof brandStoreCounts] || 0;
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -1188,28 +1182,8 @@ export default function StoreManagement() {
                 : totalBrandStores
               }
             </div>
-            {viewMode === "hq" && (
-              <p className="text-xs text-muted-foreground mt-1">
-                Showing {filteredStores.length} sample stores
-              </p>
-            )}
           </CardContent>
         </Card>
-        
-        {viewMode === "hq" && (
-          <Card className="shadow-card">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">
-                Active Stores
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-success">
-                {filteredStores.filter(store => store.status === 'active').length}
-              </div>
-            </CardContent>
-          </Card>
-        )}
       </div>
 
       {/* Search and Brand Filter */}
