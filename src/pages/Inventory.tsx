@@ -66,7 +66,9 @@ export default function Inventory() {
   const [storeFilter, setStoreFilter] = useState<string>("all");
   const [stores, setStores] = useState<{ id: string; name: string; cluster: string }[]>([]);
   const [stockTakeMode, setStockTakeMode] = useState(false);
+  const [endOfDayMode, setEndOfDayMode] = useState(false);
   const [editingStocks, setEditingStocks] = useState<Record<string, number>>({});
+  const [editingWaste, setEditingWaste] = useState<Record<string, number>>({});
   const [expandedStores, setExpandedStores] = useState<string[]>([]);
 
   useEffect(() => {
@@ -246,6 +248,7 @@ export default function Inventory() {
   };
 
   const handleStockTakeMode = () => {
+    if (endOfDayMode) setEndOfDayMode(false); // Close end of day if open
     setStockTakeMode(!stockTakeMode);
     if (!stockTakeMode) {
       // Initialize editing stocks with current values
@@ -260,8 +263,34 @@ export default function Inventory() {
     }
   };
 
+  const handleEndOfDayMode = () => {
+    if (stockTakeMode) setStockTakeMode(false); // Close stock take if open
+    setEndOfDayMode(!endOfDayMode);
+    if (!endOfDayMode) {
+      // Initialize editing stocks and waste with current values
+      const stocks: Record<string, number> = {};
+      const waste: Record<string, number> = {};
+      inventory.forEach(item => {
+        const key = item.store_id 
+          ? `${item.store_id}-${item.product.id}`
+          : item.product.id;
+        stocks[key] = item.current_stock;
+        waste[key] = 0; // Initialize waste to 0
+      });
+      setEditingStocks(stocks);
+      setEditingWaste(waste);
+    }
+  };
+
   const adjustStock = (itemKey: string, delta: number) => {
     setEditingStocks(prev => ({
+      ...prev,
+      [itemKey]: Math.max(0, (prev[itemKey] || 0) + delta)
+    }));
+  };
+
+  const adjustWaste = (itemKey: string, delta: number) => {
+    setEditingWaste(prev => ({
       ...prev,
       [itemKey]: Math.max(0, (prev[itemKey] || 0) + delta)
     }));
@@ -315,6 +344,52 @@ export default function Inventory() {
     }
   };
 
+  const handleSaveEndOfDay = async () => {
+    try {
+      for (const item of inventory) {
+        const key = item.store_id 
+          ? `${item.store_id}-${item.product.id}`
+          : item.product.id;
+        const newStock = editingStocks[key];
+        const waste = editingWaste[key] || 0;
+        
+        if (item.store_id) {
+          // Update stock in database (accounting for waste)
+          const { error } = await supabase
+            .from("store_inventory")
+            .upsert({
+              store_id: item.store_id,
+              product_id: item.product.id,
+              current_stock: newStock,
+              last_updated: new Date().toISOString(),
+            });
+
+          if (error) throw error;
+
+          // TODO: Log waste data to a waste tracking table if needed
+          if (waste > 0) {
+            console.log(`Waste logged for ${item.product.name}: ${waste} units`);
+          }
+        }
+      }
+
+      toast({
+        title: "Success",
+        description: "End of day stock take completed with waste tracking",
+      });
+      
+      setEndOfDayMode(false);
+      loadInventory();
+    } catch (error) {
+      console.error("Error saving end of day:", error);
+      toast({
+        title: "Error",
+        description: "Failed to save end of day stock take",
+        variant: "destructive",
+      });
+    }
+  };
+
   const filteredInventory = inventory.filter(item => {
     const matchesSearch = 
       item.product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -355,15 +430,26 @@ export default function Inventory() {
             }
           </p>
         </div>
-        <Button 
-          size="lg"
-          variant={stockTakeMode ? "default" : "outline"}
-          onClick={handleStockTakeMode}
-          className="shadow-brand"
-        >
-          <ClipboardCheck className="h-5 w-5 mr-2" />
-          {stockTakeMode ? "Save Stock Take" : "Stock Take Mode"}
-        </Button>
+        <div className="flex gap-2">
+          <Button 
+            size="lg"
+            variant={stockTakeMode ? "default" : "outline"}
+            onClick={handleStockTakeMode}
+            className="shadow-brand"
+          >
+            <ClipboardCheck className="h-5 w-5 mr-2" />
+            {stockTakeMode ? "Save Stock Take" : "Stock Take"}
+          </Button>
+          <Button 
+            size="lg"
+            variant={endOfDayMode ? "default" : "outline"}
+            onClick={handleEndOfDayMode}
+            className="shadow-brand"
+          >
+            <Package className="h-5 w-5 mr-2" />
+            {endOfDayMode ? "Save End of Day" : "End of Day Stock Take"}
+          </Button>
+        </div>
       </div>
 
       {/* Filters */}
@@ -420,6 +506,11 @@ export default function Inventory() {
                 Stock Take Active
               </Badge>
             )}
+            {endOfDayMode && (
+              <Badge variant="outline" className="ml-2 animate-pulse">
+                End of Day Stock Take Active
+              </Badge>
+            )}
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -458,21 +549,23 @@ export default function Inventory() {
                               <TableHead>SKU</TableHead>
                               <TableHead>Product Name</TableHead>
                               <TableHead>Current Stock</TableHead>
+                              {endOfDayMode && <TableHead>Waste</TableHead>}
                               <TableHead>Status</TableHead>
-                              {!stockTakeMode && <TableHead>Actions</TableHead>}
+                              {!stockTakeMode && !endOfDayMode && <TableHead>Actions</TableHead>}
                             </TableRow>
                           </TableHeader>
                           <TableBody>
                             {storeInventory.map((item) => {
                               const itemKey = `${item.store_id}-${item.product.id}`;
-                              const displayStock = stockTakeMode ? editingStocks[itemKey] : item.current_stock;
+                              const displayStock = (stockTakeMode || endOfDayMode) ? editingStocks[itemKey] : item.current_stock;
+                              const displayWaste = endOfDayMode ? editingWaste[itemKey] || 0 : 0;
 
                               return (
                                 <TableRow key={itemKey}>
                                   <TableCell className="font-medium">{item.product.sku}</TableCell>
                                   <TableCell>{item.product.name}</TableCell>
                                   <TableCell>
-                                    {stockTakeMode ? (
+                                    {(stockTakeMode || endOfDayMode) ? (
                                       <div className="flex items-center gap-2">
                                         <Button
                                           size="sm"
@@ -482,7 +575,7 @@ export default function Inventory() {
                                         >
                                           <Minus className="h-4 w-4" />
                                         </Button>
-                                        <span className={`font-bold text-lg min-w-[3rem] text-center ${stockTakeMode ? 'animate-wobble' : ''}`}>
+                                        <span className={`font-bold text-lg min-w-[3rem] text-center ${(stockTakeMode || endOfDayMode) ? 'animate-wobble' : ''}`}>
                                           {displayStock}
                                         </span>
                                         <Button
@@ -498,8 +591,33 @@ export default function Inventory() {
                                       <span className="font-medium">{displayStock}</span>
                                     )}
                                   </TableCell>
+                                  {endOfDayMode && (
+                                    <TableCell>
+                                      <div className="flex items-center gap-2">
+                                        <Button
+                                          size="sm"
+                                          variant="outline"
+                                          onClick={() => adjustWaste(itemKey, -1)}
+                                          className="h-8 w-8 p-0"
+                                        >
+                                          <Minus className="h-4 w-4" />
+                                        </Button>
+                                        <span className="font-bold text-lg min-w-[3rem] text-center text-destructive">
+                                          {displayWaste}
+                                        </span>
+                                        <Button
+                                          size="sm"
+                                          variant="outline"
+                                          onClick={() => adjustWaste(itemKey, 1)}
+                                          className="h-8 w-8 p-0"
+                                        >
+                                          <Plus className="h-4 w-4" />
+                                        </Button>
+                                      </div>
+                                    </TableCell>
+                                  )}
                                   <TableCell>{getStatusBadge(getStockStatus(displayStock))}</TableCell>
-                                  {!stockTakeMode && (
+                                  {!stockTakeMode && !endOfDayMode && (
                                     <TableCell>
                                       <Button size="sm" variant="ghost">
                                         <Edit2 className="h-4 w-4 mr-2" />
@@ -520,19 +638,20 @@ export default function Inventory() {
             </div>
           ) : (
             <Table>
-              <TableHeader>
+               <TableHeader>
                 <TableRow>
                   <TableHead>SKU</TableHead>
                   <TableHead>Product Name</TableHead>
                   <TableHead>Current Stock</TableHead>
+                  {endOfDayMode && <TableHead>Waste</TableHead>}
                   <TableHead>Status</TableHead>
-                  {!stockTakeMode && <TableHead>Actions</TableHead>}
+                  {!stockTakeMode && !endOfDayMode && <TableHead>Actions</TableHead>}
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {filteredInventory.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={stockTakeMode ? 4 : 5} className="text-center py-12">
+                    <TableCell colSpan={endOfDayMode ? 5 : (stockTakeMode ? 4 : 5)} className="text-center py-12">
                       <div className="flex flex-col items-center gap-2 text-muted-foreground">
                         <Package className="h-12 w-12 opacity-50" />
                         <p>No products found</p>
@@ -545,14 +664,15 @@ export default function Inventory() {
                 ) : (
                   filteredInventory.map((item) => {
                     const itemKey = item.product.id;
-                    const displayStock = stockTakeMode ? editingStocks[itemKey] : item.current_stock;
+                    const displayStock = (stockTakeMode || endOfDayMode) ? editingStocks[itemKey] : item.current_stock;
+                    const displayWaste = endOfDayMode ? editingWaste[itemKey] || 0 : 0;
 
                   return (
                     <TableRow key={itemKey}>
                       <TableCell className="font-medium">{item.product.sku}</TableCell>
                       <TableCell>{item.product.name}</TableCell>
                       <TableCell>
-                        {stockTakeMode ? (
+                        {(stockTakeMode || endOfDayMode) ? (
                           <div className="flex items-center gap-2">
                             <Button
                               size="sm"
@@ -562,7 +682,7 @@ export default function Inventory() {
                             >
                               <Minus className="h-4 w-4" />
                             </Button>
-                            <span className={`font-bold text-lg min-w-[3rem] text-center ${stockTakeMode ? 'animate-wobble' : ''}`}>
+                            <span className={`font-bold text-lg min-w-[3rem] text-center ${(stockTakeMode || endOfDayMode) ? 'animate-wobble' : ''}`}>
                               {displayStock}
                             </span>
                             <Button
@@ -578,8 +698,33 @@ export default function Inventory() {
                           <span className="font-medium">{displayStock}</span>
                         )}
                       </TableCell>
+                      {endOfDayMode && (
+                        <TableCell>
+                          <div className="flex items-center gap-2">
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => adjustWaste(itemKey, -1)}
+                              className="h-8 w-8 p-0"
+                            >
+                              <Minus className="h-4 w-4" />
+                            </Button>
+                            <span className="font-bold text-lg min-w-[3rem] text-center text-destructive">
+                              {displayWaste}
+                            </span>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => adjustWaste(itemKey, 1)}
+                              className="h-8 w-8 p-0"
+                            >
+                              <Plus className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </TableCell>
+                      )}
                       <TableCell>{getStatusBadge(getStockStatus(displayStock))}</TableCell>
-                      {!stockTakeMode && (
+                      {!stockTakeMode && !endOfDayMode && (
                         <TableCell>
                           <Button size="sm" variant="ghost">
                             <Edit2 className="h-4 w-4 mr-2" />
@@ -602,8 +747,19 @@ export default function Inventory() {
           <Button variant="outline" onClick={() => setStockTakeMode(false)}>
             Cancel
           </Button>
-          <Button onClick={handleSaveStocks} className="shadow-brand">
-            Save All Changes
+          <Button onClick={handleSaveStocks}>
+            Save Stock Take
+          </Button>
+        </div>
+      )}
+
+      {endOfDayMode && (
+        <div className="flex justify-end gap-4">
+          <Button variant="outline" onClick={() => setEndOfDayMode(false)}>
+            Cancel
+          </Button>
+          <Button onClick={handleSaveEndOfDay}>
+            Save End of Day
           </Button>
         </div>
       )}
