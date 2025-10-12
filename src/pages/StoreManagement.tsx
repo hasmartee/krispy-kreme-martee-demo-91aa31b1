@@ -971,15 +971,21 @@ export default function StoreManagement() {
     
     const matchesViewMode = viewMode === "hq" || store.name === contextSelectedStore;
     
-    // Filter by brand
-    const storeBrand = storeBrands[store.name] || "Pret a Manger";
-    const matchesBrand = selectedBrand === storeBrand;
-    
-    return matchesSearch && matchesViewMode && (viewMode === "store_manager" || matchesBrand);
+    // For HQ view, show all stores across all brands (no brand filtering)
+    // For store manager view, filter by brand
+    if (viewMode === "hq") {
+      return matchesSearch && matchesViewMode;
+    } else {
+      const storeBrand = storeBrands[store.name] || "Pret a Manger";
+      const matchesBrand = selectedBrand === storeBrand;
+      return matchesSearch && matchesViewMode && matchesBrand;
+    }
   });
 
-  // Get the total store count for the selected brand
-  const totalBrandStores = brandStoreCounts[selectedBrand as keyof typeof brandStoreCounts] || 0;
+  // Get the total store count - for HQ show all stores, otherwise show selected brand
+  const totalBrandStores = viewMode === "hq" 
+    ? Object.values(brandStoreCounts).reduce((sum, count) => sum + count, 0)
+    : brandStoreCounts[selectedBrand as keyof typeof brandStoreCounts] || 0;
 
   const getStatusBadge = (status: string) => {
     switch (status) {
