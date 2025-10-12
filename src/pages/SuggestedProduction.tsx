@@ -249,11 +249,20 @@ const getInitialDayPart = () => {
   return "Afternoon";
 };
 
+// Brand to store mapping
+const brandStoreMap = {
+  "All Brands": ["All", "London Bridge", "Kings Cross", "Victoria Station", "Oxford Street", "Canary Wharf"],
+  "Pret a Manger": ["All", "London Bridge", "Kings Cross", "Victoria Station"],
+  "Brioche Dorée": ["All", "Oxford Street", "Canary Wharf"],
+  "Starbucks": ["All", "London Bridge", "Oxford Street"]
+};
+
 export default function VolumeAllocation() {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [allocations, setAllocations] = useState(initialAllocations);
   const [selectedDate, setSelectedDate] = useState<Date>(new Date(Date.now() + 86400000)); // Tomorrow
   const { viewMode, selectedStore } = useView();
+  const [selectedBrand, setSelectedBrand] = useState<string>("All Brands");
   const [selectedStores, setSelectedStores] = useState<string[]>(["All"]);
   const [selectedDay, setSelectedDay] = useState<string>("All days");
   const [selectedDayPart, setSelectedDayPart] = useState<string>("Morning Range");
@@ -267,7 +276,8 @@ export default function VolumeAllocation() {
   const tomorrow = new Date(Date.now() + 86400000);
   const formattedDate = tomorrow.toLocaleDateString('en-GB', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
   
-  const stores = ["All", ...Array.from(new Set(baseProducts.map(a => a.storeName)))];
+  // Filter stores based on selected brand
+  const availableStores = brandStoreMap[selectedBrand as keyof typeof brandStoreMap] || brandStoreMap["All Brands"];
   
   // Get unique dates for the day filter
   const uniqueDates = Array.from(new Set(allocations.map(a => a.date.toDateString())));
@@ -280,7 +290,7 @@ export default function VolumeAllocation() {
   let filtered = viewMode === "store_manager" 
     ? allocations.slice(0, 36) // Show first 12 products x 3 day parts for store view
     : selectedStores.includes("All") 
-      ? allocations 
+      ? allocations.filter(a => selectedBrand === "All Brands" || availableStores.includes(a.storeName))
       : allocations.filter(a => selectedStores.includes(a.storeName));
   
   // Filter by day
@@ -289,36 +299,28 @@ export default function VolumeAllocation() {
     filtered = filtered.filter(a => a.date.toDateString() === selectedDateStr);
   }
   
-  // For store manager view, don't filter by day part - we'll show all in one table
-  // For HQ view, filter by day part
-  if (viewMode !== "store_manager") {
-    filtered = filtered.filter(a => a.dayPart === selectedDayPart);
-  }
-  
   const filteredAllocations = filtered;
 
-  // Group products by ID for store manager view
-  const groupedProducts = viewMode === "store_manager" 
-    ? Array.from(new Set(filtered.map(a => a.id))).map(productId => {
-        const productAllocations = filtered.filter(a => a.id === productId);
-        const morningRange = productAllocations.find(a => a.dayPart === "Morning Range");
-        const lunch = productAllocations.find(a => a.dayPart === "Lunch");
-        const afternoon = productAllocations.find(a => a.dayPart === "Afternoon");
-        
-        return {
-          id: productId,
-          productName: productAllocations[0].productName,
-          category: productAllocations[0].category,
-          currentStock: productAllocations[0].currentStock,
-          date: productAllocations[0].date,
-          storeId: productAllocations[0].storeId,
-          storeName: productAllocations[0].storeName,
-          breakfast: morningRange,
-          lunch,
-          afternoon,
-        };
-      })
-    : [];
+  // Group products by ID - now for both views
+  const groupedProducts = Array.from(new Set(filtered.map(a => a.id))).map(productId => {
+    const productAllocations = filtered.filter(a => a.id === productId);
+    const morningRange = productAllocations.find(a => a.dayPart === "Morning Range");
+    const lunch = productAllocations.find(a => a.dayPart === "Lunch");
+    const afternoon = productAllocations.find(a => a.dayPart === "Afternoon");
+    
+    return {
+      id: productId,
+      productName: productAllocations[0].productName,
+      category: productAllocations[0].category,
+      currentStock: productAllocations[0].currentStock,
+      date: productAllocations[0].date,
+      storeId: productAllocations[0].storeId,
+      storeName: productAllocations[0].storeName,
+      breakfast: morningRange,
+      lunch,
+      afternoon,
+    };
+  });
 
   const handleRefresh = () => {
     setIsRefreshing(true);
@@ -513,40 +515,62 @@ export default function VolumeAllocation() {
         </div>
       </div>
 
-      {/* Store Filter for HQ View */}
+      {/* Brand and Store Filter for HQ View */}
       {viewMode === "hq" && (
         <Card className="shadow-card border-l-4 border-l-[#7e9f57]">
           <CardContent className="py-4">
-            <div className="flex items-center justify-between">
+            <div className="space-y-4">
+              {/* Brand Filter - Higher Level */}
               <div className="flex items-center gap-4">
-                <label className="text-sm font-medium">Filter by Store:</label>
-                <Select value={selectedStores[0]} onValueChange={(v) => setSelectedStores([v])}>
-                  <SelectTrigger className="w-[180px] h-9 border-[#7e9f57] focus:ring-[#7e9f57]">
+                <label className="text-sm font-medium">My Brand:</label>
+                <Select value={selectedBrand} onValueChange={(v) => {
+                  setSelectedBrand(v);
+                  setSelectedStores(["All"]); // Reset store selection when brand changes
+                }}>
+                  <SelectTrigger className="w-[200px] h-9 border-[#7e9f57] focus:ring-[#7e9f57] font-semibold">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    {stores.map(store => (
-                      <SelectItem key={store} value={store}>{store}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <label className="text-sm font-medium ml-4">Day:</label>
-                <Select value={selectedDay} onValueChange={setSelectedDay}>
-                  <SelectTrigger className="w-[180px] h-9 border-[#7e9f57] focus:ring-[#7e9f57]">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {dayOptions.map(day => (
-                      <SelectItem key={day} value={day}>{day}</SelectItem>
-                    ))}
+                    <SelectItem value="All Brands">All Brands</SelectItem>
+                    <SelectItem value="Pret a Manger">Pret a Manger</SelectItem>
+                    <SelectItem value="Brioche Dorée">Brioche Dorée</SelectItem>
+                    <SelectItem value="Starbucks">Starbucks</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
-              <div className="flex items-center gap-2">
-                <span className="text-sm text-muted-foreground">Viewing:</span>
-                <Badge className="bg-[#7e9f57] text-white font-semibold">
-                  {selectedDay === "All days" ? "7 days" : selectedDay}
-                </Badge>
+
+              {/* Store and Day Filters */}
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                  <label className="text-sm font-medium">Filter by Store:</label>
+                  <Select value={selectedStores[0]} onValueChange={(v) => setSelectedStores([v])}>
+                    <SelectTrigger className="w-[180px] h-9 border-[#7e9f57] focus:ring-[#7e9f57]">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {availableStores.map(store => (
+                        <SelectItem key={store} value={store}>{store}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <label className="text-sm font-medium ml-4">Day:</label>
+                  <Select value={selectedDay} onValueChange={setSelectedDay}>
+                    <SelectTrigger className="w-[180px] h-9 border-[#7e9f57] focus:ring-[#7e9f57]">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {dayOptions.map(day => (
+                        <SelectItem key={day} value={day}>{day}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm text-muted-foreground">Viewing:</span>
+                  <Badge className="bg-[#7e9f57] text-white font-semibold">
+                    {selectedBrand} • {selectedDay === "All days" ? "7 days" : selectedDay}
+                  </Badge>
+                </div>
               </div>
             </div>
           </CardContent>
@@ -823,139 +847,149 @@ export default function VolumeAllocation() {
               </TableBody>
             </Table>
           ) : (
-            // HQ View - Original table with day parts as rows
+            // HQ View - Same as Store Manager View with Store column
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Date</TableHead>
-                  <TableHead>Day Part</TableHead>
                   <TableHead>Product</TableHead>
                   <TableHead>Category</TableHead>
                   <TableHead>Store</TableHead>
                   <TableHead>Current Stock</TableHead>
-                  <TableHead>Trend</TableHead>
-                  <TableHead className="bg-gradient-to-r from-[#ff914d]/20 to-[#ff914d]/10 relative">
-                    <div className="flex items-center gap-2 relative">
+                  {selectedDayPart === "Lunch" && (
+                    <TableHead className="bg-amber-50/50 text-center">
+                      <div className="text-xs text-muted-foreground">Morning Prod</div>
+                    </TableHead>
+                  )}
+                  {selectedDayPart === "Afternoon" && (
+                    <>
+                      <TableHead className="bg-amber-50/50 text-center">
+                        <div className="text-xs text-muted-foreground">Morning Prod</div>
+                      </TableHead>
+                      <TableHead className="bg-indigo-50/50 text-center">
+                        <div className="text-xs text-muted-foreground">Lunch Prod</div>
+                      </TableHead>
+                    </>
+                  )}
+                  <TableHead className="bg-gradient-to-r from-[#ff914d]/20 to-[#ff914d]/10 relative text-center">
+                    <div className="flex items-center justify-center gap-2 relative">
                       <div className="absolute inset-0 bg-[#ff914d]/5 blur-sm" />
                       <Sparkles className="h-4 w-4 text-[#ff914d] relative z-10 animate-pulse" />
                       <span className="relative z-10 font-semibold bg-gradient-to-r from-[#ff914d] to-[#ff914d]/70 bg-clip-text text-transparent">
-                        AI Top-Up Qty
+                        AI Recommended Qty
                       </span>
-                      <Sparkles className="h-3 w-3 text-[#ff914d] relative z-10 animate-spin" style={{ animationDuration: '3s' }} />
                     </div>
                   </TableHead>
-                  <TableHead className="bg-brand-green/10">Final Top-Up</TableHead>
+                  <TableHead className="bg-brand-green/10 text-center">Final Qty</TableHead>
                   <TableHead>Action</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredAllocations.map((allocation) => (
-                  <TableRow key={`${allocation.id}-${allocation.storeId}-${allocation.date.toDateString()}-${allocation.dayPart}`}>
-                    <TableCell>
-                      <div className="font-medium whitespace-nowrap">
-                        {format(allocation.date, "EEE, MMM d")}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div>
-                        <Badge 
-                          variant="outline" 
-                          className={`font-medium ${
-                            allocation.dayPart === 'Morning' 
-                              ? 'bg-amber-50 text-amber-700 border-amber-200' 
-                              : allocation.dayPart === 'Afternoon' 
-                              ? 'bg-orange-50 text-orange-700 border-orange-200' 
-                              : 'bg-indigo-50 text-indigo-700 border-indigo-200'
-                          }`}
-                        >
-                          {allocation.dayPart}
-                        </Badge>
-                        <div className="text-xs text-muted-foreground mt-1">{allocation.dayPartTime}</div>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div>
-                        <div 
-                          className={`font-medium ${recipes[allocation.id as keyof typeof recipes] ? 'cursor-pointer hover:text-primary hover:underline' : ''}`}
-                          onClick={() => recipes[allocation.id as keyof typeof recipes] && setSelectedRecipe(allocation.id)}
-                        >
-                          {allocation.productName}
+                {groupedProducts.map((product) => {
+                  // Get the allocation for the selected day part
+                  const allocation = selectedDayPart === "Morning Range" 
+                    ? product.breakfast 
+                    : selectedDayPart === "Lunch" 
+                    ? product.lunch 
+                    : product.afternoon;
+
+                  if (!allocation) return null;
+
+                  // Get previous day part production numbers
+                  const morningProduction = product.breakfast?.finalOrder || 0;
+                  const lunchProduction = product.lunch?.finalOrder || 0;
+
+                  return (
+                    <TableRow key={`${product.id}-${product.storeId}-${selectedDayPart}`}>
+                      <TableCell>
+                        <div>
+                          <div 
+                            className={`font-medium ${recipes[product.id as keyof typeof recipes] ? 'cursor-pointer hover:text-primary hover:underline' : ''}`}
+                            onClick={() => recipes[product.id as keyof typeof recipes] && setSelectedRecipe(product.id)}
+                          >
+                            {product.productName}
+                          </div>
+                          <div className="text-sm text-muted-foreground">{product.id}</div>
                         </div>
-                        <div className="text-sm text-muted-foreground">{allocation.id}</div>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      {getCategoryBadge(allocation.category)}
-                    </TableCell>
-                    <TableCell>
-                      <div>
-                        <div className="font-medium">{allocation.storeName}</div>
-                        <div className="text-sm text-muted-foreground">{allocation.storeId}</div>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <span className="font-mono">{allocation.currentStock}</span>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center gap-1">
-                        {getTrendIcon(allocation.trend)}
-                        <span className="text-sm font-medium">
-                          {allocation.trend === 'up' ? '+' : '-'}
-                          {Math.abs(allocation.predictedSales - allocation.historicalSales).toFixed(1)}
-                        </span>
-                      </div>
-                    </TableCell>
-                    <TableCell className="bg-gradient-to-r from-[#ff914d]/10 to-transparent relative group">
-                      <div className="absolute inset-0 bg-gradient-to-r from-[#ff914d]/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                      <div className="flex items-center justify-center gap-2 relative z-10">
-                        <span className="font-mono font-semibold text-foreground">
-                          {allocation.recommendedOrder}
-                        </span>
-                        <Sparkles className="h-3 w-3 text-[#ff914d] opacity-0 group-hover:opacity-100 transition-opacity" />
-                      </div>
-                    </TableCell>
-                    <TableCell className="bg-brand-green/5">
-                      <div className="flex items-center gap-2 justify-center">
+                      </TableCell>
+                      <TableCell>
+                        {getCategoryBadge(product.category)}
+                      </TableCell>
+                      <TableCell>
+                        <div>
+                          <div className="font-medium">{product.storeName}</div>
+                          <div className="text-sm text-muted-foreground">{product.storeId}</div>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <span className="font-mono">{product.currentStock}</span>
+                      </TableCell>
+                      {selectedDayPart === "Lunch" && (
+                        <TableCell className="bg-amber-50/30 text-center">
+                          <span className="font-mono font-semibold">{morningProduction}</span>
+                        </TableCell>
+                      )}
+                      {selectedDayPart === "Afternoon" && (
+                        <>
+                          <TableCell className="bg-amber-50/30 text-center">
+                            <span className="font-mono font-semibold">{morningProduction}</span>
+                          </TableCell>
+                          <TableCell className="bg-indigo-50/30 text-center">
+                            <span className="font-mono font-semibold">{lunchProduction}</span>
+                          </TableCell>
+                        </>
+                      )}
+                      <TableCell className="bg-gradient-to-r from-[#ff914d]/10 to-transparent relative group">
+                        <div className="absolute inset-0 bg-gradient-to-r from-[#ff914d]/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                        <div className="flex items-center justify-center gap-2 relative z-10">
+                          <span className="font-mono font-semibold text-foreground">
+                            {allocation.recommendedOrder}
+                          </span>
+                          <Sparkles className="h-3 w-3 text-[#ff914d] opacity-0 group-hover:opacity-100 transition-opacity" />
+                        </div>
+                      </TableCell>
+                      <TableCell className="bg-brand-green/5">
+                        <div className="flex items-center gap-2 justify-center">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => updateFinalOrder(product.id, product.storeId, product.date, selectedDayPart, -1)}
+                            className="h-8 w-8 p-0 rounded-full border-brand-green hover:bg-brand-green hover:text-white transition-colors"
+                          >
+                            <Minus className="h-4 w-4" />
+                          </Button>
+                          <span className="font-mono font-bold text-brand-green min-w-[2.5rem] text-center text-lg">
+                            {allocation.finalOrder}
+                          </span>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => updateFinalOrder(product.id, product.storeId, product.date, selectedDayPart, 1)}
+                            className="h-8 w-8 p-0 rounded-full border-brand-green hover:bg-brand-green hover:text-white transition-colors"
+                          >
+                            <Plus className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </TableCell>
+                      <TableCell>
                         <Button
                           size="sm"
-                          variant="outline"
-                          onClick={() => updateFinalOrder(allocation.id, allocation.storeId, allocation.date, allocation.dayPart, -1)}
-                          className="h-8 w-8 p-0 rounded-full border-brand-green hover:bg-brand-green hover:text-white transition-colors"
+                          className="bg-primary text-primary-foreground"
+                          disabled={!!confirmingProduction}
+                          onClick={() => handleConfirmProduction(allocation)}
                         >
-                          <Minus className="h-4 w-4" />
+                          {confirmingProduction === `${product.id}-${product.storeId}-${product.date.toDateString()}-${selectedDayPart}` ? (
+                            <>
+                              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                              Confirming...
+                            </>
+                          ) : (
+                            'Confirm'
+                          )}
                         </Button>
-                        <span className="font-mono font-bold text-brand-green min-w-[2.5rem] text-center text-lg">
-                          {allocation.finalOrder}
-                        </span>
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => updateFinalOrder(allocation.id, allocation.storeId, allocation.date, allocation.dayPart, 1)}
-                          className="h-8 w-8 p-0 rounded-full border-brand-green hover:bg-brand-green hover:text-white transition-colors"
-                        >
-                          <Plus className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <Button
-                        size="sm"
-                        className="bg-primary text-primary-foreground"
-                        disabled={!!confirmingProduction}
-                        onClick={() => handleConfirmProduction(allocation)}
-                      >
-                        {confirmingProduction === `${allocation.id}-${allocation.storeId}-${allocation.date.toDateString()}-${allocation.dayPart}` ? (
-                          <>
-                            <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                            Confirming...
-                          </>
-                        ) : (
-                          'Confirm Production'
-                        )}
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))}
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
               </TableBody>
             </Table>
           )}
