@@ -269,7 +269,7 @@ export default function VolumeAllocation() {
   
   // Filter by store
   let filtered = viewMode === "store_manager" 
-    ? allocations.slice(0, 12) // Show first 12 products for store view
+    ? allocations.slice(0, 36) // Show first 12 products x 3 day parts for store view
     : selectedStores.includes("All") 
       ? allocations 
       : allocations.filter(a => selectedStores.includes(a.storeName));
@@ -280,10 +280,36 @@ export default function VolumeAllocation() {
     filtered = filtered.filter(a => a.date.toDateString() === selectedDateStr);
   }
   
-  // Filter by day part
-  filtered = filtered.filter(a => a.dayPart === selectedDayPart);
+  // For store manager view, don't filter by day part - we'll show all in one table
+  // For HQ view, filter by day part
+  if (viewMode !== "store_manager") {
+    filtered = filtered.filter(a => a.dayPart === selectedDayPart);
+  }
   
   const filteredAllocations = filtered;
+
+  // Group products by ID for store manager view
+  const groupedProducts = viewMode === "store_manager" 
+    ? Array.from(new Set(filtered.map(a => a.id))).map(productId => {
+        const productAllocations = filtered.filter(a => a.id === productId);
+        const breakfast = productAllocations.find(a => a.dayPart === "Breakfast");
+        const lunch = productAllocations.find(a => a.dayPart === "Lunch");
+        const afternoon = productAllocations.find(a => a.dayPart === "Afternoon");
+        
+        return {
+          id: productId,
+          productName: productAllocations[0].productName,
+          category: productAllocations[0].category,
+          currentStock: productAllocations[0].currentStock,
+          date: productAllocations[0].date,
+          storeId: productAllocations[0].storeId,
+          storeName: productAllocations[0].storeName,
+          breakfast,
+          lunch,
+          afternoon,
+        };
+      })
+    : [];
 
   const handleRefresh = () => {
     setIsRefreshing(true);
@@ -518,31 +544,33 @@ export default function VolumeAllocation() {
         </Card>
       )}
 
-      {/* Day Part Selector */}
-      <Card className="shadow-card border-2 border-primary/20 bg-gradient-to-r from-primary/5 to-transparent">
-        <CardHeader className="pb-4">
-          <CardTitle className="text-xl">Production Day Part</CardTitle>
-          <CardDescription>Select which part of the day to view production recommendations for</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="flex gap-3">
-            {dayParts.map((dayPart) => (
-              <Button
-                key={dayPart.name}
-                variant={selectedDayPart === dayPart.name ? "default" : "outline"}
-                size="lg"
-                onClick={() => setSelectedDayPart(dayPart.name)}
-                className="flex-1 h-16 text-base font-semibold"
-              >
-                <div className="flex flex-col items-center">
-                  <span>{dayPart.name}</span>
-                  <span className="text-xs font-normal opacity-80">{dayPart.time}</span>
-                </div>
-              </Button>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
+      {/* Day Part Selector - Only for HQ View */}
+      {viewMode !== "store_manager" && (
+        <Card className="shadow-card border-2 border-primary/20 bg-gradient-to-r from-primary/5 to-transparent">
+          <CardHeader className="pb-4">
+            <CardTitle className="text-xl">Production Day Part</CardTitle>
+            <CardDescription>Select which part of the day to view production recommendations for</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="flex gap-3">
+              {dayParts.map((dayPart) => (
+                <Button
+                  key={dayPart.name}
+                  variant={selectedDayPart === dayPart.name ? "default" : "outline"}
+                  size="lg"
+                  onClick={() => setSelectedDayPart(dayPart.name)}
+                  className="flex-1 h-16 text-base font-semibold"
+                >
+                  <div className="flex flex-col items-center">
+                    <span>{dayPart.name}</span>
+                    <span className="text-xs font-normal opacity-80">{dayPart.time}</span>
+                  </div>
+                </Button>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Notable Events - Only in Store View */}
       {viewMode === "store_manager" && (
@@ -630,140 +658,298 @@ export default function VolumeAllocation() {
           </div>
         </CardHeader>
         <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Date</TableHead>
-                <TableHead>Day Part</TableHead>
-                <TableHead>Product</TableHead>
-                <TableHead>Category</TableHead>
-                <TableHead>Store</TableHead>
-                <TableHead>Current Stock</TableHead>
-                <TableHead>Trend</TableHead>
-                <TableHead className="bg-gradient-to-r from-[#ff914d]/20 to-[#ff914d]/10 relative">
-                  <div className="flex items-center gap-2 relative">
-                    <div className="absolute inset-0 bg-[#ff914d]/5 blur-sm" />
-                    <Sparkles className="h-4 w-4 text-[#ff914d] relative z-10 animate-pulse" />
-                    <span className="relative z-10 font-semibold bg-gradient-to-r from-[#ff914d] to-[#ff914d]/70 bg-clip-text text-transparent">
-                      AI Top-Up Qty
-                    </span>
-                    <Sparkles className="h-3 w-3 text-[#ff914d] relative z-10 animate-spin" style={{ animationDuration: '3s' }} />
-                  </div>
-                </TableHead>
-                <TableHead className="bg-brand-green/10">Final Top-Up</TableHead>
-                <TableHead>Action</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {filteredAllocations.map((allocation) => (
-                <TableRow key={`${allocation.id}-${allocation.storeId}-${allocation.date.toDateString()}-${allocation.dayPart}`}>
-                  <TableCell>
-                    <div className="font-medium whitespace-nowrap">
-                      {format(allocation.date, "EEE, MMM d")}
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div>
-                      <Badge 
-                        variant="outline" 
-                        className={`font-medium ${
-                          allocation.dayPart === 'Morning' 
-                            ? 'bg-amber-50 text-amber-700 border-amber-200' 
-                            : allocation.dayPart === 'Afternoon' 
-                            ? 'bg-orange-50 text-orange-700 border-orange-200' 
-                            : 'bg-indigo-50 text-indigo-700 border-indigo-200'
-                        }`}
-                      >
-                        {allocation.dayPart}
-                      </Badge>
-                      <div className="text-xs text-muted-foreground mt-1">{allocation.dayPartTime}</div>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div>
-                      <div 
-                        className={`font-medium ${recipes[allocation.id as keyof typeof recipes] ? 'cursor-pointer hover:text-primary hover:underline' : ''}`}
-                        onClick={() => recipes[allocation.id as keyof typeof recipes] && setSelectedRecipe(allocation.id)}
-                      >
-                        {allocation.productName}
-                      </div>
-                      <div className="text-sm text-muted-foreground">{allocation.id}</div>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    {getCategoryBadge(allocation.category)}
-                  </TableCell>
-                  <TableCell>
-                    <div>
-                      <div className="font-medium">{allocation.storeName}</div>
-                      <div className="text-sm text-muted-foreground">{allocation.storeId}</div>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <span className="font-mono">{allocation.currentStock}</span>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-1">
-                      {getTrendIcon(allocation.trend)}
-                      <span className="text-sm font-medium">
-                        {allocation.trend === 'up' ? '+' : '-'}
-                        {Math.abs(allocation.predictedSales - allocation.historicalSales).toFixed(1)}
+          {viewMode === "store_manager" ? (
+            // Store Manager View - Products as rows, Day parts as columns
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Product</TableHead>
+                  <TableHead>Category</TableHead>
+                  <TableHead>Current Stock</TableHead>
+                  <TableHead className="bg-gradient-to-r from-[#ff914d]/20 to-[#ff914d]/10 relative text-center">
+                    <div className="flex items-center justify-center gap-2 relative">
+                      <div className="absolute inset-0 bg-[#ff914d]/5 blur-sm" />
+                      <Sparkles className="h-4 w-4 text-[#ff914d] relative z-10 animate-pulse" />
+                      <span className="relative z-10 font-semibold bg-gradient-to-r from-[#ff914d] to-[#ff914d]/70 bg-clip-text text-transparent">
+                        Morning
                       </span>
                     </div>
-                  </TableCell>
-                  <TableCell className="bg-gradient-to-r from-[#ff914d]/10 to-transparent relative group">
-                    <div className="absolute inset-0 bg-gradient-to-r from-[#ff914d]/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                    <div className="flex items-center justify-center gap-2 relative z-10">
-                      <span className="font-mono font-semibold text-foreground">
-                        {allocation.recommendedOrder}
+                  </TableHead>
+                  <TableHead className="bg-gradient-to-r from-[#ff914d]/20 to-[#ff914d]/10 relative text-center">
+                    <div className="flex items-center justify-center gap-2 relative">
+                      <div className="absolute inset-0 bg-[#ff914d]/5 blur-sm" />
+                      <Sparkles className="h-4 w-4 text-[#ff914d] relative z-10 animate-pulse" />
+                      <span className="relative z-10 font-semibold bg-gradient-to-r from-[#ff914d] to-[#ff914d]/70 bg-clip-text text-transparent">
+                        Lunchtime
                       </span>
-                      <Sparkles className="h-3 w-3 text-[#ff914d] opacity-0 group-hover:opacity-100 transition-opacity" />
                     </div>
-                  </TableCell>
-                  <TableCell className="bg-brand-green/5">
-                    <div className="flex items-center gap-2 justify-center">
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => updateFinalOrder(allocation.id, allocation.storeId, allocation.date, allocation.dayPart, -1)}
-                        className="h-8 w-8 p-0 rounded-full border-brand-green hover:bg-brand-green hover:text-white transition-colors"
-                      >
-                        <Minus className="h-4 w-4" />
-                      </Button>
-                      <span className="font-mono font-bold text-brand-green min-w-[2.5rem] text-center text-lg">
-                        {allocation.finalOrder}
+                  </TableHead>
+                  <TableHead className="bg-gradient-to-r from-[#ff914d]/20 to-[#ff914d]/10 relative text-center">
+                    <div className="flex items-center justify-center gap-2 relative">
+                      <div className="absolute inset-0 bg-[#ff914d]/5 blur-sm" />
+                      <Sparkles className="h-4 w-4 text-[#ff914d] relative z-10 animate-pulse" />
+                      <span className="relative z-10 font-semibold bg-gradient-to-r from-[#ff914d] to-[#ff914d]/70 bg-clip-text text-transparent">
+                        Afternoon
                       </span>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => updateFinalOrder(allocation.id, allocation.storeId, allocation.date, allocation.dayPart, 1)}
-                        className="h-8 w-8 p-0 rounded-full border-brand-green hover:bg-brand-green hover:text-white transition-colors"
-                      >
-                        <Plus className="h-4 w-4" />
-                      </Button>
                     </div>
-                  </TableCell>
-                  <TableCell>
-                    <Button
-                      size="sm"
-                      className="bg-primary text-primary-foreground"
-                      disabled={!!confirmingProduction}
-                      onClick={() => handleConfirmProduction(allocation)}
-                    >
-                      {confirmingProduction === `${allocation.id}-${allocation.storeId}-${allocation.date.toDateString()}-${allocation.dayPart}` ? (
-                        <>
-                          <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                          Confirming...
-                        </>
-                      ) : (
-                        'Confirm Production'
-                      )}
-                    </Button>
-                  </TableCell>
+                  </TableHead>
+                  <TableHead className="bg-primary/10 text-center font-semibold">Total</TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+              </TableHeader>
+              <TableBody>
+                {groupedProducts.map((product) => {
+                  const breakfastQty = product.breakfast?.finalOrder || 0;
+                  const lunchQty = product.lunch?.finalOrder || 0;
+                  const afternoonQty = product.afternoon?.finalOrder || 0;
+                  const total = breakfastQty + lunchQty + afternoonQty;
+
+                  return (
+                    <TableRow key={product.id}>
+                      <TableCell>
+                        <div>
+                          <div 
+                            className={`font-medium ${recipes[product.id as keyof typeof recipes] ? 'cursor-pointer hover:text-primary hover:underline' : ''}`}
+                            onClick={() => recipes[product.id as keyof typeof recipes] && setSelectedRecipe(product.id)}
+                          >
+                            {product.productName}
+                          </div>
+                          <div className="text-sm text-muted-foreground">{product.id}</div>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        {getCategoryBadge(product.category)}
+                      </TableCell>
+                      <TableCell>
+                        <span className="font-mono">{product.currentStock}</span>
+                      </TableCell>
+                      {/* Morning */}
+                      <TableCell className="bg-gradient-to-r from-[#ff914d]/10 to-transparent">
+                        {product.breakfast && (
+                          <div className="flex items-center gap-2 justify-center">
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => updateFinalOrder(product.id, product.storeId, product.date, "Breakfast", -1)}
+                              className="h-8 w-8 p-0 rounded-full border-[#ff914d]/50 hover:bg-[#ff914d] hover:text-white transition-colors"
+                            >
+                              <Minus className="h-4 w-4" />
+                            </Button>
+                            <span className="font-mono font-bold text-[#ff914d] min-w-[2.5rem] text-center text-lg">
+                              {breakfastQty}
+                            </span>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => updateFinalOrder(product.id, product.storeId, product.date, "Breakfast", 1)}
+                              className="h-8 w-8 p-0 rounded-full border-[#ff914d]/50 hover:bg-[#ff914d] hover:text-white transition-colors"
+                            >
+                              <Plus className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        )}
+                      </TableCell>
+                      {/* Lunchtime */}
+                      <TableCell className="bg-gradient-to-r from-[#ff914d]/10 to-transparent">
+                        {product.lunch && (
+                          <div className="flex items-center gap-2 justify-center">
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => updateFinalOrder(product.id, product.storeId, product.date, "Lunch", -1)}
+                              className="h-8 w-8 p-0 rounded-full border-[#ff914d]/50 hover:bg-[#ff914d] hover:text-white transition-colors"
+                            >
+                              <Minus className="h-4 w-4" />
+                            </Button>
+                            <span className="font-mono font-bold text-[#ff914d] min-w-[2.5rem] text-center text-lg">
+                              {lunchQty}
+                            </span>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => updateFinalOrder(product.id, product.storeId, product.date, "Lunch", 1)}
+                              className="h-8 w-8 p-0 rounded-full border-[#ff914d]/50 hover:bg-[#ff914d] hover:text-white transition-colors"
+                            >
+                              <Plus className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        )}
+                      </TableCell>
+                      {/* Afternoon */}
+                      <TableCell className="bg-gradient-to-r from-[#ff914d]/10 to-transparent">
+                        {product.afternoon && (
+                          <div className="flex items-center gap-2 justify-center">
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => updateFinalOrder(product.id, product.storeId, product.date, "Afternoon", -1)}
+                              className="h-8 w-8 p-0 rounded-full border-[#ff914d]/50 hover:bg-[#ff914d] hover:text-white transition-colors"
+                            >
+                              <Minus className="h-4 w-4" />
+                            </Button>
+                            <span className="font-mono font-bold text-[#ff914d] min-w-[2.5rem] text-center text-lg">
+                              {afternoonQty}
+                            </span>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => updateFinalOrder(product.id, product.storeId, product.date, "Afternoon", 1)}
+                              className="h-8 w-8 p-0 rounded-full border-[#ff914d]/50 hover:bg-[#ff914d] hover:text-white transition-colors"
+                            >
+                              <Plus className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        )}
+                      </TableCell>
+                      {/* Total */}
+                      <TableCell className="bg-primary/5">
+                        <div className="text-center">
+                          <span className="font-mono font-bold text-primary text-lg">
+                            {total}
+                          </span>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
+              </TableBody>
+            </Table>
+          ) : (
+            // HQ View - Original table with day parts as rows
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Date</TableHead>
+                  <TableHead>Day Part</TableHead>
+                  <TableHead>Product</TableHead>
+                  <TableHead>Category</TableHead>
+                  <TableHead>Store</TableHead>
+                  <TableHead>Current Stock</TableHead>
+                  <TableHead>Trend</TableHead>
+                  <TableHead className="bg-gradient-to-r from-[#ff914d]/20 to-[#ff914d]/10 relative">
+                    <div className="flex items-center gap-2 relative">
+                      <div className="absolute inset-0 bg-[#ff914d]/5 blur-sm" />
+                      <Sparkles className="h-4 w-4 text-[#ff914d] relative z-10 animate-pulse" />
+                      <span className="relative z-10 font-semibold bg-gradient-to-r from-[#ff914d] to-[#ff914d]/70 bg-clip-text text-transparent">
+                        AI Top-Up Qty
+                      </span>
+                      <Sparkles className="h-3 w-3 text-[#ff914d] relative z-10 animate-spin" style={{ animationDuration: '3s' }} />
+                    </div>
+                  </TableHead>
+                  <TableHead className="bg-brand-green/10">Final Top-Up</TableHead>
+                  <TableHead>Action</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {filteredAllocations.map((allocation) => (
+                  <TableRow key={`${allocation.id}-${allocation.storeId}-${allocation.date.toDateString()}-${allocation.dayPart}`}>
+                    <TableCell>
+                      <div className="font-medium whitespace-nowrap">
+                        {format(allocation.date, "EEE, MMM d")}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div>
+                        <Badge 
+                          variant="outline" 
+                          className={`font-medium ${
+                            allocation.dayPart === 'Morning' 
+                              ? 'bg-amber-50 text-amber-700 border-amber-200' 
+                              : allocation.dayPart === 'Afternoon' 
+                              ? 'bg-orange-50 text-orange-700 border-orange-200' 
+                              : 'bg-indigo-50 text-indigo-700 border-indigo-200'
+                          }`}
+                        >
+                          {allocation.dayPart}
+                        </Badge>
+                        <div className="text-xs text-muted-foreground mt-1">{allocation.dayPartTime}</div>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div>
+                        <div 
+                          className={`font-medium ${recipes[allocation.id as keyof typeof recipes] ? 'cursor-pointer hover:text-primary hover:underline' : ''}`}
+                          onClick={() => recipes[allocation.id as keyof typeof recipes] && setSelectedRecipe(allocation.id)}
+                        >
+                          {allocation.productName}
+                        </div>
+                        <div className="text-sm text-muted-foreground">{allocation.id}</div>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      {getCategoryBadge(allocation.category)}
+                    </TableCell>
+                    <TableCell>
+                      <div>
+                        <div className="font-medium">{allocation.storeName}</div>
+                        <div className="text-sm text-muted-foreground">{allocation.storeId}</div>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <span className="font-mono">{allocation.currentStock}</span>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-1">
+                        {getTrendIcon(allocation.trend)}
+                        <span className="text-sm font-medium">
+                          {allocation.trend === 'up' ? '+' : '-'}
+                          {Math.abs(allocation.predictedSales - allocation.historicalSales).toFixed(1)}
+                        </span>
+                      </div>
+                    </TableCell>
+                    <TableCell className="bg-gradient-to-r from-[#ff914d]/10 to-transparent relative group">
+                      <div className="absolute inset-0 bg-gradient-to-r from-[#ff914d]/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                      <div className="flex items-center justify-center gap-2 relative z-10">
+                        <span className="font-mono font-semibold text-foreground">
+                          {allocation.recommendedOrder}
+                        </span>
+                        <Sparkles className="h-3 w-3 text-[#ff914d] opacity-0 group-hover:opacity-100 transition-opacity" />
+                      </div>
+                    </TableCell>
+                    <TableCell className="bg-brand-green/5">
+                      <div className="flex items-center gap-2 justify-center">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => updateFinalOrder(allocation.id, allocation.storeId, allocation.date, allocation.dayPart, -1)}
+                          className="h-8 w-8 p-0 rounded-full border-brand-green hover:bg-brand-green hover:text-white transition-colors"
+                        >
+                          <Minus className="h-4 w-4" />
+                        </Button>
+                        <span className="font-mono font-bold text-brand-green min-w-[2.5rem] text-center text-lg">
+                          {allocation.finalOrder}
+                        </span>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => updateFinalOrder(allocation.id, allocation.storeId, allocation.date, allocation.dayPart, 1)}
+                          className="h-8 w-8 p-0 rounded-full border-brand-green hover:bg-brand-green hover:text-white transition-colors"
+                        >
+                          <Plus className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <Button
+                        size="sm"
+                        className="bg-primary text-primary-foreground"
+                        disabled={!!confirmingProduction}
+                        onClick={() => handleConfirmProduction(allocation)}
+                      >
+                        {confirmingProduction === `${allocation.id}-${allocation.storeId}-${allocation.date.toDateString()}-${allocation.dayPart}` ? (
+                          <>
+                            <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                            Confirming...
+                          </>
+                        ) : (
+                          'Confirm Production'
+                        )}
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          )}
         </CardContent>
       </Card>
 
