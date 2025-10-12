@@ -260,7 +260,7 @@ export default function MyTasks() {
   const totalCount = tasks.length;
   const progressPercentage = totalCount > 0 ? (completedCount / totalCount) * 100 : 0;
 
-  const isSingleStoreView = viewMode === "store";
+  const isSingleStoreView = viewMode === "store_manager";
   const revenueForecast = isSingleStoreView ? revenueForecastStore : revenueForecastHQ;
   const volumeForecast = isSingleStoreView ? volumeForecastStore : volumeForecastHQ;
   const footfallForecast = isSingleStoreView ? footfallForecastStore : footfallForecastHQ;

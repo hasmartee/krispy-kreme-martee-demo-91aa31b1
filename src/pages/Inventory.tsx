@@ -98,7 +98,7 @@ export default function Inventory() {
   const loadInventory = async () => {
     setLoading(true);
     try {
-      if (viewMode === "store") {
+      if (viewMode === "store_manager") {
         // Store view: Show products ranged in this store based on cluster
         const { data: storeData } = await supabase
           .from("stores")
@@ -311,10 +311,10 @@ export default function Inventory() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-foreground">
-            {viewMode === "store" ? `${selectedStore} - Live Availability` : "Live Availability - All Stores"}
+            {viewMode === "store_manager" ? `${selectedStore} - Live Availability` : "Live Availability - All Stores"}
           </h1>
           <p className="text-muted-foreground">
-            {viewMode === "store" 
+            {viewMode === "store_manager" 
               ? "Real-time product availability for your store"
               : "Monitor product availability across all stores"
             }

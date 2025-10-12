@@ -18,7 +18,22 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 
-const mainNavigation = [
+const mainNavigationStoreManager = [
+  { title: "Home", url: "/", icon: Home },
+  { title: "My Tasks", url: "/tasks", icon: CheckSquare, highlight: true },
+  { title: "Performance", url: "/analytics", icon: BarChart3 },
+  { title: "Suggested Production", url: "/suggested-production", icon: TrendingUp },
+  { title: "Live Availability", url: "/inventory", icon: Package },
+  { title: "Live Sales", url: "/live-sales", icon: Activity },
+  { title: "Settings", url: "/settings", icon: Settings },
+];
+
+const mainNavigationStoreTeam = [
+  { title: "My Tasks", url: "/tasks", icon: CheckSquare, highlight: true },
+  { title: "Production", url: "/production", icon: Target },
+];
+
+const mainNavigationHQ = [
   { title: "Home", url: "/", icon: Home },
   { title: "My Tasks", url: "/tasks", icon: CheckSquare, highlight: true },
   { title: "Performance", url: "/analytics", icon: BarChart3 },
@@ -35,7 +50,7 @@ const settingsNavigationHQ = [
   { title: "My Recipes", url: "/recipes", icon: BookOpen },
 ];
 
-const settingsNavigationStore = [
+const settingsNavigationStoreManager = [
   { title: "Products", url: "/products", icon: Package },
   { title: "Range", url: "/store-products", icon: ShoppingCart },
   { title: "Recipes", url: "/recipes", icon: BookOpen },
@@ -46,8 +61,15 @@ export function AppSidebar() {
   const { viewMode } = useView();
   const [settingsOpen, setSettingsOpen] = useState(false);
   
-  const settingsNavigation = viewMode === "store" ? settingsNavigationStore : settingsNavigationHQ;
-  const businessLabel = viewMode === "store" ? "My Store" : "My Business";
+  const mainNavigation = viewMode === "store_team" 
+    ? mainNavigationStoreTeam 
+    : viewMode === "store_manager" 
+    ? mainNavigationStoreManager 
+    : mainNavigationHQ;
+  
+  const settingsNavigation = viewMode === "store_manager" ? settingsNavigationStoreManager : settingsNavigationHQ;
+  const businessLabel = viewMode === "store_manager" ? "My Store" : "My Business";
+  const showSettings = viewMode !== "store_team";
 
   return (
     <Sidebar className="w-64" collapsible="none">
@@ -101,46 +123,48 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
 
-        <Collapsible open={settingsOpen} onOpenChange={setSettingsOpen}>
-          <SidebarGroup>
-            <SidebarGroupLabel asChild>
-              <CollapsibleTrigger className="flex w-full items-center justify-between text-muted-foreground hover:text-foreground cursor-pointer">
-                {businessLabel}
-                <ChevronRight className={`h-4 w-4 transition-transform ${settingsOpen ? 'rotate-90' : ''}`} />
-              </CollapsibleTrigger>
-            </SidebarGroupLabel>
-            <CollapsibleContent>
-              <SidebarGroupContent>
-                <SidebarMenu>
-                  {settingsNavigation.map((item) => {
-                    return (
-                      <SidebarMenuItem key={item.title}>
-                        <NavLink 
-                          to={item.url} 
-                          className={({ isActive }) => `
-                            flex items-center gap-3 px-3 py-2 rounded-lg transition-all
-                            ${isActive 
-                              ? "bg-primary text-primary-foreground font-semibold shadow-md" 
-                              : "text-muted-foreground hover:bg-muted hover:text-foreground"
-                            }
-                          `}
-                        >
-                          {({ isActive }) => (
-                            <>
-                              <item.icon className="h-4 w-4 shrink-0" />
-                              <span className="flex-1">{item.title}</span>
-                              {isActive && <ChevronRight className="h-4 w-4" />}
-                            </>
-                          )}
-                        </NavLink>
-                      </SidebarMenuItem>
-                    );
-                  })}
-                </SidebarMenu>
-              </SidebarGroupContent>
-            </CollapsibleContent>
-          </SidebarGroup>
-        </Collapsible>
+        {showSettings && (
+          <Collapsible open={settingsOpen} onOpenChange={setSettingsOpen}>
+            <SidebarGroup>
+              <SidebarGroupLabel asChild>
+                <CollapsibleTrigger className="flex w-full items-center justify-between text-muted-foreground hover:text-foreground cursor-pointer">
+                  {businessLabel}
+                  <ChevronRight className={`h-4 w-4 transition-transform ${settingsOpen ? 'rotate-90' : ''}`} />
+                </CollapsibleTrigger>
+              </SidebarGroupLabel>
+              <CollapsibleContent>
+                <SidebarGroupContent>
+                  <SidebarMenu>
+                    {settingsNavigation.map((item) => {
+                      return (
+                        <SidebarMenuItem key={item.title}>
+                          <NavLink 
+                            to={item.url} 
+                            className={({ isActive }) => `
+                              flex items-center gap-3 px-3 py-2 rounded-lg transition-all
+                              ${isActive 
+                                ? "bg-primary text-primary-foreground font-semibold shadow-md" 
+                                : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                              }
+                            `}
+                          >
+                            {({ isActive }) => (
+                              <>
+                                <item.icon className="h-4 w-4 shrink-0" />
+                                <span className="flex-1">{item.title}</span>
+                                {isActive && <ChevronRight className="h-4 w-4" />}
+                              </>
+                            )}
+                          </NavLink>
+                        </SidebarMenuItem>
+                      );
+                    })}
+                  </SidebarMenu>
+                </SidebarGroupContent>
+              </CollapsibleContent>
+            </SidebarGroup>
+          </Collapsible>
+        )}
       </SidebarContent>
     </Sidebar>
   );

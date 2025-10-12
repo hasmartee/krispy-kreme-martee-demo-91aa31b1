@@ -268,7 +268,7 @@ export default function VolumeAllocation() {
   })];
   
   // Filter by store
-  let filtered = viewMode === "store" 
+  let filtered = viewMode === "store_manager" 
     ? allocations.slice(0, 12) // Show first 12 products for store view
     : selectedStores.includes("All") 
       ? allocations 
@@ -457,7 +457,7 @@ export default function VolumeAllocation() {
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-3xl font-bold text-secondary-foreground mb-2">
-                {viewMode === "store" ? selectedStore : "AI Production Recommendations"}
+                {viewMode === "store_manager" ? selectedStore : "AI Production Recommendations"}
               </h1>
               <p className="text-secondary-foreground/80 text-lg">
                 Optimised production top-ups by day part (Breakfast, Lunch, Afternoon) powered by machine learning
@@ -545,7 +545,7 @@ export default function VolumeAllocation() {
       </Card>
 
       {/* Notable Events - Only in Store View */}
-      {viewMode === "store" && (
+      {viewMode === "store_manager" && (
         <>
           <div className="pt-2">
             <h2 className="text-2xl font-bold text-foreground mb-4">

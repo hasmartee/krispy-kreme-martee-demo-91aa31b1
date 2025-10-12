@@ -21,6 +21,7 @@ import Inventory from "./pages/Inventory";
 import MyRecipes from "./pages/MyRecipes";
 import MyTasks from "./pages/MyTasks";
 import Deliveries from "./pages/Deliveries";
+import Production from "./pages/Production";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 
@@ -52,6 +53,7 @@ const App = () => (
                       <Route path="/inventory" element={<Inventory />} />
                       <Route path="/recipes" element={<MyRecipes />} />
                       <Route path="/tasks" element={<MyTasks />} />
+                      <Route path="/production" element={<Production />} />
                       <Route path="/store-details" element={<StoreDetails />} />
                       <Route path="/ingredients" element={<Navigate to="/analytics" replace />} />
                       <Route path="/suppliers" element={<Navigate to="/analytics" replace />} />

@@ -281,14 +281,14 @@ export default function Analytics() {
   };
 
   // Filter data based on view mode and selected store
-  const filteredStorePerformance = viewMode === "store" 
+  const filteredStorePerformance = viewMode === "store_manager" 
     ? mockStorePerformance.slice(0, 1)
     : selectedStore === "all" 
       ? mockStorePerformance 
       : mockStorePerformance.filter(s => s.name === selectedStore);
 
   // Determine if we're showing a single store (either in store view or filtered in HQ view)
-  const isSingleStoreView = viewMode === "store" || (viewMode === "hq" && selectedStore !== "all");
+  const isSingleStoreView = viewMode === "store_manager" || (viewMode === "hq" && selectedStore !== "all");
   
   // Store-specific data (for Store View)
   const storeData = {
@@ -364,7 +364,7 @@ export default function Analytics() {
   
   // Calculate aggregated data for filtered stores
   const getAggregatedData = () => {
-    if (viewMode === "store") {
+    if (viewMode === "store_manager") {
       return storeData;
     }
     
@@ -423,7 +423,7 @@ export default function Analytics() {
       <div className="flex flex-col gap-4">
         <div>
           <h1 className="text-3xl font-bold text-foreground">
-            Performance {viewMode === "store" ? `- ${contextSelectedStore}` : ""}
+            Performance {viewMode === "store_manager" ? `- ${contextSelectedStore}` : ""}
           </h1>
           <p className="text-muted-foreground">
             Key metrics and performance insights
@@ -818,7 +818,7 @@ export default function Analytics() {
                   </div>
                   <p className="text-xs text-muted-foreground">
                     <TrendingUp className="inline h-3 w-3 mr-1 text-success" />
-                    {viewMode === "store" ? "+5.2%" : "+8.1%"} from last period
+                    {viewMode === "store_manager" ? "+5.2%" : "+8.1%"} from last period
                   </p>
                 </CardContent>
               </Card>
@@ -877,18 +877,18 @@ export default function Analytics() {
               <Card className="shadow-card">
                 <CardHeader className="pb-2">
                   <CardTitle className="text-sm font-medium text-muted-foreground">
-                    {viewMode === "store" ? "Store Ranking" : "Top Performer"}
+                    {viewMode === "store_manager" ? "Store Ranking" : "Top Performer"}
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="flex items-center gap-2">
                     <Award className="h-5 w-5 text-warning" />
                     <div className="text-lg font-bold text-foreground">
-                      {viewMode === "store" ? "#3 of 50" : "King's Cross"}
+                      {viewMode === "store_manager" ? "#3 of 50" : "King's Cross"}
                     </div>
                   </div>
                   <p className="text-xs text-muted-foreground">
-                    {viewMode === "store" ? "Top quartile" : "£41.2k revenue"}
+                    {viewMode === "store_manager" ? "Top quartile" : "£41.2k revenue"}
                   </p>
                 </CardContent>
               </Card>
@@ -919,7 +919,7 @@ export default function Analytics() {
             <Card className="shadow-card">
               <CardHeader>
                 <CardTitle>
-                  {viewMode === "store" ? "Store Metrics" : "Store Performance Breakdown"}
+                  {viewMode === "store_manager" ? "Store Metrics" : "Store Performance Breakdown"}
                 </CardTitle>
                 <CardDescription>
                   Detailed performance metrics by store

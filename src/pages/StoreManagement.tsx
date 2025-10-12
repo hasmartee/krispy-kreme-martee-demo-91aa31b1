@@ -1091,10 +1091,10 @@ export default function StoreManagement() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-foreground">
-            {viewMode === "store" ? `My Store - ${contextSelectedStore}` : "My Stores"}
+            {viewMode === "store_manager" ? `My Store - ${contextSelectedStore}` : "My Stores"}
           </h1>
           <p className="text-muted-foreground">
-            {viewMode === "store" 
+            {viewMode === "store_manager" 
               ? `Manage store details and delivery schedules for ${contextSelectedStore}`
               : "Manage store locations, details, and performance metrics"
             }
@@ -1123,12 +1123,12 @@ export default function StoreManagement() {
         <Card className="shadow-card">
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">
-              {viewMode === "store" ? "Store Status" : "Total Stores"}
+              {viewMode === "store_manager" ? "Store Status" : "Total Stores"}
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-foreground">
-              {viewMode === "store" && filteredStores.length > 0 
+              {viewMode === "store_manager" && filteredStores.length > 0 
                 ? filteredStores[0].status === 'active' ? 'Active' : filteredStores[0].status
                 : filteredStores.length
               }

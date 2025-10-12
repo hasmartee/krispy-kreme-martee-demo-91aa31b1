@@ -73,7 +73,7 @@ export default function LiveSales() {
     if (!isLive) return;
 
     const addNewSale = () => {
-      const newSale = generateMockSale(viewMode === "store" ? selectedStore : undefined);
+      const newSale = generateMockSale(viewMode === "store_manager" ? selectedStore : undefined);
       setSales(prevSales => [newSale, ...prevSales].slice(0, 50)); // Keep only last 50 sales
     };
 
@@ -89,7 +89,7 @@ export default function LiveSales() {
   }, [isLive, viewMode, selectedStore]);
 
   // Filter sales by store if in store view
-  const filteredSales = viewMode === "store" 
+  const filteredSales = viewMode === "store_manager" 
     ? sales.filter(sale => sale.store === selectedStore)
     : sales;
 
@@ -119,7 +119,7 @@ export default function LiveSales() {
       {/* Header */}
       <div>
         <h1 className="text-3xl font-bold text-foreground">
-          Live Sales {viewMode === "store" ? `- ${selectedStore}` : ""}
+          Live Sales {viewMode === "store_manager" ? `- ${selectedStore}` : ""}
         </h1>
         <p className="text-muted-foreground">
           Real-time sales data from POS system integration

@@ -405,10 +405,10 @@ export default function ProductRange() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-foreground">
-            {appViewMode === "store" ? `My Store - ${selectedStore}` : "My Products"}
+            {appViewMode === "store_manager" ? `My Store - ${selectedStore}` : "My Products"}
           </h1>
           <p className="text-muted-foreground">
-            {appViewMode === "store"
+            {appViewMode === "store_manager"
               ? `Product catalog for ${selectedStore}`
               : "Manage your complete SKU catalog with photos and details"
             }

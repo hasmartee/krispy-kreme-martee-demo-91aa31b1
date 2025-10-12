@@ -205,7 +205,7 @@ export default function Deliveries() {
         minute: "2-digit",
       }).replace(",", ""),
       receivedBy: newDelivery.receivedBy,
-      store: viewMode === "store" ? selectedStore : "All Stores",
+      store: viewMode === "store_manager" ? selectedStore : "All Stores",
       items: newDelivery.items,
       status: allReceived ? "completed" : anyReceived ? "partial" : "pending",
       notes: newDelivery.notes,
@@ -263,7 +263,7 @@ export default function Deliveries() {
     }
   };
 
-  const filteredDeliveries = viewMode === "store"
+  const filteredDeliveries = viewMode === "store_manager"
     ? deliveries.filter((d) => d.store === selectedStore)
     : deliveries;
 

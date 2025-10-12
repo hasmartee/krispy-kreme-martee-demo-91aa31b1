@@ -73,17 +73,17 @@ export default function Home() {
   const { viewMode, selectedStore } = useView();
   const navigate = useNavigate();
 
-  const isSingleStoreView = viewMode === "store";
+  const isSingleStoreView = viewMode === "store_manager";
   const revenueForecast = isSingleStoreView ? revenueForecastStore : revenueForecastHQ;
   const volumeForecast = isSingleStoreView ? volumeForecastStore : volumeForecastHQ;
   const footfallForecast = isSingleStoreView ? footfallForecastStore : footfallForecastHQ;
 
   // Mock data for this week's metrics
   const weeklyMetrics = {
-    revenue: viewMode === "store" ? 1286 : 32150,
-    grossProfit: viewMode === "store" ? 772 : 19290,
-    waste: viewMode === "store" ? 45 : 1125,
-    availability: viewMode === "store" ? 96.5 : 94.8,
+    revenue: viewMode === "store_manager" ? 1286 : 32150,
+    grossProfit: viewMode === "store_manager" ? 772 : 19290,
+    waste: viewMode === "store_manager" ? 45 : 1125,
+    availability: viewMode === "store_manager" ? 96.5 : 94.8,
   };
 
   // Mock next task data
@@ -99,7 +99,7 @@ export default function Home() {
       {/* Header */}
       <div>
         <h1 className="text-3xl font-bold text-foreground">
-          Welcome Back {viewMode === "store" ? `- ${selectedStore}` : ""}
+          Welcome Back {viewMode === "store_manager" ? `- ${selectedStore}` : ""}
         </h1>
         <p className="text-muted-foreground">
           Here's what's happening this week

@@ -128,7 +128,7 @@ export default function SuggestedOrdering() {
         { name: "Cream Cheese", currentStock: 6, minStock: 20, category: "Dairy", supplier: "Dairy Direct", leadTime: 1, unit: "kg" },
       ];
 
-      const stores = viewMode === "store" 
+      const stores = viewMode === "store_manager" 
         ? [selectedStore]
         : ["London Bridge", "Canary Wharf", "King's Cross"];
 
@@ -254,7 +254,7 @@ export default function SuggestedOrdering() {
               <div>
                 <h1 className="text-2xl font-bold text-foreground">Suggested Ordering</h1>
                 <p className="text-sm text-muted-foreground">
-                  {viewMode === "store"
+                  {viewMode === "store_manager"
                     ? `Ingredient re-order recommendations for ${selectedStore}`
                     : "Ingredient re-order recommendations across all stores"}
                 </p>
