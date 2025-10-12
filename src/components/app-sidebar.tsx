@@ -1,4 +1,4 @@
-import { BarChart3, Package, Store, TrendingUp, ShoppingCart, Settings, ChevronRight, Target, BookOpen, CheckSquare, Activity, Truck, Home, ChefHat } from "lucide-react";
+import { BarChart3, Package, Store, TrendingUp, ShoppingCart, Settings, ChevronRight, Target, BookOpen, CheckSquare, Activity, Truck, Home, ChefHat, Sparkles } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import { useState } from "react";
 import { useView } from "@/contexts/ViewContext";
@@ -18,27 +18,27 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 
-const mainNavigationStoreManager = [
+const mainNavigationStoreManager: Array<{ title: string; url: string; icon: any; sparkles?: boolean }> = [
   { title: "Home", url: "/", icon: Home },
   { title: "My Tasks", url: "/tasks", icon: CheckSquare },
   { title: "Performance", url: "/analytics", icon: BarChart3 },
-  { title: "Suggested Production", url: "/suggested-production", icon: TrendingUp },
+  { title: "Suggested Production", url: "/suggested-production", icon: ChefHat, sparkles: true },
   { title: "Live Availability", url: "/inventory", icon: Package },
   { title: "Live Sales", url: "/live-sales", icon: Activity },
 ];
 
-const mainNavigationStoreTeam = [
+const mainNavigationStoreTeam: Array<{ title: string; url: string; icon: any; sparkles?: boolean }> = [
   { title: "Home", url: "/store-team-home", icon: Home },
   { title: "My Tasks", url: "/tasks", icon: CheckSquare },
   { title: "Production", url: "/production", icon: ChefHat },
   { title: "Live Availability", url: "/inventory", icon: Package },
 ];
 
-const mainNavigationHQ = [
+const mainNavigationHQ: Array<{ title: string; url: string; icon: any; sparkles?: boolean }> = [
   { title: "Home", url: "/", icon: Home },
   { title: "My Tasks", url: "/tasks", icon: CheckSquare },
   { title: "Performance", url: "/analytics", icon: BarChart3 },
-  { title: "Suggested Production", url: "/suggested-production", icon: TrendingUp },
+  { title: "Suggested Production", url: "/suggested-production", icon: ChefHat, sparkles: true },
   { title: "Live Availability", url: "/inventory", icon: Package },
   { title: "Live Sales", url: "/live-sales", icon: Activity },
 ];
@@ -119,7 +119,12 @@ export function AppSidebar() {
                     >
                       {({ isActive }) => (
                         <>
-                          <item.icon className="h-4 w-4 shrink-0" />
+                          <div className="relative">
+                            <item.icon className="h-4 w-4 shrink-0" />
+                            {item.sparkles && (
+                              <Sparkles className="h-2.5 w-2.5 absolute -top-1 -right-1 text-[#ff914d] animate-pulse" />
+                            )}
+                          </div>
                           <span className="flex-1">{item.title}</span>
                           {isActive && <ChevronRight className="h-4 w-4" />}
                         </>
