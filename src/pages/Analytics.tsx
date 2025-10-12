@@ -233,18 +233,18 @@ const storeBrands: Record<string, string> = {
   "Liverpool Street Station": "Pret a Manger",
   "St Pancras International": "Pret a Manger",
   "Shoreditch High Street": "Pret a Manger",
-  "Camden Town": "Pret a Manger",
   
-  // Brioche Dorée stores (residential & upscale areas)
+  // Brioche Dorée stores (upscale & residential areas)
   "Bond Street": "Brioche Dorée",
   "Notting Hill Gate": "Brioche Dorée",
   "Greenwich Village": "Brioche Dorée",
   "Wimbledon Village": "Brioche Dorée",
   
-  // Starbucks stores (business district)
+  // Starbucks stores (business district & mixed)
   "Bank Station": "Starbucks",
   "Canary Wharf Plaza": "Starbucks",
-  "The City - Leadenhall": "Starbucks"
+  "The City - Leadenhall": "Starbucks",
+  "Camden Town": "Starbucks"
 };
 
 export default function Analytics() {
