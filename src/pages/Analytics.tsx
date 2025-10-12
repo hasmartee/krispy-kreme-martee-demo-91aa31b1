@@ -226,28 +226,38 @@ const CHART_COLORS = {
   breakfastItems: "hsl(23 100% 65%)",
 };
 
-// Brand to store mapping - expanded with more stores
-const brandStoreMap = {
-  "All Brands": [
-    "London Bridge", "Kings Cross", "Victoria Station", "Oxford Street", "Canary Wharf", 
-    "Liverpool Street", "Paddington", "Waterloo", "Bond Street", "Leicester Square", 
-    "Covent Garden", "Bank", "Monument", "Tower Hill", "Holborn", "Shoreditch",
-    "Camden", "Brixton", "Clapham", "Wimbledon", "Richmond", "Greenwich",
-    "Hampstead", "Notting Hill", "Chelsea"
-  ],
-  "Pret a Manger": [
-    "London Bridge", "Kings Cross", "Victoria Station", "Liverpool Street", 
-    "Paddington", "Waterloo", "Bank", "Monument", "Shoreditch", "Camden",
-    "Clapham", "Wimbledon", "Greenwich"
-  ],
-  "Brioche Dorée": [
-    "Oxford Street", "Canary Wharf", "Bond Street", "Leicester Square", 
-    "Covent Garden", "Notting Hill", "Chelsea", "Hampstead"
-  ],
-  "Starbucks": [
-    "London Bridge", "Oxford Street", "Tower Hill", "Holborn", "Canary Wharf",
-    "Richmond", "Brixton", "Camden"
-  ]
+// Brand to store mapping (matching StoreManagement.tsx)
+const storeBrands: Record<string, string> = {
+  // Pret a Manger stores (London locations)
+  "London Bridge": "Pret a Manger",
+  "Kings Cross": "Pret a Manger",
+  "Victoria Station": "Pret a Manger",
+  "Liverpool Street": "Pret a Manger",
+  "Paddington": "Pret a Manger",
+  "Waterloo": "Pret a Manger",
+  "Bank": "Pret a Manger",
+  "Monument": "Pret a Manger",
+  "Shoreditch": "Pret a Manger",
+  "Camden": "Pret a Manger",
+  "Clapham": "Pret a Manger",
+  "Wimbledon": "Pret a Manger",
+  "Greenwich": "Pret a Manger",
+  
+  // Brioche Dorée stores
+  "Oxford Street": "Brioche Dorée",
+  "Canary Wharf": "Brioche Dorée",
+  "Bond Street": "Brioche Dorée",
+  "Leicester Square": "Brioche Dorée",
+  "Covent Garden": "Brioche Dorée",
+  "Notting Hill": "Brioche Dorée",
+  "Chelsea": "Brioche Dorée",
+  "Hampstead": "Brioche Dorée",
+  
+  // Starbucks stores
+  "Tower Hill": "Starbucks",
+  "Holborn": "Starbucks",
+  "Richmond": "Starbucks",
+  "Brixton": "Starbucks"
 };
 
 export default function Analytics() {
@@ -265,7 +275,7 @@ export default function Analytics() {
   // Available stores based on selected brand
   const availableStores = selectedBrand === "All Brands" 
     ? stores
-    : stores.filter(s => brandStoreMap[selectedBrand as keyof typeof brandStoreMap]?.includes(s.name));
+    : stores.filter(s => storeBrands[s.name] === selectedBrand);
 
   useEffect(() => {
     const loadStores = async () => {
@@ -461,12 +471,12 @@ export default function Analytics() {
         </div>
       </div>
 
-      {/* Big Peachy Pink Box with Period and Store Selectors + KPIs */}
-      <Card className="shadow-card border-0" style={{ background: 'var(--gradient-brand)' }}>
+      {/* Big Box with Period and Store Selectors + KPIs */}
+      <Card className="shadow-card">
         <CardContent className="p-6">
           {/* Heading */}
           <div className="mb-4">
-            <h2 className="text-2xl font-bold text-secondary">
+            <h2 className="text-2xl font-bold text-foreground">
               {viewMode === "hq" && selectedBrand !== "All Brands" ? `${selectedBrand} • ` : ""}
               {selectedStore === "all" ? "All Stores" : selectedStore} • This Week's Performance
             </h2>
@@ -477,12 +487,12 @@ export default function Analytics() {
             <div className="flex flex-col gap-4 mb-6">
               {/* Brand Filter - Higher Level */}
               <div className="flex items-center gap-4">
-                <label className="text-sm font-medium text-secondary">My Brand:</label>
+                <label className="text-sm font-medium">My Brand:</label>
                 <Select value={selectedBrand} onValueChange={(v) => {
                   setSelectedBrand(v);
                   setSelectedStore("all");
                 }}>
-                  <SelectTrigger className="w-[200px] bg-white/90 border-white/20 font-semibold">
+                  <SelectTrigger className="w-[200px] border-[#7e9f57] focus:ring-[#7e9f57] font-semibold">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -497,7 +507,7 @@ export default function Analytics() {
               {/* Store and Date Filters */}
               <div className="flex flex-col sm:flex-row gap-4">
                 <Select value={selectedStore} onValueChange={setSelectedStore}>
-                  <SelectTrigger className="w-[200px] bg-white/90 border-white/20">
+                  <SelectTrigger className="w-[200px]">
                     <SelectValue placeholder="Select store" />
                   </SelectTrigger>
                   <SelectContent>
@@ -512,7 +522,7 @@ export default function Analytics() {
                 
                 <Popover>
                   <PopoverTrigger asChild>
-                    <Button variant="outline" className="w-[280px] justify-start text-left font-normal bg-white/90 border-white/20">
+                    <Button variant="outline" className="w-[280px] justify-start text-left font-normal">
                       <CalendarIcon className="mr-2 h-4 w-4" />
                       {dateRange?.from ? (
                         dateRange.to ? (
@@ -545,7 +555,7 @@ export default function Analytics() {
           ) : (
             <div className="flex flex-col sm:flex-row gap-4 mb-6">
               <Select value={selectedStore} onValueChange={setSelectedStore}>
-                <SelectTrigger className="w-[200px] bg-white/90 border-white/20">
+                <SelectTrigger className="w-[200px]">
                   <SelectValue placeholder="Select store" />
                 </SelectTrigger>
                 <SelectContent>
@@ -560,7 +570,7 @@ export default function Analytics() {
               
               <Popover>
                 <PopoverTrigger asChild>
-                  <Button variant="outline" className="w-[280px] justify-start text-left font-normal bg-white/90 border-white/20">
+                  <Button variant="outline" className="w-[280px] justify-start text-left font-normal">
                     <CalendarIcon className="mr-2 h-4 w-4" />
                     {dateRange?.from ? (
                       dateRange.to ? (
