@@ -36,9 +36,10 @@ const settingsNavigationHQ = [
 ];
 
 const settingsNavigationStore = [
-  { title: "Products", url: "/products", icon: Package, readonly: true },
-  { title: "Range", url: "/store-products", icon: ShoppingCart, readonly: true },
+  { title: "Products", url: "/products", icon: Package },
+  { title: "Range", url: "/store-products", icon: ShoppingCart },
   { title: "Recipes", url: "/recipes", icon: BookOpen },
+  { title: "Store Details", url: "/store-details", icon: Store },
 ];
 
 export function AppSidebar() {
@@ -127,12 +128,7 @@ export function AppSidebar() {
                           {({ isActive }) => (
                             <>
                               <item.icon className="h-4 w-4 shrink-0" />
-                              <span className="flex-1">
-                                {item.title}
-                                {'readonly' in item && item.readonly && (
-                                  <span className="text-xs ml-2 opacity-60">(View only)</span>
-                                )}
-                              </span>
+                              <span className="flex-1">{item.title}</span>
                               {isActive && <ChevronRight className="h-4 w-4" />}
                             </>
                           )}

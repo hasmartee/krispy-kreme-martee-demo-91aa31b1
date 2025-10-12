@@ -414,20 +414,22 @@ export default function ProductRange() {
             }
           </p>
         </div>
-        <div className="flex gap-2">
-          <Button 
-            variant="outline"
-            onClick={() => setIsBulkUploadOpen(true)}
-            className="shadow-brand"
-          >
-            <Upload className="h-4 w-4 mr-2" />
-            Bulk Upload
-          </Button>
-          <Button className="bg-primary text-primary-foreground shadow-brand hover:bg-primary/90">
-            <Plus className="h-4 w-4 mr-2" />
-            Add Product
-          </Button>
-        </div>
+        {appViewMode === "hq" && (
+          <div className="flex gap-2">
+            <Button 
+              variant="outline"
+              onClick={() => setIsBulkUploadOpen(true)}
+              className="shadow-brand"
+            >
+              <Upload className="h-4 w-4 mr-2" />
+              Bulk Upload
+            </Button>
+            <Button className="bg-primary text-primary-foreground shadow-brand hover:bg-primary/90">
+              <Plus className="h-4 w-4 mr-2" />
+              Add Product
+            </Button>
+          </div>
+        )}
       </div>
 
       {/* Filters */}

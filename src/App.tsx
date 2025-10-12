@@ -13,6 +13,7 @@ import SuggestedOrdering from "./pages/SuggestedOrdering";
 import ProductRange from "./pages/ProductRange";
 import StoreProductRange from "./pages/StoreProductRange";
 import StoreManagement from "./pages/StoreManagement";
+import StoreDetails from "./pages/StoreDetails";
 import Analytics from "./pages/Analytics";
 import LiveSales from "./pages/LiveSales";
 import Settings from "./pages/Settings";
@@ -51,6 +52,7 @@ const App = () => (
                       <Route path="/inventory" element={<Inventory />} />
                       <Route path="/recipes" element={<MyRecipes />} />
                       <Route path="/tasks" element={<MyTasks />} />
+                      <Route path="/store-details" element={<StoreDetails />} />
                       <Route path="/ingredients" element={<Navigate to="/analytics" replace />} />
                       <Route path="/suppliers" element={<Navigate to="/analytics" replace />} />
                       <Route path="/logistics" element={<Navigate to="/analytics" replace />} />

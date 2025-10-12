@@ -464,23 +464,23 @@ export default function StoreProductRange() {
         </Card>
       )}
 
-      {/* Search and Cluster Filters */}
-      <Card className="shadow-card">
-        <CardContent className="pt-6">
-          <div className="flex flex-col md:flex-row gap-4">
-            <div className="flex-1">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input
-                  type="text"
-                  placeholder="Search stores by name, postcode, or ID..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10"
-                />
+      {/* Search and Cluster Filters - Only show in HQ view */}
+      {viewMode === "hq" && (
+        <Card className="shadow-card">
+          <CardContent className="pt-6">
+            <div className="flex flex-col md:flex-row gap-4">
+              <div className="flex-1">
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    type="text"
+                    placeholder="Search stores by name, postcode, or ID..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="pl-10"
+                  />
+                </div>
               </div>
-            </div>
-            {viewMode === "hq" && (
               <Select value={selectedCluster} onValueChange={setSelectedCluster}>
                 <SelectTrigger className="w-[200px]">
                   <SelectValue placeholder="Filter by cluster" />
@@ -494,10 +494,10 @@ export default function StoreProductRange() {
                   ))}
                 </SelectContent>
               </Select>
-            )}
-          </div>
-        </CardContent>
-      </Card>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Cluster Overview - Only show in HQ View */}
       {viewMode === "hq" && (
@@ -731,90 +731,144 @@ export default function StoreProductRange() {
               </div>
             );
           })
-        ) : (
-          // Store View: Show only the selected store
-          filteredStores.map((store) => {
-            const isExpanded = expandedStores.includes(store.storeId);
-            return (
-              <Card key={store.storeId} className="shadow-card hover:shadow-lg transition-all">
-                <CardHeader>
-                  <div className="flex items-center justify-between">
-                    <div 
-                      className="flex-1 cursor-pointer hover:bg-muted/20 -m-6 p-6 rounded-lg transition-colors"
-                      onClick={() => toggleStoreExpanded(store.storeId)}
-                    >
-                      <CardTitle className="flex items-center gap-3">
-                        <Store className="h-5 w-5" />
-                        {store.storeName}
-                        {getClusterBadge(store.cluster)}
-                      </CardTitle>
-                      <CardDescription>
-                        {store.storeId} • {store.postcode} • 
-                        {store.activeProducts.filter(p => p.active).length} of {store.activeProducts.length} products active
-                      </CardDescription>
-                    </div>
-                    <Button 
-                      variant="ghost" 
-                      size="sm"
-                      onClick={() => toggleStoreExpanded(store.storeId)}
-                    >
-                      {isExpanded ? (
-                        <ChevronUp className="h-5 w-5" />
-                      ) : (
-                        <ChevronDown className="h-5 w-5" />
-                      )}
-                    </Button>
-                  </div>
-                </CardHeader>
-                {isExpanded && (
-                  <CardContent className="animate-accordion-down">
-                    <Table>
-                      <TableHeader>
-                        <TableRow>
-                          <TableHead>Product</TableHead>
-                          <TableHead>Category</TableHead>
-                          <TableHead>Status</TableHead>
-                          <TableHead>Action</TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {store.activeProducts
-                          .filter(product => selectedDayPart === "all" || product.dayParts?.includes(selectedDayPart))
-                          .map((product) => (
-                          <TableRow key={product.id}>
-                            <TableCell>
-                              <div>
-                                <div className="font-medium">{product.name}</div>
-                                <div className="text-sm text-muted-foreground">{product.id}</div>
-                              </div>
-                            </TableCell>
-                            <TableCell>
-                              {getCategoryBadge(product.category)}
-                            </TableCell>
-                            <TableCell>
-                              <Badge variant={product.active ? "default" : "secondary"}>
-                                {product.active ? "Active" : "Inactive"}
-                              </Badge>
-                            </TableCell>
-                            <TableCell>
-                              <Button
-                                size="sm"
-                                variant={product.active ? "outline" : "default"}
-                                onClick={() => toggleProductStatus(store.storeId, product.id)}
-                              >
-                                {product.active ? "Disable" : "Enable"}
-                              </Button>
-                            </TableCell>
-                          </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
-                  </CardContent>
-                )}
-              </Card>
-            );
-          })
-        )}
+        ) : null}
+        
+        {/* Store View: Show ranges split by day parts */}
+        {viewMode === "store" && filteredStores.map((store) => {
+        const breakfastProducts = store.activeProducts.filter(p => p.dayParts?.includes('breakfast'));
+        const lunchProducts = store.activeProducts.filter(p => p.dayParts?.includes('lunch'));
+        const afternoonProducts = store.activeProducts.filter(p => p.dayParts?.includes('afternoon'));
+        
+        return (
+          <div key={store.storeId} className="space-y-6">
+            {/* Breakfast Range */}
+            <Card className="shadow-card">
+              <CardHeader>
+                <CardTitle className="text-xl flex items-center gap-2">
+                  Breakfast Range
+                  <Badge variant="secondary">{breakfastProducts.length} products</Badge>
+                </CardTitle>
+                <CardDescription>Open-11am</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Product</TableHead>
+                      <TableHead>Category</TableHead>
+                      <TableHead>Status</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {breakfastProducts.map((product) => (
+                      <TableRow key={product.id}>
+                        <TableCell>
+                          <div>
+                            <div className="font-medium">{product.name}</div>
+                            <div className="text-sm text-muted-foreground">{product.id}</div>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          {getCategoryBadge(product.category)}
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant={product.active ? "default" : "secondary"}>
+                            {product.active ? "Active" : "Inactive"}
+                          </Badge>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </CardContent>
+            </Card>
+
+            {/* Lunch Range */}
+            <Card className="shadow-card">
+              <CardHeader>
+                <CardTitle className="text-xl flex items-center gap-2">
+                  Lunch Range
+                  <Badge variant="secondary">{lunchProducts.length} products</Badge>
+                </CardTitle>
+                <CardDescription>11am-2pm</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Product</TableHead>
+                      <TableHead>Category</TableHead>
+                      <TableHead>Status</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {lunchProducts.map((product) => (
+                      <TableRow key={product.id}>
+                        <TableCell>
+                          <div>
+                            <div className="font-medium">{product.name}</div>
+                            <div className="text-sm text-muted-foreground">{product.id}</div>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          {getCategoryBadge(product.category)}
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant={product.active ? "default" : "secondary"}>
+                            {product.active ? "Active" : "Inactive"}
+                          </Badge>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </CardContent>
+            </Card>
+
+            {/* Afternoon Range */}
+            <Card className="shadow-card">
+              <CardHeader>
+                <CardTitle className="text-xl flex items-center gap-2">
+                  Afternoon Range
+                  <Badge variant="secondary">{afternoonProducts.length} products</Badge>
+                </CardTitle>
+                <CardDescription>2pm-Close</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Product</TableHead>
+                      <TableHead>Category</TableHead>
+                      <TableHead>Status</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {afternoonProducts.map((product) => (
+                      <TableRow key={product.id}>
+                        <TableCell>
+                          <div>
+                            <div className="font-medium">{product.name}</div>
+                            <div className="text-sm text-muted-foreground">{product.id}</div>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          {getCategoryBadge(product.category)}
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant={product.active ? "default" : "secondary"}>
+                            {product.active ? "Active" : "Inactive"}
+                          </Badge>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </CardContent>
+            </Card>
+          </div>
+        );
+      })}
       </div>
 
       {/* Template Edit Dialog */}
