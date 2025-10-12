@@ -6,6 +6,7 @@ import { useView } from "@/contexts/ViewContext";
 export default function StoreDetails() {
   const { selectedStore } = useView();
 
+  // Store details component
   // Mock store details data
   const storeDetails = {
     name: selectedStore,
