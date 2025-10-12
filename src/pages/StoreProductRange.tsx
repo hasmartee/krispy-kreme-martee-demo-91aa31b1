@@ -96,36 +96,40 @@ interface StoreInfo {
 
 // Brand to store name mapping (which stores belong to which brand)
 const storeBrands: Record<string, string> = {
-  // Pret a Manger stores (London locations)
+  // Pret a Manger stores
   "London Bridge": "Pret a Manger",
-  "Kings Cross": "Pret a Manger",
+  "King's Cross": "Pret a Manger",
   "Victoria Station": "Pret a Manger",
   "Liverpool Street": "Pret a Manger",
   "Paddington": "Pret a Manger",
-  "Waterloo": "Pret a Manger",
+  "Waterloo Station": "Pret a Manger",
   "Bank": "Pret a Manger",
   "Monument": "Pret a Manger",
   "Shoreditch": "Pret a Manger",
-  "Camden": "Pret a Manger",
-  "Clapham": "Pret a Manger",
+  "Camden Town": "Pret a Manger",
+  "Clapham Junction": "Pret a Manger",
   "Wimbledon": "Pret a Manger",
   "Greenwich": "Pret a Manger",
   
   // Brioche Dorée stores
-  "Oxford Street": "Brioche Dorée",
+  "Oxford Circus": "Brioche Dorée",
   "Canary Wharf": "Brioche Dorée",
   "Bond Street": "Brioche Dorée",
   "Leicester Square": "Brioche Dorée",
   "Covent Garden": "Brioche Dorée",
   "Notting Hill": "Brioche Dorée",
   "Chelsea": "Brioche Dorée",
-  "Hampstead": "Brioche Dorée",
+  "Soho": "Brioche Dorée",
   
   // Starbucks stores
   "Tower Hill": "Starbucks",
   "Holborn": "Starbucks",
   "Richmond": "Starbucks",
-  "Brixton": "Starbucks"
+  "Brixton": "Starbucks",
+  "Stratford": "Starbucks",
+  "Kensington": "Starbucks",
+  "Moorgate": "Starbucks",
+  "Farringdon": "Starbucks"
 };
 
 // Brand-specific product templates
