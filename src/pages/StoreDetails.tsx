@@ -13,19 +13,12 @@ export default function StoreDetails() {
     storeId: "ST001",
     cluster: "Transport Hub",
     status: "Active",
-    address: "2 London Bridge Street, London",
-    postcode: "SE1 9RT",
-    phone: "020 7403 8456",
-    manager: "Sarah Williams",
-    openingHours: "06:30 - 19:00",
-    dailyTarget: 2400,
-    weeklyAverage: 2180,
-    bankDetails: {
-      accountName: "Moto Hospitality - London Bridge",
-      sortCode: "20-00-00",
-      accountNumber: "12345678",
-      bankName: "Barclays Bank PLC",
-    }
+    address: "45 King William Street",
+    postcode: "EC4N 7BW",
+    phone: "020 8234 5678",
+    manager: "Mark Johnson",
+    openingHours: "Mon-Fri: 6:30am-8pm, Sat-Sun: Closed",
+    dailyTarget: 2800,
   };
 
   return (
@@ -39,7 +32,7 @@ export default function StoreDetails() {
       </div>
 
       <div className="grid gap-6 md:grid-cols-2">
-        {/* Store Information */}
+        {/* Store Name & Postcode */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
@@ -49,133 +42,98 @@ export default function StoreDetails() {
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium text-muted-foreground">Store Name</span>
-                <span className="text-sm font-semibold">{storeDetails.name}</span>
+              <div>
+                <p className="text-sm font-medium text-muted-foreground mb-1">Store Name</p>
+                <p className="text-base font-semibold">{storeDetails.name}</p>
               </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium text-muted-foreground">Store ID</span>
-                <span className="text-sm font-semibold">{storeDetails.storeId}</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium text-muted-foreground">Cluster</span>
-                <Badge variant="secondary">{storeDetails.cluster}</Badge>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium text-muted-foreground">Status</span>
-                <Badge className="bg-success text-white">{storeDetails.status}</Badge>
+              <div>
+                <p className="text-sm font-medium text-muted-foreground mb-1">Postcode</p>
+                <p className="text-base font-semibold">{storeDetails.postcode}</p>
               </div>
             </div>
           </CardContent>
         </Card>
 
-        {/* Contact Information */}
+        {/* Address */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <MapPin className="h-5 w-5 text-primary" />
-              Contact Information
+              Address
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-base">{storeDetails.address}</p>
+          </CardContent>
+        </Card>
+
+        {/* Phone & Manager */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Phone className="h-5 w-5 text-primary" />
+              Contact Details
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="space-y-3">
-              <div className="flex items-start gap-3">
-                <MapPin className="h-4 w-4 text-muted-foreground mt-0.5" />
-                <div className="flex-1">
-                  <p className="text-sm font-medium">Address</p>
-                  <p className="text-sm text-muted-foreground">{storeDetails.address}</p>
-                  <p className="text-sm text-muted-foreground">{storeDetails.postcode}</p>
-                </div>
+            <div className="space-y-2">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground mb-1">Phone</p>
+                <p className="text-base font-semibold">{storeDetails.phone}</p>
               </div>
-              <div className="flex items-center gap-3">
-                <Phone className="h-4 w-4 text-muted-foreground" />
-                <div className="flex-1">
-                  <p className="text-sm font-medium">Phone</p>
-                  <p className="text-sm text-muted-foreground">{storeDetails.phone}</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-3">
-                <User className="h-4 w-4 text-muted-foreground" />
-                <div className="flex-1">
-                  <p className="text-sm font-medium">Store Manager</p>
-                  <p className="text-sm text-muted-foreground">{storeDetails.manager}</p>
-                </div>
+              <div>
+                <p className="text-sm font-medium text-muted-foreground mb-1">Manager</p>
+                <p className="text-base font-semibold">{storeDetails.manager}</p>
               </div>
             </div>
           </CardContent>
         </Card>
 
-        {/* Operating Hours */}
+        {/* Store Cluster & Status */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Building2 className="h-5 w-5 text-primary" />
+              Store Category
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="space-y-2">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground mb-1">Store Cluster</p>
+                <Badge variant="secondary" className="text-base">{storeDetails.cluster}</Badge>
+              </div>
+              <div>
+                <p className="text-sm font-medium text-muted-foreground mb-1">Status</p>
+                <Badge className="bg-success text-white text-base">{storeDetails.status}</Badge>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Opening Hours */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Clock className="h-5 w-5 text-primary" />
-              Operating Hours
+              Opening Hours
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium text-muted-foreground">Opening Hours</span>
-                <span className="text-sm font-semibold">{storeDetails.openingHours}</span>
-              </div>
-            </div>
+            <p className="text-base">{storeDetails.openingHours}</p>
           </CardContent>
         </Card>
 
-        {/* Performance Targets */}
+        {/* Daily Target */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Target className="h-5 w-5 text-primary" />
-              Performance Targets
+              Daily Target
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium text-muted-foreground">Daily Target</span>
-                <span className="text-sm font-semibold">£{storeDetails.dailyTarget.toLocaleString()}</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium text-muted-foreground">Weekly Average</span>
-                <span className="text-sm font-semibold">£{storeDetails.weeklyAverage.toLocaleString()}</span>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Bank Details */}
-        <Card className="md:col-span-2">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Building2 className="h-5 w-5 text-primary" />
-              Bank Details
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid gap-4 md:grid-cols-2">
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium text-muted-foreground">Account Name</span>
-                  <span className="text-sm font-semibold">{storeDetails.bankDetails.accountName}</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium text-muted-foreground">Bank Name</span>
-                  <span className="text-sm font-semibold">{storeDetails.bankDetails.bankName}</span>
-                </div>
-              </div>
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium text-muted-foreground">Sort Code</span>
-                  <span className="text-sm font-semibold font-mono">{storeDetails.bankDetails.sortCode}</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium text-muted-foreground">Account Number</span>
-                  <span className="text-sm font-semibold font-mono">{storeDetails.bankDetails.accountNumber}</span>
-                </div>
-              </div>
-            </div>
+            <p className="text-2xl font-bold">£{storeDetails.dailyTarget.toLocaleString()}</p>
           </CardContent>
         </Card>
       </div>
