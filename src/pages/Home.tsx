@@ -78,6 +78,40 @@ export default function Home() {
   const volumeForecast = isSingleStoreView ? volumeForecastStore : volumeForecastHQ;
   const footfallForecast = isSingleStoreView ? footfallForecastStore : footfallForecastHQ;
 
+  // Multi-brand data for HQ view
+  const brandData = [
+    { 
+      name: "Pret a Manger", 
+      stores: 156, 
+      revenue: 4250000, 
+      grossProfit: 1785000,
+      waste: 3.2, 
+      availability: 96.8 
+    },
+    { 
+      name: "Brioche Dorée", 
+      stores: 118, 
+      revenue: 2890000, 
+      grossProfit: 1215600,
+      waste: 4.1, 
+      availability: 94.5 
+    },
+    { 
+      name: "Starbucks", 
+      stores: 112, 
+      revenue: 5120000, 
+      grossProfit: 2150400,
+      waste: 2.8, 
+      availability: 97.2 
+    },
+  ];
+
+  const totalStores = brandData.reduce((sum, brand) => sum + brand.stores, 0);
+  const totalRevenue = brandData.reduce((sum, brand) => sum + brand.revenue, 0);
+  const totalGrossProfit = brandData.reduce((sum, brand) => sum + brand.grossProfit, 0);
+  const avgWaste = brandData.reduce((sum, brand) => sum + brand.waste, 0) / brandData.length;
+  const avgAvailability = brandData.reduce((sum, brand) => sum + brand.availability, 0) / brandData.length;
+
   // Mock data for this week's metrics
   const weeklyMetrics = {
     revenue: viewMode === "store_manager" ? 1286 : 32150,
@@ -104,6 +138,44 @@ export default function Home() {
           Here's what's happening this week
         </p>
       </div>
+
+      {/* Multi-Brand Overview - HQ Only */}
+      {viewMode === "hq" && (
+        <div>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-xl font-semibold text-foreground">Brand Overview</h2>
+            <p className="text-sm text-muted-foreground">{totalStores} stores across 3 brands</p>
+          </div>
+          <div className="grid gap-4 md:grid-cols-3 mb-6">
+            {brandData.map((brand) => (
+              <Card key={brand.name}>
+                <CardHeader>
+                  <CardTitle className="text-lg">{brand.name}</CardTitle>
+                  <p className="text-sm text-muted-foreground">{brand.stores} stores</p>
+                </CardHeader>
+                <CardContent className="space-y-2">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-muted-foreground">Revenue:</span>
+                    <span className="font-medium">£{(brand.revenue / 1000000).toFixed(2)}M</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-muted-foreground">Gross Profit:</span>
+                    <span className="font-medium">£{(brand.grossProfit / 1000000).toFixed(2)}M</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-muted-foreground">Waste:</span>
+                    <span className="font-medium">{brand.waste.toFixed(1)}%</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-muted-foreground">Availability:</span>
+                    <span className="font-medium">{brand.availability.toFixed(1)}%</span>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* This Week's Metrics */}
       <div>
@@ -207,37 +279,39 @@ export default function Home() {
         </>
       )}
 
-      {/* Next Task */}
-      <div>
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-semibold text-foreground">Your Next Task</h2>
-          <Button onClick={() => navigate("/tasks")} variant="outline" className="gap-2">
-            View All Tasks
-            <ArrowRight className="h-4 w-4" />
-          </Button>
-        </div>
+      {/* Next Task - Store Manager Only */}
+      {viewMode === "store_manager" && (
+        <div>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-xl font-semibold text-foreground">Your Next Task</h2>
+            <Button onClick={() => navigate("/tasks")} variant="outline" className="gap-2">
+              View All Tasks
+              <ArrowRight className="h-4 w-4" />
+            </Button>
+          </div>
 
-        <Card className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => navigate("/tasks")}>
-          <CardContent className="p-6">
-            <div className="flex items-start justify-between">
-              <div className="flex items-start gap-4">
-                <div className="mt-1">
-                  <ClipboardCheck className="h-5 w-5 text-primary" />
-                </div>
-                <div className="space-y-2">
-                  <div className="flex items-center gap-2">
-                    <h3 className="font-semibold text-foreground">{nextTask.title}</h3>
+          <Card className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => navigate("/tasks")}>
+            <CardContent className="p-6">
+              <div className="flex items-start justify-between">
+                <div className="flex items-start gap-4">
+                  <div className="mt-1">
+                    <ClipboardCheck className="h-5 w-5 text-primary" />
                   </div>
-                  <p className="text-sm text-muted-foreground">
-                    Scheduled for {nextTask.time}
-                  </p>
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2">
+                      <h3 className="font-semibold text-foreground">{nextTask.title}</h3>
+                    </div>
+                    <p className="text-sm text-muted-foreground">
+                      Scheduled for {nextTask.time}
+                    </p>
+                  </div>
                 </div>
+                <ArrowRight className="h-5 w-5 text-muted-foreground" />
               </div>
-              <ArrowRight className="h-5 w-5 text-muted-foreground" />
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
 
       {/* AI Forecasts Section */}
       <div className="space-y-6">
