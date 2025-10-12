@@ -114,10 +114,10 @@ export default function Home() {
 
   // Mock data for this week's metrics
   const weeklyMetrics = {
-    revenue: viewMode === "store_manager" ? 1286 : 32150,
-    grossProfit: viewMode === "store_manager" ? 772 : 19290,
-    waste: viewMode === "store_manager" ? 45 : 1125,
-    availability: viewMode === "store_manager" ? 96.5 : 94.8,
+    revenue: viewMode === "store_manager" ? 1286 : totalRevenue,
+    grossProfit: viewMode === "store_manager" ? 772 : totalGrossProfit,
+    waste: viewMode === "store_manager" ? 45 : Math.round(avgWaste * totalRevenue / 100),
+    availability: viewMode === "store_manager" ? 96.5 : avgAvailability,
   };
 
   // Mock next task data
@@ -139,6 +139,77 @@ export default function Home() {
         </p>
       </div>
 
+      {/* This Week's Metrics */}
+      <div>
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-xl font-semibold text-foreground">This Week's Performance</h2>
+          <Button onClick={() => navigate("/analytics")} variant="outline" className="gap-2">
+            View Full Performance
+            <ArrowRight className="h-4 w-4" />
+          </Button>
+        </div>
+        
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Revenue</CardTitle>
+              <DollarSign className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">
+                {viewMode === "hq" ? `£${(weeklyMetrics.revenue / 1000000).toFixed(2)}M` : `£${weeklyMetrics.revenue.toLocaleString()}`}
+              </div>
+              <p className="text-xs text-muted-foreground mt-1">
+                Week to date
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Gross Profit</CardTitle>
+              <TrendingUp className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">
+                {viewMode === "hq" ? `£${(weeklyMetrics.grossProfit / 1000000).toFixed(2)}M` : `£${weeklyMetrics.grossProfit.toLocaleString()}`}
+              </div>
+              <p className="text-xs text-muted-foreground mt-1">
+                {((weeklyMetrics.grossProfit / weeklyMetrics.revenue) * 100).toFixed(1)}% margin
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Waste</CardTitle>
+              <Trash2 className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">
+                {viewMode === "hq" ? `£${(weeklyMetrics.waste / 1000000).toFixed(2)}M` : `£${weeklyMetrics.waste.toLocaleString()}`}
+              </div>
+              <p className="text-xs text-muted-foreground mt-1">
+                {viewMode === "hq" ? `${avgWaste.toFixed(1)}% average` : `${((weeklyMetrics.waste / weeklyMetrics.revenue) * 100).toFixed(1)}% of revenue`}
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Availability</CardTitle>
+              <CheckCircle className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{weeklyMetrics.availability.toFixed(1)}%</div>
+              <p className="text-xs text-muted-foreground mt-1">
+                Products in stock
+              </p>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+
       {/* Multi-Brand Overview - HQ Only */}
       {viewMode === "hq" && (
         <div>
@@ -146,7 +217,7 @@ export default function Home() {
             <h2 className="text-xl font-semibold text-foreground">Brand Overview</h2>
             <p className="text-sm text-muted-foreground">{totalStores} stores across 3 brands</p>
           </div>
-          <div className="grid gap-4 md:grid-cols-3 mb-6">
+          <div className="grid gap-4 md:grid-cols-3">
             {brandData.map((brand) => (
               <Card key={brand.name}>
                 <CardHeader>
@@ -176,71 +247,6 @@ export default function Home() {
           </div>
         </div>
       )}
-
-      {/* This Week's Metrics */}
-      <div>
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-semibold text-foreground">This Week's Performance</h2>
-          <Button onClick={() => navigate("/analytics")} variant="outline" className="gap-2">
-            View Full Performance
-            <ArrowRight className="h-4 w-4" />
-          </Button>
-        </div>
-        
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Revenue</CardTitle>
-              <DollarSign className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">£{weeklyMetrics.revenue.toLocaleString()}</div>
-              <p className="text-xs text-muted-foreground mt-1">
-                Week to date
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Gross Profit</CardTitle>
-              <TrendingUp className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">£{weeklyMetrics.grossProfit.toLocaleString()}</div>
-              <p className="text-xs text-muted-foreground mt-1">
-                {((weeklyMetrics.grossProfit / weeklyMetrics.revenue) * 100).toFixed(1)}% margin
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Waste</CardTitle>
-              <Trash2 className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">£{weeklyMetrics.waste.toLocaleString()}</div>
-              <p className="text-xs text-muted-foreground mt-1">
-                {((weeklyMetrics.waste / weeklyMetrics.revenue) * 100).toFixed(1)}% of revenue
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Availability</CardTitle>
-              <CheckCircle className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{weeklyMetrics.availability}%</div>
-              <p className="text-xs text-muted-foreground mt-1">
-                Products in stock
-              </p>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
 
       {/* Notable Events - Only in Store View */}
       {viewMode === "store_manager" && (
@@ -313,8 +319,9 @@ export default function Home() {
         </div>
       )}
 
-      {/* AI Forecasts Section */}
-      <div className="space-y-6">
+      {/* AI Forecasts Section - Store Manager Only */}
+      {viewMode === "store_manager" && (
+        <div className="space-y-6">
         <div className="flex items-center gap-2">
           <BrainCircuit className="h-6 w-6 text-primary" />
           <h2 className="text-xl font-semibold text-foreground">AI-Powered Forecasts</h2>
@@ -600,7 +607,8 @@ export default function Home() {
             </CardContent>
           </Card>
         </div>
-      </div>
+        </div>
+      )}
     </div>
   );
 }
