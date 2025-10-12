@@ -1,6 +1,7 @@
 import { BarChart3, Package, Store, TrendingUp, ShoppingCart, Settings, ChevronRight, Target, BookOpen, CheckSquare, Activity, Truck, Home } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import { useState } from "react";
+import { useView } from "@/contexts/ViewContext";
 import {
   Sidebar,
   SidebarContent,
@@ -27,15 +28,25 @@ const mainNavigation = [
   { title: "Settings", url: "/settings", icon: Settings },
 ];
 
-const settingsNavigation = [
+const settingsNavigationHQ = [
   { title: "My Products", url: "/products", icon: Package },
   { title: "My Stores", url: "/stores", icon: Store },
   { title: "My Range Plans", url: "/store-products", icon: ShoppingCart },
   { title: "My Recipes", url: "/recipes", icon: BookOpen },
 ];
 
+const settingsNavigationStore = [
+  { title: "Products", url: "/products", icon: Package, readonly: true },
+  { title: "Range", url: "/store-products", icon: ShoppingCart, readonly: true },
+  { title: "Recipes", url: "/recipes", icon: BookOpen },
+];
+
 export function AppSidebar() {
+  const { viewMode } = useView();
   const [settingsOpen, setSettingsOpen] = useState(false);
+  
+  const settingsNavigation = viewMode === "store" ? settingsNavigationStore : settingsNavigationHQ;
+  const businessLabel = viewMode === "store" ? "My Store" : "My Business";
 
   return (
     <Sidebar className="w-64" collapsible="none">
@@ -93,7 +104,7 @@ export function AppSidebar() {
           <SidebarGroup>
             <SidebarGroupLabel asChild>
               <CollapsibleTrigger className="flex w-full items-center justify-between text-muted-foreground hover:text-foreground cursor-pointer">
-                My Business
+                {businessLabel}
                 <ChevronRight className={`h-4 w-4 transition-transform ${settingsOpen ? 'rotate-90' : ''}`} />
               </CollapsibleTrigger>
             </SidebarGroupLabel>
@@ -116,7 +127,12 @@ export function AppSidebar() {
                           {({ isActive }) => (
                             <>
                               <item.icon className="h-4 w-4 shrink-0" />
-                              <span className="flex-1">{item.title}</span>
+                              <span className="flex-1">
+                                {item.title}
+                                {'readonly' in item && item.readonly && (
+                                  <span className="text-xs ml-2 opacity-60">(View only)</span>
+                                )}
+                              </span>
                               {isActive && <ChevronRight className="h-4 w-4" />}
                             </>
                           )}

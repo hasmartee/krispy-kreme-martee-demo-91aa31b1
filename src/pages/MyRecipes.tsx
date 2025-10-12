@@ -41,6 +41,7 @@ interface Recipe {
   ingredients: {
     item: string;
     quantity: string;
+    allergens?: string[];
   }[];
   instructions: string[];
 }
@@ -60,12 +61,12 @@ const MyRecipes = () => {
       prepTime: "5 minutes",
       servings: 1,
       ingredients: [
-        { item: "Bacon", quantity: "3 rashers (60g)" },
-        { item: "Romaine Lettuce", quantity: "2 leaves (30g)" },
-        { item: "Tomato", quantity: "3 slices (50g)" },
-        { item: "Whole Wheat Bread", quantity: "2 slices (80g)" },
-        { item: "Mayonnaise", quantity: "1 tbsp (15ml)" },
-        { item: "Black Pepper", quantity: "Pinch" },
+        { item: "Bacon", quantity: "3 rashers (60g)", allergens: [] },
+        { item: "Romaine Lettuce", quantity: "2 leaves (30g)", allergens: [] },
+        { item: "Tomato", quantity: "3 slices (50g)", allergens: [] },
+        { item: "Whole Wheat Bread", quantity: "2 slices (80g)", allergens: ["Gluten", "Wheat"] },
+        { item: "Mayonnaise", quantity: "1 tbsp (15ml)", allergens: ["Eggs", "Mustard"] },
+        { item: "Black Pepper", quantity: "Pinch", allergens: [] },
       ],
       instructions: [
         "Cook bacon rashers in a pan over medium heat until crispy (approximately 4-5 minutes per side).",
@@ -89,12 +90,12 @@ const MyRecipes = () => {
       prepTime: "8 minutes",
       servings: 1,
       ingredients: [
-        { item: "Chicken Breast", quantity: "120g (cooked, sliced)" },
-        { item: "Romaine Lettuce", quantity: "40g (shredded)" },
-        { item: "Parmesan Cheese", quantity: "20g (grated)" },
-        { item: "Caesar Dressing", quantity: "30ml" },
-        { item: "Tortilla Wrap", quantity: "1 large (60g)" },
-        { item: "Cherry Tomatoes", quantity: "3 halved (30g)" },
+        { item: "Chicken Breast", quantity: "120g (cooked, sliced)", allergens: [] },
+        { item: "Romaine Lettuce", quantity: "40g (shredded)", allergens: [] },
+        { item: "Parmesan Cheese", quantity: "20g (grated)", allergens: ["Milk"] },
+        { item: "Caesar Dressing", quantity: "30ml", allergens: ["Eggs", "Fish", "Mustard"] },
+        { item: "Tortilla Wrap", quantity: "1 large (60g)", allergens: ["Gluten", "Wheat"] },
+        { item: "Cherry Tomatoes", quantity: "3 halved (30g)", allergens: [] },
       ],
       instructions: [
         "Preheat grill to medium-high heat if chicken needs cooking.",
@@ -152,12 +153,12 @@ const MyRecipes = () => {
       prepTime: "7 minutes",
       servings: 1,
       ingredients: [
-        { item: "Tuna", quantity: "100g (canned, drained)" },
-        { item: "Mayonnaise", quantity: "2 tbsp (30ml)" },
-        { item: "Cheddar Cheese", quantity: "50g (sliced)" },
-        { item: "Ciabatta Bread", quantity: "1 roll (100g)" },
-        { item: "Red Onion", quantity: "15g (diced)" },
-        { item: "Black Pepper", quantity: "To taste" },
+        { item: "Tuna", quantity: "100g (canned, drained)", allergens: ["Fish"] },
+        { item: "Mayonnaise", quantity: "2 tbsp (30ml)", allergens: ["Eggs", "Mustard"] },
+        { item: "Cheddar Cheese", quantity: "50g (sliced)", allergens: ["Milk"] },
+        { item: "Ciabatta Bread", quantity: "1 roll (100g)", allergens: ["Gluten", "Wheat"] },
+        { item: "Red Onion", quantity: "15g (diced)", allergens: [] },
+        { item: "Black Pepper", quantity: "To taste", allergens: [] },
       ],
       instructions: [
         "Drain canned tuna thoroughly and place in a mixing bowl.",
@@ -702,7 +703,18 @@ const MyRecipes = () => {
                             key={index} 
                             className="flex justify-between items-center p-2 rounded-lg bg-muted/30"
                           >
-                            <span className="font-medium">{ingredient.item}</span>
+                            <div className="flex-1">
+                              <span className="font-medium">{ingredient.item}</span>
+                              {ingredient.allergens && ingredient.allergens.length > 0 && (
+                                <div className="flex gap-1 mt-1 flex-wrap">
+                                  {ingredient.allergens.map((allergen, i) => (
+                                    <Badge key={i} variant="destructive" className="text-xs">
+                                      {allergen}
+                                    </Badge>
+                                  ))}
+                                </div>
+                              )}
+                            </div>
                             <Badge variant="secondary">{ingredient.quantity}</Badge>
                           </div>
                         ))}
