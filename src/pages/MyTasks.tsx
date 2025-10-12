@@ -102,7 +102,7 @@ export default function MyTasks() {
         {
           id: "1",
           type: "production",
-          title: "Morning Production",
+          title: "Confirm Morning Production",
           time: "06:30",
           completed: false,
           details: "Confirm all breakfast items production",
@@ -111,7 +111,7 @@ export default function MyTasks() {
         {
           id: "2",
           type: "production",
-          title: "Lunchtime Production",
+          title: "Confirm Lunchtime Production",
           time: "11:00",
           completed: false,
           details: "Confirm sandwiches, wraps, and salads for lunch service",
@@ -120,7 +120,7 @@ export default function MyTasks() {
         {
           id: "3",
           type: "production",
-          title: "Afternoon Production",
+          title: "Confirm Afternoon Production",
           time: "14:00",
           completed: false,
           details: "Confirm afternoon snacks and light meals",
@@ -142,7 +142,7 @@ export default function MyTasks() {
         {
           id: "1",
           type: "production",
-          title: "Morning Production",
+          title: "Complete Morning Production",
           time: "06:30",
           completed: false,
           details: "Complete all breakfast items production",
@@ -151,7 +151,7 @@ export default function MyTasks() {
         {
           id: "2",
           type: "production",
-          title: "Lunchtime Production",
+          title: "Complete Lunchtime Production",
           time: "11:00",
           completed: false,
           details: "Complete sandwiches, wraps, and salads for lunch service",
@@ -160,7 +160,7 @@ export default function MyTasks() {
         {
           id: "3",
           type: "production",
-          title: "Afternoon Production",
+          title: "Complete Afternoon Production",
           time: "14:00",
           completed: false,
           details: "Complete afternoon snacks and light meals",

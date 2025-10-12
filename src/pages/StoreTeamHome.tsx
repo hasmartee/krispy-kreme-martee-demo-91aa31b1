@@ -25,7 +25,7 @@ export default function StoreTeamHome() {
     {
       id: "1",
       type: "production",
-      title: "Morning Production",
+      title: "Complete Morning Production",
       time: "06:30",
       completed: false,
       details: "Complete all breakfast items production",
@@ -34,7 +34,7 @@ export default function StoreTeamHome() {
     {
       id: "2",
       type: "production",
-      title: "Lunchtime Production",
+      title: "Complete Lunchtime Production",
       time: "11:00",
       completed: false,
       details: "Complete sandwiches, wraps, and salads for lunch service",
@@ -43,7 +43,7 @@ export default function StoreTeamHome() {
     {
       id: "3",
       type: "production",
-      title: "Afternoon Production",
+      title: "Complete Afternoon Production",
       time: "14:00",
       completed: false,
       details: "Complete afternoon snacks and light meals",
