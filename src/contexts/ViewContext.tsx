@@ -13,7 +13,7 @@ interface ViewContextType {
 const ViewContext = createContext<ViewContextType | undefined>(undefined);
 
 export function ViewProvider({ children }: { children: ReactNode }) {
-  const [viewMode, setViewMode] = useState<ViewMode>("store_manager");
+  const [viewMode, setViewMode] = useState<ViewMode>("store_team");
   const [selectedStore, setSelectedStore] = useState<string>("");
 
   // Load first store on mount

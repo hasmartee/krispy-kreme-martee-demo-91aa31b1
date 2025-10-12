@@ -98,29 +98,29 @@ export default function MyTasks() {
       {
         id: "7",
         type: "production",
-        title: "Confirm morning production",
+        title: "Morning Production",
         time: "06:30",
         completed: false,
-        details: "Verify all breakfast items are prepared and displayed",
-        priority: "high"
-      },
-      {
-        id: "1",
-        type: "production",
-        title: "Prepare Breakfast Items",
-        time: "05:30",
-        completed: false,
-        details: "Prepare breakfast sandwiches, bagels, and parfaits",
+        details: "Prepare and verify all breakfast items are ready",
         priority: "high"
       },
       {
         id: "2",
         type: "production",
-        title: "Prepare Lunch Items",
-        time: "09:00",
+        title: "Lunchtime Production",
+        time: "11:00",
         completed: false,
         details: "Prepare sandwiches, wraps, and salads for lunch service",
         priority: "high"
+      },
+      {
+        id: "8",
+        type: "production",
+        title: "Afternoon Production",
+        time: "14:00",
+        completed: false,
+        details: "Prepare afternoon snacks and light meals",
+        priority: "medium"
       },
       {
         id: "3",
@@ -265,6 +265,11 @@ export default function MyTasks() {
   const volumeForecast = isSingleStoreView ? volumeForecastStore : volumeForecastHQ;
   const footfallForecast = isSingleStoreView ? footfallForecastStore : footfallForecastHQ;
 
+  // Filter tasks based on view mode
+  const displayTasks = viewMode === "store_team" 
+    ? sortedTasks.filter(t => t.type === "production")
+    : sortedTasks;
+
   if (viewMode === "hq") {
     return (
       <div className="p-6">
@@ -371,7 +376,7 @@ export default function MyTasks() {
       </Card>
 
       <div className="grid gap-3">
-        {sortedTasks.map((task) => (
+        {displayTasks.map((task) => (
           <Card 
             key={task.id} 
             className={`transition-all duration-300 ${

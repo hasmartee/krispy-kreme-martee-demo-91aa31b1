@@ -31,6 +31,7 @@ const mainNavigationStoreManager = [
 const mainNavigationStoreTeam = [
   { title: "My Tasks", url: "/tasks", icon: CheckSquare, highlight: true },
   { title: "Production", url: "/production", icon: Target },
+  { title: "Live Availability", url: "/inventory", icon: Package },
 ];
 
 const mainNavigationHQ = [

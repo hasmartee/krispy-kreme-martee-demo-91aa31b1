@@ -16,13 +16,13 @@ export function ViewSelector() {
     <div className="flex items-center gap-4">
       <Tabs value={viewMode} onValueChange={handleViewChange}>
         <TabsList className="grid w-[360px] grid-cols-3">
-          <TabsTrigger value="store_manager" className="gap-2">
-            <Store className="h-4 w-4" />
-            Store Manager
-          </TabsTrigger>
           <TabsTrigger value="store_team" className="gap-2">
             <Users className="h-4 w-4" />
             Store Team
+          </TabsTrigger>
+          <TabsTrigger value="store_manager" className="gap-2">
+            <Store className="h-4 w-4" />
+            Store Manager
           </TabsTrigger>
           <TabsTrigger value="hq" className="gap-2">
             <Building2 className="h-4 w-4" />
