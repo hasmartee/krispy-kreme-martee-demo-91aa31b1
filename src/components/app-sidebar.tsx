@@ -58,6 +58,13 @@ const settingsNavigationStoreManager = [
   { title: "Store Details", url: "/store-details", icon: Store },
 ];
 
+const settingsNavigationStoreTeam = [
+  { title: "Products", url: "/products", icon: Package },
+  { title: "Range", url: "/store-products", icon: ShoppingCart },
+  { title: "Recipes", url: "/recipes", icon: BookOpen },
+  { title: "Store Details", url: "/store-details", icon: Store },
+];
+
 export function AppSidebar() {
   const { viewMode } = useView();
   const [settingsOpen, setSettingsOpen] = useState(false);
@@ -68,9 +75,14 @@ export function AppSidebar() {
     ? mainNavigationStoreManager 
     : mainNavigationHQ;
   
-  const settingsNavigation = viewMode === "store_manager" ? settingsNavigationStoreManager : settingsNavigationHQ;
-  const businessLabel = viewMode === "store_manager" ? "My Store" : "My Business";
-  const showSettings = viewMode !== "store_team";
+  const settingsNavigation = viewMode === "store_team"
+    ? settingsNavigationStoreTeam
+    : viewMode === "store_manager" 
+    ? settingsNavigationStoreManager 
+    : settingsNavigationHQ;
+  
+  const businessLabel = viewMode === "store_manager" || viewMode === "store_team" ? "My Store" : "My Business";
+  const showSettings = true; // Show settings for all views now
 
   return (
     <Sidebar className="w-64" collapsible="none">

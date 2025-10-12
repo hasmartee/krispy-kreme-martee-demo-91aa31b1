@@ -101,13 +101,22 @@ export default function Inventory() {
     try {
       if (viewMode === "store_manager" || viewMode === "store_team") {
         // Store view: Show ALL products for store team, or cluster-based for manager
-        const { data: storeData } = await supabase
+        const { data: storeData, error: storeError } = await supabase
           .from("stores")
           .select("id, cluster")
           .eq("name", selectedStore)
           .maybeSingle();
 
-        console.log('Store data:', storeData);
+        console.log('Store data:', storeData, 'Error:', storeError);
+
+        if (storeError) {
+          console.error('Store query error:', storeError);
+          toast({
+            title: "Error loading store",
+            description: storeError.message,
+            variant: "destructive"
+          });
+        }
 
         if (!storeData) {
           console.log('No store data found');
@@ -124,12 +133,22 @@ export default function Inventory() {
 
         if (viewMode === "store_manager" && storeData.cluster) {
           const clusterSkus = clusterProducts[storeData.cluster as keyof typeof clusterProducts] || [];
+          console.log('Filtering by cluster SKUs:', clusterSkus);
           productsQuery = productsQuery.in("sku", clusterSkus);
         }
 
         const { data: products, error: productsError } = await productsQuery;
 
-        console.log('Products query result:', { products, error: productsError, count: products?.length });
+        console.log('Products query result:', { products: products?.length, error: productsError });
+
+        if (productsError) {
+          console.error('Products query error:', productsError);
+          toast({
+            title: "Error loading products",
+            description: productsError.message,
+            variant: "destructive"
+          });
+        }
 
         if (!products || products.length === 0) {
           console.log('No products found');
@@ -141,13 +160,17 @@ export default function Inventory() {
         const inventoryItems: InventoryItem[] = [];
 
         for (const product of products) {
-          // Get inventory
-          const { data: stockData } = await supabase
+          // Get inventory - don't fail if no stock record exists
+          const { data: stockData, error: stockError } = await supabase
             .from("store_inventory")
             .select("current_stock")
             .eq("store_id", storeData.id)
             .eq("product_id", product.id)
             .maybeSingle();
+
+          if (stockError) {
+            console.warn('Stock query error for product', product.sku, ':', stockError);
+          }
 
           const currentStock = stockData?.current_stock || 0;
 
@@ -158,7 +181,7 @@ export default function Inventory() {
           });
         }
 
-        console.log('Final inventory items:', inventoryItems.length);
+        console.log('Final inventory items:', inventoryItems.length, inventoryItems);
         setInventory(inventoryItems);
       } else {
         // HQ view: Show all products across all stores
