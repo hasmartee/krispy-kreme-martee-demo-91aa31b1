@@ -162,34 +162,36 @@ const recipes = {
   },
 };
 
-// Base product data
+// Base product data with day part specific products
 const baseProducts = [
-  { id: "SK001", productName: "Classic BLT Sandwich", category: "Sandwich", storeId: "ST001", storeName: "London Bridge", currentStock: 12, recommendedOrder: 18, finalOrder: 18, trend: "up", historicalSales: 15.2, predictedSales: 17.8 },
-  { id: "SK002", productName: "Chicken Caesar Wrap", category: "Wrap", storeId: "ST001", storeName: "London Bridge", currentStock: 8, recommendedOrder: 22, finalOrder: 22, trend: "up", historicalSales: 18.5, predictedSales: 21.3 },
-  { id: "SK005", productName: "Mediterranean Salad Bowl", category: "Salad", storeId: "ST001", storeName: "London Bridge", currentStock: 10, recommendedOrder: 16, finalOrder: 16, trend: "up", historicalSales: 13.9, predictedSales: 15.4 },
-  { id: "SK007", productName: "Chicken & Bacon Sandwich", category: "Sandwich", storeId: "ST001", storeName: "London Bridge", currentStock: 11, recommendedOrder: 17, finalOrder: 17, trend: "up", historicalSales: 14.8, predictedSales: 16.9 },
-  { id: "SK010", productName: "Ham & Cheese Croissant", category: "Hot Food", storeId: "ST001", storeName: "London Bridge", currentStock: 16, recommendedOrder: 21, finalOrder: 21, trend: "up", historicalSales: 18.2, predictedSales: 20.6 },
-  { id: "SK015", productName: "Cream Cheese Bagel", category: "Sandwich", storeId: "ST001", storeName: "London Bridge", currentStock: 15, recommendedOrder: 20, finalOrder: 20, trend: "up", historicalSales: 17.4, predictedSales: 19.8 },
-  { id: "SK021", productName: "Egg & Cress Sandwich", category: "Sandwich", storeId: "ST001", storeName: "London Bridge", currentStock: 10, recommendedOrder: 15, finalOrder: 15, trend: "up", historicalSales: 13.1, predictedSales: 14.8 },
-  { id: "SK025", productName: "Pain au Chocolat", category: "Hot Food", storeId: "ST001", storeName: "London Bridge", currentStock: 9, recommendedOrder: 14, finalOrder: 14, trend: "up", historicalSales: 12.7, predictedSales: 13.9 },
-  { id: "SK030", productName: "Cinnamon Swirl", category: "Hot Food", storeId: "ST001", storeName: "London Bridge", currentStock: 11, recommendedOrder: 16, finalOrder: 16, trend: "up", historicalSales: 14.1, predictedSales: 15.8 },
-  { id: "SK035", productName: "Sesame Bagel", category: "Sandwich", storeId: "ST001", storeName: "London Bridge", currentStock: 10, recommendedOrder: 15, finalOrder: 15, trend: "up", historicalSales: 13.2, predictedSales: 14.6 },
-  { id: "SK040", productName: "Cobb Salad", category: "Salad", storeId: "ST001", storeName: "London Bridge", currentStock: 9, recommendedOrder: 14, finalOrder: 14, trend: "up", historicalSales: 12.6, predictedSales: 13.7 },
-  { id: "SK045", productName: "Garden Salad Bowl", category: "Salad", storeId: "ST001", storeName: "London Bridge", currentStock: 8, recommendedOrder: 13, finalOrder: 13, trend: "down", historicalSales: 15.1, predictedSales: 12.6 },
-  { id: "SK003", productName: "Avocado & Hummus Wrap", category: "Wrap", storeId: "ST002", storeName: "Canary Wharf", currentStock: 6, recommendedOrder: 14, finalOrder: 14, trend: "down", historicalSales: 16.8, predictedSales: 13.2 },
-  { id: "SK004", productName: "Tuna Melt Panini", category: "Hot Food", storeId: "ST002", storeName: "Canary Wharf", currentStock: 15, recommendedOrder: 20, finalOrder: 20, trend: "up", historicalSales: 17.1, predictedSales: 19.7 },
-  { id: "SK006", productName: "Smoked Salmon Bagel", category: "Sandwich", storeId: "ST004", storeName: "Oxford Circus", currentStock: 14, recommendedOrder: 19, finalOrder: 19, trend: "up", historicalSales: 16.3, predictedSales: 18.5 },
-  { id: "SK008", productName: "Vegan No-Chicken Wrap", category: "Wrap", storeId: "ST006", storeName: "Victoria Station", currentStock: 9, recommendedOrder: 15, finalOrder: 15, trend: "up", historicalSales: 12.4, predictedSales: 14.7 },
-  { id: "SK009", productName: "Greek Feta Salad", category: "Salad", storeId: "ST007", storeName: "Shoreditch", currentStock: 7, recommendedOrder: 13, finalOrder: 13, trend: "down", historicalSales: 15.1, predictedSales: 12.8 },
-  { id: "SK011", productName: "Turkey & Cranberry Sandwich", category: "Sandwich", storeId: "ST009", storeName: "Waterloo Station", currentStock: 13, recommendedOrder: 18, finalOrder: 18, trend: "up", historicalSales: 15.7, predictedSales: 17.9 },
-  { id: "SK012", productName: "Falafel Wrap", category: "Wrap", storeId: "ST010", storeName: "Camden Town", currentStock: 10, recommendedOrder: 16, finalOrder: 16, trend: "up", historicalSales: 13.5, predictedSales: 15.8 },
-  { id: "SK013", productName: "Caprese Panini", category: "Hot Food", storeId: "ST011", storeName: "Liverpool Street", currentStock: 12, recommendedOrder: 17, finalOrder: 17, trend: "up", historicalSales: 14.9, predictedSales: 16.7 },
-  { id: "SK014", productName: "Asian Chicken Salad", category: "Salad", storeId: "ST012", storeName: "Notting Hill", currentStock: 8, recommendedOrder: 14, finalOrder: 14, trend: "down", historicalSales: 16.2, predictedSales: 13.9 },
-  { id: "SK016", productName: "Club Sandwich", category: "Sandwich", storeId: "ST014", storeName: "Hammersmith", currentStock: 11, recommendedOrder: 16, finalOrder: 16, trend: "up", historicalSales: 14.1, predictedSales: 15.9 },
-  { id: "SK017", productName: "BBQ Chicken Wrap", category: "Wrap", storeId: "ST015", storeName: "Bond Street", currentStock: 9, recommendedOrder: 15, finalOrder: 15, trend: "up", historicalSales: 13.8, predictedSales: 14.9 },
-  { id: "SK018", productName: "Quinoa Power Salad", category: "Salad", storeId: "ST016", storeName: "Euston Station", currentStock: 7, recommendedOrder: 12, finalOrder: 12, trend: "down", historicalSales: 14.5, predictedSales: 11.8 },
-  { id: "SK019", productName: "Almond Croissant", category: "Hot Food", storeId: "ST017", storeName: "Clapham Junction", currentStock: 14, recommendedOrder: 19, finalOrder: 19, trend: "up", historicalSales: 16.8, predictedSales: 18.7 },
-  { id: "SK020", productName: "Mozzarella Panini", category: "Hot Food", storeId: "ST018", storeName: "Wimbledon", currentStock: 12, recommendedOrder: 17, finalOrder: 17, trend: "up", historicalSales: 15.2, predictedSales: 16.8 },
+  // Breakfast items (available in Breakfast slot)
+  { id: "SK001", productName: "Classic BLT Sandwich", category: "Sandwich", storeId: "ST001", storeName: "London Bridge", currentStock: 12, recommendedOrder: 18, finalOrder: 18, trend: "up", historicalSales: 15.2, predictedSales: 17.8, dayParts: ["Breakfast"] },
+  { id: "SK015", productName: "Cream Cheese Bagel", category: "Sandwich", storeId: "ST001", storeName: "London Bridge", currentStock: 15, recommendedOrder: 20, finalOrder: 20, trend: "up", historicalSales: 17.4, predictedSales: 19.8, dayParts: ["Breakfast"] },
+  { id: "SK010", productName: "Ham & Cheese Croissant", category: "Hot Food", storeId: "ST001", storeName: "London Bridge", currentStock: 16, recommendedOrder: 21, finalOrder: 21, trend: "up", historicalSales: 18.2, predictedSales: 20.6, dayParts: ["Breakfast"] },
+  { id: "SK025", productName: "Pain au Chocolat", category: "Hot Food", storeId: "ST001", storeName: "London Bridge", currentStock: 9, recommendedOrder: 14, finalOrder: 14, trend: "up", historicalSales: 12.7, predictedSales: 13.9, dayParts: ["Breakfast"] },
+  { id: "SK030", productName: "Cinnamon Swirl", category: "Hot Food", storeId: "ST001", storeName: "London Bridge", currentStock: 11, recommendedOrder: 16, finalOrder: 16, trend: "up", historicalSales: 14.1, predictedSales: 15.8, dayParts: ["Breakfast"] },
+  { id: "SK006", productName: "Smoked Salmon Bagel", category: "Sandwich", storeId: "ST001", storeName: "London Bridge", currentStock: 14, recommendedOrder: 19, finalOrder: 19, trend: "up", historicalSales: 16.3, predictedSales: 18.5, dayParts: ["Breakfast"] },
+  { id: "SK035", productName: "Sesame Bagel", category: "Sandwich", storeId: "ST001", storeName: "London Bridge", currentStock: 10, recommendedOrder: 15, finalOrder: 15, trend: "up", historicalSales: 13.2, predictedSales: 14.6, dayParts: ["Breakfast"] },
+  { id: "SK021", productName: "Egg & Cress Sandwich", category: "Sandwich", storeId: "ST001", storeName: "London Bridge", currentStock: 10, recommendedOrder: 15, finalOrder: 15, trend: "up", historicalSales: 13.1, predictedSales: 14.8, dayParts: ["Breakfast"] },
+  
+  // Lunch items (available in Breakfast and Lunch)
+  { id: "SK002", productName: "Chicken Caesar Wrap", category: "Wrap", storeId: "ST001", storeName: "London Bridge", currentStock: 8, recommendedOrder: 22, finalOrder: 22, trend: "up", historicalSales: 18.5, predictedSales: 21.3, dayParts: ["Breakfast", "Lunch"] },
+  { id: "SK007", productName: "Chicken & Bacon Sandwich", category: "Sandwich", storeId: "ST001", storeName: "London Bridge", currentStock: 11, recommendedOrder: 17, finalOrder: 17, trend: "up", historicalSales: 14.8, predictedSales: 16.9, dayParts: ["Breakfast", "Lunch"] },
+  { id: "SK003", productName: "Avocado & Hummus Wrap", category: "Wrap", storeId: "ST001", storeName: "London Bridge", currentStock: 6, recommendedOrder: 14, finalOrder: 14, trend: "down", historicalSales: 16.8, predictedSales: 13.2, dayParts: ["Lunch"] },
+  { id: "SK004", productName: "Tuna Melt Panini", category: "Hot Food", storeId: "ST001", storeName: "London Bridge", currentStock: 15, recommendedOrder: 20, finalOrder: 20, trend: "up", historicalSales: 17.1, predictedSales: 19.7, dayParts: ["Lunch"] },
+  { id: "SK005", productName: "Mediterranean Salad Bowl", category: "Salad", storeId: "ST001", storeName: "London Bridge", currentStock: 10, recommendedOrder: 16, finalOrder: 16, trend: "up", historicalSales: 13.9, predictedSales: 15.4, dayParts: ["Lunch"] },
+  { id: "SK009", productName: "Greek Feta Salad", category: "Salad", storeId: "ST001", storeName: "London Bridge", currentStock: 7, recommendedOrder: 13, finalOrder: 13, trend: "down", historicalSales: 15.1, predictedSales: 12.8, dayParts: ["Lunch"] },
+  { id: "SK013", productName: "Caprese Panini", category: "Hot Food", storeId: "ST001", storeName: "London Bridge", currentStock: 12, recommendedOrder: 17, finalOrder: 17, trend: "up", historicalSales: 14.9, predictedSales: 16.7, dayParts: ["Lunch"] },
+  
+  // Afternoon items (available across all day parts or afternoon specific)
+  { id: "SK011", productName: "Turkey & Cranberry Sandwich", category: "Sandwich", storeId: "ST001", storeName: "London Bridge", currentStock: 13, recommendedOrder: 18, finalOrder: 18, trend: "up", historicalSales: 15.7, predictedSales: 17.9, dayParts: ["Lunch", "Afternoon"] },
+  { id: "SK012", productName: "Falafel Wrap", category: "Wrap", storeId: "ST001", storeName: "London Bridge", currentStock: 10, recommendedOrder: 16, finalOrder: 16, trend: "up", historicalSales: 13.5, predictedSales: 15.8, dayParts: ["Lunch", "Afternoon"] },
+  { id: "SK014", productName: "Asian Chicken Salad", category: "Salad", storeId: "ST001", storeName: "London Bridge", currentStock: 8, recommendedOrder: 14, finalOrder: 14, trend: "down", historicalSales: 16.2, predictedSales: 13.9, dayParts: ["Afternoon"] },
+  { id: "SK016", productName: "Club Sandwich", category: "Sandwich", storeId: "ST001", storeName: "London Bridge", currentStock: 11, recommendedOrder: 16, finalOrder: 16, trend: "up", historicalSales: 14.1, predictedSales: 15.9, dayParts: ["Afternoon"] },
+  { id: "SK017", productName: "BBQ Chicken Wrap", category: "Wrap", storeId: "ST001", storeName: "London Bridge", currentStock: 9, recommendedOrder: 15, finalOrder: 15, trend: "up", historicalSales: 13.8, predictedSales: 14.9, dayParts: ["Afternoon"] },
+  { id: "SK018", productName: "Quinoa Power Salad", category: "Salad", storeId: "ST001", storeName: "London Bridge", currentStock: 7, recommendedOrder: 12, finalOrder: 12, trend: "down", historicalSales: 14.5, predictedSales: 11.8, dayParts: ["Afternoon"] },
+  { id: "SK040", productName: "Cobb Salad", category: "Salad", storeId: "ST001", storeName: "London Bridge", currentStock: 9, recommendedOrder: 14, finalOrder: 14, trend: "up", historicalSales: 12.6, predictedSales: 13.7, dayParts: ["Afternoon"] },
+  { id: "SK045", productName: "Garden Salad Bowl", category: "Salad", storeId: "ST001", storeName: "London Bridge", currentStock: 8, recommendedOrder: 13, finalOrder: 13, trend: "down", historicalSales: 15.1, predictedSales: 12.6, dayParts: ["Afternoon"] },
 ];
 
 // Day parts matching range plan
@@ -205,12 +207,17 @@ const generate7DayForecast = () => {
   for (let dayOffset = 0; dayOffset < 7; dayOffset++) {
     const date = new Date(Date.now() + (dayOffset + 1) * 86400000); // Starting from tomorrow
     baseProducts.forEach(product => {
+      // Filter products by their available day parts
+      const availableDayParts = dayParts.filter(dp => 
+        product.dayParts.includes(dp.name)
+      );
+      
       // Add some variation for each day
       const dailyVariation = 0.9 + Math.random() * 0.2; // 90% to 110%
       const totalDaily = Math.round(product.recommendedOrder * dailyVariation);
       
       // Split into day parts
-      dayParts.forEach(dayPart => {
+      availableDayParts.forEach(dayPart => {
         // Add slight variation per day part
         const dayPartVariation = 0.95 + Math.random() * 0.1; // 95% to 105%
         const recommendedTopUp = Math.round(totalDaily * dayPart.percentage * dayPartVariation);
@@ -682,6 +689,21 @@ export default function VolumeAllocation() {
                   <TableHead>Product</TableHead>
                   <TableHead>Category</TableHead>
                   <TableHead>Current Stock</TableHead>
+                  {selectedDayPart === "Lunch" && (
+                    <TableHead className="bg-amber-50/50 text-center">
+                      <div className="text-xs text-muted-foreground">Breakfast Prod</div>
+                    </TableHead>
+                  )}
+                  {selectedDayPart === "Afternoon" && (
+                    <>
+                      <TableHead className="bg-amber-50/50 text-center">
+                        <div className="text-xs text-muted-foreground">Breakfast Prod</div>
+                      </TableHead>
+                      <TableHead className="bg-indigo-50/50 text-center">
+                        <div className="text-xs text-muted-foreground">Lunch Prod</div>
+                      </TableHead>
+                    </>
+                  )}
                   <TableHead className="bg-gradient-to-r from-[#ff914d]/20 to-[#ff914d]/10 relative text-center">
                     <div className="flex items-center justify-center gap-2 relative">
                       <div className="absolute inset-0 bg-[#ff914d]/5 blur-sm" />
@@ -706,6 +728,10 @@ export default function VolumeAllocation() {
 
                   if (!allocation) return null;
 
+                  // Get previous day part production numbers
+                  const breakfastProduction = product.breakfast?.finalOrder || 0;
+                  const lunchProduction = product.lunch?.finalOrder || 0;
+
                   return (
                     <TableRow key={`${product.id}-${selectedDayPart}`}>
                       <TableCell>
@@ -725,6 +751,21 @@ export default function VolumeAllocation() {
                       <TableCell>
                         <span className="font-mono">{product.currentStock}</span>
                       </TableCell>
+                      {selectedDayPart === "Lunch" && (
+                        <TableCell className="bg-amber-50/30 text-center">
+                          <span className="font-mono font-semibold">{breakfastProduction}</span>
+                        </TableCell>
+                      )}
+                      {selectedDayPart === "Afternoon" && (
+                        <>
+                          <TableCell className="bg-amber-50/30 text-center">
+                            <span className="font-mono font-semibold">{breakfastProduction}</span>
+                          </TableCell>
+                          <TableCell className="bg-indigo-50/30 text-center">
+                            <span className="font-mono font-semibold">{lunchProduction}</span>
+                          </TableCell>
+                        </>
+                      )}
                       <TableCell className="bg-gradient-to-r from-[#ff914d]/10 to-transparent relative group">
                         <div className="absolute inset-0 bg-gradient-to-r from-[#ff914d]/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                         <div className="flex items-center justify-center gap-2 relative z-10">
