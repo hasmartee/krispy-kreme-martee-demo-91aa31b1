@@ -125,41 +125,6 @@ export default function StoreTeamHome() {
           </CardContent>
         </Card>
       </div>
-
-      {/* Quick Actions */}
-      <Card className="shadow-card">
-        <CardHeader>
-          <CardTitle>Quick Actions</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <Button 
-              variant="outline" 
-              className="h-24 flex flex-col items-center justify-center gap-2"
-              onClick={() => navigate("/production")}
-            >
-              <ChefHat className="h-6 w-6" />
-              <span>View Production</span>
-            </Button>
-            <Button 
-              variant="outline" 
-              className="h-24 flex flex-col items-center justify-center gap-2"
-              onClick={() => navigate("/inventory")}
-            >
-              <CheckCircle className="h-6 w-6" />
-              <span>Live Availability</span>
-            </Button>
-            <Button 
-              variant="outline" 
-              className="h-24 flex flex-col items-center justify-center gap-2"
-              onClick={() => navigate("/recipes")}
-            >
-              <ChefHat className="h-6 w-6" />
-              <span>Recipes</span>
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
     </div>
   );
 }
