@@ -8,8 +8,15 @@ export function ViewSelector() {
   const navigate = useNavigate();
 
   const handleViewChange = (value: string) => {
-    setViewMode(value as "hq" | "store_manager" | "store_team");
-    navigate("/analytics");
+    const newMode = value as "hq" | "store_manager" | "store_team";
+    setViewMode(newMode);
+    
+    // Navigate to the appropriate home page for each view
+    if (newMode === "store_team") {
+      navigate("/store-team-home");
+    } else {
+      navigate("/");
+    }
   };
 
   return (
