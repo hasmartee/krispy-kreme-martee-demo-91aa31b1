@@ -164,23 +164,23 @@ const recipes = {
 
 // Base product data with day part specific products
 const baseProducts = [
-  // Morning Range items (SK011-SK022)
-  { id: "SK011", productName: "Ham & Cheese Croissant", category: "Hot Food", storeId: "ST001", storeName: "London Bridge", currentStock: 16, recommendedOrder: 21, finalOrder: 21, trend: "up", historicalSales: 18.2, predictedSales: 20.6, dayParts: ["Morning Range"] },
-  { id: "SK012", productName: "Bacon & Egg Roll", category: "Hot Food", storeId: "ST001", storeName: "London Bridge", currentStock: 14, recommendedOrder: 19, finalOrder: 19, trend: "up", historicalSales: 16.5, predictedSales: 18.8, dayParts: ["Morning Range"] },
-  { id: "SK013", productName: "Avocado Toast with Poached Egg", category: "Hot Food", storeId: "ST001", storeName: "London Bridge", currentStock: 12, recommendedOrder: 18, finalOrder: 18, trend: "up", historicalSales: 15.2, predictedSales: 17.6, dayParts: ["Morning Range"] },
-  { id: "SK014", productName: "Fruit & Yogurt Parfait", category: "Hot Food", storeId: "ST001", storeName: "London Bridge", currentStock: 10, recommendedOrder: 15, finalOrder: 15, trend: "up", historicalSales: 13.5, predictedSales: 14.9, dayParts: ["Morning Range"] },
-  { id: "SK015", productName: "Breakfast Burrito", category: "Hot Food", storeId: "ST001", storeName: "London Bridge", currentStock: 11, recommendedOrder: 16, finalOrder: 16, trend: "up", historicalSales: 14.1, predictedSales: 15.8, dayParts: ["Morning Range"] },
-  { id: "SK016", productName: "Granola Bowl with Berries", category: "Hot Food", storeId: "ST001", storeName: "London Bridge", currentStock: 9, recommendedOrder: 14, finalOrder: 14, trend: "up", historicalSales: 12.7, predictedSales: 13.9, dayParts: ["Morning Range"] },
-  { id: "SK017", productName: "Egg & Cheese Muffin", category: "Hot Food", storeId: "ST001", storeName: "London Bridge", currentStock: 15, recommendedOrder: 20, finalOrder: 20, trend: "up", historicalSales: 17.4, predictedSales: 19.5, dayParts: ["Morning Range"] },
-  { id: "SK018", productName: "Smoked Salmon Bagel", category: "Sandwich", storeId: "ST001", storeName: "London Bridge", currentStock: 14, recommendedOrder: 19, finalOrder: 19, trend: "up", historicalSales: 16.3, predictedSales: 18.5, dayParts: ["Morning Range"] },
-  { id: "SK019", productName: "Almond Butter & Banana Toast", category: "Hot Food", storeId: "ST001", storeName: "London Bridge", currentStock: 10, recommendedOrder: 15, finalOrder: 15, trend: "up", historicalSales: 13.2, predictedSales: 14.6, dayParts: ["Morning Range"] },
-  { id: "SK020", productName: "Coffee & Pastry Combo", category: "Hot Food", storeId: "ST001", storeName: "London Bridge", currentStock: 13, recommendedOrder: 18, finalOrder: 18, trend: "up", historicalSales: 15.8, predictedSales: 17.4, dayParts: ["Morning Range"] },
-  { id: "SK021", productName: "Scrambled Eggs on Sourdough", category: "Hot Food", storeId: "ST001", storeName: "London Bridge", currentStock: 12, recommendedOrder: 17, finalOrder: 17, trend: "up", historicalSales: 14.9, predictedSales: 16.7, dayParts: ["Morning Range"] },
-  { id: "SK022", productName: "Porridge with Honey & Nuts", category: "Hot Food", storeId: "ST001", storeName: "London Bridge", currentStock: 11, recommendedOrder: 16, finalOrder: 16, trend: "up", historicalSales: 14.1, predictedSales: 15.8, dayParts: ["Morning Range"] },
+  // Morning items (SK011-SK022)
+  { id: "SK011", productName: "Ham & Cheese Croissant", category: "Hot Food", storeId: "ST001", storeName: "London Bridge", currentStock: 16, recommendedOrder: 21, finalOrder: 21, trend: "up", historicalSales: 18.2, predictedSales: 20.6, dayParts: ["Morning"] },
+  { id: "SK012", productName: "Bacon & Egg Roll", category: "Hot Food", storeId: "ST001", storeName: "London Bridge", currentStock: 14, recommendedOrder: 19, finalOrder: 19, trend: "up", historicalSales: 16.5, predictedSales: 18.8, dayParts: ["Morning"] },
+  { id: "SK013", productName: "Avocado Toast with Poached Egg", category: "Hot Food", storeId: "ST001", storeName: "London Bridge", currentStock: 12, recommendedOrder: 18, finalOrder: 18, trend: "up", historicalSales: 15.2, predictedSales: 17.6, dayParts: ["Morning"] },
+  { id: "SK014", productName: "Fruit & Yogurt Parfait", category: "Hot Food", storeId: "ST001", storeName: "London Bridge", currentStock: 10, recommendedOrder: 15, finalOrder: 15, trend: "up", historicalSales: 13.5, predictedSales: 14.9, dayParts: ["Morning"] },
+  { id: "SK015", productName: "Breakfast Burrito", category: "Hot Food", storeId: "ST001", storeName: "London Bridge", currentStock: 11, recommendedOrder: 16, finalOrder: 16, trend: "up", historicalSales: 14.1, predictedSales: 15.8, dayParts: ["Morning"] },
+  { id: "SK016", productName: "Granola Bowl with Berries", category: "Hot Food", storeId: "ST001", storeName: "London Bridge", currentStock: 9, recommendedOrder: 14, finalOrder: 14, trend: "up", historicalSales: 12.7, predictedSales: 13.9, dayParts: ["Morning"] },
+  { id: "SK017", productName: "Egg & Cheese Muffin", category: "Hot Food", storeId: "ST001", storeName: "London Bridge", currentStock: 15, recommendedOrder: 20, finalOrder: 20, trend: "up", historicalSales: 17.4, predictedSales: 19.5, dayParts: ["Morning"] },
+  { id: "SK018", productName: "Smoked Salmon Bagel", category: "Sandwich", storeId: "ST001", storeName: "London Bridge", currentStock: 14, recommendedOrder: 19, finalOrder: 19, trend: "up", historicalSales: 16.3, predictedSales: 18.5, dayParts: ["Morning"] },
+  { id: "SK019", productName: "Almond Butter & Banana Toast", category: "Hot Food", storeId: "ST001", storeName: "London Bridge", currentStock: 10, recommendedOrder: 15, finalOrder: 15, trend: "up", historicalSales: 13.2, predictedSales: 14.6, dayParts: ["Morning"] },
+  { id: "SK020", productName: "Coffee & Pastry Combo", category: "Hot Food", storeId: "ST001", storeName: "London Bridge", currentStock: 13, recommendedOrder: 18, finalOrder: 18, trend: "up", historicalSales: 15.8, predictedSales: 17.4, dayParts: ["Morning"] },
+  { id: "SK021", productName: "Scrambled Eggs on Sourdough", category: "Hot Food", storeId: "ST001", storeName: "London Bridge", currentStock: 12, recommendedOrder: 17, finalOrder: 17, trend: "up", historicalSales: 14.9, predictedSales: 16.7, dayParts: ["Morning"] },
+  { id: "SK022", productName: "Porridge with Honey & Nuts", category: "Hot Food", storeId: "ST001", storeName: "London Bridge", currentStock: 11, recommendedOrder: 16, finalOrder: 16, trend: "up", historicalSales: 14.1, predictedSales: 15.8, dayParts: ["Morning"] },
   
-  // Lunch items (SK001-SK005, some available in both Morning Range and Lunch)
-  { id: "SK001", productName: "Classic BLT Sandwich", category: "Sandwich", storeId: "ST001", storeName: "London Bridge", currentStock: 12, recommendedOrder: 18, finalOrder: 18, trend: "up", historicalSales: 15.2, predictedSales: 17.8, dayParts: ["Morning Range", "Lunch"] },
-  { id: "SK002", productName: "Chicken Caesar Wrap", category: "Wrap", storeId: "ST001", storeName: "London Bridge", currentStock: 8, recommendedOrder: 22, finalOrder: 22, trend: "up", historicalSales: 18.5, predictedSales: 21.3, dayParts: ["Morning Range", "Lunch"] },
+  // Lunch items (SK001-SK005, some available in both Morning and Lunch)
+  { id: "SK001", productName: "Classic BLT Sandwich", category: "Sandwich", storeId: "ST001", storeName: "London Bridge", currentStock: 12, recommendedOrder: 18, finalOrder: 18, trend: "up", historicalSales: 15.2, predictedSales: 17.8, dayParts: ["Morning", "Lunch"] },
+  { id: "SK002", productName: "Chicken Caesar Wrap", category: "Wrap", storeId: "ST001", storeName: "London Bridge", currentStock: 8, recommendedOrder: 22, finalOrder: 22, trend: "up", historicalSales: 18.5, predictedSales: 21.3, dayParts: ["Morning", "Lunch"] },
   { id: "SK003", productName: "Avocado & Hummus Wrap", category: "Wrap", storeId: "ST001", storeName: "London Bridge", currentStock: 6, recommendedOrder: 14, finalOrder: 14, trend: "down", historicalSales: 16.8, predictedSales: 13.2, dayParts: ["Lunch"] },
   { id: "SK004", productName: "Tuna Melt Panini", category: "Hot Food", storeId: "ST001", storeName: "London Bridge", currentStock: 15, recommendedOrder: 20, finalOrder: 20, trend: "up", historicalSales: 17.1, predictedSales: 19.7, dayParts: ["Lunch"] },
   { id: "SK005", productName: "Mediterranean Salad Bowl", category: "Salad", storeId: "ST001", storeName: "London Bridge", currentStock: 10, recommendedOrder: 16, finalOrder: 16, trend: "up", historicalSales: 13.9, predictedSales: 15.4, dayParts: ["Lunch"] },
@@ -198,7 +198,7 @@ const baseProducts = [
 
 // Day parts matching range plan
 const dayParts = [
-  { name: "Morning Range", time: "Open-11am", percentage: 0.35 },
+  { name: "Morning", time: "Open-11am", percentage: 0.35 },
   { name: "Lunch", time: "11am-2pm", percentage: 0.45 },
   { name: "Afternoon", time: "2pm-Close", percentage: 0.20 }
 ];
@@ -244,7 +244,7 @@ const initialAllocations = generate7DayForecast();
 // Get initial day part based on current time
 const getInitialDayPart = () => {
   const currentHour = new Date().getHours();
-  if (currentHour < 9) return "Morning Range";
+  if (currentHour < 9) return "Morning";
   if (currentHour >= 9 && currentHour < 11) return "Lunch";
   return "Afternoon";
 };
@@ -274,7 +274,7 @@ export default function VolumeAllocation() {
   const [selectedBrand, setSelectedBrand] = useState<string>("Pret a Manger");
   const [selectedStores, setSelectedStores] = useState<string[]>(["All"]);
   const [selectedDay, setSelectedDay] = useState<string>("All days");
-  const [selectedDayPart, setSelectedDayPart] = useState<string>("Morning Range");
+  const [selectedDayPart, setSelectedDayPart] = useState<string>("Morning");
   const [webhookUrl, setWebhookUrl] = useState("");
   const [isWebhookDialogOpen, setIsWebhookDialogOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -313,7 +313,7 @@ export default function VolumeAllocation() {
   // Group products by ID - now for both views
   const groupedProducts = Array.from(new Set(filtered.map(a => a.id))).map(productId => {
     const productAllocations = filtered.filter(a => a.id === productId);
-    const morningRange = productAllocations.find(a => a.dayPart === "Morning Range");
+    const morningRange = productAllocations.find(a => a.dayPart === "Morning");
     const lunch = productAllocations.find(a => a.dayPart === "Lunch");
     const afternoon = productAllocations.find(a => a.dayPart === "Afternoon");
     
@@ -506,7 +506,7 @@ export default function VolumeAllocation() {
                 {viewMode === "store_manager" ? selectedStore : "AI Production Recommendations"}
               </h1>
               <p className="text-secondary-foreground/80 text-lg">
-                Optimised production top-ups by day part (Morning Range, Lunch, Afternoon) powered by machine learning
+                Optimised production top-ups by day part (Morning, Lunch, Afternoon) powered by machine learning
               </p>
             </div>
             <div className="flex items-center gap-3">
@@ -733,7 +733,7 @@ export default function VolumeAllocation() {
                       <TableHead className="bg-amber-50/50 text-center">
                         <div className="text-xs text-muted-foreground">Morning Prod</div>
                       </TableHead>
-                      <TableHead className="bg-indigo-50/50 text-center">
+                      <TableHead className="bg-amber-50/50 text-center">
                         <div className="text-xs text-muted-foreground">Lunch Prod</div>
                       </TableHead>
                     </>
@@ -754,7 +754,7 @@ export default function VolumeAllocation() {
               <TableBody>
                 {groupedProducts.map((product) => {
                   // Get the allocation for the selected day part
-                  const allocation = selectedDayPart === "Morning Range" 
+                  const allocation = selectedDayPart === "Morning" 
                     ? product.breakfast 
                     : selectedDayPart === "Lunch" 
                     ? product.lunch 
@@ -795,7 +795,7 @@ export default function VolumeAllocation() {
                           <TableCell className="bg-amber-50/30 text-center">
                             <span className="font-mono font-semibold">{morningProduction}</span>
                           </TableCell>
-                          <TableCell className="bg-indigo-50/30 text-center">
+                          <TableCell className="bg-amber-50/30 text-center">
                             <span className="font-mono font-semibold">{lunchProduction}</span>
                           </TableCell>
                         </>
@@ -873,7 +873,7 @@ export default function VolumeAllocation() {
                       <TableHead className="bg-amber-50/50 text-center">
                         <div className="text-xs text-muted-foreground">Morning Prod</div>
                       </TableHead>
-                      <TableHead className="bg-indigo-50/50 text-center">
+                      <TableHead className="bg-amber-50/50 text-center">
                         <div className="text-xs text-muted-foreground">Lunch Prod</div>
                       </TableHead>
                     </>
@@ -894,7 +894,7 @@ export default function VolumeAllocation() {
               <TableBody>
                 {groupedProducts.map((product) => {
                   // Get the allocation for the selected day part
-                  const allocation = selectedDayPart === "Morning Range" 
+                  const allocation = selectedDayPart === "Morning" 
                     ? product.breakfast 
                     : selectedDayPart === "Lunch" 
                     ? product.lunch 
@@ -941,7 +941,7 @@ export default function VolumeAllocation() {
                           <TableCell className="bg-amber-50/30 text-center">
                             <span className="font-mono font-semibold">{morningProduction}</span>
                           </TableCell>
-                          <TableCell className="bg-indigo-50/30 text-center">
+                          <TableCell className="bg-amber-50/30 text-center">
                             <span className="font-mono font-semibold">{lunchProduction}</span>
                           </TableCell>
                         </>
