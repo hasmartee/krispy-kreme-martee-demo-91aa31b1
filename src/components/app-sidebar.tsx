@@ -37,9 +37,6 @@ const mainNavigationStoreTeam: Array<{ title: string; url: string; icon: any; sp
 const mainNavigationHQ: Array<{ title: string; url: string; icon: any; sparkles?: boolean }> = [
   { title: "Home", url: "/", icon: Home },
   { title: "Performance", url: "/analytics", icon: BarChart3 },
-  { title: "Suggested Production", url: "/suggested-production", icon: ChefHat, sparkles: true },
-  { title: "Live Availability", url: "/inventory", icon: Package },
-  { title: "Live Sales", url: "/live-sales", icon: Activity },
 ];
 
 const settingsNavigationHQ = [
