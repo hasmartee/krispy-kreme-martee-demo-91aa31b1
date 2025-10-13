@@ -88,6 +88,7 @@ export default function Inventory() {
   const [editingStocks, setEditingStocks] = useState<Record<string, number>>({});
   const [editingWaste, setEditingWaste] = useState<Record<string, number>>({});
   const [expandedStores, setExpandedStores] = useState<string[]>([]);
+  const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
 
   // Available stores based on selected brand
   const availableStores = stores.filter(s => brandStoreMap[selectedBrand as keyof typeof brandStoreMap]?.includes(s.name));
@@ -206,6 +207,7 @@ export default function Inventory() {
 
         console.log('Final inventory items:', inventoryItems.length, inventoryItems);
         setInventory(inventoryItems);
+        setLastUpdated(new Date());
       } else {
         // HQ view: Show all products across all stores
         const { data: storesData } = await supabase
@@ -255,6 +257,7 @@ export default function Inventory() {
         }
 
         setInventory(allItems);
+        setLastUpdated(new Date());
       }
     } catch (error) {
       console.error("Error loading inventory:", error);
@@ -450,6 +453,11 @@ export default function Inventory() {
               : "Monitor product availability across all stores"
             }
           </p>
+          {lastUpdated && (
+            <p className="text-sm text-muted-foreground mt-1">
+              Last updated: {lastUpdated.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
+            </p>
+          )}
         </div>
         <div className="flex gap-2">
           <Button 
