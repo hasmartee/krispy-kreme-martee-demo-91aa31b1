@@ -541,20 +541,6 @@ export default function Analytics() {
             </div>
           ) : (
             <div className="flex flex-col sm:flex-row gap-4 mb-6">
-              <Select value={selectedStore} onValueChange={setSelectedStore}>
-                <SelectTrigger className="w-[200px]">
-                  <SelectValue placeholder="Select store" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Stores</SelectItem>
-                  {stores.map((store) => (
-                    <SelectItem key={store.id} value={store.name}>
-                      {store.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              
               <Popover>
                 <PopoverTrigger asChild>
                   <Button variant="outline" className="w-[280px] justify-start text-left font-normal">
