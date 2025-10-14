@@ -433,7 +433,7 @@ export default function SuggestedProduction() {
               <TableRow>
                 <TableHead>Product</TableHead>
                 <TableHead>Category</TableHead>
-                {viewMode === "hq" && <TableHead>Store</TableHead>}
+                <TableHead>Store</TableHead>
                 <TableHead>Current Stock</TableHead>
                 <TableHead className="bg-gradient-to-r from-[#ff914d]/20 to-[#ff914d]/10 relative text-center">
                   <div className="flex items-center justify-center gap-2 relative">
@@ -465,11 +465,9 @@ export default function SuggestedProduction() {
                   <TableCell>
                     {getCategoryBadge(product.category)}
                   </TableCell>
-                  {viewMode === "hq" && (
-                    <TableCell>
-                      <span className="font-medium">{product.store}</span>
-                    </TableCell>
-                  )}
+                  <TableCell>
+                    <span className="font-medium">{product.store}</span>
+                  </TableCell>
                   <TableCell>
                     <span className="font-mono">{product.currentStock}</span>
                   </TableCell>
