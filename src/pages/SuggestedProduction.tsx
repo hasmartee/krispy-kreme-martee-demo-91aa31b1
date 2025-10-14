@@ -219,12 +219,26 @@ export default function SuggestedProduction() {
         // Generate mock production data for each store
         const mockProducts: Product[] = [];
         const productsList = [
-          { id: "OS-S001", name: "Classic BLT Sandwich", category: "Sandwich" },
-          { id: "OS-W001", name: "Chicken Caesar Wrap", category: "Wrap" },
-          { id: "OS-W002", name: "Avocado & Hummus Wrap", category: "Wrap" },
-          { id: "OS-S004", name: "Tuna Melt Panini", category: "Hot Food" },
-          { id: "OS-L001", name: "Mediterranean Salad", category: "Salad" },
-          { id: "OS-S003", name: "Salmon & Cream Cheese Bagel", category: "Sandwich" },
+          { id: "OS-P001", name: "Kanelstang (Cinnamon Swirl)", category: "Pastries" },
+          { id: "OS-P002", name: "Tebirkes (Poppy Seed Pastry)", category: "Pastries" },
+          { id: "OS-P003", name: "Wienerbrød (Danish Pastry)", category: "Pastries" },
+          { id: "OS-P004", name: "Croissant", category: "Pastries" },
+          { id: "OS-P005", name: "Pain au Chocolat", category: "Pastries" },
+          { id: "OS-P006", name: "Almond Croissant", category: "Pastries" },
+          { id: "OS-B001", name: "Rugbrød (Rye Bread) Whole", category: "Breads" },
+          { id: "OS-B002", name: "Sourdough Loaf", category: "Breads" },
+          { id: "OS-HB001", name: "Scrambled Eggs on Sourdough", category: "Hot Breakfast" },
+          { id: "OS-HB002", name: "Bacon & Egg Roll", category: "Hot Breakfast" },
+          { id: "OS-HB003", name: "Ham & Cheese Croissant", category: "Hot Breakfast" },
+          { id: "OS-CB001", name: "Granola Bowl with Yogurt", category: "Cold Breakfast" },
+          { id: "OS-S001", name: "Classic BLT Sandwich", category: "Sandwiches" },
+          { id: "OS-S002", name: "Chicken Bacon Sandwich", category: "Sandwiches" },
+          { id: "OS-S003", name: "Salmon & Cream Cheese Bagel", category: "Sandwiches" },
+          { id: "OS-S004", name: "Tuna Melt Panini", category: "Sandwiches" },
+          { id: "OS-W001", name: "Chicken Caesar Wrap", category: "Wraps" },
+          { id: "OS-W002", name: "Avocado & Hummus Wrap", category: "Wraps" },
+          { id: "OS-L001", name: "Mediterranean Salad", category: "Salads" },
+          { id: "OS-L002", name: "Greek Feta Salad", category: "Salads" },
         ];
 
         const targetStores = viewMode === "store_manager" 

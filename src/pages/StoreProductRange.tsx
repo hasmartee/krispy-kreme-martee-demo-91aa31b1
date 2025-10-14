@@ -40,12 +40,38 @@ const storeClusters = [
   },
 ];
 
-// Day parts
-const dayParts = [
-  { id: "breakfast", name: "Breakfast", timeRange: "Open-11am" },
-  { id: "lunch", name: "Lunch", timeRange: "11am-2pm" },
-  { id: "afternoon", name: "Afternoon", timeRange: "2pm-Close" },
-];
+// Ole and Steen product images
+import cinnamonSwirl from "@/assets/products/cinnamon-swirl.jpg";
+import poppySeedPastry from "@/assets/products/poppy-seed-pastry.jpg";
+import danishPastry from "@/assets/products/danish-pastry.jpg";
+import butterCroissant from "@/assets/products/butter-croissant.jpg";
+import painAuChocolat from "@/assets/products/pain-au-chocolat.jpg";
+import almondCroissant from "@/assets/products/almond-croissant.jpg";
+import ryeBreadWhole from "@/assets/products/rye-bread-whole.jpg";
+import sourdoughLoaf from "@/assets/products/sourdough-loaf.jpg";
+import wholeGrainRoll from "@/assets/products/whole-grain-roll.jpg";
+import sesameRoll from "@/assets/products/sesame-roll.jpg";
+import scrambledEggsToast from "@/assets/products/scrambled-eggs-sourdough.jpg";
+import baconEggRoll from "@/assets/products/bacon-egg-roll.jpg";
+import hamCheeseCroissantHot from "@/assets/products/ham-cheese-croissant-hot.jpg";
+import avocadoEggToast from "@/assets/products/avocado-toast-egg.jpg";
+import porridgeHoney from "@/assets/products/porridge-honey-nuts.jpg";
+import granolaYogurtBowl from "@/assets/products/granola-yogurt-bowl.jpg";
+import fruitParfait from "@/assets/products/fruit-parfait.jpg";
+import almondBananaToast from "@/assets/products/almond-butter-banana-toast.jpg";
+import classicBlt from "@/assets/products/classic-blt.jpg";
+import chickenBacon from "@/assets/products/chicken-bacon-sandwich.jpg";
+import salmonCreamBagel from "@/assets/products/salmon-cream-bagel.jpg";
+import tunaMelt from "@/assets/products/tuna-melt-panini.jpg";
+import hamCheeseToastie from "@/assets/products/ham-cheese-toastie.jpg";
+import eggCheeseEnglishMuffin from "@/assets/products/egg-cheese-english-muffin.jpg";
+import chickenCaesar from "@/assets/products/chicken-caesar-wrap.jpg";
+import avocadoHummus from "@/assets/products/avocado-hummus-wrap.jpg";
+import veganMediterraneanWrap from "@/assets/products/vegan-mediterranean-wrap.jpg";
+import breakfastBurritoWrap from "@/assets/products/breakfast-burrito-wrap.jpg";
+import mediterraneanSaladBowl from "@/assets/products/mediterranean-salad-bowl.jpg";
+import greekSaladBowl from "@/assets/products/greek-salad-bowl.jpg";
+import coffeePastry from "@/assets/products/coffee-pastry-combo.jpg";
 
 const rangingInsights = [
   {
@@ -94,77 +120,59 @@ interface StoreInfo {
   cluster: string;
 }
 
-// Brand to store name mapping (using actual database store names)
-const storeBrands: Record<string, string> = {
-  // Pret a Manger stores (transport hubs & high street)
-  "Kings Cross Station": "Pret a Manger",
-  "Liverpool Street Station": "Pret a Manger",
-  "St Pancras International": "Pret a Manger",
-  "Shoreditch High Street": "Pret a Manger",
-  
-  // Brioche Dorée stores (upscale & residential areas)
-  "Bond Street": "Brioche Dorée",
-  "Notting Hill Gate": "Brioche Dorée",
-  "Greenwich Village": "Brioche Dorée",
-  "Wimbledon Village": "Brioche Dorée",
-  
-  // Starbucks stores (business district & mixed)
-  "Bank Station": "Starbucks",
-  "Canary Wharf Plaza": "Starbucks",
-  "The City - Leadenhall": "Starbucks",
-  "Camden Town": "Starbucks"
-};
+// All stores use Ole and Steen products
+const storeBrands: Record<string, string> = {};
 
-// Brand-specific product templates
+// Ole and Steen product templates
 const brandProductTemplates = {
-  "Pret a Manger": {
-    breakfast: [
-      { id: "PRET-B001", name: "Bacon & Egg Baguette", category: "Breakfast", active: true, dayParts: ["breakfast"] },
-      { id: "PRET-B002", name: "Ham & Cheese Croissant", category: "Breakfast", active: true, dayParts: ["breakfast"] },
-      { id: "PRET-B003", name: "Avocado Toast with Egg", category: "Breakfast", active: true, dayParts: ["breakfast"] },
-      { id: "PRET-B004", name: "Granola Bowl", category: "Breakfast", active: true, dayParts: ["breakfast"] },
-      { id: "PRET-B005", name: "Breakfast Burrito", category: "Breakfast", active: true, dayParts: ["breakfast"] },
-    ],
-    lunch: [
-      { id: "PRET-L001", name: "Classic BLT", category: "Sandwich", active: true, dayParts: ["lunch", "afternoon"] },
-      { id: "PRET-L002", name: "Chicken Caesar Wrap", category: "Wrap", active: true, dayParts: ["lunch", "afternoon"] },
-      { id: "PRET-L003", name: "Tuna Melt Panini", category: "Hot Food", active: true, dayParts: ["lunch", "afternoon"] },
-      { id: "PRET-L004", name: "Mediterranean Salad", category: "Salad", active: true, dayParts: ["lunch", "afternoon"] },
-      { id: "PRET-L005", name: "Chicken Bacon Sandwich", category: "Sandwich", active: true, dayParts: ["lunch", "afternoon"] },
-    ]
-  },
-  "Brioche Dorée": {
-    breakfast: [
-      { id: "BD-B001", name: "Croissant au Beurre", category: "Breakfast", active: true, dayParts: ["breakfast"] },
-      { id: "BD-B002", name: "Pain au Chocolat", category: "Breakfast", active: true, dayParts: ["breakfast"] },
-      { id: "BD-B003", name: "Croque Monsieur", category: "Breakfast", active: true, dayParts: ["breakfast"] },
-      { id: "BD-B004", name: "Brioche with Jam", category: "Breakfast", active: true, dayParts: ["breakfast"] },
-      { id: "BD-B005", name: "French Toast", category: "Breakfast", active: true, dayParts: ["breakfast"] },
-    ],
-    lunch: [
-      { id: "BD-L001", name: "Jambon-Beurre Sandwich", category: "Sandwich", active: true, dayParts: ["lunch", "afternoon"] },
-      { id: "BD-L002", name: "Quiche Lorraine", category: "Hot Food", active: true, dayParts: ["lunch", "afternoon"] },
-      { id: "BD-L003", name: "Croque Madame", category: "Hot Food", active: true, dayParts: ["lunch", "afternoon"] },
-      { id: "BD-L004", name: "Salade Niçoise", category: "Salad", active: true, dayParts: ["lunch", "afternoon"] },
-      { id: "BD-L005", name: "Baguette Poulet", category: "Sandwich", active: true, dayParts: ["lunch", "afternoon"] },
-    ]
-  },
-  "Starbucks": {
-    breakfast: [
-      { id: "SB-B001", name: "Bacon Egg Bites", category: "Breakfast", active: true, dayParts: ["breakfast"] },
-      { id: "SB-B002", name: "Breakfast Sandwich", category: "Breakfast", active: true, dayParts: ["breakfast"] },
-      { id: "SB-B003", name: "Oatmeal with Toppings", category: "Breakfast", active: true, dayParts: ["breakfast"] },
-      { id: "SB-B004", name: "Blueberry Muffin", category: "Breakfast", active: true, dayParts: ["breakfast"] },
-      { id: "SB-B005", name: "Avocado Spread", category: "Breakfast", active: true, dayParts: ["breakfast"] },
-    ],
-    lunch: [
-      { id: "SB-L001", name: "Turkey Pesto Panini", category: "Sandwich", active: true, dayParts: ["lunch", "afternoon"] },
-      { id: "SB-L002", name: "Chicken Caprese Sandwich", category: "Sandwich", active: true, dayParts: ["lunch", "afternoon"] },
-      { id: "SB-L003", name: "Protein Box", category: "Salad", active: true, dayParts: ["lunch", "afternoon"] },
-      { id: "SB-L004", name: "Grilled Cheese", category: "Hot Food", active: true, dayParts: ["lunch", "afternoon"] },
-      { id: "SB-L005", name: "Chicken Wrap", category: "Wrap", active: true, dayParts: ["lunch", "afternoon"] },
-    ]
-  }
+  "Ole and Steen": [
+    // Pastries & Viennoiserie
+    { id: "OS-P001", name: "Kanelstang (Cinnamon Swirl)", category: "Pastries", active: true, image: cinnamonSwirl },
+    { id: "OS-P002", name: "Tebirkes (Poppy Seed Pastry)", category: "Pastries", active: true, image: poppySeedPastry },
+    { id: "OS-P003", name: "Wienerbrød (Danish Pastry)", category: "Pastries", active: true, image: danishPastry },
+    { id: "OS-P004", name: "Croissant", category: "Pastries", active: true, image: butterCroissant },
+    { id: "OS-P005", name: "Pain au Chocolat", category: "Pastries", active: true, image: painAuChocolat },
+    { id: "OS-P006", name: "Almond Croissant", category: "Pastries", active: true, image: almondCroissant },
+    
+    // Breads & Baked Goods
+    { id: "OS-B001", name: "Rugbrød (Rye Bread) Whole", category: "Breads", active: true, image: ryeBreadWhole },
+    { id: "OS-B002", name: "Sourdough Loaf", category: "Breads", active: true, image: sourdoughLoaf },
+    { id: "OS-B003", name: "Whole Grain Roll", category: "Breads", active: true, image: wholeGrainRoll },
+    { id: "OS-B004", name: "Sesame Roll", category: "Breads", active: true, image: sesameRoll },
+    
+    // Hot Breakfast Items
+    { id: "OS-HB001", name: "Scrambled Eggs on Sourdough", category: "Hot Breakfast", active: true, image: scrambledEggsToast },
+    { id: "OS-HB002", name: "Bacon & Egg Roll", category: "Hot Breakfast", active: true, image: baconEggRoll },
+    { id: "OS-HB003", name: "Ham & Cheese Croissant", category: "Hot Breakfast", active: true, image: hamCheeseCroissantHot },
+    { id: "OS-HB004", name: "Avocado Toast with Egg", category: "Hot Breakfast", active: true, image: avocadoEggToast },
+    { id: "OS-HB005", name: "Porridge with Honey & Nuts", category: "Hot Breakfast", active: true, image: porridgeHoney },
+    
+    // Cold Breakfast
+    { id: "OS-CB001", name: "Granola Bowl with Yogurt", category: "Cold Breakfast", active: true, image: granolaYogurtBowl },
+    { id: "OS-CB002", name: "Fruit & Yogurt Parfait", category: "Cold Breakfast", active: true, image: fruitParfait },
+    { id: "OS-CB003", name: "Almond Butter & Banana Toast", category: "Cold Breakfast", active: true, image: almondBananaToast },
+    
+    // Sandwiches & Smørrebrød
+    { id: "OS-S001", name: "Classic BLT Sandwich", category: "Sandwiches", active: true, image: classicBlt },
+    { id: "OS-S002", name: "Chicken Bacon Sandwich", category: "Sandwiches", active: true, image: chickenBacon },
+    { id: "OS-S003", name: "Salmon & Cream Cheese Bagel", category: "Sandwiches", active: true, image: salmonCreamBagel },
+    { id: "OS-S004", name: "Tuna Melt Panini", category: "Sandwiches", active: true, image: tunaMelt },
+    { id: "OS-S005", name: "Ham & Cheese Toastie", category: "Sandwiches", active: true, image: hamCheeseToastie },
+    { id: "OS-S006", name: "Egg & Cheese Muffin", category: "Sandwiches", active: true, image: eggCheeseEnglishMuffin },
+    
+    // Wraps
+    { id: "OS-W001", name: "Chicken Caesar Wrap", category: "Wraps", active: true, image: chickenCaesar },
+    { id: "OS-W002", name: "Avocado & Hummus Wrap", category: "Wraps", active: true, image: avocadoHummus },
+    { id: "OS-W003", name: "Vegan Mediterranean Wrap", category: "Wraps", active: true, image: veganMediterraneanWrap },
+    { id: "OS-W004", name: "Breakfast Burrito", category: "Wraps", active: true, image: breakfastBurritoWrap },
+    
+    // Salads
+    { id: "OS-L001", name: "Mediterranean Salad", category: "Salads", active: true, image: mediterraneanSaladBowl },
+    { id: "OS-L002", name: "Greek Feta Salad", category: "Salads", active: true, image: greekSaladBowl },
+    
+    // Combo Meals
+    { id: "OS-C001", name: "Coffee & Pastry Combo", category: "Combos", active: true, image: coffeePastry },
+  ]
 };
 
 // Generate products for a brand and cluster
@@ -172,28 +180,27 @@ const generateBrandProducts = (brand: string, cluster: string) => {
   const brandTemplate = brandProductTemplates[brand as keyof typeof brandProductTemplates];
   if (!brandTemplate) return [];
   
-  const allProducts = [...brandTemplate.breakfast, ...brandTemplate.lunch];
+  const allProducts = Array.isArray(brandTemplate) ? brandTemplate : [];
   
   // Customize based on cluster
   switch (cluster) {
     case "transport_hub":
-      return allProducts.slice(0, 8); // Fewer SKUs for quick service
+      return allProducts.slice(0, 20); // Grab-and-go focus
     case "business_district":
-      return allProducts.slice(0, 10);
+      return allProducts.slice(0, 25); // Business lunch focus
     case "residential":
-      return allProducts;
+      return allProducts; // Full range
     case "high_street":
-      return allProducts;
+      return allProducts; // Full range
     default:
-      return allProducts.slice(0, 7);
+      return allProducts.slice(0, 15);
   }
 };
 
 export default function StoreProductRange() {
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedBrand, setSelectedBrand] = useState("Pret a Manger");
+  const [selectedBrand, setSelectedBrand] = useState("Ole and Steen");
   const [selectedCluster, setSelectedCluster] = useState<string>("all");
-  const [selectedDayPart, setSelectedDayPart] = useState<string>("all");
   const [storeData, setStoreData] = useState<any[]>([]);
   const [allStores, setAllStores] = useState<StoreInfo[]>([]);
   const [isClusterDialogOpen, setIsClusterDialogOpen] = useState(false);
@@ -241,16 +248,15 @@ export default function StoreProductRange() {
       setAllStores(storesInfo);
       
       // Update store data with actual stores
-      const updatedStoreData = storesInfo.map(store => {
-        const storeBrand = storeBrands[store.storeName] || "Pret a Manger";
-        return {
-          storeId: store.storeId,
-          storeName: store.storeName,
-          postcode: store.postcode,
-          cluster: store.cluster,
-          activeProducts: generateBrandProducts(storeBrand, store.cluster)
-        };
-      });
+        const updatedStoreData = storesInfo.map(store => {
+          return {
+            storeId: store.storeId,
+            storeName: store.storeName,
+            postcode: store.postcode,
+            cluster: store.cluster,
+            activeProducts: generateBrandProducts("Ole and Steen", store.cluster)
+          };
+        });
       setStoreData(updatedStoreData);
     }
   };
@@ -262,11 +268,7 @@ export default function StoreProductRange() {
     const matchesCluster = selectedCluster === "all" || store.cluster === selectedCluster;
     const matchesViewMode = viewMode === "hq" || viewMode === "store_manager" || viewMode === "store_team" ? (store.storeName === selectedStore || viewMode === "hq") : false;
     
-    // Filter by brand
-    const storeBrand = storeBrands[store.storeName] || "Pret a Manger";
-    const matchesBrand = selectedBrand === storeBrand;
-    
-    return matchesSearch && matchesCluster && matchesViewMode && (viewMode !== "hq" || matchesBrand);
+    return matchesSearch && matchesCluster && matchesViewMode;
   });
 
   const handleClusterClick = (clusterId: string) => {
@@ -352,7 +354,7 @@ export default function StoreProductRange() {
 
   const handleEditTemplate = (clusterId: string) => {
     setEditingTemplateCluster(clusterId);
-    setTemplateProducts(generateBrandProducts(selectedBrand, clusterId));
+    setTemplateProducts(generateBrandProducts("Ole and Steen", clusterId));
     setIsEditTemplateOpen(true);
   };
 
@@ -455,83 +457,23 @@ export default function StoreProductRange() {
         </div>
       </div>
 
-      {/* Brand and Day Part Filter - Prominent */}
+      {/* Brand Filter - Only show in HQ view */}
       {viewMode === "hq" && (
-        <>
-          <Card className="shadow-card">
-            <CardContent className="p-4">
-              <div className="flex items-center gap-4">
-                <label className="text-sm font-medium">My Brand:</label>
-                <Select value={selectedBrand} onValueChange={setSelectedBrand}>
-                  <SelectTrigger className="w-[200px] h-9 border-[#7e9f57] focus:ring-[#7e9f57] font-semibold">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Pret a Manger">Pret a Manger</SelectItem>
-                    <SelectItem value="Brioche Dorée">Brioche Dorée</SelectItem>
-                    <SelectItem value="Starbucks">Starbucks</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="shadow-card border-2 border-primary/20 bg-gradient-to-r from-primary/5 to-transparent">
-            <CardHeader className="pb-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <CardTitle className="text-xl flex items-center gap-2">
-                    <Filter className="h-5 w-5 text-primary" />
-                    Day Part Filter
-                  </CardTitle>
-                  <CardDescription>
-                    {selectedDayPart === "all" 
-                      ? "Showing products for all day parts" 
-                      : `Showing ${dayParts.find(d => d.id === selectedDayPart)?.name} products (${dayParts.find(d => d.id === selectedDayPart)?.timeRange})`
-                    }
-                  </CardDescription>
-                </div>
-                {selectedDayPart !== "all" && (
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setSelectedDayPart("all")}
-                    className="text-muted-foreground hover:text-foreground"
-                  >
-                    Clear Filter
-                  </Button>
-                )}
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="flex flex-wrap gap-3">
-                <Button
-                  variant={selectedDayPart === "all" ? "default" : "outline"}
-                  size="lg"
-                  onClick={() => setSelectedDayPart("all")}
-                  className="flex-1 min-w-[160px] h-16 text-base font-semibold"
-                >
-                  <Package className="mr-2 h-5 w-5" />
-                  All Day Parts
-                </Button>
-                {dayParts.map((dayPart) => (
-                  <Button
-                    key={dayPart.id}
-                    variant={selectedDayPart === dayPart.id ? "default" : "outline"}
-                    size="lg"
-                    onClick={() => setSelectedDayPart(dayPart.id)}
-                    className="flex-1 min-w-[160px] h-16 text-base font-semibold"
-                  >
-                    <div className="flex flex-col items-start">
-                      <span>{dayPart.name}</span>
-                      <span className="text-xs font-normal opacity-80">{dayPart.timeRange}</span>
-                    </div>
-                  </Button>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        </>
+        <Card className="shadow-card">
+          <CardContent className="p-4">
+            <div className="flex items-center gap-4">
+              <label className="text-sm font-medium">My Brand:</label>
+              <Select value={selectedBrand} onValueChange={setSelectedBrand}>
+                <SelectTrigger className="w-[200px] h-9 border-[#7e9f57] focus:ring-[#7e9f57] font-semibold">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Ole and Steen">Ole and Steen</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </CardContent>
+        </Card>
       )}
 
       {/* Search and Cluster Filters - Only show in HQ view */}
@@ -625,13 +567,11 @@ export default function StoreProductRange() {
                         <h4 className="text-sm font-semibold text-foreground">Range Template</h4>
                       </div>
                       <Badge variant="outline" className="text-xs font-semibold bg-background">
-                        {clusterProducts.filter(p => selectedDayPart === "all" || p.dayParts?.includes(selectedDayPart)).length} products
+                        {clusterProducts.length} products
                       </Badge>
                     </div>
                     <div className="space-y-2 max-h-[300px] overflow-y-auto pr-2 scrollbar-thin">
-                      {clusterProducts
-                        .filter(product => selectedDayPart === "all" || product.dayParts?.includes(selectedDayPart))
-                        .map((product) => (
+                      {clusterProducts.map((product) => (
                         <div 
                           key={product.id}
                           className="flex items-center justify-between p-3 rounded-lg bg-gradient-to-r from-muted/40 to-transparent hover:from-muted/60 hover:to-muted/20 transition-all border border-transparent hover:border-primary/20"
@@ -761,9 +701,7 @@ export default function StoreProductRange() {
                                 </TableRow>
                               </TableHeader>
                               <TableBody>
-                                {store.activeProducts
-                                  .filter(product => selectedDayPart === "all" || product.dayParts?.includes(selectedDayPart))
-                                  .map((product) => (
+                                {store.activeProducts.map((product) => (
                                   <TableRow key={product.id}>
                                     <TableCell>
                                       <div>
@@ -803,140 +741,49 @@ export default function StoreProductRange() {
           })
         ) : null}
         
-        {/* Store View: Show ranges split by day parts */}
+        {/* Store View: Show all products in a simple table */}
         {viewMode === "store_manager" && filteredStores.map((store) => {
-        const breakfastProducts = store.activeProducts.filter(p => p.dayParts?.includes('breakfast'));
-        const lunchProducts = store.activeProducts.filter(p => p.dayParts?.includes('lunch'));
-        const afternoonProducts = store.activeProducts.filter(p => p.dayParts?.includes('afternoon'));
-        
         return (
-          <div key={store.storeId} className="space-y-6">
-            {/* Breakfast Range */}
-            <Card className="shadow-card">
-              <CardHeader>
-                <CardTitle className="text-xl flex items-center gap-2">
-                  Breakfast Range
-                  <Badge variant="secondary">{breakfastProducts.length} products</Badge>
-                </CardTitle>
-                <CardDescription>Open-11am</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Product</TableHead>
-                      <TableHead>Category</TableHead>
-                      <TableHead>Status</TableHead>
+          <Card key={store.storeId} className="shadow-card">
+            <CardHeader>
+              <CardTitle className="text-xl flex items-center gap-2">
+                My Product Range
+                <Badge variant="secondary">{store.activeProducts.length} products</Badge>
+              </CardTitle>
+              <CardDescription>All products available at {store.storeName}</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Product</TableHead>
+                    <TableHead>Category</TableHead>
+                    <TableHead>Status</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {store.activeProducts.map((product) => (
+                    <TableRow key={product.id}>
+                      <TableCell>
+                        <div>
+                          <div className="font-medium">{product.name}</div>
+                          <div className="text-sm text-muted-foreground">{product.id}</div>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        {getCategoryBadge(product.category)}
+                      </TableCell>
+                      <TableCell>
+                        <Badge variant={product.active ? "default" : "secondary"}>
+                          {product.active ? "Active" : "Inactive"}
+                        </Badge>
+                      </TableCell>
                     </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {breakfastProducts.map((product) => (
-                      <TableRow key={product.id}>
-                        <TableCell>
-                          <div>
-                            <div className="font-medium">{product.name}</div>
-                            <div className="text-sm text-muted-foreground">{product.id}</div>
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          {getCategoryBadge(product.category)}
-                        </TableCell>
-                        <TableCell>
-                          <Badge variant={product.active ? "default" : "secondary"}>
-                            {product.active ? "Active" : "Inactive"}
-                          </Badge>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </CardContent>
-            </Card>
-
-            {/* Lunch Range */}
-            <Card className="shadow-card">
-              <CardHeader>
-                <CardTitle className="text-xl flex items-center gap-2">
-                  Lunch Range
-                  <Badge variant="secondary">{lunchProducts.length} products</Badge>
-                </CardTitle>
-                <CardDescription>11am-2pm</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Product</TableHead>
-                      <TableHead>Category</TableHead>
-                      <TableHead>Status</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {lunchProducts.map((product) => (
-                      <TableRow key={product.id}>
-                        <TableCell>
-                          <div>
-                            <div className="font-medium">{product.name}</div>
-                            <div className="text-sm text-muted-foreground">{product.id}</div>
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          {getCategoryBadge(product.category)}
-                        </TableCell>
-                        <TableCell>
-                          <Badge variant={product.active ? "default" : "secondary"}>
-                            {product.active ? "Active" : "Inactive"}
-                          </Badge>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </CardContent>
-            </Card>
-
-            {/* Afternoon Range */}
-            <Card className="shadow-card">
-              <CardHeader>
-                <CardTitle className="text-xl flex items-center gap-2">
-                  Afternoon Range
-                  <Badge variant="secondary">{afternoonProducts.length} products</Badge>
-                </CardTitle>
-                <CardDescription>2pm-Close</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Product</TableHead>
-                      <TableHead>Category</TableHead>
-                      <TableHead>Status</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {afternoonProducts.map((product) => (
-                      <TableRow key={product.id}>
-                        <TableCell>
-                          <div>
-                            <div className="font-medium">{product.name}</div>
-                            <div className="text-sm text-muted-foreground">{product.id}</div>
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          {getCategoryBadge(product.category)}
-                        </TableCell>
-                        <TableCell>
-                          <Badge variant={product.active ? "default" : "secondary"}>
-                            {product.active ? "Active" : "Inactive"}
-                          </Badge>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </CardContent>
-            </Card>
-          </div>
+                  ))}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
         );
       })}
       </div>
