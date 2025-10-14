@@ -147,26 +147,26 @@ const footfallForecastHQ = [
   { day: "Sun", footfall: 1525, morning: 500, afternoon: 640, evening: 385 },
 ];
 
-// Mock store performance data (from Performance page)
+// Mock store performance data (Ole and Steen stores)
 const mockStorePerformance = [
-  { id: "ST001", name: "London Bridge", revenue: 28500, target: 26000, variance: 9.6, grossProfit: 11400, grossProfitMargin: 40.0, waste: 520, wastePercentage: 1.8, topProduct: "BLT Sandwich" },
-  { id: "ST002", name: "Canary Wharf", revenue: 32100, target: 31000, variance: 3.5, grossProfit: 13482, grossProfitMargin: 42.0, waste: 680, wastePercentage: 2.1, topProduct: "Caesar Wrap" },
-  { id: "ST003", name: "King's Cross", revenue: 41200, target: 40000, variance: 3.0, grossProfit: 16480, grossProfitMargin: 40.0, waste: 890, wastePercentage: 2.2, topProduct: "Salmon Bagel" },
-  { id: "ST004", name: "Oxford Circus", revenue: 24800, target: 28000, variance: -11.4, grossProfit: 9672, grossProfitMargin: 39.0, waste: 950, wastePercentage: 3.8, topProduct: "Med Salad" },
-  { id: "ST005", name: "Covent Garden", revenue: 29600, target: 28000, variance: 5.7, grossProfit: 12136, grossProfitMargin: 41.0, waste: 610, wastePercentage: 2.1, topProduct: "Chicken Wrap" },
-  { id: "ST006", name: "Victoria Station", revenue: 38200, target: 36000, variance: 6.1, grossProfit: 15698, grossProfitMargin: 41.1, waste: 720, wastePercentage: 1.9, topProduct: "Tuna Panini" },
+  { id: "OS001", name: "Kings Cross Station", revenue: 41200, target: 40000, variance: 3.0, grossProfit: 16480, grossProfitMargin: 40.0, waste: 890, wastePercentage: 2.2, topProduct: "Almond Croissant" },
+  { id: "OS002", name: "Liverpool Street Station", revenue: 38500, target: 37000, variance: 4.1, grossProfit: 15400, grossProfitMargin: 40.0, waste: 820, wastePercentage: 2.1, topProduct: "BLT Sandwich" },
+  { id: "OS003", name: "St Pancras International", revenue: 42800, target: 41000, variance: 4.4, grossProfit: 17120, grossProfitMargin: 40.0, waste: 910, wastePercentage: 2.1, topProduct: "Pain au Chocolat" },
+  { id: "OS004", name: "Canary Wharf Plaza", revenue: 35200, target: 34000, variance: 3.5, grossProfit: 14080, grossProfitMargin: 40.0, waste: 680, wastePercentage: 1.9, topProduct: "Caesar Wrap" },
+  { id: "OS005", name: "Bond Street", revenue: 32600, target: 31000, variance: 5.2, grossProfit: 13040, grossProfitMargin: 40.0, waste: 720, wastePercentage: 2.2, topProduct: "Ham & Cheese Croissant" },
+  { id: "OS006", name: "Bank Station", revenue: 36800, target: 35500, variance: 3.7, grossProfit: 14720, grossProfitMargin: 40.0, waste: 750, wastePercentage: 2.0, topProduct: "Salmon Bagel" },
 ];
 
-// Mock product performance data (from Performance page)
+// Mock product performance data (Ole and Steen products)
 const mockProductPerformance = [
-  { id: "SK001", name: "Classic BLT Sandwich", soldUnits: 1240, revenue: 6820, margin: 58.2, waste: 45, wastePercentage: 3.5, trend: "up" },
-  { id: "SK002", name: "Chicken Caesar Wrap", soldUnits: 980, revenue: 5880, margin: 62.1, waste: 32, wastePercentage: 3.2, trend: "up" },
-  { id: "SK003", name: "Avocado & Hummus Wrap", soldUnits: 760, revenue: 4560, margin: 61.8, waste: 28, wastePercentage: 3.6, trend: "down" },
-  { id: "SK004", name: "Tuna Melt Panini", soldUnits: 890, revenue: 5340, margin: 59.5, waste: 38, wastePercentage: 4.1, trend: "up" },
-  { id: "SK005", name: "Mediterranean Salad Bowl", soldUnits: 720, revenue: 4680, margin: 64.2, waste: 42, wastePercentage: 5.5, trend: "down" },
-  { id: "SK006", name: "Smoked Salmon Bagel", soldUnits: 650, revenue: 4875, margin: 68.5, waste: 25, wastePercentage: 3.7, trend: "up" },
-  { id: "SK007", name: "Ham & Cheese Croissant", soldUnits: 1120, revenue: 5040, margin: 55.3, waste: 52, wastePercentage: 4.4, trend: "up" },
-  { id: "SK008", name: "Vegan Buddha Bowl", soldUnits: 580, revenue: 4060, margin: 66.8, waste: 35, wastePercentage: 5.7, trend: "down" },
+  { id: "OS101", name: "Almond Croissant", soldUnits: 2850, revenue: 11400, margin: 62.5, waste: 95, wastePercentage: 3.2, trend: "up" },
+  { id: "OS102", name: "Pain au Chocolat", soldUnits: 2620, revenue: 10480, margin: 64.2, waste: 88, wastePercentage: 3.1, trend: "up" },
+  { id: "OS103", name: "BLT Sandwich", soldUnits: 1940, revenue: 10670, margin: 58.2, waste: 72, wastePercentage: 3.6, trend: "up" },
+  { id: "OS104", name: "Chicken Caesar Wrap", soldUnits: 1680, revenue: 10080, margin: 61.8, waste: 58, wastePercentage: 3.3, trend: "up" },
+  { id: "OS105", name: "Mediterranean Salad Bowl", soldUnits: 1420, revenue: 9220, margin: 64.8, waste: 68, wastePercentage: 4.6, trend: "down" },
+  { id: "OS106", name: "Salmon Cream Bagel", soldUnits: 1280, revenue: 9600, margin: 68.2, waste: 48, wastePercentage: 3.7, trend: "up" },
+  { id: "OS107", name: "Ham & Cheese Croissant", soldUnits: 2180, revenue: 9810, margin: 55.8, waste: 86, wastePercentage: 3.8, trend: "up" },
+  { id: "OS108", name: "Avocado Hummus Wrap", soldUnits: 1520, revenue: 9120, margin: 63.5, waste: 62, wastePercentage: 3.9, trend: "down" },
 ];
 
 // Mock daily trend data
@@ -196,34 +196,34 @@ const mealPeriodRevenueHQ = [
 
 // Product category revenue by day (Store view)
 const categoryRevenueStore = [
-  { day: "Mon", sandwiches: 68, wraps: 52, salads: 28, breakfast: 17 },
-  { day: "Tue", sandwiches: 61, wraps: 48, salads: 24, breakfast: 15 },
-  { day: "Wed", sandwiches: 72, wraps: 55, salads: 32, breakfast: 19 },
-  { day: "Thu", sandwiches: 65, wraps: 51, salads: 29, breakfast: 17 },
-  { day: "Fri", sandwiches: 78, wraps: 62, salads: 35, breakfast: 20 },
-  { day: "Sat", sandwiches: 88, wraps: 68, salads: 40, breakfast: 22 },
-  { day: "Sun", sandwiches: 70, wraps: 54, salads: 31, breakfast: 19 },
+  { day: "Mon", pastries: 58, sandwiches: 48, wraps: 42, salads: 20 },
+  { day: "Tue", pastries: 52, sandwiches: 44, wraps: 38, salads: 18 },
+  { day: "Wed", pastries: 64, sandwiches: 52, wraps: 45, salads: 24 },
+  { day: "Thu", pastries: 56, sandwiches: 48, wraps: 40, salads: 21 },
+  { day: "Fri", pastries: 68, sandwiches: 58, wraps: 52, salads: 26 },
+  { day: "Sat", pastries: 78, sandwiches: 65, wraps: 58, salads: 30 },
+  { day: "Sun", pastries: 62, sandwiches: 52, wraps: 44, salads: 23 },
 ];
 
-// Product category revenue by day (HQ view)
+// Product category revenue by day (HQ view - 50 stores)
 const categoryRevenueHQ = [
-  { day: "Mon", sandwiches: 1680, wraps: 1280, salads: 690, breakfast: 420 },
-  { day: "Tue", sandwiches: 1510, wraps: 1180, salads: 590, breakfast: 370 },
-  { day: "Wed", sandwiches: 1800, wraps: 1360, salads: 790, breakfast: 470 },
-  { day: "Thu", sandwiches: 1620, wraps: 1260, salads: 720, breakfast: 420 },
-  { day: "Fri", sandwiches: 1940, wraps: 1530, salads: 860, breakfast: 490 },
-  { day: "Sat", sandwiches: 2180, wraps: 1680, salads: 990, breakfast: 550 },
-  { day: "Sun", sandwiches: 1740, wraps: 1330, salads: 760, breakfast: 470 },
+  { day: "Mon", pastries: 2900, sandwiches: 2400, wraps: 2100, salads: 1000 },
+  { day: "Tue", pastries: 2600, sandwiches: 2200, wraps: 1900, salads: 900 },
+  { day: "Wed", pastries: 3200, sandwiches: 2600, wraps: 2250, salads: 1200 },
+  { day: "Thu", pastries: 2800, sandwiches: 2400, wraps: 2000, salads: 1050 },
+  { day: "Fri", pastries: 3400, sandwiches: 2900, wraps: 2600, salads: 1300 },
+  { day: "Sat", pastries: 3900, sandwiches: 3250, wraps: 2900, salads: 1500 },
+  { day: "Sun", pastries: 3100, sandwiches: 2600, wraps: 2200, salads: 1150 },
 ];
 
 const CHART_COLORS = {
   breakfast: "hsl(18 85% 78%)", // primary/peach
   lunch: "hsl(88 32% 62%)", // accent/green
   afternoon: "hsl(23 100% 65%)", // warning/orange
-  sandwiches: "hsl(18 85% 78%)",
-  wraps: "hsl(88 32% 62%)",
-  salads: "hsl(140 24% 24%)",
-  breakfastItems: "hsl(23 100% 65%)",
+  pastries: "hsl(18 85% 78%)", // peach for pastries
+  sandwiches: "hsl(88 32% 62%)", // green for sandwiches
+  wraps: "hsl(23 100% 65%)", // orange for wraps
+  salads: "hsl(140 24% 24%)", // dark green for salads
 };
 
 // Brand to store mapping (using actual database store names)
@@ -249,7 +249,6 @@ const storeBrands: Record<string, string> = {
 
 export default function Analytics() {
   const { viewMode, selectedStore: contextSelectedStore } = useView();
-  const [selectedBrand, setSelectedBrand] = useState<string>("All Brands");
   const [selectedStore, setSelectedStore] = useState<string>("all");
   const [stores, setStores] = useState<Array<{ name: string; id: string }>>([]);
   const [dateRange, setDateRange] = useState<{ from: Date; to: Date }>({
@@ -258,11 +257,6 @@ export default function Analytics() {
   });
   const [aiInsights, setAiInsights] = useState<any[]>([]);
   const [loadingInsights, setLoadingInsights] = useState(false);
-
-  // Available stores based on selected brand
-  const availableStores = selectedBrand === "All Brands" 
-    ? stores
-    : stores.filter(s => storeBrands[s.name] === selectedBrand);
 
   useEffect(() => {
     const loadStores = async () => {
@@ -282,16 +276,16 @@ export default function Analytics() {
   const fetchAIInsights = async () => {
     setLoadingInsights(true);
     try {
-      const ingredientData = [
-        { name: "Chicken Breast", category: "Protein", expected: isSingleStoreView ? 45.2 : 1108, actual: isSingleStoreView ? 43.8 : 1072, variance: -3.1 },
-        { name: "Lettuce", category: "Vegetables", expected: isSingleStoreView ? 28.5 : 698, actual: isSingleStoreView ? 29.2 : 715, variance: 2.5 },
-        { name: "Avocado", category: "Vegetables", expected: isSingleStoreView ? 32.0 : 784, actual: isSingleStoreView ? 31.8 : 779, variance: -0.6 },
-        { name: "Tomatoes", category: "Vegetables", expected: isSingleStoreView ? 24.8 : 608, actual: isSingleStoreView ? 26.4 : 647, variance: 6.5 },
-        { name: "Bread", category: "Bakery", expected: isSingleStoreView ? 52.0 : 1274, actual: isSingleStoreView ? 51.2 : 1254, variance: -1.5 }
+      const productData = [
+        { name: "Almond Croissant", category: "Pastries", expected: isSingleStoreView ? 57.0 : 2850, actual: isSingleStoreView ? 56.4 : 2820, variance: -1.1 },
+        { name: "Pain au Chocolat", category: "Pastries", expected: isSingleStoreView ? 52.4 : 2620, actual: isSingleStoreView ? 53.0 : 2650, variance: 1.1 },
+        { name: "BLT Sandwich", category: "Sandwiches", expected: isSingleStoreView ? 38.8 : 1940, actual: isSingleStoreView ? 38.2 : 1910, variance: -1.5 },
+        { name: "Caesar Wrap", category: "Wraps", expected: isSingleStoreView ? 33.6 : 1680, actual: isSingleStoreView ? 34.0 : 1700, variance: 1.2 },
+        { name: "Mediterranean Salad", category: "Salads", expected: isSingleStoreView ? 28.4 : 1420, actual: isSingleStoreView ? 28.4 : 1420, variance: 0.0 }
       ];
 
       const { data, error } = await supabase.functions.invoke('ingredient-insights', {
-        body: { ingredientData }
+        body: { ingredientData: productData }
       });
 
       if (error) throw error;
@@ -353,39 +347,39 @@ export default function Analytics() {
     ]
   };
   
-  // HQ data (all stores combined)
+  // HQ data (50 stores combined - Ole and Steen)
   const hqData = {
-    revenue: 12260000,
+    revenue: 1840000, // 50 stores * ~£36,800 average
     revenueChange: 20.1,
-    grossProfit: 5151000,
+    grossProfit: 736000, // 40% margin
     grossProfitChange: 15.3,
-    waste: 413062,
+    waste: 36800, // 2% waste rate
     wasteChange: -18,
     salesWasteData: [
-      { date: "Mon", sales: 4200, waste: 180 },
-      { date: "Tue", sales: 3800, waste: 160 },
-      { date: "Wed", sales: 4500, waste: 140 },
-      { date: "Thu", sales: 4100, waste: 190 },
-      { date: "Fri", sales: 5200, waste: 210 },
-      { date: "Sat", sales: 5800, waste: 220 },
-      { date: "Sun", sales: 4600, waste: 170 },
+      { date: "Mon", sales: 258000, waste: 5160 },
+      { date: "Tue", sales: 246000, waste: 4920 },
+      { date: "Wed", sales: 272000, waste: 5440 },
+      { date: "Thu", sales: 254000, waste: 5080 },
+      { date: "Fri", sales: 289000, waste: 5780 },
+      { date: "Sat", sales: 315000, waste: 6300 },
+      { date: "Sun", sales: 268000, waste: 5360 },
     ],
     revenueComparisonData: [
-      { date: "Mon", predicted: 4500, actual: 4200 },
-      { date: "Tue", predicted: 4100, actual: 3800 },
-      { date: "Wed", predicted: 4400, actual: 4500 },
-      { date: "Thu", predicted: 4300, actual: 4100 },
-      { date: "Fri", predicted: 5000, actual: 5200 },
-      { date: "Sat", predicted: 5500, actual: 5800 },
-      { date: "Sun", predicted: 4700, actual: 4600 },
+      { date: "Mon", predicted: 260000, actual: 258000 },
+      { date: "Tue", predicted: 248000, actual: 246000 },
+      { date: "Wed", predicted: 270000, actual: 272000 },
+      { date: "Thu", predicted: 256000, actual: 254000 },
+      { date: "Fri", predicted: 285000, actual: 289000 },
+      { date: "Sat", predicted: 310000, actual: 315000 },
+      { date: "Sun", predicted: 265000, actual: 268000 },
     ],
     volumeComparisonData: [
-      { product: "BLT Sand", recommended: 45, actual: 42, missed: 3 },
-      { product: "Caesar Wrap", recommended: 38, actual: 40, waste: 2 },
-      { product: "Avo Wrap", recommended: 32, actual: 28, missed: 4 },
-      { product: "Tuna Panini", recommended: 28, actual: 30, waste: 2 },
-      { product: "Med Salad", recommended: 35, actual: 35, optimal: 0 },
-      { product: "Salmon Bagel", recommended: 25, actual: 22, missed: 3 },
+      { product: "Almond Crois.", recommended: 2850, actual: 2820, missed: 30 },
+      { product: "Pain Choc.", recommended: 2620, actual: 2650, waste: 30 },
+      { product: "BLT Sand.", recommended: 1940, actual: 1910, missed: 30 },
+      { product: "Caesar Wrap", recommended: 1680, actual: 1700, waste: 20 },
+      { product: "Med Salad", recommended: 1420, actual: 1420, optimal: 0 },
+      { product: "Salmon Bagel", recommended: 1280, actual: 1250, missed: 30 },
     ]
   };
   
@@ -464,80 +458,57 @@ export default function Analytics() {
           {/* Heading */}
           <div className="mb-4">
             <h2 className="text-2xl font-bold text-foreground">
-              {viewMode === "hq" && selectedBrand !== "All Brands" ? `${selectedBrand} • ` : ""}
               {selectedStore === "all" ? "All Stores" : selectedStore} • This Week's Performance
             </h2>
           </div>
 
           {/* Period and Store Selectors */}
           {viewMode === "hq" ? (
-            <div className="flex flex-col gap-4 mb-6">
-              {/* Brand Filter - Higher Level */}
-              <div className="flex items-center gap-4">
-                <label className="text-sm font-medium">My Brand:</label>
-                <Select value={selectedBrand} onValueChange={(v) => {
-                  setSelectedBrand(v);
-                  setSelectedStore("all");
-                }}>
-                  <SelectTrigger className="w-[200px] border-[#7e9f57] focus:ring-[#7e9f57] font-semibold">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="All Brands">All Brands</SelectItem>
-                    <SelectItem value="Pret a Manger">Pret a Manger</SelectItem>
-                    <SelectItem value="Brioche Dorée">Brioche Dorée</SelectItem>
-                    <SelectItem value="Starbucks">Starbucks</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              {/* Store and Date Filters */}
-              <div className="flex flex-col sm:flex-row gap-4">
-                <Select value={selectedStore} onValueChange={setSelectedStore}>
-                  <SelectTrigger className="w-[200px]">
-                    <SelectValue placeholder="Select store" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Stores</SelectItem>
-                    {availableStores.map((store) => (
-                      <SelectItem key={store.id} value={store.name}>
-                        {store.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button variant="outline" className="w-[280px] justify-start text-left font-normal">
-                      <CalendarIcon className="mr-2 h-4 w-4" />
-                      {dateRange?.from ? (
-                        dateRange.to ? (
-                          <>
-                            {format(dateRange.from, "LLL dd, y")} -{" "}
-                            {format(dateRange.to, "LLL dd, y")}
-                          </>
-                        ) : (
-                          format(dateRange.from, "LLL dd, y")
-                        )
+            <div className="flex flex-col sm:flex-row gap-4 mb-6">
+              <Select value={selectedStore} onValueChange={setSelectedStore}>
+                <SelectTrigger className="w-[200px]">
+                  <SelectValue placeholder="Select store" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Stores</SelectItem>
+                  {stores.map((store) => (
+                    <SelectItem key={store.id} value={store.name}>
+                      {store.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button variant="outline" className="w-[280px] justify-start text-left font-normal">
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {dateRange?.from ? (
+                      dateRange.to ? (
+                        <>
+                          {format(dateRange.from, "LLL dd, y")} -{" "}
+                          {format(dateRange.to, "LLL dd, y")}
+                        </>
                       ) : (
-                        <span>Pick a date range</span>
-                      )}
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0" align="start">
-                    <Calendar
-                      initialFocus
-                      mode="range"
-                      defaultMonth={dateRange?.from}
-                      selected={{ from: dateRange?.from, to: dateRange?.to }}
-                      onSelect={(range: any) => range && setDateRange(range)}
-                      numberOfMonths={2}
-                      className={cn("p-3 pointer-events-auto")}
-                    />
-                  </PopoverContent>
-                </Popover>
-              </div>
+                        format(dateRange.from, "LLL dd, y")
+                      )
+                    ) : (
+                      <span>Pick a date range</span>
+                    )}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    initialFocus
+                    mode="range"
+                    defaultMonth={dateRange?.from}
+                    selected={{ from: dateRange?.from, to: dateRange?.to }}
+                    onSelect={(range: any) => range && setDateRange(range)}
+                    numberOfMonths={2}
+                    className={cn("p-3 pointer-events-auto")}
+                  />
+                </PopoverContent>
+              </Popover>
             </div>
           ) : (
             <div className="flex flex-col sm:flex-row gap-4 mb-6">
@@ -664,24 +635,15 @@ export default function Analytics() {
                 </CardContent>
               </Card>
               
-              {/* Sub-cards: End Product and Ingredients */}
-              <div className="grid grid-cols-2 gap-2">
+              {/* Sub-cards: End Product only */}
+              <div className="grid grid-cols-1 gap-2">
                 <Card className="bg-background shadow-md">
                   <CardContent className="p-3">
-                    <div className="text-xs text-muted-foreground mb-1">End Product</div>
+                    <div className="text-xs text-muted-foreground mb-1">Product Waste</div>
                     <div className="text-lg font-bold text-foreground">
-                      £{Math.round(currentData.waste * 0.65).toLocaleString()}
+                      £{currentData.waste.toLocaleString()}
                     </div>
-                    <div className="text-xs text-muted-foreground">65% of waste</div>
-                  </CardContent>
-                </Card>
-                <Card className="bg-background shadow-md">
-                  <CardContent className="p-3">
-                    <div className="text-xs text-muted-foreground mb-1">Ingredients</div>
-                    <div className="text-lg font-bold text-foreground">
-                      £{Math.round(currentData.waste * 0.35).toLocaleString()}
-                    </div>
-                    <div className="text-xs text-muted-foreground">35% of waste</div>
+                    <div className="text-xs text-muted-foreground">Finished products wasted</div>
                   </CardContent>
                 </Card>
               </div>
@@ -775,17 +737,21 @@ export default function Analytics() {
                   }}
                 />
                 <Legend />
-                <Bar dataKey="sandwiches" stackId="a" fill={CHART_COLORS.sandwiches} name="Sandwiches" />
+                <Bar dataKey="pastries" stackId="a" fill={CHART_COLORS.pastries} name="Pastries" />
+                <Bar dataKey="sandwiches" stackId="a" fill={CHART_COLORS.sandwiches} name="Sandwiches & Toasts" />
                 <Bar dataKey="wraps" stackId="a" fill={CHART_COLORS.wraps} name="Wraps" />
-                <Bar dataKey="salads" stackId="a" fill={CHART_COLORS.salads} name="Salads" />
-                <Bar dataKey="breakfast" stackId="a" fill={CHART_COLORS.breakfastItems} name="Breakfast Items" />
+                <Bar dataKey="salads" stackId="a" fill={CHART_COLORS.salads} name="Salads & Bowls" />
               </BarChart>
             </ResponsiveContainer>
             <div className="mt-4 p-4 rounded-lg bg-muted/30 border">
               <div className="grid grid-cols-2 gap-3 text-sm">
                 <div className="flex items-center gap-2">
+                  <div className="h-3 w-3 rounded" style={{ backgroundColor: CHART_COLORS.pastries }}></div>
+                  <span className="text-muted-foreground">Pastries</span>
+                </div>
+                <div className="flex items-center gap-2">
                   <div className="h-3 w-3 rounded" style={{ backgroundColor: CHART_COLORS.sandwiches }}></div>
-                  <span className="text-muted-foreground">Sandwiches</span>
+                  <span className="text-muted-foreground">Sandwiches & Toasts</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <div className="h-3 w-3 rounded" style={{ backgroundColor: CHART_COLORS.wraps }}></div>
@@ -793,11 +759,7 @@ export default function Analytics() {
                 </div>
                 <div className="flex items-center gap-2">
                   <div className="h-3 w-3 rounded" style={{ backgroundColor: CHART_COLORS.salads }}></div>
-                  <span className="text-muted-foreground">Salads</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="h-3 w-3 rounded" style={{ backgroundColor: CHART_COLORS.breakfastItems }}></div>
-                  <span className="text-muted-foreground">Breakfast Items</span>
+                  <span className="text-muted-foreground">Salads & Bowls</span>
                 </div>
               </div>
             </div>
@@ -993,11 +955,11 @@ export default function Analytics() {
                   <div className="flex items-center gap-2">
                     <Award className="h-5 w-5 text-warning" />
                     <div className="text-lg font-bold text-foreground">
-                      {viewMode === "store_manager" ? "#3 of 50" : "King's Cross"}
+                      {viewMode === "store_manager" ? "#3 of 50" : "St Pancras"}
                     </div>
                   </div>
                   <p className="text-xs text-muted-foreground">
-                    {viewMode === "store_manager" ? "Top quartile" : "£41.2k revenue"}
+                    {viewMode === "store_manager" ? "Top quartile" : "£42.8k revenue"}
                   </p>
                 </CardContent>
               </Card>
