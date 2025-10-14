@@ -195,6 +195,7 @@ export default function Production() {
   const [loading, setLoading] = useState(true);
   const [selectedRecipe, setSelectedRecipe] = useState<string | null>(null);
   const [confirmingProduction, setConfirmingProduction] = useState<string | null>(null);
+  const [groupByProduct, setGroupByProduct] = useState(false);
   const { toast } = useToast();
   
   const tomorrow = new Date(Date.now() + 86400000);
@@ -338,9 +339,38 @@ export default function Production() {
       "Wrap": "bg-green-100 text-green-800",
       "Hot Food": "bg-orange-100 text-orange-800",
       "Salad": "bg-emerald-100 text-emerald-800",
+      "Pastries": "bg-purple-100 text-purple-800",
+      "Breads": "bg-amber-100 text-amber-800",
+      "Hot Breakfast": "bg-red-100 text-red-800",
+      "Cold Breakfast": "bg-cyan-100 text-cyan-800",
+      "Sandwiches": "bg-blue-100 text-blue-800",
+      "Wraps": "bg-green-100 text-green-800",
+      "Salads": "bg-emerald-100 text-emerald-800",
     };
     return <Badge className={colors[category] || "bg-gray-100 text-gray-800"}>{category}</Badge>;
   };
+
+  // Aggregate products by product ID when groupByProduct is true
+  const displayProducts = viewMode === "hq" && groupByProduct
+    ? Object.values(
+        products.reduce((acc, product) => {
+          if (!acc[product.id]) {
+            acc[product.id] = {
+              ...product,
+              storeId: 'aggregated', // Unique ID for aggregated view
+              store: `${products.filter(p => p.id === product.id).length} stores`,
+              currentStock: 0,
+              recommendedOrder: 0,
+              finalOrder: 0,
+            };
+          }
+          acc[product.id].currentStock += product.currentStock;
+          acc[product.id].recommendedOrder += product.recommendedOrder;
+          acc[product.id].finalOrder += product.finalOrder;
+          return acc;
+        }, {} as Record<string, Product>)
+      )
+    : products;
 
   if (loading) {
     return (
@@ -372,20 +402,42 @@ export default function Production() {
         </div>
       </div>
 
-      {/* Last Updated */}
+      {/* Last Updated and View Toggle */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
           <span>Last updated: {format(new Date(), "EEEE, MMMM d, yyyy 'at' h:mm a")}</span>
         </div>
-        <Button 
-          onClick={handleRefresh}
-          size="sm"
-          variant="outline"
-          disabled={isRefreshing}
-        >
-          <RefreshCw className={`h-4 w-4 mr-2 ${isRefreshing ? 'animate-spin' : ''}`} />
-          Refresh
-        </Button>
+        <div className="flex items-center gap-2">
+          {viewMode === "hq" && (
+            <div className="flex items-center gap-2 bg-muted/50 rounded-lg p-1">
+              <Button
+                size="sm"
+                variant={!groupByProduct ? "default" : "ghost"}
+                onClick={() => setGroupByProduct(false)}
+                className="h-8"
+              >
+                By Line
+              </Button>
+              <Button
+                size="sm"
+                variant={groupByProduct ? "default" : "ghost"}
+                onClick={() => setGroupByProduct(true)}
+                className="h-8"
+              >
+                By Product
+              </Button>
+            </div>
+          )}
+          <Button 
+            onClick={handleRefresh}
+            size="sm"
+            variant="outline"
+            disabled={isRefreshing}
+          >
+            <RefreshCw className={`h-4 w-4 mr-2 ${isRefreshing ? 'animate-spin' : ''}`} />
+            Refresh
+          </Button>
+        </div>
       </div>
 
       {/* Production Table */}
@@ -416,7 +468,7 @@ export default function Production() {
               <TableRow>
                 <TableHead>Product</TableHead>
                 <TableHead>Category</TableHead>
-                {viewMode === "hq" && <TableHead>Store</TableHead>}
+                {viewMode === "hq" && !groupByProduct && <TableHead>Store</TableHead>}
                 <TableHead>Current Stock</TableHead>
                 <TableHead className="bg-gradient-to-r from-[#ff914d]/20 to-[#ff914d]/10 relative text-center">
                   <div className="flex items-center justify-center gap-2 relative">
@@ -432,7 +484,7 @@ export default function Production() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {products.map((product) => (
+              {displayProducts.map((product) => (
                 <TableRow key={`${product.id}-${product.storeId}`}>
                   <TableCell>
                     <div>
@@ -448,7 +500,7 @@ export default function Production() {
                   <TableCell>
                     {getCategoryBadge(product.category)}
                   </TableCell>
-                  {viewMode === "hq" && (
+                  {viewMode === "hq" && !groupByProduct && (
                     <TableCell>
                       <span className="font-medium">{product.store}</span>
                     </TableCell>

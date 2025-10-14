@@ -30,7 +30,7 @@ const mainNavigationStoreManager: Array<{ title: string; url: string; icon: any;
 const mainNavigationHQ: Array<{ title: string; url: string; icon: any; sparkles?: boolean }> = [
   { title: "Home", url: "/", icon: Home },
   { title: "Performance", url: "/analytics", icon: BarChart3 },
-  { title: "Production", url: "/production", icon: ChefHat },
+  { title: "Suggested Production", url: "/production", icon: ChefHat, sparkles: true },
 ];
 
 const settingsNavigationHQ = [

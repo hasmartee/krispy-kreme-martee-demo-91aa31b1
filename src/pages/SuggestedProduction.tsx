@@ -362,6 +362,7 @@ export default function SuggestedProduction() {
           if (!acc[product.id]) {
             acc[product.id] = {
               ...product,
+              storeId: 'aggregated', // Unique ID for aggregated view
               store: `${products.filter(p => p.id === product.id).length} stores`,
               currentStock: 0,
               recommendedOrder: 0,
