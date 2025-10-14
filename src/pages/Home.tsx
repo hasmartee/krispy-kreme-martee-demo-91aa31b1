@@ -509,50 +509,27 @@ export default function Home() {
       ) : (
         /* Store Manager View - Keep existing content */
         <>
-          {/* Disparity Alerts - Store View */}
-          <div>
-            <div className="flex items-center gap-2 mb-4">
-              <AlertTriangle className="h-5 w-5 text-amber-500" />
-              <h2 className="text-xl font-semibold text-foreground">Attention Required</h2>
-            </div>
-            <div className="grid gap-3 md:grid-cols-2">
-              <Card className="border-l-4 border-l-amber-500 bg-amber-500/5">
-                <CardContent className="p-4">
-                  <div className="flex items-start gap-3">
-                    <Trash2 className="h-5 w-5 text-amber-600 mt-0.5" />
-                    <div className="flex-1">
-                      <div className="font-semibold text-foreground mb-1">Waste Discrepancy</div>
-                      <div className="text-sm text-muted-foreground mb-2">
-                        Recorded: <span className="font-medium text-foreground">12 items</span> | 
-                        Expected: <span className="font-medium text-foreground">28 items</span>
-                      </div>
-                      <Badge variant="outline" className="text-xs text-amber-600 border-amber-600">
-                        +133% variance
-                      </Badge>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-              
-              <Card className="border-l-4 border-l-amber-500 bg-amber-500/5">
-                <CardContent className="p-4">
-                  <div className="flex items-start gap-3">
-                    <Package className="h-5 w-5 text-amber-600 mt-0.5" />
-                    <div className="flex-1">
-                      <div className="font-semibold text-foreground mb-1">Delivery Shortfall</div>
-                      <div className="text-sm text-muted-foreground mb-2">
-                        Expected: <span className="font-medium text-foreground">450 items</span> | 
-                        Received: <span className="font-medium text-foreground">428 items</span>
-                      </div>
-                      <Badge variant="outline" className="text-xs text-amber-600 border-amber-600">
-                        -4.9% shortage
-                      </Badge>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          </div>
+          {/* Attention Required - Compact Alert */}
+          <Card className="border-l-4 border-l-amber-500 bg-amber-500/5">
+            <CardContent className="p-4">
+              <div className="flex items-center gap-2 mb-3">
+                <AlertTriangle className="h-5 w-5 text-amber-500" />
+                <h3 className="font-semibold text-foreground">Attention Required</h3>
+              </div>
+              <div className="flex flex-col sm:flex-row gap-4 text-sm">
+                <div className="flex items-center gap-2">
+                  <Trash2 className="h-4 w-4 text-amber-600" />
+                  <span className="text-muted-foreground">Waste variance:</span>
+                  <span className="font-medium text-amber-600">+133%</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Package className="h-4 w-4 text-amber-600" />
+                  <span className="text-muted-foreground">Delivery shortfall:</span>
+                  <span className="font-medium text-amber-600">-4.9%</span>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
 
           {/* This Week's Metrics */}
           <div>
@@ -647,105 +624,80 @@ export default function Home() {
         </>
       )}
 
-      {/* Notable Events - Only in Store View */}
+      {/* Today's Context - Store Manager Only - Compact */}
       {viewMode === "store_manager" && (
-        <>
-          <div className="pt-2">
-            <h2 className="text-2xl font-bold text-foreground mb-4">
-              Notable events on Monday 13 October 2025
-            </h2>
-          </div>
-
-          <Card className="shadow-card border-l-4 border-l-amber-500 bg-gradient-to-br from-amber-500/10 to-transparent">
-            <CardContent className="p-4">
-              <div className="flex flex-col md:flex-row items-start md:items-center gap-4 md:gap-8">
-                <div className="flex items-center gap-3">
-                  <div className="p-2 rounded-lg bg-primary/10">
-                    <CloudRain className="h-5 w-5 text-primary" />
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium text-muted-foreground">Predicted Weather</p>
-                    <p className="text-base font-semibold text-foreground">Rainy, 12°C - Lower footfall expected</p>
-                  </div>
-                </div>
-                <div className="h-8 w-px bg-border hidden md:block" />
-                <div className="flex items-center gap-3">
-                  <div className="p-2 rounded-lg bg-destructive/10">
-                    <AlertTriangle className="h-5 w-5 text-destructive" />
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium text-muted-foreground">Key Events</p>
-                    <p className="text-base font-semibold text-foreground">Train strike in Central London - Reduced commuter traffic</p>
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </>
-      )}
-
-      {/* Next Task - Store Manager Only */}
-      {viewMode === "store_manager" && (
-        <div>
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-semibold text-foreground">Your Next Task</h2>
-            <Button onClick={() => navigate("/tasks")} variant="outline" className="gap-2">
-              View All Tasks
-              <ArrowRight className="h-4 w-4" />
-            </Button>
-          </div>
-
-          <Card className="cursor-pointer hover:shadow-lg transition-shadow border-l-4 border-l-primary bg-gradient-to-br from-primary/5 to-transparent" onClick={() => navigate("/tasks")}>
-            <CardContent className="p-6">
-              <div className="flex items-start justify-between">
-                <div className="flex items-start gap-4">
-                  <div className="mt-1">
-                    <ClipboardCheck className="h-5 w-5 text-primary" />
-                  </div>
-                  <div className="space-y-2">
-                    <div className="flex items-center gap-2">
-                      <h3 className="font-semibold text-foreground">{nextTask.title}</h3>
-                    </div>
-                    <p className="text-sm text-muted-foreground">
-                      Scheduled for {nextTask.time}
-                    </p>
-                  </div>
-                </div>
-                <ArrowRight className="h-5 w-5 text-muted-foreground" />
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      )}
-
-      {/* Share Comments with HQ - Store Manager Only */}
-      {viewMode === "store_manager" && (
-        <div>
-          <div className="flex items-center gap-2 mb-4">
-            <MessageSquare className="h-5 w-5 text-primary" />
-            <h2 className="text-xl font-semibold text-foreground">Share with HQ</h2>
-          </div>
-          
-          <Card className="border-l-4 border-l-primary bg-gradient-to-br from-primary/5 to-transparent">
-            <CardContent className="p-6 space-y-4">
+        <div className="grid gap-3 md:grid-cols-2">
+          <Card className="bg-muted/30">
+            <CardContent className="p-4 flex items-center gap-3">
+              <CloudRain className="h-5 w-5 text-primary" />
               <div>
-                <p className="text-sm text-muted-foreground mb-3">
-                  Have insights, concerns, or feedback to share with headquarters? Let us know what's happening at your store.
-                </p>
-                <Textarea 
-                  placeholder="Share your comments, observations, or suggestions for HQ..."
-                  className="min-h-[100px] resize-none"
-                />
+                <p className="text-xs text-muted-foreground">Weather</p>
+                <p className="text-sm font-semibold">Rainy, 12°C</p>
               </div>
-              <div className="flex justify-end">
-                <Button className="gap-2">
-                  <MessageSquare className="h-4 w-4" />
-                  Send to HQ
-                </Button>
+            </CardContent>
+          </Card>
+          <Card className="bg-muted/30">
+            <CardContent className="p-4 flex items-center gap-3">
+              <AlertTriangle className="h-5 w-5 text-destructive" />
+              <div>
+                <p className="text-xs text-muted-foreground">Alert</p>
+                <p className="text-sm font-semibold">Train strike - Lower footfall</p>
               </div>
             </CardContent>
           </Card>
         </div>
+      )}
+
+      {/* Next Task - Store Manager Only - Compact */}
+      {viewMode === "store_manager" && (
+        <Card className="cursor-pointer hover:shadow-md transition-shadow bg-muted/30" onClick={() => navigate("/tasks")}>
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <ClipboardCheck className="h-5 w-5 text-primary" />
+                <div>
+                  <p className="text-xs text-muted-foreground">Next Task</p>
+                  <p className="font-semibold text-foreground">{nextTask.title} - {nextTask.time}</p>
+                </div>
+              </div>
+              <Button size="sm" variant="ghost" className="gap-1">
+                View All
+                <ArrowRight className="h-4 w-4" />
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Share Comments with HQ - Store Manager Only - PROMINENT */}
+      {viewMode === "store_manager" && (
+        <Card className="border-2 border-primary shadow-lg bg-gradient-to-br from-primary/10 via-primary/5 to-transparent">
+          <CardHeader className="pb-4">
+            <div className="flex items-center gap-3">
+              <div className="p-2 rounded-lg bg-primary/20">
+                <MessageSquare className="h-6 w-6 text-primary" />
+              </div>
+              <div>
+                <CardTitle className="text-2xl">Share with HQ</CardTitle>
+                <CardDescription className="text-base">
+                  Have insights, concerns, or feedback? Let headquarters know what's happening.
+                </CardDescription>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <Textarea 
+              placeholder="Share your comments, observations, or suggestions for HQ..."
+              className="min-h-[120px] resize-none bg-background/50 border-primary/20 focus:border-primary"
+            />
+            <div className="flex justify-end">
+              <Button size="lg" className="gap-2 shadow-md">
+                <MessageSquare className="h-5 w-5" />
+                Send to HQ
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
       )}
     </div>
   );
