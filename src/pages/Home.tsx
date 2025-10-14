@@ -259,7 +259,12 @@ export default function Home() {
                   <CardContent className="space-y-4">
                     <div>
                       <div className="text-4xl font-bold text-foreground">8,420</div>
-                      <div className="text-sm text-muted-foreground mt-1">94.2% of total</div>
+                      <div className="flex items-center gap-2 mt-1">
+                        <div className="text-sm text-muted-foreground">94.2% of total</div>
+                        <Badge variant="outline" className="text-xs text-green-600 border-green-600">
+                          +5.3% vs last week
+                        </Badge>
+                      </div>
                     </div>
                     <div className="grid grid-cols-2 gap-3">
                       <Card className="bg-muted/50">
@@ -330,7 +335,12 @@ export default function Home() {
                   <CardContent className="space-y-4">
                     <div>
                       <div className="text-4xl font-bold text-foreground">385</div>
-                      <div className="text-sm text-muted-foreground mt-1">4.3% of total</div>
+                      <div className="flex items-center gap-2 mt-1">
+                        <div className="text-sm text-muted-foreground">4.3% of total</div>
+                        <Badge variant="outline" className="text-xs text-destructive border-destructive">
+                          +12% vs last week
+                        </Badge>
+                      </div>
                     </div>
                     <div className="grid grid-cols-2 gap-3">
                       <Card className="bg-muted/50">
@@ -401,7 +411,12 @@ export default function Home() {
                   <CardContent className="space-y-4">
                     <div>
                       <div className="text-4xl font-bold text-foreground">8,950</div>
-                      <div className="text-sm text-muted-foreground mt-1">Total delivered</div>
+                      <div className="flex items-center gap-2 mt-1">
+                        <div className="text-sm text-muted-foreground">Total delivered</div>
+                        <Badge variant="outline" className="text-xs text-amber-600 border-amber-600">
+                          -1.6% vs last week
+                        </Badge>
+                      </div>
                     </div>
                     <div className="grid grid-cols-2 gap-3">
                       <Card className="bg-muted/50">
@@ -477,61 +492,81 @@ export default function Home() {
             </div>
             
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-              <Card>
+              <Card className="border-l-4 border-l-primary bg-gradient-to-br from-primary/5 to-transparent">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">Revenue</CardTitle>
-                  <DollarSign className="h-4 w-4 text-muted-foreground" />
+                  <DollarSign className="h-4 w-4 text-primary" />
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">
                     £{weeklyMetrics.revenue.toLocaleString()}
                   </div>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    Week to date
-                  </p>
+                  <div className="flex items-center gap-2 mt-1">
+                    <p className="text-xs text-muted-foreground">
+                      Week to date
+                    </p>
+                    <Badge variant="outline" className="text-xs text-green-600 border-green-600">
+                      +8.2%
+                    </Badge>
+                  </div>
                 </CardContent>
               </Card>
 
-              <Card>
+              <Card className="border-l-4 border-l-green-500 bg-gradient-to-br from-green-500/5 to-transparent">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">Gross Profit</CardTitle>
-                  <TrendingUp className="h-4 w-4 text-muted-foreground" />
+                  <TrendingUp className="h-4 w-4 text-green-600" />
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">
                     £{weeklyMetrics.grossProfit.toLocaleString()}
                   </div>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    {((weeklyMetrics.grossProfit / weeklyMetrics.revenue) * 100).toFixed(1)}% margin
-                  </p>
+                  <div className="flex items-center gap-2 mt-1">
+                    <p className="text-xs text-muted-foreground">
+                      {((weeklyMetrics.grossProfit / weeklyMetrics.revenue) * 100).toFixed(1)}% margin
+                    </p>
+                    <Badge variant="outline" className="text-xs text-green-600 border-green-600">
+                      +6.5%
+                    </Badge>
+                  </div>
                 </CardContent>
               </Card>
 
-              <Card>
+              <Card className="border-l-4 border-l-destructive bg-gradient-to-br from-destructive/5 to-transparent">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">Waste</CardTitle>
-                  <Trash2 className="h-4 w-4 text-muted-foreground" />
+                  <Trash2 className="h-4 w-4 text-destructive" />
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">
                     £{weeklyMetrics.waste.toLocaleString()}
                   </div>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    {((weeklyMetrics.waste / weeklyMetrics.revenue) * 100).toFixed(1)}% of revenue
-                  </p>
+                  <div className="flex items-center gap-2 mt-1">
+                    <p className="text-xs text-muted-foreground">
+                      {((weeklyMetrics.waste / weeklyMetrics.revenue) * 100).toFixed(1)}% of revenue
+                    </p>
+                    <Badge variant="outline" className="text-xs text-destructive border-destructive">
+                      +2.1%
+                    </Badge>
+                  </div>
                 </CardContent>
               </Card>
 
-              <Card>
+              <Card className="border-l-4 border-l-blue-500 bg-gradient-to-br from-blue-500/5 to-transparent">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">Availability</CardTitle>
-                  <CheckCircle className="h-4 w-4 text-muted-foreground" />
+                  <CheckCircle className="h-4 w-4 text-blue-600" />
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">{weeklyMetrics.availability.toFixed(1)}%</div>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    Products in stock
-                  </p>
+                  <div className="flex items-center gap-2 mt-1">
+                    <p className="text-xs text-muted-foreground">
+                      Products in stock
+                    </p>
+                    <Badge variant="outline" className="text-xs text-green-600 border-green-600">
+                      +1.2%
+                    </Badge>
+                  </div>
                 </CardContent>
               </Card>
             </div>
@@ -548,7 +583,7 @@ export default function Home() {
             </h2>
           </div>
 
-          <Card className="shadow-card border-l-4 border-l-warning bg-warning/5">
+          <Card className="shadow-card border-l-4 border-l-amber-500 bg-gradient-to-br from-amber-500/10 to-transparent">
             <CardContent className="p-4">
               <div className="flex flex-col md:flex-row items-start md:items-center gap-4 md:gap-8">
                 <div className="flex items-center gap-3">
@@ -587,7 +622,7 @@ export default function Home() {
             </Button>
           </div>
 
-          <Card className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => navigate("/tasks")}>
+          <Card className="cursor-pointer hover:shadow-lg transition-shadow border-l-4 border-l-primary bg-gradient-to-br from-primary/5 to-transparent" onClick={() => navigate("/tasks")}>
             <CardContent className="p-6">
               <div className="flex items-start justify-between">
                 <div className="flex items-start gap-4">
@@ -607,297 +642,6 @@ export default function Home() {
               </div>
             </CardContent>
           </Card>
-        </div>
-      )}
-
-      {/* AI Forecasts Section - Store Manager Only */}
-      {viewMode === "store_manager" && (
-        <div className="space-y-6">
-        <div className="flex items-center gap-2">
-          <BrainCircuit className="h-6 w-6 text-primary" />
-          <h2 className="text-xl font-semibold text-foreground">AI-Powered Forecasts</h2>
-          <Sparkles className="h-5 w-5 text-primary animate-pulse" />
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Revenue Forecast */}
-          <Card className="shadow-card border-primary/20 bg-gradient-to-br from-background via-background to-primary/5">
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <DollarSign className="h-5 w-5 text-primary" />
-                  <CardTitle className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-                    Revenue Forecast
-                  </CardTitle>
-                </div>
-                <div className="flex items-center gap-1 text-xs font-medium text-primary">
-                  <Sparkles className="h-3 w-3" />
-                  AI Prediction
-                </div>
-              </div>
-              <CardDescription>Next 7 days revenue predictions with confidence bands</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <ResponsiveContainer width="100%" height={300}>
-                <AreaChart data={revenueForecast}>
-                  <defs>
-                    <linearGradient id="colorForecast" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.8}/>
-                      <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0.1}/>
-                    </linearGradient>
-                    <linearGradient id="colorConfidence" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="hsl(var(--accent))" stopOpacity={0.3}/>
-                      <stop offset="95%" stopColor="hsl(var(--accent))" stopOpacity={0.05}/>
-                    </linearGradient>
-                  </defs>
-                  <CartesianGrid strokeDasharray="3 3" opacity={0.2} />
-                  <XAxis dataKey="day" stroke="hsl(var(--muted-foreground))" />
-                  <YAxis stroke="hsl(var(--muted-foreground))" />
-                  <Tooltip 
-                    contentStyle={{ 
-                      backgroundColor: "hsl(var(--popover))", 
-                      border: "1px solid hsl(var(--border))",
-                      borderRadius: "8px"
-                    }}
-                  />
-                  <Area 
-                    type="monotone" 
-                    dataKey="upper" 
-                    stackId="1"
-                    stroke="none"
-                    fill="url(#colorConfidence)"
-                    name="Upper Bound"
-                  />
-                  <Area 
-                    type="monotone" 
-                    dataKey="forecast" 
-                    stackId="2"
-                    stroke="hsl(var(--primary))"
-                    strokeWidth={3}
-                    fill="url(#colorForecast)"
-                    name="Forecast (£)"
-                  />
-                  <Line 
-                    type="monotone" 
-                    dataKey="lower" 
-                    stroke="hsl(var(--accent))"
-                    strokeWidth={1}
-                    strokeDasharray="5 5"
-                    name="Lower Bound"
-                  />
-                </AreaChart>
-              </ResponsiveContainer>
-              <div className="mt-4 space-y-2 p-4 rounded-lg bg-primary/5 border border-primary/20">
-                <div className="flex items-center gap-2 text-sm">
-                  <TrendingUp className="h-4 w-4 text-success" />
-                  <span className="font-medium">
-                    Weekly forecast: £{revenueForecast.reduce((sum, day) => sum + day.forecast, 0).toLocaleString()}
-                  </span>
-                </div>
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <CheckCircle className="h-4 w-4 text-primary" />
-                  <span>
-                    Average confidence: {Math.round(revenueForecast.reduce((sum, day) => sum + day.confidence, 0) / revenueForecast.length)}%
-                  </span>
-                </div>
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <Sparkles className="h-4 w-4 text-primary" />
-                  <span>
-                    Peak day: Saturday (£{revenueForecast.find(d => d.day === "Sat")?.forecast.toLocaleString()})
-                  </span>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Volume Forecast */}
-          <Card className="shadow-card border-accent/20 bg-gradient-to-br from-background via-background to-accent/5">
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <TrendingUp className="h-5 w-5 text-accent" />
-                  <CardTitle className="bg-gradient-to-r from-accent to-primary bg-clip-text text-transparent">
-                    Volume Forecast
-                  </CardTitle>
-                </div>
-                <div className="flex items-center gap-1 text-xs font-medium text-accent">
-                  <BrainCircuit className="h-3 w-3" />
-                  ML Model
-                </div>
-              </div>
-              <CardDescription>Top 5 products volume predictions for next week</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <ResponsiveContainer width="100%" height={300}>
-                <AreaChart data={volumeForecast}>
-                  <defs>
-                    <linearGradient id="colorBlt" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.8}/>
-                      <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0}/>
-                    </linearGradient>
-                    <linearGradient id="colorCaesar" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="hsl(var(--accent))" stopOpacity={0.7}/>
-                      <stop offset="95%" stopColor="hsl(var(--accent))" stopOpacity={0}/>
-                    </linearGradient>
-                    <linearGradient id="colorAvocado" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="hsl(var(--success))" stopOpacity={0.6}/>
-                      <stop offset="95%" stopColor="hsl(var(--success))" stopOpacity={0}/>
-                    </linearGradient>
-                  </defs>
-                  <CartesianGrid strokeDasharray="3 3" opacity={0.2} />
-                  <XAxis dataKey="day" stroke="hsl(var(--muted-foreground))" />
-                  <YAxis stroke="hsl(var(--muted-foreground))" />
-                  <Tooltip 
-                    contentStyle={{ 
-                      backgroundColor: "hsl(var(--popover))", 
-                      border: "1px solid hsl(var(--border))",
-                      borderRadius: "8px"
-                    }}
-                  />
-                  <Legend />
-                  <Area 
-                    type="monotone" 
-                    dataKey="blt" 
-                    stackId="1"
-                    stroke="hsl(var(--primary))"
-                    strokeWidth={2}
-                    fill="url(#colorBlt)"
-                    name="BLT Sandwich"
-                  />
-                  <Area 
-                    type="monotone" 
-                    dataKey="caesar" 
-                    stackId="1"
-                    stroke="hsl(var(--accent))"
-                    strokeWidth={2}
-                    fill="url(#colorCaesar)"
-                    name="Caesar Wrap"
-                  />
-                  <Area 
-                    type="monotone" 
-                    dataKey="avocado" 
-                    stackId="1"
-                    stroke="hsl(var(--success))"
-                    strokeWidth={2}
-                    fill="url(#colorAvocado)"
-                    name="Avocado Wrap"
-                  />
-                </AreaChart>
-              </ResponsiveContainer>
-              <div className="mt-4 space-y-2 p-4 rounded-lg bg-accent/5 border border-accent/20">
-                <div className="flex items-center gap-2 text-sm">
-                  <TrendingUp className="h-4 w-4 text-success" />
-                  <span className="font-medium">
-                    Total week volume: {volumeForecast.reduce((sum, day) => sum + day.blt + day.caesar + day.avocado + day.tuna + day.salad, 0)} units
-                  </span>
-                </div>
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <Sparkles className="h-4 w-4 text-accent" />
-                  <span>
-                    Top seller: BLT Sandwich ({volumeForecast.reduce((sum, day) => sum + day.blt, 0)} units/week)
-                  </span>
-                </div>
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <BrainCircuit className="h-4 w-4 text-accent" />
-                  <span>
-                    Model accuracy: 97.3% based on historical patterns
-                  </span>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Footfall Forecast */}
-          <Card className="shadow-card border-success/20 bg-gradient-to-br from-background via-background to-success/5">
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <Users className="h-5 w-5 text-success" />
-                  <CardTitle className="bg-gradient-to-r from-success to-primary bg-clip-text text-transparent">
-                    Footfall Forecast
-                  </CardTitle>
-                </div>
-                <div className="flex items-center gap-1 text-xs font-medium text-success">
-                  <Sparkles className="h-3 w-3" />
-                  AI Prediction
-                </div>
-              </div>
-              <CardDescription>Expected customer traffic for the next 7 days</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <ResponsiveContainer width="100%" height={300}>
-                <ComposedChart data={footfallForecast}>
-                  <defs>
-                    <linearGradient id="colorFootfall" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="hsl(var(--success))" stopOpacity={0.8}/>
-                      <stop offset="95%" stopColor="hsl(var(--success))" stopOpacity={0.1}/>
-                    </linearGradient>
-                  </defs>
-                  <CartesianGrid strokeDasharray="3 3" opacity={0.2} />
-                  <XAxis dataKey="day" stroke="hsl(var(--muted-foreground))" />
-                  <YAxis stroke="hsl(var(--muted-foreground))" />
-                  <Tooltip 
-                    contentStyle={{ 
-                      backgroundColor: "hsl(var(--popover))", 
-                      border: "1px solid hsl(var(--border))",
-                      borderRadius: "8px"
-                    }}
-                  />
-                  <Legend />
-                  <Area 
-                    type="monotone" 
-                    dataKey="footfall" 
-                    stroke="hsl(var(--success))"
-                    strokeWidth={3}
-                    fill="url(#colorFootfall)"
-                    name="Total Footfall"
-                  />
-                  <Bar 
-                    dataKey="morning" 
-                    stackId="breakdown"
-                    fill="hsl(var(--primary))"
-                    name="Morning"
-                    opacity={0.6}
-                  />
-                  <Bar 
-                    dataKey="afternoon" 
-                    stackId="breakdown"
-                    fill="hsl(var(--accent))"
-                    name="Afternoon"
-                    opacity={0.6}
-                  />
-                  <Bar 
-                    dataKey="evening" 
-                    stackId="breakdown"
-                    fill="hsl(var(--warning))"
-                    name="Evening"
-                    opacity={0.6}
-                  />
-                </ComposedChart>
-              </ResponsiveContainer>
-              <div className="mt-4 space-y-2 p-4 rounded-lg bg-success/5 border border-success/20">
-                <div className="flex items-center gap-2 text-sm">
-                  <Users className="h-4 w-4 text-success" />
-                  <span className="font-medium">
-                    Weekly forecast: {footfallForecast.reduce((sum, day) => sum + day.footfall, 0).toLocaleString()} customers
-                  </span>
-                </div>
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <TrendingUp className="h-4 w-4 text-success" />
-                  <span>
-                    Peak day: Saturday ({footfallForecast.find(d => d.day === "Sat")?.footfall.toLocaleString()} customers)
-                  </span>
-                </div>
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <BrainCircuit className="h-4 w-4 text-success" />
-                  <span>
-                    Busiest time: Afternoon ({Math.round(footfallForecast.reduce((sum, day) => sum + day.afternoon, 0) / footfallForecast.length)}avg/day)
-                  </span>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
         </div>
       )}
     </div>
