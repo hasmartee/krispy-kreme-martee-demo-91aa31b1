@@ -123,55 +123,55 @@ interface StoreInfo {
 // All stores use Ole and Steen products
 const storeBrands: Record<string, string> = {};
 
-// Ole and Steen product templates
+// Ole and Steen product templates with day parts
 const brandProductTemplates = {
   "Ole and Steen": [
     // Pastries & Viennoiserie
-    { id: "OS-P001", name: "Kanelstang (Cinnamon Swirl)", category: "Pastries", active: true, image: cinnamonSwirl },
-    { id: "OS-P002", name: "Tebirkes (Poppy Seed Pastry)", category: "Pastries", active: true, image: poppySeedPastry },
-    { id: "OS-P003", name: "Wienerbrød (Danish Pastry)", category: "Pastries", active: true, image: danishPastry },
-    { id: "OS-P004", name: "Croissant", category: "Pastries", active: true, image: butterCroissant },
-    { id: "OS-P005", name: "Pain au Chocolat", category: "Pastries", active: true, image: painAuChocolat },
-    { id: "OS-P006", name: "Almond Croissant", category: "Pastries", active: true, image: almondCroissant },
+    { id: "OS-P001", name: "Kanelstang (Cinnamon Swirl)", category: "Pastries", dayPart: "Morning", active: true, image: cinnamonSwirl },
+    { id: "OS-P002", name: "Tebirkes (Poppy Seed Pastry)", category: "Pastries", dayPart: "Morning", active: true, image: poppySeedPastry },
+    { id: "OS-P003", name: "Wienerbrød (Danish Pastry)", category: "Pastries", dayPart: "Morning", active: true, image: danishPastry },
+    { id: "OS-P004", name: "Croissant", category: "Pastries", dayPart: "Morning", active: true, image: butterCroissant },
+    { id: "OS-P005", name: "Pain au Chocolat", category: "Pastries", dayPart: "Morning", active: true, image: painAuChocolat },
+    { id: "OS-P006", name: "Almond Croissant", category: "Pastries", dayPart: "Morning", active: true, image: almondCroissant },
     
     // Breads & Baked Goods
-    { id: "OS-B001", name: "Rugbrød (Rye Bread) Whole", category: "Breads", active: true, image: ryeBreadWhole },
-    { id: "OS-B002", name: "Sourdough Loaf", category: "Breads", active: true, image: sourdoughLoaf },
-    { id: "OS-B003", name: "Whole Grain Roll", category: "Breads", active: true, image: wholeGrainRoll },
-    { id: "OS-B004", name: "Sesame Roll", category: "Breads", active: true, image: sesameRoll },
+    { id: "OS-B001", name: "Rugbrød (Rye Bread) Whole", category: "Breads", dayPart: "Morning", active: true, image: ryeBreadWhole },
+    { id: "OS-B002", name: "Sourdough Loaf", category: "Breads", dayPart: "Morning", active: true, image: sourdoughLoaf },
+    { id: "OS-B003", name: "Whole Grain Roll", category: "Breads", dayPart: "Morning", active: true, image: wholeGrainRoll },
+    { id: "OS-B004", name: "Sesame Roll", category: "Breads", dayPart: "Morning", active: true, image: sesameRoll },
     
     // Hot Breakfast Items
-    { id: "OS-HB001", name: "Scrambled Eggs on Sourdough", category: "Hot Breakfast", active: true, image: scrambledEggsToast },
-    { id: "OS-HB002", name: "Bacon & Egg Roll", category: "Hot Breakfast", active: true, image: baconEggRoll },
-    { id: "OS-HB003", name: "Ham & Cheese Croissant", category: "Hot Breakfast", active: true, image: hamCheeseCroissantHot },
-    { id: "OS-HB004", name: "Avocado Toast with Egg", category: "Hot Breakfast", active: true, image: avocadoEggToast },
-    { id: "OS-HB005", name: "Porridge with Honey & Nuts", category: "Hot Breakfast", active: true, image: porridgeHoney },
+    { id: "OS-HB001", name: "Scrambled Eggs on Sourdough", category: "Hot Breakfast", dayPart: "Morning", active: true, image: scrambledEggsToast },
+    { id: "OS-HB002", name: "Bacon & Egg Roll", category: "Hot Breakfast", dayPart: "Morning", active: true, image: baconEggRoll },
+    { id: "OS-HB003", name: "Ham & Cheese Croissant", category: "Hot Breakfast", dayPart: "Morning", active: true, image: hamCheeseCroissantHot },
+    { id: "OS-HB004", name: "Avocado Toast with Egg", category: "Hot Breakfast", dayPart: "Morning", active: true, image: avocadoEggToast },
+    { id: "OS-HB005", name: "Porridge with Honey & Nuts", category: "Hot Breakfast", dayPart: "Morning", active: true, image: porridgeHoney },
     
     // Cold Breakfast
-    { id: "OS-CB001", name: "Granola Bowl with Yogurt", category: "Cold Breakfast", active: true, image: granolaYogurtBowl },
-    { id: "OS-CB002", name: "Fruit & Yogurt Parfait", category: "Cold Breakfast", active: true, image: fruitParfait },
-    { id: "OS-CB003", name: "Almond Butter & Banana Toast", category: "Cold Breakfast", active: true, image: almondBananaToast },
+    { id: "OS-CB001", name: "Granola Bowl with Yogurt", category: "Cold Breakfast", dayPart: "Morning", active: true, image: granolaYogurtBowl },
+    { id: "OS-CB002", name: "Fruit & Yogurt Parfait", category: "Cold Breakfast", dayPart: "Morning", active: true, image: fruitParfait },
+    { id: "OS-CB003", name: "Almond Butter & Banana Toast", category: "Cold Breakfast", dayPart: "Morning", active: true, image: almondBananaToast },
     
     // Sandwiches & Smørrebrød
-    { id: "OS-S001", name: "Classic BLT Sandwich", category: "Sandwiches", active: true, image: classicBlt },
-    { id: "OS-S002", name: "Chicken Bacon Sandwich", category: "Sandwiches", active: true, image: chickenBacon },
-    { id: "OS-S003", name: "Salmon & Cream Cheese Bagel", category: "Sandwiches", active: true, image: salmonCreamBagel },
-    { id: "OS-S004", name: "Tuna Melt Panini", category: "Sandwiches", active: true, image: tunaMelt },
-    { id: "OS-S005", name: "Ham & Cheese Toastie", category: "Sandwiches", active: true, image: hamCheeseToastie },
-    { id: "OS-S006", name: "Egg & Cheese Muffin", category: "Sandwiches", active: true, image: eggCheeseEnglishMuffin },
+    { id: "OS-S001", name: "Classic BLT Sandwich", category: "Sandwiches", dayPart: "Lunch", active: true, image: classicBlt },
+    { id: "OS-S002", name: "Chicken Bacon Sandwich", category: "Sandwiches", dayPart: "Lunch", active: true, image: chickenBacon },
+    { id: "OS-S003", name: "Salmon & Cream Cheese Bagel", category: "Sandwiches", dayPart: "Lunch", active: true, image: salmonCreamBagel },
+    { id: "OS-S004", name: "Tuna Melt Panini", category: "Sandwiches", dayPart: "Lunch", active: true, image: tunaMelt },
+    { id: "OS-S005", name: "Ham & Cheese Toastie", category: "Sandwiches", dayPart: "Lunch", active: true, image: hamCheeseToastie },
+    { id: "OS-S006", name: "Egg & Cheese Muffin", category: "Sandwiches", dayPart: "Lunch", active: true, image: eggCheeseEnglishMuffin },
     
     // Wraps
-    { id: "OS-W001", name: "Chicken Caesar Wrap", category: "Wraps", active: true, image: chickenCaesar },
-    { id: "OS-W002", name: "Avocado & Hummus Wrap", category: "Wraps", active: true, image: avocadoHummus },
-    { id: "OS-W003", name: "Vegan Mediterranean Wrap", category: "Wraps", active: true, image: veganMediterraneanWrap },
-    { id: "OS-W004", name: "Breakfast Burrito", category: "Wraps", active: true, image: breakfastBurritoWrap },
+    { id: "OS-W001", name: "Chicken Caesar Wrap", category: "Wraps", dayPart: "Lunch", active: true, image: chickenCaesar },
+    { id: "OS-W002", name: "Avocado & Hummus Wrap", category: "Wraps", dayPart: "Lunch", active: true, image: avocadoHummus },
+    { id: "OS-W003", name: "Vegan Mediterranean Wrap", category: "Wraps", dayPart: "Lunch", active: true, image: veganMediterraneanWrap },
+    { id: "OS-W004", name: "Breakfast Burrito", category: "Wraps", dayPart: "Morning", active: true, image: breakfastBurritoWrap },
     
     // Salads
-    { id: "OS-L001", name: "Mediterranean Salad", category: "Salads", active: true, image: mediterraneanSaladBowl },
-    { id: "OS-L002", name: "Greek Feta Salad", category: "Salads", active: true, image: greekSaladBowl },
+    { id: "OS-L001", name: "Mediterranean Salad", category: "Salads", dayPart: "Lunch", active: true, image: mediterraneanSaladBowl },
+    { id: "OS-L002", name: "Greek Feta Salad", category: "Salads", dayPart: "Lunch", active: true, image: greekSaladBowl },
     
     // Combo Meals
-    { id: "OS-C001", name: "Coffee & Pastry Combo", category: "Combos", active: true, image: coffeePastry },
+    { id: "OS-C001", name: "Coffee & Pastry Combo", category: "Combos", dayPart: "Afternoon", active: true, image: coffeePastry },
   ]
 };
 
@@ -201,6 +201,7 @@ export default function StoreProductRange() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedBrand, setSelectedBrand] = useState("Ole and Steen");
   const [selectedCluster, setSelectedCluster] = useState<string>("all");
+  const [selectedDayPart, setSelectedDayPart] = useState<string>("all");
   const [storeData, setStoreData] = useState<any[]>([]);
   const [allStores, setAllStores] = useState<StoreInfo[]>([]);
   const [isClusterDialogOpen, setIsClusterDialogOpen] = useState(false);
@@ -440,6 +441,20 @@ export default function StoreProductRange() {
     );
   };
 
+  const getDayPartBadge = (dayPart: string) => {
+    const dayPartColors = {
+      'Morning': 'bg-amber-100 text-amber-800',
+      'Lunch': 'bg-sky-100 text-sky-800',
+      'Afternoon': 'bg-purple-100 text-purple-800',
+    };
+    
+    return (
+      <Badge className={dayPartColors[dayPart as keyof typeof dayPartColors] || 'bg-muted'}>
+        {dayPart}
+      </Badge>
+    );
+  };
+
   return (
     <div className="flex-1 space-y-6 p-6">
       {/* Header */}
@@ -504,6 +519,17 @@ export default function StoreProductRange() {
                       {cluster.name}
                     </SelectItem>
                   ))}
+                </SelectContent>
+              </Select>
+              <Select value={selectedDayPart} onValueChange={setSelectedDayPart}>
+                <SelectTrigger className="w-[200px]">
+                  <SelectValue placeholder="Filter by day part" />
+                </SelectTrigger>
+                <SelectContent className="bg-background border shadow-lg z-50">
+                  <SelectItem value="all">All Day Parts</SelectItem>
+                  <SelectItem value="Morning">Morning</SelectItem>
+                  <SelectItem value="Lunch">Lunch</SelectItem>
+                  <SelectItem value="Afternoon">Afternoon</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -696,12 +722,15 @@ export default function StoreProductRange() {
                                 <TableRow>
                                   <TableHead>Product</TableHead>
                                   <TableHead>Category</TableHead>
+                                  <TableHead>Day Part</TableHead>
                                   <TableHead>Status</TableHead>
                                   <TableHead>Action</TableHead>
                                 </TableRow>
                               </TableHeader>
                               <TableBody>
-                                {store.activeProducts.map((product) => (
+                                {store.activeProducts
+                                  .filter(product => selectedDayPart === "all" || product.dayPart === selectedDayPart)
+                                  .map((product) => (
                                   <TableRow key={product.id}>
                                     <TableCell>
                                       <div>
@@ -711,6 +740,9 @@ export default function StoreProductRange() {
                                     </TableCell>
                                     <TableCell>
                                       {getCategoryBadge(product.category)}
+                                    </TableCell>
+                                    <TableCell>
+                                      {getDayPartBadge(product.dayPart)}
                                     </TableCell>
                                     <TableCell>
                                       <Badge variant={product.active ? "default" : "secondary"}>
