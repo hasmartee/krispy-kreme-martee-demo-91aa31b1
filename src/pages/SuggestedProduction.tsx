@@ -299,8 +299,10 @@ export default function SuggestedProduction() {
     await new Promise(resolve => setTimeout(resolve, 1500));
     
     toast({
-      title: "✓ Production Confirmed",
-      description: `${product.productName} added to production queue for ${product.store}`,
+      title: viewMode === "hq" ? "✓ Production Confirmed" : "✓ Delivery Logged",
+      description: viewMode === "hq" 
+        ? `${product.productName} added to production queue for ${product.store}`
+        : `${product.productName} delivery logged - ${product.finalOrder} units received`,
     });
     
     setConfirmingProduction(null);
@@ -364,12 +366,16 @@ export default function SuggestedProduction() {
         <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/60 to-black/40" />
         <div className="absolute inset-0 flex flex-col justify-center px-8">
           <div className="flex items-center gap-3 mb-3">
-            <div className="flex items-center gap-2 bg-[#ff914d]/20 backdrop-blur-sm px-4 py-2 rounded-full border border-[#ff914d]/30">
-              <Sparkles className="h-5 w-5 text-[#ff914d] animate-pulse" />
-              <span className="text-white font-semibold text-sm">AI-Powered Suggestions</span>
-            </div>
+            {viewMode === "hq" && (
+              <div className="flex items-center gap-2 bg-[#ff914d]/20 backdrop-blur-sm px-4 py-2 rounded-full border border-[#ff914d]/30">
+                <Sparkles className="h-5 w-5 text-[#ff914d] animate-pulse" />
+                <span className="text-white font-semibold text-sm">AI-Powered Suggestions</span>
+              </div>
+            )}
           </div>
-          <h1 className="text-4xl font-bold text-white mb-2">Suggested Production Plan</h1>
+          <h1 className="text-4xl font-bold text-white mb-2">
+            {viewMode === "hq" ? "Suggested Production Plan" : "Store Deliveries"}
+          </h1>
           <p className="text-xl text-white/90">
             {viewMode === "hq" ? "All Stores" : selectedStore} - {formattedDate}
           </p>
@@ -397,9 +403,14 @@ export default function SuggestedProduction() {
         <CardHeader>
           <div className="flex items-center justify-between">
             <div>
-              <CardTitle className="text-xl">Daily Production Plan</CardTitle>
+              <CardTitle className="text-xl">
+                {viewMode === "hq" ? "Daily Production Plan" : "Expected Deliveries"}
+              </CardTitle>
               <CardDescription>
-                AI-powered production quantities for tomorrow's service
+                {viewMode === "hq" 
+                  ? "AI-powered production quantities for tomorrow's service"
+                  : "Log received deliveries and track any variations from expected quantities"
+                }
               </CardDescription>
             </div>
             <div className="flex items-center gap-2">
@@ -421,17 +432,21 @@ export default function SuggestedProduction() {
                 <TableHead>Product</TableHead>
                 <TableHead>Category</TableHead>
                 {viewMode === "hq" && <TableHead>Store</TableHead>}
-                <TableHead>Current Stock</TableHead>
-                <TableHead className="bg-gradient-to-r from-[#ff914d]/20 to-[#ff914d]/10 relative text-center">
-                  <div className="flex items-center justify-center gap-2 relative">
-                    <div className="absolute inset-0 bg-[#ff914d]/5 blur-sm" />
-                    <Sparkles className="h-4 w-4 text-[#ff914d] relative z-10 animate-pulse" />
-                    <span className="relative z-10 font-semibold bg-gradient-to-r from-[#ff914d] to-[#ff914d]/70 bg-clip-text text-transparent">
-                      AI Recommended Qty
-                    </span>
-                  </div>
+                <TableHead>{viewMode === "hq" ? "Current Stock" : "Expected Delivery"}</TableHead>
+                {viewMode === "hq" && (
+                  <TableHead className="bg-gradient-to-r from-[#ff914d]/20 to-[#ff914d]/10 relative text-center">
+                    <div className="flex items-center justify-center gap-2 relative">
+                      <div className="absolute inset-0 bg-[#ff914d]/5 blur-sm" />
+                      <Sparkles className="h-4 w-4 text-[#ff914d] relative z-10 animate-pulse" />
+                      <span className="relative z-10 font-semibold bg-gradient-to-r from-[#ff914d] to-[#ff914d]/70 bg-clip-text text-transparent">
+                        AI Recommended Qty
+                      </span>
+                    </div>
+                  </TableHead>
+                )}
+                <TableHead className="bg-brand-green/10 text-center">
+                  {viewMode === "hq" ? "Final Qty" : "Delivered"}
                 </TableHead>
-                <TableHead className="bg-brand-green/10 text-center">Final Qty</TableHead>
                 <TableHead>Action</TableHead>
               </TableRow>
             </TableHeader>
@@ -460,36 +475,47 @@ export default function SuggestedProduction() {
                   <TableCell>
                     <span className="font-mono">{product.currentStock}</span>
                   </TableCell>
-                  <TableCell className="bg-gradient-to-r from-[#ff914d]/10 to-transparent relative group">
-                    <div className="absolute inset-0 bg-gradient-to-r from-[#ff914d]/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                    <div className="flex items-center justify-center gap-2 relative z-10">
-                      <span className="font-mono font-semibold text-foreground">
-                        {product.recommendedOrder}
-                      </span>
-                      <Sparkles className="h-3 w-3 text-[#ff914d] opacity-0 group-hover:opacity-100 transition-opacity" />
-                    </div>
-                  </TableCell>
+                  {viewMode === "hq" && (
+                    <TableCell className="bg-gradient-to-r from-[#ff914d]/10 to-transparent relative group">
+                      <div className="absolute inset-0 bg-gradient-to-r from-[#ff914d]/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                      <div className="flex items-center justify-center gap-2 relative z-10">
+                        <span className="font-mono font-semibold text-foreground">
+                          {product.recommendedOrder}
+                        </span>
+                        <Sparkles className="h-3 w-3 text-[#ff914d] opacity-0 group-hover:opacity-100 transition-opacity" />
+                      </div>
+                    </TableCell>
+                  )}
                   <TableCell className="bg-brand-green/5">
                     <div className="flex items-center gap-2 justify-center">
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => updateFinalOrder(product.id, product.storeId, -1)}
-                        className="h-8 w-8 p-0 rounded-full border-brand-green hover:bg-brand-green hover:text-white transition-colors"
-                      >
-                        <Minus className="h-4 w-4" />
-                      </Button>
-                      <span className="font-mono font-bold text-brand-green min-w-[2.5rem] text-center text-lg">
-                        {product.finalOrder}
-                      </span>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => updateFinalOrder(product.id, product.storeId, 1)}
-                        className="h-8 w-8 p-0 rounded-full border-brand-green hover:bg-brand-green hover:text-white transition-colors"
-                      >
-                        <Plus className="h-4 w-4" />
-                      </Button>
+                      {viewMode === "hq" && (
+                        <>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => updateFinalOrder(product.id, product.storeId, -1)}
+                            className="h-8 w-8 p-0 rounded-full border-brand-green hover:bg-brand-green hover:text-white transition-colors"
+                          >
+                            <Minus className="h-4 w-4" />
+                          </Button>
+                          <span className="font-mono font-bold text-brand-green min-w-[2.5rem] text-center text-lg">
+                            {product.finalOrder}
+                          </span>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => updateFinalOrder(product.id, product.storeId, 1)}
+                            className="h-8 w-8 p-0 rounded-full border-brand-green hover:bg-brand-green hover:text-white transition-colors"
+                          >
+                            <Plus className="h-4 w-4" />
+                          </Button>
+                        </>
+                      )}
+                      {viewMode === "store_manager" && (
+                        <span className="font-mono font-bold text-brand-green text-lg">
+                          {product.finalOrder}
+                        </span>
+                      )}
                     </div>
                   </TableCell>
                   <TableCell>
@@ -502,10 +528,10 @@ export default function SuggestedProduction() {
                       {confirmingProduction === `${product.id}-${product.storeId}` ? (
                         <>
                           <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                          Confirming...
+                          {viewMode === "hq" ? "Confirming..." : "Logging..."}
                         </>
                       ) : (
-                        'Confirm'
+                        viewMode === "hq" ? "Confirm" : "Log Delivery"
                       )}
                     </Button>
                   </TableCell>
