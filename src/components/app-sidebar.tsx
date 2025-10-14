@@ -37,13 +37,11 @@ const settingsNavigationHQ = [
   { title: "My Products", url: "/products", icon: Package },
   { title: "My Stores", url: "/stores", icon: Store },
   { title: "My Range Plans", url: "/store-products", icon: ShoppingCart },
-  { title: "My Recipes", url: "/recipes", icon: BookOpen },
 ];
 
 const settingsNavigationStoreManager = [
   { title: "Products", url: "/products", icon: Package },
   { title: "Range", url: "/store-products", icon: ShoppingCart },
-  { title: "Recipes", url: "/recipes", icon: BookOpen },
   { title: "Store Details", url: "/store-details", icon: Store },
 ];
 

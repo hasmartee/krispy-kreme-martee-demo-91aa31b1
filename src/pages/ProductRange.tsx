@@ -11,76 +11,87 @@ import { useToast } from "@/hooks/use-toast";
 import { useView } from "@/contexts/ViewContext";
 import ProductCard from "@/components/ProductCard";
 import ProductListItem from "@/components/ProductListItem";
-import bltSandwich from "@/assets/products/blt-sandwich.jpg";
-import chickenCaesarWrap from "@/assets/products/chicken-caesar-wrap.jpg";
-import avocadoHummusWrap from "@/assets/products/avocado-hummus-wrap.jpg";
-import tunaMeltPanini from "@/assets/products/tuna-melt-panini.jpg";
-import mediterraneanSalad from "@/assets/products/mediterranean-salad.jpg";
-import salmonBagel from "@/assets/products/salmon-bagel.jpg";
-import chickenBaconSandwich from "@/assets/products/chicken-bacon-sandwich.jpg";
-import veganWrap from "@/assets/products/vegan-wrap.jpg";
-import greekFetaSalad from "@/assets/products/greek-feta-salad.jpg";
-import hamCheeseCroissant from "@/assets/products/ham-cheese-croissant.jpg";
+import cinnamonSwirl from "@/assets/products/cinnamon-swirl.jpg";
+import poppySeedPastry from "@/assets/products/poppy-seed-pastry.jpg";
+import danishPastry from "@/assets/products/danish-pastry.jpg";
+import butterCroissant from "@/assets/products/butter-croissant.jpg";
+import painAuChocolat from "@/assets/products/pain-au-chocolat.jpg";
+import almondCroissant from "@/assets/products/almond-croissant.jpg";
+import ryeBreadWhole from "@/assets/products/rye-bread-whole.jpg";
+import sourdoughLoaf from "@/assets/products/sourdough-loaf.jpg";
+import wholeGrainRoll from "@/assets/products/whole-grain-roll.jpg";
+import sesameRoll from "@/assets/products/sesame-roll.jpg";
+import scrambledEggsToast from "@/assets/products/scrambled-eggs-toast.jpg";
 import baconEggRoll from "@/assets/products/bacon-egg-roll.jpg";
-import avocadoToastEgg from "@/assets/products/avocado-toast-egg.jpg";
-import fruitYogurtPar from "@/assets/products/fruit-yogurt-parfait.jpg";
-import breakfastBurrito from "@/assets/products/breakfast-burrito.jpg";
-import granolaBowl from "@/assets/products/granola-bowl.jpg";
-import eggCheeseMuffin from "@/assets/products/egg-cheese-muffin.jpg";
-import almondButterBananaToast from "@/assets/products/almond-butter-banana-toast.jpg";
-import coffeePastryCombo from "@/assets/products/coffee-pastry-combo.jpg";
-import scrambledEggsSourdough from "@/assets/products/scrambled-eggs-sourdough.jpg";
-import porridgeHoneyNuts from "@/assets/products/porridge-honey-nuts.jpg";
+import hamCheeseCroissantHot from "@/assets/products/ham-cheese-croissant-hot.jpg";
+import avocadoEggToast from "@/assets/products/avocado-egg-toast.jpg";
+import porridgeHoney from "@/assets/products/porridge-honey.jpg";
+import granolaYogurtBowl from "@/assets/products/granola-yogurt-bowl.jpg";
+import fruitParfait from "@/assets/products/fruit-parfait.jpg";
+import almondBananaToast from "@/assets/products/almond-banana-toast.jpg";
+import classicBlt from "@/assets/products/classic-blt.jpg";
+import chickenBacon from "@/assets/products/chicken-bacon.jpg";
+import salmonCreamBagel from "@/assets/products/salmon-cream-bagel.jpg";
+import tunaMelt from "@/assets/products/tuna-melt.jpg";
+import hamCheeseToastie from "@/assets/products/ham-cheese-toastie.jpg";
+import eggCheeseEnglishMuffin from "@/assets/products/egg-cheese-english-muffin.jpg";
+import chickenCaesar from "@/assets/products/chicken-caesar.jpg";
+import avocadoHummus from "@/assets/products/avocado-hummus.jpg";
+import veganMediterraneanWrap from "@/assets/products/vegan-mediterranean-wrap.jpg";
+import breakfastBurritoWrap from "@/assets/products/breakfast-burrito-wrap.jpg";
+import mediterraneanSaladBowl from "@/assets/products/mediterranean-salad-bowl.jpg";
+import greekSaladBowl from "@/assets/products/greek-salad-bowl.jpg";
+import coffeePastry from "@/assets/products/coffee-pastry.jpg";
 
 // Brand-specific product catalogs
 const brandProducts = {
   "Ole and Steen": [
     // Pastries & Viennoiserie
-    { skuId: "OS-001", name: "Kanelstang (Cinnamon Swirl)", category: "Pastries", price: 3.95, costPrice: 1.65, inStock: true, image: coffeePastryCombo, allergens: ["Gluten", "Dairy", "Egg"], shelfLife: 1, ingredients: [] },
-    { skuId: "OS-002", name: "Tebirkes (Poppy Seed Pastry)", category: "Pastries", price: 3.75, costPrice: 1.55, inStock: true, image: coffeePastryCombo, allergens: ["Gluten", "Dairy", "Sesame"], shelfLife: 1, ingredients: [] },
-    { skuId: "OS-003", name: "Wienerbrød (Danish Pastry)", category: "Pastries", price: 4.25, costPrice: 1.75, inStock: true, image: coffeePastryCombo, allergens: ["Gluten", "Dairy", "Egg"], shelfLife: 1, ingredients: [] },
-    { skuId: "OS-004", name: "Croissant", category: "Pastries", price: 3.50, costPrice: 1.45, inStock: true, image: hamCheeseCroissant, allergens: ["Gluten", "Dairy"], shelfLife: 1, ingredients: [] },
-    { skuId: "OS-005", name: "Pain au Chocolat", category: "Pastries", price: 3.95, costPrice: 1.65, inStock: true, image: coffeePastryCombo, allergens: ["Gluten", "Dairy"], shelfLife: 1, ingredients: [] },
-    { skuId: "OS-006", name: "Almond Croissant", category: "Pastries", price: 4.50, costPrice: 1.85, inStock: true, image: coffeePastryCombo, allergens: ["Gluten", "Dairy", "Nuts"], shelfLife: 1, ingredients: [] },
+    { skuId: "OS-P001", name: "Kanelstang (Cinnamon Swirl)", category: "Pastries", price: 3.95, costPrice: 1.65, inStock: true, image: cinnamonSwirl, allergens: ["Gluten", "Dairy", "Egg"], shelfLife: 1, ingredients: [] },
+    { skuId: "OS-P002", name: "Tebirkes (Poppy Seed Pastry)", category: "Pastries", price: 3.75, costPrice: 1.55, inStock: true, image: poppySeedPastry, allergens: ["Gluten", "Dairy", "Sesame"], shelfLife: 1, ingredients: [] },
+    { skuId: "OS-P003", name: "Wienerbrød (Danish Pastry)", category: "Pastries", price: 4.25, costPrice: 1.75, inStock: true, image: danishPastry, allergens: ["Gluten", "Dairy", "Egg"], shelfLife: 1, ingredients: [] },
+    { skuId: "OS-P004", name: "Croissant", category: "Pastries", price: 3.50, costPrice: 1.45, inStock: true, image: butterCroissant, allergens: ["Gluten", "Dairy"], shelfLife: 1, ingredients: [] },
+    { skuId: "OS-P005", name: "Pain au Chocolat", category: "Pastries", price: 3.95, costPrice: 1.65, inStock: true, image: painAuChocolat, allergens: ["Gluten", "Dairy"], shelfLife: 1, ingredients: [] },
+    { skuId: "OS-P006", name: "Almond Croissant", category: "Pastries", price: 4.50, costPrice: 1.85, inStock: true, image: almondCroissant, allergens: ["Gluten", "Dairy", "Nuts"], shelfLife: 1, ingredients: [] },
     
     // Breads & Baked Goods
-    { skuId: "OS-010", name: "Rugbrød (Rye Bread) Whole", category: "Breads", price: 5.95, costPrice: 2.50, inStock: true, image: scrambledEggsSourdough, allergens: ["Gluten"], shelfLife: 5, ingredients: [] },
-    { skuId: "OS-011", name: "Sourdough Loaf", category: "Breads", price: 6.50, costPrice: 2.75, inStock: true, image: scrambledEggsSourdough, allergens: ["Gluten"], shelfLife: 3, ingredients: [] },
-    { skuId: "OS-012", name: "Whole Grain Roll", category: "Breads", price: 2.25, costPrice: 0.95, inStock: true, image: baconEggRoll, allergens: ["Gluten"], shelfLife: 2, ingredients: [] },
-    { skuId: "OS-013", name: "Sesame Roll", category: "Breads", price: 2.25, costPrice: 0.95, inStock: true, image: baconEggRoll, allergens: ["Gluten", "Sesame"], shelfLife: 2, ingredients: [] },
+    { skuId: "OS-B001", name: "Rugbrød (Rye Bread) Whole", category: "Breads", price: 5.95, costPrice: 2.50, inStock: true, image: ryeBreadWhole, allergens: ["Gluten"], shelfLife: 5, ingredients: [] },
+    { skuId: "OS-B002", name: "Sourdough Loaf", category: "Breads", price: 6.50, costPrice: 2.75, inStock: true, image: sourdoughLoaf, allergens: ["Gluten"], shelfLife: 3, ingredients: [] },
+    { skuId: "OS-B003", name: "Whole Grain Roll", category: "Breads", price: 2.25, costPrice: 0.95, inStock: true, image: wholeGrainRoll, allergens: ["Gluten"], shelfLife: 2, ingredients: [] },
+    { skuId: "OS-B004", name: "Sesame Roll", category: "Breads", price: 2.25, costPrice: 0.95, inStock: true, image: sesameRoll, allergens: ["Gluten", "Sesame"], shelfLife: 2, ingredients: [] },
     
     // Hot Breakfast Items
-    { skuId: "OS-020", name: "Scrambled Eggs on Sourdough", category: "Hot Breakfast", price: 6.95, costPrice: 2.95, inStock: true, image: scrambledEggsSourdough, allergens: ["Gluten", "Egg", "Dairy"], shelfLife: 1, ingredients: [] },
-    { skuId: "OS-021", name: "Bacon & Egg Roll", category: "Hot Breakfast", price: 5.95, costPrice: 2.50, inStock: true, image: baconEggRoll, allergens: ["Gluten", "Egg"], shelfLife: 1, ingredients: [] },
-    { skuId: "OS-022", name: "Ham & Cheese Croissant", category: "Hot Breakfast", price: 5.50, costPrice: 2.30, inStock: true, image: hamCheeseCroissant, allergens: ["Gluten", "Dairy"], shelfLife: 1, ingredients: [] },
-    { skuId: "OS-023", name: "Avocado Toast with Egg", category: "Hot Breakfast", price: 7.95, costPrice: 3.35, inStock: true, image: avocadoToastEgg, allergens: ["Gluten", "Egg"], shelfLife: 1, ingredients: [] },
-    { skuId: "OS-024", name: "Porridge with Honey & Nuts", category: "Hot Breakfast", price: 4.95, costPrice: 2.05, inStock: true, image: porridgeHoneyNuts, allergens: ["Gluten", "Dairy", "Nuts"], shelfLife: 1, ingredients: [] },
+    { skuId: "OS-HB001", name: "Scrambled Eggs on Sourdough", category: "Hot Breakfast", price: 6.95, costPrice: 2.95, inStock: true, image: scrambledEggsToast, allergens: ["Gluten", "Egg", "Dairy"], shelfLife: 1, ingredients: [] },
+    { skuId: "OS-HB002", name: "Bacon & Egg Roll", category: "Hot Breakfast", price: 5.95, costPrice: 2.50, inStock: true, image: baconEggRoll, allergens: ["Gluten", "Egg"], shelfLife: 1, ingredients: [] },
+    { skuId: "OS-HB003", name: "Ham & Cheese Croissant", category: "Hot Breakfast", price: 5.50, costPrice: 2.30, inStock: true, image: hamCheeseCroissantHot, allergens: ["Gluten", "Dairy"], shelfLife: 1, ingredients: [] },
+    { skuId: "OS-HB004", name: "Avocado Toast with Egg", category: "Hot Breakfast", price: 7.95, costPrice: 3.35, inStock: true, image: avocadoEggToast, allergens: ["Gluten", "Egg"], shelfLife: 1, ingredients: [] },
+    { skuId: "OS-HB005", name: "Porridge with Honey & Nuts", category: "Hot Breakfast", price: 4.95, costPrice: 2.05, inStock: true, image: porridgeHoney, allergens: ["Gluten", "Dairy", "Nuts"], shelfLife: 1, ingredients: [] },
     
     // Cold Breakfast
-    { skuId: "OS-030", name: "Granola Bowl with Yogurt", category: "Cold Breakfast", price: 5.50, costPrice: 2.30, inStock: true, image: granolaBowl, allergens: ["Dairy", "Nuts"], shelfLife: 2, ingredients: [] },
-    { skuId: "OS-031", name: "Fruit & Yogurt Parfait", category: "Cold Breakfast", price: 4.95, costPrice: 2.05, inStock: true, image: fruitYogurtPar, allergens: ["Dairy"], shelfLife: 2, ingredients: [] },
-    { skuId: "OS-032", name: "Almond Butter & Banana Toast", category: "Cold Breakfast", price: 5.95, costPrice: 2.50, inStock: true, image: almondButterBananaToast, allergens: ["Gluten", "Nuts"], shelfLife: 1, ingredients: [] },
+    { skuId: "OS-CB001", name: "Granola Bowl with Yogurt", category: "Cold Breakfast", price: 5.50, costPrice: 2.30, inStock: true, image: granolaYogurtBowl, allergens: ["Dairy", "Nuts"], shelfLife: 2, ingredients: [] },
+    { skuId: "OS-CB002", name: "Fruit & Yogurt Parfait", category: "Cold Breakfast", price: 4.95, costPrice: 2.05, inStock: true, image: fruitParfait, allergens: ["Dairy"], shelfLife: 2, ingredients: [] },
+    { skuId: "OS-CB003", name: "Almond Butter & Banana Toast", category: "Cold Breakfast", price: 5.95, costPrice: 2.50, inStock: true, image: almondBananaToast, allergens: ["Gluten", "Nuts"], shelfLife: 1, ingredients: [] },
     
     // Sandwiches & Smørrebrød
-    { skuId: "OS-040", name: "Classic BLT Sandwich", category: "Sandwiches", price: 6.95, costPrice: 2.95, inStock: true, image: bltSandwich, allergens: ["Gluten"], shelfLife: 2, ingredients: [] },
-    { skuId: "OS-041", name: "Chicken Bacon Sandwich", category: "Sandwiches", price: 7.50, costPrice: 3.15, inStock: true, image: chickenBaconSandwich, allergens: ["Gluten"], shelfLife: 2, ingredients: [] },
-    { skuId: "OS-042", name: "Salmon & Cream Cheese Bagel", category: "Sandwiches", price: 7.95, costPrice: 3.35, inStock: true, image: salmonBagel, allergens: ["Gluten", "Fish", "Dairy"], shelfLife: 2, ingredients: [] },
-    { skuId: "OS-043", name: "Tuna Melt Panini", category: "Sandwiches", price: 6.95, costPrice: 2.95, inStock: true, image: tunaMeltPanini, allergens: ["Gluten", "Fish", "Dairy"], shelfLife: 2, ingredients: [] },
-    { skuId: "OS-044", name: "Ham & Cheese Toastie", category: "Sandwiches", price: 5.95, costPrice: 2.50, inStock: true, image: hamCheeseCroissant, allergens: ["Gluten", "Dairy"], shelfLife: 2, ingredients: [] },
-    { skuId: "OS-045", name: "Egg & Cheese Muffin", category: "Sandwiches", price: 4.95, costPrice: 2.05, inStock: true, image: eggCheeseMuffin, allergens: ["Gluten", "Egg", "Dairy"], shelfLife: 1, ingredients: [] },
+    { skuId: "OS-S001", name: "Classic BLT Sandwich", category: "Sandwiches", price: 6.95, costPrice: 2.95, inStock: true, image: classicBlt, allergens: ["Gluten"], shelfLife: 2, ingredients: [] },
+    { skuId: "OS-S002", name: "Chicken Bacon Sandwich", category: "Sandwiches", price: 7.50, costPrice: 3.15, inStock: true, image: chickenBacon, allergens: ["Gluten"], shelfLife: 2, ingredients: [] },
+    { skuId: "OS-S003", name: "Salmon & Cream Cheese Bagel", category: "Sandwiches", price: 7.95, costPrice: 3.35, inStock: true, image: salmonCreamBagel, allergens: ["Gluten", "Fish", "Dairy"], shelfLife: 2, ingredients: [] },
+    { skuId: "OS-S004", name: "Tuna Melt Panini", category: "Sandwiches", price: 6.95, costPrice: 2.95, inStock: true, image: tunaMelt, allergens: ["Gluten", "Fish", "Dairy"], shelfLife: 2, ingredients: [] },
+    { skuId: "OS-S005", name: "Ham & Cheese Toastie", category: "Sandwiches", price: 5.95, costPrice: 2.50, inStock: true, image: hamCheeseToastie, allergens: ["Gluten", "Dairy"], shelfLife: 2, ingredients: [] },
+    { skuId: "OS-S006", name: "Egg & Cheese Muffin", category: "Sandwiches", price: 4.95, costPrice: 2.05, inStock: true, image: eggCheeseEnglishMuffin, allergens: ["Gluten", "Egg", "Dairy"], shelfLife: 1, ingredients: [] },
     
     // Wraps
-    { skuId: "OS-050", name: "Chicken Caesar Wrap", category: "Wraps", price: 7.50, costPrice: 3.15, inStock: true, image: chickenCaesarWrap, allergens: ["Gluten", "Dairy", "Fish"], shelfLife: 2, ingredients: [] },
-    { skuId: "OS-051", name: "Avocado & Hummus Wrap", category: "Wraps", price: 6.95, costPrice: 2.95, inStock: true, image: avocadoHummusWrap, allergens: ["Gluten", "Sesame"], shelfLife: 2, ingredients: [] },
-    { skuId: "OS-052", name: "Vegan Mediterranean Wrap", category: "Wraps", price: 6.95, costPrice: 2.95, inStock: true, image: veganWrap, allergens: ["Gluten"], shelfLife: 2, ingredients: [] },
-    { skuId: "OS-053", name: "Breakfast Burrito", category: "Wraps", price: 6.50, costPrice: 2.75, inStock: true, image: breakfastBurrito, allergens: ["Gluten", "Egg", "Dairy"], shelfLife: 1, ingredients: [] },
+    { skuId: "OS-W001", name: "Chicken Caesar Wrap", category: "Wraps", price: 7.50, costPrice: 3.15, inStock: true, image: chickenCaesar, allergens: ["Gluten", "Dairy", "Fish"], shelfLife: 2, ingredients: [] },
+    { skuId: "OS-W002", name: "Avocado & Hummus Wrap", category: "Wraps", price: 6.95, costPrice: 2.95, inStock: true, image: avocadoHummus, allergens: ["Gluten", "Sesame"], shelfLife: 2, ingredients: [] },
+    { skuId: "OS-W003", name: "Vegan Mediterranean Wrap", category: "Wraps", price: 6.95, costPrice: 2.95, inStock: true, image: veganMediterraneanWrap, allergens: ["Gluten"], shelfLife: 2, ingredients: [] },
+    { skuId: "OS-W004", name: "Breakfast Burrito", category: "Wraps", price: 6.50, costPrice: 2.75, inStock: true, image: breakfastBurritoWrap, allergens: ["Gluten", "Egg", "Dairy"], shelfLife: 1, ingredients: [] },
     
     // Salads
-    { skuId: "OS-060", name: "Mediterranean Salad", category: "Salads", price: 7.95, costPrice: 3.35, inStock: true, image: mediterraneanSalad, allergens: ["Dairy"], shelfLife: 3, ingredients: [] },
-    { skuId: "OS-061", name: "Greek Feta Salad", category: "Salads", price: 7.50, costPrice: 3.15, inStock: true, image: greekFetaSalad, allergens: ["Dairy"], shelfLife: 3, ingredients: [] },
+    { skuId: "OS-L001", name: "Mediterranean Salad", category: "Salads", price: 7.95, costPrice: 3.35, inStock: true, image: mediterraneanSaladBowl, allergens: ["Dairy"], shelfLife: 3, ingredients: [] },
+    { skuId: "OS-L002", name: "Greek Feta Salad", category: "Salads", price: 7.50, costPrice: 3.15, inStock: true, image: greekSaladBowl, allergens: ["Dairy"], shelfLife: 3, ingredients: [] },
     
     // Combo Meals
-    { skuId: "OS-070", name: "Coffee & Pastry Combo", category: "Combos", price: 6.95, costPrice: 2.95, inStock: true, image: coffeePastryCombo, allergens: ["Gluten", "Dairy"], shelfLife: 1, ingredients: [] },
+    { skuId: "OS-C001", name: "Coffee & Pastry Combo", category: "Combos", price: 6.95, costPrice: 2.95, inStock: true, image: coffeePastry, allergens: ["Gluten", "Dairy"], shelfLife: 1, ingredients: [] },
   ]
 };
 
@@ -147,7 +158,7 @@ export default function ProductRange() {
             price: parseFloat(values[3]) || 0,
             costPrice: parseFloat(values[4]) || 0,
             inStock: values[5]?.toLowerCase() === 'true',
-            image: bltSandwich, // Default image
+            image: classicBlt, // Default image
             allergens: values[6] ? values[6].split(';') : [],
             shelfLife: parseInt(values[7]) || 2,
             ingredients: [],

@@ -18,7 +18,6 @@ import Analytics from "./pages/Analytics";
 import LiveSales from "./pages/LiveSales";
 import Settings from "./pages/Settings";
 import Inventory from "./pages/Inventory";
-import MyRecipes from "./pages/MyRecipes";
 import MyTasks from "./pages/MyTasks";
 import Deliveries from "./pages/Deliveries";
 import Production from "./pages/Production";
@@ -51,7 +50,6 @@ const App = () => (
                       <Route path="/store-products" element={<StoreProductRange />} />
                       <Route path="/stores" element={<StoreManagement />} />
                       <Route path="/inventory" element={<Inventory />} />
-                      <Route path="/recipes" element={<MyRecipes />} />
                       <Route path="/tasks" element={<MyTasks />} />
                       <Route path="/production" element={<Production />} />
                       <Route path="/store-details" element={<StoreDetails />} />

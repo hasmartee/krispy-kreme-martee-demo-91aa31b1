@@ -11,17 +11,17 @@ import { format } from "date-fns";
 import heroImage from "@/assets/hero-food.jpg";
 import { useView } from "@/contexts/ViewContext";
 import { supabase } from "@/lib/supabase-helper";
-import bltSandwich from "@/assets/products/blt-sandwich.jpg";
-import chickenCaesarWrap from "@/assets/products/chicken-caesar-wrap.jpg";
-import avocadoHummusWrap from "@/assets/products/avocado-hummus-wrap.jpg";
-import salmonBagel from "@/assets/products/salmon-bagel.jpg";
-import greekFetaSalad from "@/assets/products/greek-feta-salad.jpg";
+import classicBlt from "@/assets/products/classic-blt.jpg";
+import chickenCaesar from "@/assets/products/chicken-caesar.jpg";
+import avocadoHummus from "@/assets/products/avocado-hummus.jpg";
+import salmonCreamBagel from "@/assets/products/salmon-cream-bagel.jpg";
+import greekSaladBowl from "@/assets/products/greek-salad-bowl.jpg";
 
 // Recipe data
 const recipes = {
-  "SK001": {
+  "OS-S001": {
     productName: "Classic BLT Sandwich",
-    image: bltSandwich,
+    image: classicBlt,
     prepTime: "5 minutes",
     ingredients: [
       { item: "Bacon", quantity: "3 rashers (60g)" },
@@ -44,9 +44,9 @@ const recipes = {
       "Cut diagonally and wrap immediately in food-safe packaging.",
     ],
   },
-  "SK002": {
+  "OS-W001": {
     productName: "Chicken Caesar Wrap",
-    image: chickenCaesarWrap,
+    image: chickenCaesar,
     prepTime: "7 minutes",
     ingredients: [
       { item: "Grilled Chicken", quantity: "120g" },
@@ -68,9 +68,9 @@ const recipes = {
       "Cut in half diagonally and wrap immediately in food-safe packaging.",
     ],
   },
-  "SK003": {
+  "OS-W002": {
     productName: "Avocado & Hummus Wrap",
-    image: avocadoHummusWrap,
+    image: avocadoHummus,
     prepTime: "5 minutes",
     ingredients: [
       { item: "Avocado", quantity: "1/2 (70g)" },
@@ -92,7 +92,7 @@ const recipes = {
       "Cut in half diagonally and wrap immediately in food-safe packaging.",
     ],
   },
-  "SK004": {
+  "OS-S004": {
     productName: "Tuna Melt Panini",
     image: null,
     prepTime: "8 minutes",
@@ -116,9 +116,9 @@ const recipes = {
       "Cut in half diagonally and wrap immediately in food-safe packaging.",
     ],
   },
-  "SK005": {
+  "OS-L001": {
     productName: "Mediterranean Salad Bowl",
-    image: greekFetaSalad,
+    image: greekSaladBowl,
     prepTime: "10 minutes",
     ingredients: [
       { item: "Cucumber", quantity: "1/2 (60g)" },
@@ -142,9 +142,9 @@ const recipes = {
       "Serve immediately in a bowl or portion into food-safe containers for later.",
     ],
   },
-  "SK006": {
+  "OS-S003": {
     productName: "Smoked Salmon Bagel",
-    image: salmonBagel,
+    image: salmonCreamBagel,
     prepTime: "5 minutes",
     ingredients: [
       { item: "Smoked Salmon", quantity: "80g" },
@@ -219,12 +219,12 @@ export default function SuggestedProduction() {
         // Generate mock production data for each store
         const mockProducts: Product[] = [];
         const productsList = [
-          { id: "SK001", name: "Classic BLT Sandwich", category: "Sandwich" },
-          { id: "SK002", name: "Chicken Caesar Wrap", category: "Wrap" },
-          { id: "SK003", name: "Avocado & Hummus Wrap", category: "Wrap" },
-          { id: "SK004", name: "Tuna Melt Panini", category: "Hot Food" },
-          { id: "SK005", name: "Mediterranean Salad Bowl", category: "Salad" },
-          { id: "SK006", name: "Smoked Salmon Bagel", category: "Sandwich" },
+          { id: "OS-S001", name: "Classic BLT Sandwich", category: "Sandwich" },
+          { id: "OS-W001", name: "Chicken Caesar Wrap", category: "Wrap" },
+          { id: "OS-W002", name: "Avocado & Hummus Wrap", category: "Wrap" },
+          { id: "OS-S004", name: "Tuna Melt Panini", category: "Hot Food" },
+          { id: "OS-L001", name: "Mediterranean Salad", category: "Salad" },
+          { id: "OS-S003", name: "Salmon & Cream Cheese Bagel", category: "Sandwich" },
         ];
 
         const targetStores = viewMode === "store_manager" 
