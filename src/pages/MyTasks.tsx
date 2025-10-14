@@ -4,7 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { Truck, Trash2, ArrowRight, Clock, Trophy, Zap, Star, Sparkles } from "lucide-react";
+import { Truck, Trash2, ArrowRight, Clock, Trophy, Zap, Star, Sparkles, CheckSquare } from "lucide-react";
 import { useView } from "@/contexts/ViewContext";
 import { useToast } from "@/hooks/use-toast";
 
@@ -40,6 +40,24 @@ export default function MyTasks() {
     },
     {
       id: "2",
+      title: "Fresh Prep Finishing Touches",
+      description: "Complete final preparations for fresh products",
+      time: "Morning",
+      icon: Star,
+      path: "",
+      completed: false,
+    },
+    {
+      id: "3",
+      title: "Daily Checks",
+      description: "Complete routine store safety and quality checks",
+      time: "Throughout Day",
+      icon: CheckSquare,
+      path: "",
+      completed: false,
+    },
+    {
+      id: "4",
       title: "Confirm Waste",
       description: "Record end of day waste for all products",
       time: "End of Day",
@@ -93,7 +111,9 @@ export default function MyTasks() {
   };
 
   const handleTaskClick = (task: Task) => {
-    navigate(task.path);
+    if (task.path) {
+      navigate(task.path);
+    }
   };
 
   if (viewMode === "hq") {
@@ -245,17 +265,19 @@ export default function MyTasks() {
                     <Clock className="h-4 w-4" />
                     <span className="text-sm font-medium">{task.time}</span>
                   </div>
-                  <Button 
-                    size="sm" 
-                    variant="outline"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleTaskClick(task);
-                    }}
-                  >
-                    Go to Task
-                    <ArrowRight className="h-4 w-4 ml-2" />
-                  </Button>
+                  {task.path && (
+                    <Button 
+                      size="sm" 
+                      variant="outline"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleTaskClick(task);
+                      }}
+                    >
+                      Go to Task
+                      <ArrowRight className="h-4 w-4 ml-2" />
+                    </Button>
+                  )}
                 </div>
               </div>
             </CardContent>
