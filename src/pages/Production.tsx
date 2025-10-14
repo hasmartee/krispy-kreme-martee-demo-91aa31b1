@@ -1,407 +1,575 @@
-import { useState } from "react";
-import { useView } from "@/contexts/ViewContext";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { useState, useEffect } from "react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { CheckCircle2, Clock, AlertCircle, Plus, Check } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { TrendingUp, TrendingDown, RefreshCw, Plus, Minus, CloudRain, AlertTriangle, Sparkles, Download, Send, BookOpen, Loader2 } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
+import { format } from "date-fns";
+import heroImage from "@/assets/hero-food.jpg";
+import { useView } from "@/contexts/ViewContext";
+import { supabase } from "@/lib/supabase-helper";
+import classicBlt from "@/assets/products/classic-blt.jpg";
+import chickenCaesar from "@/assets/products/chicken-caesar.jpg";
+import avocadoHummus from "@/assets/products/avocado-hummus.jpg";
+import salmonCreamBagel from "@/assets/products/salmon-cream-bagel.jpg";
+import greekSaladBowl from "@/assets/products/greek-salad-bowl.jpg";
 
-interface ProductionItem {
+// Recipe data
+const recipes = {
+  "OS-S001": {
+    productName: "Classic BLT Sandwich",
+    image: classicBlt,
+    prepTime: "5 minutes",
+    ingredients: [
+      { item: "Bacon", quantity: "3 rashers (60g)" },
+      { item: "Romaine Lettuce", quantity: "2 leaves (30g)" },
+      { item: "Tomato", quantity: "3 slices (50g)" },
+      { item: "Whole Wheat Bread", quantity: "2 slices (80g)" },
+      { item: "Mayonnaise", quantity: "1 tbsp (15ml)" },
+      { item: "Black Pepper", quantity: "Pinch" },
+    ],
+    instructions: [
+      "Cook bacon rashers in a pan over medium heat until crispy (approximately 4-5 minutes per side).",
+      "While bacon is cooking, wash and dry the romaine lettuce leaves thoroughly.",
+      "Slice the tomato into 3 even slices, approximately 5mm thick.",
+      "Toast the whole wheat bread slices until golden brown.",
+      "Spread mayonnaise evenly on one side of each toasted bread slice.",
+      "On the first slice, layer the lettuce leaves, followed by the tomato slices.",
+      "Place the crispy bacon rashers on top of the tomatoes.",
+      "Season with a pinch of black pepper.",
+      "Top with the second slice of bread, mayo side down.",
+      "Cut diagonally and wrap immediately in food-safe packaging.",
+    ],
+  },
+  "OS-W001": {
+    productName: "Chicken Caesar Wrap",
+    image: chickenCaesar,
+    prepTime: "7 minutes",
+    ingredients: [
+      { item: "Grilled Chicken", quantity: "120g" },
+      { item: "Romaine Lettuce", quantity: "3 leaves (45g)" },
+      { item: "Caesar Dressing", quantity: "2 tbsp (30ml)" },
+      { item: "Parmesan Cheese", quantity: "1 tbsp (5g)" },
+      { item: "Whole Wheat Tortilla", quantity: "1 (60g)" },
+      { item: "Black Pepper", quantity: "Pinch" },
+    ],
+    instructions: [
+      "Grill chicken breast until fully cooked and slightly browned (approximately 6-8 minutes per side).",
+      "Let the chicken cool slightly, then slice into thin strips.",
+      "Wash and dry the romaine lettuce leaves thoroughly.",
+      "Lay the whole wheat tortilla flat on a clean surface.",
+      "Spread Caesar dressing evenly over the tortilla, leaving a 1-inch border.",
+      "Layer the lettuce leaves, followed by the sliced chicken strips.",
+      "Sprinkle with Parmesan cheese and season with a pinch of black pepper.",
+      "Fold in the sides of the tortilla, then tightly roll up from the bottom.",
+      "Cut in half diagonally and wrap immediately in food-safe packaging.",
+    ],
+  },
+  "OS-W002": {
+    productName: "Avocado & Hummus Wrap",
+    image: avocadoHummus,
+    prepTime: "5 minutes",
+    ingredients: [
+      { item: "Avocado", quantity: "1/2 (70g)" },
+      { item: "Hummus", quantity: "2 tbsp (40g)" },
+      { item: "Spinach", quantity: "2 handfuls (50g)" },
+      { item: "Red Bell Pepper", quantity: "1/4 (40g)" },
+      { item: "Whole Wheat Tortilla", quantity: "1 (60g)" },
+      { item: "Lemon Juice", quantity: "1 tsp (5ml)" },
+    ],
+    instructions: [
+      "Slice the avocado in half, remove the pit, and scoop out the flesh. Mash lightly with a fork.",
+      "Add a squeeze of lemon juice to the mashed avocado to prevent browning.",
+      "Wash and dry the spinach leaves thoroughly.",
+      "Slice the red bell pepper into thin strips.",
+      "Lay the whole wheat tortilla flat on a clean surface.",
+      "Spread hummus evenly over the tortilla, leaving a 1-inch border.",
+      "Layer the spinach leaves, followed by the mashed avocado and red bell pepper strips.",
+      "Fold in the sides of the tortilla, then tightly roll up from the bottom.",
+      "Cut in half diagonally and wrap immediately in food-safe packaging.",
+    ],
+  },
+  "OS-S004": {
+    productName: "Tuna Melt Panini",
+    image: null,
+    prepTime: "8 minutes",
+    ingredients: [
+      { item: "Canned Tuna", quantity: "120g" },
+      { item: "Cheddar Cheese", quantity: "2 slices (40g)" },
+      { item: "Red Onion", quantity: "2 tbsp (20g)" },
+      { item: "Mayonnaise", quantity: "1 tbsp (15ml)" },
+      { item: "Sourdough Bread", quantity: "2 slices (80g)" },
+      { item: "Black Pepper", quantity: "Pinch" },
+    ],
+    instructions: [
+      "Drain the canned tuna thoroughly and flake it into a bowl.",
+      "Finely chop the red onion.",
+      "Add mayonnaise to the tuna and mix well. Season with a pinch of black pepper.",
+      "Butter one side of each slice of sourdough bread.",
+      "Place one slice of bread, butter-side down, in a panini press or skillet.",
+      "Layer the tuna mixture, followed by the cheddar cheese slices, and top with the red onion.",
+      "Place the second slice of bread on top, butter-side up.",
+      "Grill in the panini press or skillet until the bread is golden brown and the cheese is melted and bubbly (approximately 3-4 minutes).",
+      "Cut in half diagonally and wrap immediately in food-safe packaging.",
+    ],
+  },
+  "OS-L001": {
+    productName: "Mediterranean Salad Bowl",
+    image: greekSaladBowl,
+    prepTime: "10 minutes",
+    ingredients: [
+      { item: "Cucumber", quantity: "1/2 (60g)" },
+      { item: "Cherry Tomatoes", quantity: "10 (80g)" },
+      { item: "Kalamata Olives", quantity: "10 (30g)" },
+      { item: "Feta Cheese", quantity: "50g" },
+      { item: "Red Onion", quantity: "1/4 (30g)" },
+      { item: "Mixed Greens", quantity: "2 handfuls (60g)" },
+      { item: "Olive Oil", quantity: "2 tbsp (30ml)" },
+      { item: "Lemon Juice", quantity: "1 tbsp (15ml)" },
+      { item: "Dried Oregano", quantity: "1/2 tsp" },
+      { item: "Black Pepper", quantity: "Pinch" },
+    ],
+    instructions: [
+      "Wash and dry the mixed greens thoroughly.",
+      "Dice the cucumber and halve the cherry tomatoes.",
+      "Slice the red onion thinly.",
+      "In a large bowl, combine the mixed greens, cucumber, cherry tomatoes, Kalamata olives, red onion, and feta cheese.",
+      "In a small bowl, whisk together olive oil, lemon juice, dried oregano, and black pepper to make the dressing.",
+      "Pour the dressing over the salad and toss gently to combine.",
+      "Serve immediately in a bowl or portion into food-safe containers for later.",
+    ],
+  },
+  "OS-S003": {
+    productName: "Smoked Salmon Bagel",
+    image: salmonCreamBagel,
+    prepTime: "5 minutes",
+    ingredients: [
+      { item: "Smoked Salmon", quantity: "80g" },
+      { item: "Cream Cheese", quantity: "2 tbsp (40g)" },
+      { item: "Red Onion", quantity: "1 tbsp (10g)" },
+      { item: "Capers", quantity: "1 tsp (5g)" },
+      { item: "Everything Bagel", quantity: "1 (85g)" },
+      { item: "Black Pepper", quantity: "Pinch" },
+    ],
+    instructions: [
+      "Slice the everything bagel in half horizontally.",
+      "Spread cream cheese evenly on both halves of the bagel.",
+      "Thinly slice the red onion.",
+      "Layer smoked salmon on one half of the bagel.",
+      "Sprinkle with red onion and capers.",
+      "Season with a pinch of black pepper.",
+      "Top with the other half of the bagel.",
+      "Cut in half and wrap immediately in food-safe packaging.",
+    ],
+  },
+};
+
+interface Product {
   id: string;
   productName: string;
-  sku: string;
-  quantity: number;
-  status: "confirmed" | "in-progress" | "completed";
-  confirmedAt: string;
-  instructions: string[];
-  ingredients: { name: string; amount: string }[];
-  isAdHoc?: boolean;
-  storeName?: string;
+  category: string;
+  store: string;
+  storeId: string;
+  currentStock: number;
+  recommendedOrder: number;
+  finalOrder: number;
+  trend: "up" | "down" | "stable";
+  historicalSales: number;
+  predictedSales: number;
 }
 
-const getStatusIcon = (status: ProductionItem["status"]) => {
-  switch (status) {
-    case "completed":
-      return <CheckCircle2 className="h-5 w-5 text-green-500" />;
-    case "in-progress":
-      return <Clock className="h-5 w-5 text-blue-500" />;
-    case "confirmed":
-      return <AlertCircle className="h-5 w-5 text-amber-500" />;
-  }
-};
-
-const getStatusBadge = (status: ProductionItem["status"]) => {
-  switch (status) {
-    case "completed":
-      return <Badge className="bg-green-500">Completed</Badge>;
-    case "in-progress":
-      return <Badge className="bg-blue-500">In Progress</Badge>;
-    case "confirmed":
-      return <Badge className="bg-amber-500">Ready to Start</Badge>;
-  }
-};
+interface Store {
+  id: string;
+  name: string;
+  cluster: string;
+}
 
 export default function Production() {
-  const { selectedStore, viewMode } = useView();
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const { viewMode, selectedStore } = useView();
+  const [products, setProducts] = useState<Product[]>([]);
+  const [stores, setStores] = useState<Store[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [selectedRecipe, setSelectedRecipe] = useState<string | null>(null);
+  const [confirmingProduction, setConfirmingProduction] = useState<string | null>(null);
   const { toast } = useToast();
-  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
-  const [newProduction, setNewProduction] = useState({
-    productName: "",
-    quantity: "",
-    instructions: "",
-  });
+  
+  const tomorrow = new Date(Date.now() + 86400000);
+  const formattedDate = tomorrow.toLocaleDateString('en-GB', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
 
-  // Mock data - in HQ view, includes store names
-  const [productionItems, setProductionItems] = useState<ProductionItem[]>([
-    {
-      id: "1",
-      productName: "Bacon & Egg Roll",
-      sku: "BRK-001",
-      quantity: 24,
-      status: "completed",
-      confirmedAt: "05:30",
-      storeName: viewMode === "hq" ? "London Bridge" : undefined,
-      instructions: [
-        "Cook bacon strips until crispy",
-        "Fry eggs to customer preference",
-        "Toast rolls until golden",
-        "Assemble and wrap individually"
-      ],
-      ingredients: [
-        { name: "Bacon strips", amount: "48 strips" },
-        { name: "Eggs", amount: "24 eggs" },
-        { name: "Bread rolls", amount: "24 rolls" },
-        { name: "Butter", amount: "200g" }
-      ]
-    },
-    {
-      id: "2",
-      productName: "Breakfast Burrito",
-      sku: "BRK-002",
-      quantity: 18,
-      status: "in-progress",
-      confirmedAt: "05:30",
-      storeName: viewMode === "hq" ? "London Bridge" : undefined,
-      instructions: [
-        "Scramble eggs with seasoning",
-        "Cook sausage and chop into pieces",
-        "Warm tortillas",
-        "Fill with eggs, sausage, cheese and salsa",
-        "Roll and wrap for service"
-      ],
-      ingredients: [
-        { name: "Tortilla wraps", amount: "18 wraps" },
-        { name: "Eggs", amount: "36 eggs" },
-        { name: "Sausages", amount: "18 sausages" },
-        { name: "Cheddar cheese", amount: "300g" },
-        { name: "Salsa", amount: "250ml" }
-      ]
-    },
-    {
-      id: "3",
-      productName: "BLT Sandwich",
-      sku: "LUN-001",
-      quantity: 32,
-      status: "confirmed",
-      confirmedAt: "10:30",
-      storeName: viewMode === "hq" ? "Kings Cross" : undefined,
-      instructions: [
-        "Toast bread slices",
-        "Cook bacon until crispy",
-        "Wash and dry lettuce",
-        "Slice tomatoes",
-        "Layer ingredients and cut diagonally"
-      ],
-      ingredients: [
-        { name: "Bread slices", amount: "64 slices" },
-        { name: "Bacon", amount: "48 strips" },
-        { name: "Lettuce", amount: "1 head" },
-        { name: "Tomatoes", amount: "8 tomatoes" },
-        { name: "Mayonnaise", amount: "200ml" }
-      ]
-    },
-  ]);
+  useEffect(() => {
+    loadData();
+  }, [viewMode, selectedStore]);
 
-  const handleCompleteItem = (itemId: string) => {
-    setProductionItems(prev => prev.map(item =>
-      item.id === itemId ? { ...item, status: "completed" as const } : item
-    ));
+  const loadData = async () => {
+    setLoading(true);
+    try {
+      // Load stores
+      const { data, error } = await supabase
+        .from('stores')
+        .select('*')
+        .order('name') as any;
 
-    toast({
-      title: "✓ Production completed",
-      description: "Stock levels have been updated on Live Availability page",
-    });
-  };
+      if (data) {
+        setStores(data);
+        
+        // Generate mock production data for each store
+        const mockProducts: Product[] = [];
+        const productsList = [
+          { id: "OS-S001", name: "Classic BLT Sandwich", category: "Sandwich" },
+          { id: "OS-W001", name: "Chicken Caesar Wrap", category: "Wrap" },
+          { id: "OS-W002", name: "Avocado & Hummus Wrap", category: "Wrap" },
+          { id: "OS-S004", name: "Tuna Melt Panini", category: "Hot Food" },
+          { id: "OS-L001", name: "Mediterranean Salad", category: "Salad" },
+          { id: "OS-S003", name: "Salmon & Cream Cheese Bagel", category: "Sandwich" },
+        ];
 
-  const handleCompleteAll = () => {
-    setProductionItems(prev => prev.map(item => ({ ...item, status: "completed" as const })));
+        const targetStores = viewMode === "store_manager" 
+          ? data.filter((s: any) => s.name === selectedStore)
+          : data;
 
-    toast({
-      title: "✓ All production completed",
-      description: "All stock levels have been updated on Live Availability page",
-    });
-  };
+        targetStores.forEach((store: any) => {
+          productsList.forEach(product => {
+            const baseQty = 15 + Math.floor(Math.random() * 15);
+            const currentStock = Math.floor(Math.random() * 10);
+            mockProducts.push({
+              id: product.id,
+              productName: product.name,
+              category: product.category,
+              store: store.name,
+              storeId: store.id,
+              currentStock,
+              recommendedOrder: baseQty,
+              finalOrder: baseQty,
+              trend: Math.random() > 0.3 ? "up" : "down",
+              historicalSales: baseQty * 0.9,
+              predictedSales: baseQty * 1.05,
+            });
+          });
+        });
 
-  const handleAddProduction = () => {
-    if (!newProduction.productName || !newProduction.quantity) {
+        setProducts(mockProducts);
+      }
+    } catch (error) {
+      console.error("Error loading data:", error);
       toast({
-        title: "Missing information",
-        description: "Please fill in product name and quantity",
-        variant: "destructive"
+        title: "Error",
+        description: "Failed to load production data",
+        variant: "destructive",
       });
-      return;
+    } finally {
+      setLoading(false);
     }
+  };
 
-    const newItem: ProductionItem = {
-      id: `adhoc-${Date.now()}`,
-      productName: newProduction.productName,
-      sku: `ADH-${Date.now().toString().slice(-3)}`,
-      quantity: parseInt(newProduction.quantity),
-      status: "confirmed",
-      confirmedAt: new Date().toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" }),
-      instructions: newProduction.instructions.split("\n").filter(i => i.trim()),
-      ingredients: [],
-      isAdHoc: true
-    };
+  const handleRefresh = async () => {
+    setIsRefreshing(true);
+    await loadData();
+    setTimeout(() => setIsRefreshing(false), 1000);
+  };
 
-    setProductionItems(prev => [...prev, newItem]);
+  const updateFinalOrder = (productId: string, storeId: string, delta: number) => {
+    setProducts(prev => prev.map(p => 
+      p.id === productId && p.storeId === storeId
+        ? { ...p, finalOrder: Math.max(0, p.finalOrder + delta) }
+        : p
+    ));
+  };
 
-    setNewProduction({
-      productName: "",
-      quantity: "",
-      instructions: ""
-    });
-    setIsAddDialogOpen(false);
-
+  const handleConfirmProduction = async (product: Product) => {
+    setConfirmingProduction(`${product.id}-${product.storeId}`);
+    
+    await new Promise(resolve => setTimeout(resolve, 1500));
+    
     toast({
-      title: "Ad-hoc production added",
-      description: `${newItem.productName} has been added to production queue`,
+      title: "✓ Production Confirmed",
+      description: `${product.productName} added to production queue for ${product.store}`,
+    });
+    
+    setConfirmingProduction(null);
+  };
+
+  const handleExportCSV = () => {
+    const headers = ["Product", "Category", "Store", "Current Stock", "Recommended Qty", "Final Qty"];
+    
+    const rows = products.map(p => 
+      [p.productName, p.category, p.store, p.currentStock, p.recommendedOrder, p.finalOrder]
+    );
+    
+    const csvContent = [
+      headers.join(','),
+      ...rows.map(row => row.join(','))
+    ].join('\n');
+    
+    const blob = new Blob([csvContent], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `production-${format(tomorrow, 'yyyy-MM-dd')}.csv`;
+    a.click();
+    window.URL.revokeObjectURL(url);
+    
+    toast({
+      title: "CSV Exported",
+      description: "Production plan has been exported successfully",
     });
   };
 
-  const allCompleted = productionItems.every(item => item.status === "completed");
-  const someCompleted = productionItems.some(item => item.status === "completed");
+  const getCategoryBadge = (category: string) => {
+    const colors: Record<string, string> = {
+      "Sandwich": "bg-blue-100 text-blue-800",
+      "Wrap": "bg-green-100 text-green-800",
+      "Hot Food": "bg-orange-100 text-orange-800",
+      "Salad": "bg-emerald-100 text-emerald-800",
+    };
+    return <Badge className={colors[category] || "bg-gray-100 text-gray-800"}>{category}</Badge>;
+  };
+
+  if (loading) {
+    return (
+      <div className="p-6 flex items-center justify-center min-h-[400px]">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
 
   return (
-    <div className="p-6 space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-foreground">Production Plans</h1>
-          <p className="text-muted-foreground">
-            {viewMode === "hq" ? "All Stores - Today's production schedule" : `${selectedStore} - Today's production schedule`}
+    <div className="flex-1 space-y-6 p-6">
+      {/* Hero Section */}
+      <div 
+        className="relative h-48 rounded-2xl overflow-hidden bg-cover bg-center shadow-2xl"
+        style={{ backgroundImage: `url(${heroImage})` }}
+      >
+        <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/60 to-black/40" />
+        <div className="absolute inset-0 flex flex-col justify-center px-8">
+          <div className="flex items-center gap-3 mb-3">
+            <div className="flex items-center gap-2 bg-[#ff914d]/20 backdrop-blur-sm px-4 py-2 rounded-full border border-[#ff914d]/30">
+              <Sparkles className="h-5 w-5 text-[#ff914d] animate-pulse" />
+              <span className="text-white font-semibold text-sm">AI-Powered Suggestions</span>
+            </div>
+          </div>
+          <h1 className="text-4xl font-bold text-white mb-2">Suggested Production Plan</h1>
+          <p className="text-xl text-white/90">
+            {viewMode === "hq" ? "All Stores" : selectedStore} - {formattedDate}
           </p>
         </div>
-        
-        <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-          <DialogTrigger asChild>
-            <Button className="gap-2">
-              <Plus className="h-4 w-4" />
-              Add Ad-hoc Production
-            </Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Add Ad-hoc Production</DialogTitle>
-              <DialogDescription>
-                Add an additional production item that wasn't in the planned schedule
-              </DialogDescription>
-            </DialogHeader>
-            <div className="space-y-4 py-4">
-              <div className="space-y-2">
-                <Label htmlFor="productName">Product Name</Label>
-                <Input
-                  id="productName"
-                  placeholder="e.g., Extra BLT Sandwiches"
-                  value={newProduction.productName}
-                  onChange={(e) => setNewProduction({ ...newProduction, productName: e.target.value })}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="quantity">Quantity</Label>
-                <Input
-                  id="quantity"
-                  type="number"
-                  placeholder="e.g., 12"
-                  value={newProduction.quantity}
-                  onChange={(e) => setNewProduction({ ...newProduction, quantity: e.target.value })}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="instructions">Instructions (optional)</Label>
-                <Textarea
-                  id="instructions"
-                  placeholder="One instruction per line"
-                  rows={4}
-                  value={newProduction.instructions}
-                  onChange={(e) => setNewProduction({ ...newProduction, instructions: e.target.value })}
-                />
-              </div>
-            </div>
-            <DialogFooter>
-              <Button variant="outline" onClick={() => setIsAddDialogOpen(false)}>
-                Cancel
-              </Button>
-              <Button onClick={handleAddProduction}>
-                Add Production
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
       </div>
 
-      {/* Info Banner */}
-      <Card className="bg-blue-50 border-blue-200">
-        <CardContent className="p-4">
-          <p className="text-sm text-blue-900">
-            💡 <strong>Completing production items automatically updates stock levels on the Live Availability page.</strong> 
-            Mark items as complete when production is finished and ready for service.
-          </p>
+      {/* Context Cards */}
+      <Card className="shadow-card border-l-4 border-l-primary">
+        <CardContent className="p-6">
+          <div className="flex flex-col md:flex-row items-start md:items-center gap-6">
+            <div className="flex items-center gap-3">
+              <div className="p-2 rounded-lg bg-primary/10">
+                <CloudRain className="h-5 w-5 text-primary" />
+              </div>
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Predicted Weather</p>
+                <p className="text-base font-semibold text-foreground">Rainy, 12°C - Lower footfall expected</p>
+              </div>
+            </div>
+            <div className="h-8 w-px bg-border hidden md:block" />
+            <div className="flex items-center gap-3">
+              <div className="p-2 rounded-lg bg-destructive/10">
+                <AlertTriangle className="h-5 w-5 text-destructive" />
+              </div>
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Key Events</p>
+                <p className="text-base font-semibold text-foreground">Train strike in Central London - Reduced commuter traffic</p>
+              </div>
+            </div>
+          </div>
         </CardContent>
       </Card>
 
-      {/* Production List */}
-      <Card className="border-l-4 border-l-primary">
+      {/* Last Updated */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+          <span>Last updated: {format(new Date(), "EEEE, MMMM d, yyyy 'at' h:mm a")}</span>
+        </div>
+        <Button 
+          onClick={handleRefresh}
+          size="sm"
+          variant="outline"
+          disabled={isRefreshing}
+        >
+          <RefreshCw className={`h-4 w-4 mr-2 ${isRefreshing ? 'animate-spin' : ''}`} />
+          Refresh
+        </Button>
+      </div>
+
+      {/* Production Table */}
+      <Card className="shadow-card">
         <CardHeader>
           <div className="flex items-center justify-between">
             <div>
-              <CardTitle className="text-xl flex items-center gap-2">
-                Today's Production
-                {allCompleted && <CheckCircle2 className="h-5 w-5 text-green-500" />}
-              </CardTitle>
+              <CardTitle className="text-xl">Daily Production Plan</CardTitle>
+              <CardDescription>
+                AI-powered production quantities for tomorrow's service
+              </CardDescription>
             </div>
-            <div className="flex items-center gap-3">
-              <Badge variant="secondary">
-                {productionItems.filter(i => i.status === "completed").length}/{productionItems.length} completed
-              </Badge>
-              {!allCompleted && someCompleted && (
-                <Button
-                  size="sm"
-                  onClick={handleCompleteAll}
-                  className="gap-2"
-                >
-                  <Check className="h-4 w-4" />
-                  Complete All
-                </Button>
-              )}
+            <div className="flex items-center gap-2">
+              <Button 
+                onClick={handleExportCSV}
+                size="sm"
+                variant="outline"
+              >
+                <Download className="h-4 w-4 mr-2" />
+                Export CSV
+              </Button>
             </div>
           </div>
         </CardHeader>
-        
-        <CardContent className="space-y-6 pt-0">
-          {productionItems.map((item) => (
-            <Card key={item.id} className="border-2">
-              <CardHeader>
-                <div className="flex items-start justify-between">
-                  <div className="flex items-center gap-3">
-                    {getStatusIcon(item.status)}
-                    <div>
-                      <CardTitle className="text-lg flex items-center gap-2">
-                        {item.productName}
-                        <span className="text-sm text-muted-foreground font-normal">
-                          (SKU: {item.sku})
-                        </span>
-                        {item.isAdHoc && (
-                          <Badge variant="outline" className="text-xs">
-                            Ad-hoc
-                          </Badge>
-                        )}
-                      </CardTitle>
-                      <div className="text-sm text-muted-foreground mt-1">
-                        Quantity: {item.quantity} units
-                        {viewMode === "hq" && item.storeName && ` • Store: ${item.storeName}`}
-                      </div>
-                    </div>
+        <CardContent>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Product</TableHead>
+                <TableHead>Category</TableHead>
+                <TableHead>Store</TableHead>
+                <TableHead>Current Stock</TableHead>
+                <TableHead className="bg-gradient-to-r from-[#ff914d]/20 to-[#ff914d]/10 relative text-center">
+                  <div className="flex items-center justify-center gap-2 relative">
+                    <div className="absolute inset-0 bg-[#ff914d]/5 blur-sm" />
+                    <Sparkles className="h-4 w-4 text-[#ff914d] relative z-10 animate-pulse" />
+                    <span className="relative z-10 font-semibold bg-gradient-to-r from-[#ff914d] to-[#ff914d]/70 bg-clip-text text-transparent">
+                      AI Recommended Qty
+                    </span>
                   </div>
-                  <div className="flex items-center gap-2">
-                    {getStatusBadge(item.status)}
-                    {item.status !== "completed" && (
+                </TableHead>
+                <TableHead className="bg-brand-green/10 text-center">Final Qty</TableHead>
+                <TableHead>Action</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {products.map((product) => (
+                <TableRow key={`${product.id}-${product.storeId}`}>
+                  <TableCell>
+                    <div>
+                      <div 
+                        className={`font-medium ${recipes[product.id as keyof typeof recipes] ? 'cursor-pointer hover:text-primary hover:underline' : ''}`}
+                        onClick={() => recipes[product.id as keyof typeof recipes] && setSelectedRecipe(product.id)}
+                      >
+                        {product.productName}
+                      </div>
+                      <div className="text-sm text-muted-foreground">{product.id}</div>
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    {getCategoryBadge(product.category)}
+                  </TableCell>
+                  <TableCell>
+                    <span className="font-medium">{product.store}</span>
+                  </TableCell>
+                  <TableCell>
+                    <span className="font-mono">{product.currentStock}</span>
+                  </TableCell>
+                  <TableCell className="bg-gradient-to-r from-[#ff914d]/10 to-transparent relative group">
+                    <div className="absolute inset-0 bg-gradient-to-r from-[#ff914d]/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                    <div className="flex items-center justify-center gap-2 relative z-10">
+                      <span className="font-mono font-semibold text-foreground">
+                        {product.recommendedOrder}
+                      </span>
+                      <Sparkles className="h-3 w-3 text-[#ff914d] opacity-0 group-hover:opacity-100 transition-opacity" />
+                    </div>
+                  </TableCell>
+                  <TableCell className="bg-brand-green/5">
+                    <div className="flex items-center gap-2 justify-center">
                       <Button
                         size="sm"
-                        onClick={() => handleCompleteItem(item.id)}
-                        className="gap-2"
+                        variant="outline"
+                        onClick={() => updateFinalOrder(product.id, product.storeId, -1)}
+                        className="h-8 w-8 p-0 rounded-full border-brand-green hover:bg-brand-green hover:text-white transition-colors"
                       >
-                        <Check className="h-4 w-4" />
-                        Complete
+                        <Minus className="h-4 w-4" />
                       </Button>
-                    )}
-                  </div>
-                </div>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="grid md:grid-cols-2 gap-6">
-                  {item.ingredients.length > 0 && (
-                    <div>
-                      <h3 className="font-semibold text-foreground mb-3 flex items-center gap-2">
-                        <span className="w-6 h-6 rounded-full bg-primary/10 text-primary flex items-center justify-center text-sm">1</span>
-                        Ingredients Required
-                      </h3>
-                      <ul className="space-y-2">
-                        {item.ingredients.map((ingredient, idx) => (
-                          <li key={idx} className="flex justify-between text-sm">
-                            <span className="text-muted-foreground">{ingredient.name}</span>
-                            <span className="font-medium text-foreground">{ingredient.amount}</span>
-                          </li>
-                        ))}
-                      </ul>
+                      <span className="font-mono font-bold text-brand-green min-w-[2.5rem] text-center text-lg">
+                        {product.finalOrder}
+                      </span>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => updateFinalOrder(product.id, product.storeId, 1)}
+                        className="h-8 w-8 p-0 rounded-full border-brand-green hover:bg-brand-green hover:text-white transition-colors"
+                      >
+                        <Plus className="h-4 w-4" />
+                      </Button>
                     </div>
-                  )}
-
-                  {item.instructions.length > 0 && (
-                    <div>
-                      <h3 className="font-semibold text-foreground mb-3 flex items-center gap-2">
-                        <span className="w-6 h-6 rounded-full bg-primary/10 text-primary flex items-center justify-center text-sm">2</span>
-                        Production Steps
-                      </h3>
-                      <ol className="space-y-2">
-                        {item.instructions.map((instruction, idx) => (
-                          <li key={idx} className="flex gap-2 text-sm text-muted-foreground">
-                            <span className="font-semibold text-primary min-w-[20px]">{idx + 1}.</span>
-                            <span>{instruction}</span>
-                          </li>
-                        ))}
-                      </ol>
-                    </div>
-                  )}
-                </div>
-
-                <div className="pt-4 border-t flex items-center justify-between text-sm">
-                  <span className="text-muted-foreground">
-                    Confirmed at {item.confirmedAt}
-                  </span>
-                  {item.status === "confirmed" && (
-                    <span className="text-amber-600 font-medium">
-                      ⚠️ Ready to begin production
-                    </span>
-                  )}
-                  {item.status === "in-progress" && (
-                    <span className="text-blue-600 font-medium">
-                      🔄 Production in progress
-                    </span>
-                  )}
-                  {item.status === "completed" && (
-                    <span className="text-green-600 font-medium">
-                      ✓ Production complete - Stock updated
-                    </span>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-          ))}
+                  </TableCell>
+                  <TableCell>
+                    <Button
+                      size="sm"
+                      className="bg-primary text-primary-foreground"
+                      disabled={!!confirmingProduction}
+                      onClick={() => handleConfirmProduction(product)}
+                    >
+                      {confirmingProduction === `${product.id}-${product.storeId}` ? (
+                        <>
+                          <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                          Confirming...
+                        </>
+                      ) : (
+                        'Confirm'
+                      )}
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
         </CardContent>
       </Card>
 
-      {productionItems.length === 0 && (
-        <Card>
-          <CardContent className="py-12 text-center">
-            <p className="text-muted-foreground">
-              No production plans confirmed yet. Check the Suggested Production page to confirm today's production.
-            </p>
-          </CardContent>
-        </Card>
+      {/* Recipe Dialog */}
+      {selectedRecipe && recipes[selectedRecipe as keyof typeof recipes] && (
+        <Dialog open={!!selectedRecipe} onOpenChange={() => setSelectedRecipe(null)}>
+          <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <BookOpen className="h-5 w-5 text-primary" />
+                {recipes[selectedRecipe as keyof typeof recipes].productName}
+              </DialogTitle>
+              <DialogDescription>
+                Preparation time: {recipes[selectedRecipe as keyof typeof recipes].prepTime}
+              </DialogDescription>
+            </DialogHeader>
+            <div className="space-y-6">
+              <img 
+                src={recipes[selectedRecipe as keyof typeof recipes].image} 
+                alt={recipes[selectedRecipe as keyof typeof recipes].productName}
+                className="w-full h-64 object-cover rounded-lg"
+              />
+              <div>
+                <h3 className="font-semibold text-lg mb-3">Ingredients (per unit)</h3>
+                <div className="grid gap-2">
+                  {recipes[selectedRecipe as keyof typeof recipes].ingredients.map((ing, idx) => (
+                    <div key={idx} className="flex justify-between p-2 bg-muted rounded">
+                      <span>{ing.item}</span>
+                      <span className="font-mono text-sm">{ing.quantity}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div>
+                <h3 className="font-semibold text-lg mb-3">Instructions</h3>
+                <ol className="space-y-2">
+                  {recipes[selectedRecipe as keyof typeof recipes].instructions.map((inst, idx) => (
+                    <li key={idx} className="flex gap-3">
+                      <span className="font-semibold text-primary min-w-[24px]">{idx + 1}.</span>
+                      <span className="text-sm">{inst}</span>
+                    </li>
+                  ))}
+                </ol>
+              </div>
+            </div>
+            <DialogFooter>
+              <Button onClick={() => setSelectedRecipe(null)}>Close</Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       )}
     </div>
   );
