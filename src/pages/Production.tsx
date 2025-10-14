@@ -182,6 +182,7 @@ interface Product {
   trend: "up" | "down" | "stable";
   historicalSales: number;
   predictedSales: number;
+  dayPart?: string;
 }
 
 interface Store {
@@ -223,26 +224,26 @@ export default function Production() {
         // Generate mock production data for each store
         const mockProducts: Product[] = [];
         const productsList = [
-          { id: "OS-P001", name: "Kanelstang (Cinnamon Swirl)", category: "Pastries" },
-          { id: "OS-P002", name: "Tebirkes (Poppy Seed Pastry)", category: "Pastries" },
-          { id: "OS-P003", name: "Wienerbrød (Danish Pastry)", category: "Pastries" },
-          { id: "OS-P004", name: "Croissant", category: "Pastries" },
-          { id: "OS-P005", name: "Pain au Chocolat", category: "Pastries" },
-          { id: "OS-P006", name: "Almond Croissant", category: "Pastries" },
-          { id: "OS-B001", name: "Rugbrød (Rye Bread) Whole", category: "Breads" },
-          { id: "OS-B002", name: "Sourdough Loaf", category: "Breads" },
-          { id: "OS-HB001", name: "Scrambled Eggs on Sourdough", category: "Hot Breakfast" },
-          { id: "OS-HB002", name: "Bacon & Egg Roll", category: "Hot Breakfast" },
-          { id: "OS-HB003", name: "Ham & Cheese Croissant", category: "Hot Breakfast" },
-          { id: "OS-CB001", name: "Granola Bowl with Yogurt", category: "Cold Breakfast" },
-          { id: "OS-S001", name: "Classic BLT Sandwich", category: "Sandwiches" },
-          { id: "OS-S002", name: "Chicken Bacon Sandwich", category: "Sandwiches" },
-          { id: "OS-S003", name: "Salmon & Cream Cheese Bagel", category: "Sandwiches" },
-          { id: "OS-S004", name: "Tuna Melt Panini", category: "Sandwiches" },
-          { id: "OS-W001", name: "Chicken Caesar Wrap", category: "Wraps" },
-          { id: "OS-W002", name: "Avocado & Hummus Wrap", category: "Wraps" },
-          { id: "OS-L001", name: "Mediterranean Salad", category: "Salads" },
-          { id: "OS-L002", name: "Greek Feta Salad", category: "Salads" },
+          { id: "OS-P001", name: "Kanelstang (Cinnamon Swirl)", category: "Pastries", dayPart: "Morning" },
+          { id: "OS-P002", name: "Tebirkes (Poppy Seed Pastry)", category: "Pastries", dayPart: "Morning" },
+          { id: "OS-P003", name: "Wienerbrød (Danish Pastry)", category: "Pastries", dayPart: "Morning" },
+          { id: "OS-P004", name: "Croissant", category: "Pastries", dayPart: "Morning" },
+          { id: "OS-P005", name: "Pain au Chocolat", category: "Pastries", dayPart: "Morning" },
+          { id: "OS-P006", name: "Almond Croissant", category: "Pastries", dayPart: "Morning" },
+          { id: "OS-B001", name: "Rugbrød (Rye Bread) Whole", category: "Breads", dayPart: "Morning" },
+          { id: "OS-B002", name: "Sourdough Loaf", category: "Breads", dayPart: "Morning" },
+          { id: "OS-HB001", name: "Scrambled Eggs on Sourdough", category: "Hot Breakfast", dayPart: "Morning" },
+          { id: "OS-HB002", name: "Bacon & Egg Roll", category: "Hot Breakfast", dayPart: "Morning" },
+          { id: "OS-HB003", name: "Ham & Cheese Croissant", category: "Hot Breakfast", dayPart: "Morning" },
+          { id: "OS-CB001", name: "Granola Bowl with Yogurt", category: "Cold Breakfast", dayPart: "Morning" },
+          { id: "OS-S001", name: "Classic BLT Sandwich", category: "Sandwiches", dayPart: "Lunch" },
+          { id: "OS-S002", name: "Chicken Bacon Sandwich", category: "Sandwiches", dayPart: "Lunch" },
+          { id: "OS-S003", name: "Salmon & Cream Cheese Bagel", category: "Sandwiches", dayPart: "Lunch" },
+          { id: "OS-S004", name: "Tuna Melt Panini", category: "Sandwiches", dayPart: "Lunch" },
+          { id: "OS-W001", name: "Chicken Caesar Wrap", category: "Wraps", dayPart: "Lunch" },
+          { id: "OS-W002", name: "Avocado & Hummus Wrap", category: "Wraps", dayPart: "Lunch" },
+          { id: "OS-L001", name: "Mediterranean Salad", category: "Salads", dayPart: "Afternoon" },
+          { id: "OS-L002", name: "Greek Feta Salad", category: "Salads", dayPart: "Afternoon" },
         ];
 
         const targetStores = viewMode === "store_manager" 
@@ -265,6 +266,7 @@ export default function Production() {
               trend: Math.random() > 0.3 ? "up" : "down",
               historicalSales: baseQty * 0.9,
               predictedSales: baseQty * 1.05,
+              dayPart: product.dayPart,
             });
           });
         });
@@ -351,6 +353,16 @@ export default function Production() {
       "Salads": "bg-emerald-100 text-emerald-800",
     };
     return <Badge className={colors[category] || "bg-gray-100 text-gray-800"}>{category}</Badge>;
+  };
+
+  const getDayPartBadge = (dayPart: string | undefined) => {
+    if (!dayPart) return null;
+    const colors: Record<string, string> = {
+      "Morning": "bg-amber-100 text-amber-800 border-amber-300",
+      "Lunch": "bg-blue-100 text-blue-800 border-blue-300",
+      "Afternoon": "bg-purple-100 text-purple-800 border-purple-300",
+    };
+    return <Badge variant="outline" className={colors[dayPart] || "bg-gray-100 text-gray-800"}>{dayPart}</Badge>;
   };
 
   // Aggregate products by product ID when groupByProduct is true
@@ -496,6 +508,7 @@ export default function Production() {
               <TableRow>
                 <TableHead>Product</TableHead>
                 <TableHead>Category</TableHead>
+                <TableHead>Day Part</TableHead>
                 {viewMode === "hq" && !groupByProduct && <TableHead>Store</TableHead>}
                 <TableHead>Current Stock</TableHead>
                 <TableHead className="bg-gradient-to-r from-[#ff914d]/20 to-[#ff914d]/10 relative text-center">
@@ -527,6 +540,9 @@ export default function Production() {
                   </TableCell>
                   <TableCell>
                     {getCategoryBadge(product.category)}
+                  </TableCell>
+                  <TableCell>
+                    {getDayPartBadge(product.dayPart)}
                   </TableCell>
                   {viewMode === "hq" && !groupByProduct && (
                     <TableCell>

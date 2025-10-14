@@ -182,6 +182,7 @@ interface Product {
   trend: "up" | "down" | "stable";
   historicalSales: number;
   predictedSales: number;
+  dayPart?: string;
 }
 
 interface Store {
@@ -223,26 +224,26 @@ export default function SuggestedProduction() {
         // Generate mock production data for each store
         const mockProducts: Product[] = [];
         const productsList = [
-          { id: "OS-P001", name: "Kanelstang (Cinnamon Swirl)", category: "Pastries" },
-          { id: "OS-P002", name: "Tebirkes (Poppy Seed Pastry)", category: "Pastries" },
-          { id: "OS-P003", name: "Wienerbrød (Danish Pastry)", category: "Pastries" },
-          { id: "OS-P004", name: "Croissant", category: "Pastries" },
-          { id: "OS-P005", name: "Pain au Chocolat", category: "Pastries" },
-          { id: "OS-P006", name: "Almond Croissant", category: "Pastries" },
-          { id: "OS-B001", name: "Rugbrød (Rye Bread) Whole", category: "Breads" },
-          { id: "OS-B002", name: "Sourdough Loaf", category: "Breads" },
-          { id: "OS-HB001", name: "Scrambled Eggs on Sourdough", category: "Hot Breakfast" },
-          { id: "OS-HB002", name: "Bacon & Egg Roll", category: "Hot Breakfast" },
-          { id: "OS-HB003", name: "Ham & Cheese Croissant", category: "Hot Breakfast" },
-          { id: "OS-CB001", name: "Granola Bowl with Yogurt", category: "Cold Breakfast" },
-          { id: "OS-S001", name: "Classic BLT Sandwich", category: "Sandwiches" },
-          { id: "OS-S002", name: "Chicken Bacon Sandwich", category: "Sandwiches" },
-          { id: "OS-S003", name: "Salmon & Cream Cheese Bagel", category: "Sandwiches" },
-          { id: "OS-S004", name: "Tuna Melt Panini", category: "Sandwiches" },
-          { id: "OS-W001", name: "Chicken Caesar Wrap", category: "Wraps" },
-          { id: "OS-W002", name: "Avocado & Hummus Wrap", category: "Wraps" },
-          { id: "OS-L001", name: "Mediterranean Salad", category: "Salads" },
-          { id: "OS-L002", name: "Greek Feta Salad", category: "Salads" },
+          { id: "OS-P001", name: "Kanelstang (Cinnamon Swirl)", category: "Pastries", dayPart: "Morning" },
+          { id: "OS-P002", name: "Tebirkes (Poppy Seed Pastry)", category: "Pastries", dayPart: "Morning" },
+          { id: "OS-P003", name: "Wienerbrød (Danish Pastry)", category: "Pastries", dayPart: "Morning" },
+          { id: "OS-P004", name: "Croissant", category: "Pastries", dayPart: "Morning" },
+          { id: "OS-P005", name: "Pain au Chocolat", category: "Pastries", dayPart: "Morning" },
+          { id: "OS-P006", name: "Almond Croissant", category: "Pastries", dayPart: "Morning" },
+          { id: "OS-B001", name: "Rugbrød (Rye Bread) Whole", category: "Breads", dayPart: "Morning" },
+          { id: "OS-B002", name: "Sourdough Loaf", category: "Breads", dayPart: "Morning" },
+          { id: "OS-HB001", name: "Scrambled Eggs on Sourdough", category: "Hot Breakfast", dayPart: "Morning" },
+          { id: "OS-HB002", name: "Bacon & Egg Roll", category: "Hot Breakfast", dayPart: "Morning" },
+          { id: "OS-HB003", name: "Ham & Cheese Croissant", category: "Hot Breakfast", dayPart: "Morning" },
+          { id: "OS-CB001", name: "Granola Bowl with Yogurt", category: "Cold Breakfast", dayPart: "Morning" },
+          { id: "OS-S001", name: "Classic BLT Sandwich", category: "Sandwiches", dayPart: "Lunch" },
+          { id: "OS-S002", name: "Chicken Bacon Sandwich", category: "Sandwiches", dayPart: "Lunch" },
+          { id: "OS-S003", name: "Salmon & Cream Cheese Bagel", category: "Sandwiches", dayPart: "Lunch" },
+          { id: "OS-S004", name: "Tuna Melt Panini", category: "Sandwiches", dayPart: "Lunch" },
+          { id: "OS-W001", name: "Chicken Caesar Wrap", category: "Wraps", dayPart: "Lunch" },
+          { id: "OS-W002", name: "Avocado & Hummus Wrap", category: "Wraps", dayPart: "Lunch" },
+          { id: "OS-L001", name: "Mediterranean Salad", category: "Salads", dayPart: "Afternoon" },
+          { id: "OS-L002", name: "Greek Feta Salad", category: "Salads", dayPart: "Afternoon" },
         ];
 
         const targetStores = viewMode === "store_manager" 
@@ -264,6 +265,7 @@ export default function SuggestedProduction() {
               trend: Math.random() > 0.3 ? "up" : "down",
               historicalSales: baseQty * 0.9,
               predictedSales: baseQty * 1.05,
+              dayPart: product.dayPart,
             });
           });
         });
@@ -358,6 +360,16 @@ export default function SuggestedProduction() {
     return <Badge className={colors[category] || "bg-gray-100 text-gray-800"}>{category}</Badge>;
   };
 
+  const getDayPartBadge = (dayPart: string | undefined) => {
+    if (!dayPart) return null;
+    const colors: Record<string, string> = {
+      "Morning": "bg-amber-100 text-amber-800 border-amber-300",
+      "Lunch": "bg-blue-100 text-blue-800 border-blue-300",
+      "Afternoon": "bg-purple-100 text-purple-800 border-purple-300",
+    };
+    return <Badge variant="outline" className={colors[dayPart] || "bg-gray-100 text-gray-800"}>{dayPart}</Badge>;
+  };
+
   // Aggregate products by product ID when groupByProduct is true
   const displayProducts = viewMode === "hq" && groupByProduct
     ? Object.values(
@@ -416,29 +428,29 @@ export default function SuggestedProduction() {
 
       {/* Date Picker and View Toggle */}
       <div className="flex items-center justify-between gap-4">
-        <Popover>
-          <PopoverTrigger asChild>
-            <Button
-              variant="outline"
-              className={cn(
-                "justify-start text-left font-normal",
-                !selectedDate && "text-muted-foreground"
-              )}
-            >
-              <CalendarIcon className="mr-2 h-4 w-4" />
-              {selectedDate ? format(selectedDate, "PPP") : <span>Pick a date</span>}
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-auto p-0" align="start">
-            <Calendar
-              mode="single"
-              selected={selectedDate}
-              onSelect={(date) => date && setSelectedDate(date)}
-              initialFocus
-              className="p-3 pointer-events-auto"
-            />
-          </PopoverContent>
-        </Popover>
+        <div className="flex items-center gap-2">
+          <span className="text-sm font-medium text-muted-foreground">Production Date:</span>
+          <Select
+            value={selectedDate.toISOString()}
+            onValueChange={(value) => setSelectedDate(new Date(value))}
+          >
+            <SelectTrigger className="w-[240px]">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {Array.from({ length: 7 }, (_, i) => {
+                const date = new Date();
+                date.setDate(date.getDate() + i);
+                return (
+                  <SelectItem key={i} value={date.toISOString()}>
+                    {format(date, "EEEE, MMM d, yyyy")}
+                    {i === 0 && " (Today)"}
+                  </SelectItem>
+                );
+              })}
+            </SelectContent>
+          </Select>
+        </div>
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <span>Last updated: {format(new Date(), "EEEE, MMMM d, yyyy 'at' h:mm a")}</span>
@@ -510,6 +522,7 @@ export default function SuggestedProduction() {
               <TableRow>
                 <TableHead>Product</TableHead>
                 <TableHead>Category</TableHead>
+                <TableHead>Day Part</TableHead>
                 {viewMode === "hq" && !groupByProduct && <TableHead>Store</TableHead>}
                 {viewMode === "hq" && (
                   <TableHead className="bg-gradient-to-r from-[#ff914d]/20 to-[#ff914d]/10 relative text-center">
@@ -544,6 +557,9 @@ export default function SuggestedProduction() {
                   </TableCell>
                   <TableCell>
                     {getCategoryBadge(product.category)}
+                  </TableCell>
+                  <TableCell>
+                    {getDayPartBadge(product.dayPart)}
                   </TableCell>
                   {viewMode === "hq" && !groupByProduct && (
                     <TableCell>
