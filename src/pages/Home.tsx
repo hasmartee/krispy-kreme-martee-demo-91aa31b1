@@ -139,113 +139,170 @@ export default function Home() {
         </p>
       </div>
 
-      {/* This Week's Metrics */}
-      <div>
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-semibold text-foreground">This Week's Performance</h2>
-          <Button onClick={() => navigate("/analytics")} variant="outline" className="gap-2">
-            View Full Performance
-            <ArrowRight className="h-4 w-4" />
-          </Button>
+      {viewMode === "hq" ? (
+        /* HQ View - Three Main Metrics */
+        <div className="grid gap-6 md:grid-cols-3">
+          {/* Sold Qty */}
+          <Card className="shadow-lg">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-lg font-semibold">Sold Qty</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div>
+                <div className="text-4xl font-bold text-foreground">8,420</div>
+                <div className="text-sm text-muted-foreground mt-1">94.2% of total</div>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <Card className="bg-muted/50">
+                  <CardContent className="p-3">
+                    <div className="text-xs text-muted-foreground mb-1">Full Price Sales</div>
+                    <div className="text-xl font-semibold">6,890</div>
+                    <div className="text-xs text-muted-foreground">81.8%</div>
+                  </CardContent>
+                </Card>
+                <Card className="bg-muted/50">
+                  <CardContent className="p-3">
+                    <div className="text-xs text-muted-foreground mb-1">Reduced Price Sales</div>
+                    <div className="text-xl font-semibold">1,530</div>
+                    <div className="text-xs text-muted-foreground">18.2%</div>
+                  </CardContent>
+                </Card>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Wasted Qty */}
+          <Card className="shadow-lg">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-lg font-semibold">Wasted Qty</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div>
+                <div className="text-4xl font-bold text-foreground">385</div>
+                <div className="text-sm text-muted-foreground mt-1">4.3% of total</div>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <Card className="bg-muted/50">
+                  <CardContent className="p-3">
+                    <div className="text-xs text-muted-foreground mb-1">Reported</div>
+                    <div className="text-xl font-semibold">185</div>
+                    <div className="text-xs text-muted-foreground">2.1%</div>
+                  </CardContent>
+                </Card>
+                <Card className="bg-destructive/10 border-destructive/20">
+                  <CardContent className="p-3">
+                    <div className="text-xs text-muted-foreground mb-1">Calculated</div>
+                    <div className="text-xl font-semibold text-destructive">385</div>
+                    <div className="text-xs text-destructive">4.3%</div>
+                  </CardContent>
+                </Card>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Delivered Qty */}
+          <Card className="shadow-lg">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-lg font-semibold">Delivered Qty</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div>
+                <div className="text-4xl font-bold text-foreground">8,950</div>
+                <div className="text-sm text-muted-foreground mt-1">Total delivered</div>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <Card className="bg-muted/50">
+                  <CardContent className="p-3">
+                    <div className="text-xs text-muted-foreground mb-1">Expected</div>
+                    <div className="text-xl font-semibold">9,100</div>
+                    <div className="text-xs text-muted-foreground">100%</div>
+                  </CardContent>
+                </Card>
+                <Card className="bg-muted/50">
+                  <CardContent className="p-3">
+                    <div className="text-xs text-muted-foreground mb-1">Received</div>
+                    <div className="text-xl font-semibold">8,950</div>
+                    <div className="text-xs text-muted-foreground">98.4%</div>
+                  </CardContent>
+                </Card>
+              </div>
+            </CardContent>
+          </Card>
         </div>
-        
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Revenue</CardTitle>
-              <DollarSign className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">
-                {viewMode === "hq" ? `£${(weeklyMetrics.revenue / 1000000).toFixed(2)}M` : `£${weeklyMetrics.revenue.toLocaleString()}`}
-              </div>
-              <p className="text-xs text-muted-foreground mt-1">
-                Week to date
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Gross Profit</CardTitle>
-              <TrendingUp className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">
-                {viewMode === "hq" ? `£${(weeklyMetrics.grossProfit / 1000000).toFixed(2)}M` : `£${weeklyMetrics.grossProfit.toLocaleString()}`}
-              </div>
-              <p className="text-xs text-muted-foreground mt-1">
-                {((weeklyMetrics.grossProfit / weeklyMetrics.revenue) * 100).toFixed(1)}% margin
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Waste</CardTitle>
-              <Trash2 className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">
-                {viewMode === "hq" ? `£${(weeklyMetrics.waste / 1000000).toFixed(2)}M` : `£${weeklyMetrics.waste.toLocaleString()}`}
-              </div>
-              <p className="text-xs text-muted-foreground mt-1">
-                {viewMode === "hq" ? `${avgWaste.toFixed(1)}% average` : `${((weeklyMetrics.waste / weeklyMetrics.revenue) * 100).toFixed(1)}% of revenue`}
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Availability</CardTitle>
-              <CheckCircle className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{weeklyMetrics.availability.toFixed(1)}%</div>
-              <p className="text-xs text-muted-foreground mt-1">
-                Products in stock
-              </p>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-
-      {/* Multi-Brand Overview - HQ Only */}
-      {viewMode === "hq" && (
-        <div>
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-semibold text-foreground">Brand Overview</h2>
-            <p className="text-sm text-muted-foreground">{totalStores} stores across 3 brands</p>
-          </div>
-          <div className="grid gap-4 md:grid-cols-3">
-            {brandData.map((brand) => (
-              <Card key={brand.name}>
-                <CardHeader>
-                  <CardTitle className="text-lg">{brand.name}</CardTitle>
-                  <p className="text-sm text-muted-foreground">{brand.stores} stores</p>
+      ) : (
+        /* Store Manager View - Keep existing content */
+        <>
+          {/* This Week's Metrics */}
+          <div>
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xl font-semibold text-foreground">This Week's Performance</h2>
+              <Button onClick={() => navigate("/analytics")} variant="outline" className="gap-2">
+                View Full Performance
+                <ArrowRight className="h-4 w-4" />
+              </Button>
+            </div>
+            
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Revenue</CardTitle>
+                  <DollarSign className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
-                <CardContent className="space-y-2">
-                  <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Revenue:</span>
-                    <span className="font-medium">£{(brand.revenue / 1000000).toFixed(2)}M</span>
+                <CardContent>
+                  <div className="text-2xl font-bold">
+                    £{weeklyMetrics.revenue.toLocaleString()}
                   </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Gross Profit:</span>
-                    <span className="font-medium">£{(brand.grossProfit / 1000000).toFixed(2)}M</span>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Waste:</span>
-                    <span className="font-medium">{brand.waste.toFixed(1)}%</span>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Availability:</span>
-                    <span className="font-medium">{brand.availability.toFixed(1)}%</span>
-                  </div>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Week to date
+                  </p>
                 </CardContent>
               </Card>
-            ))}
+
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Gross Profit</CardTitle>
+                  <TrendingUp className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">
+                    £{weeklyMetrics.grossProfit.toLocaleString()}
+                  </div>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    {((weeklyMetrics.grossProfit / weeklyMetrics.revenue) * 100).toFixed(1)}% margin
+                  </p>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Waste</CardTitle>
+                  <Trash2 className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">
+                    £{weeklyMetrics.waste.toLocaleString()}
+                  </div>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    {((weeklyMetrics.waste / weeklyMetrics.revenue) * 100).toFixed(1)}% of revenue
+                  </p>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Availability</CardTitle>
+                  <CheckCircle className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{weeklyMetrics.availability.toFixed(1)}%</div>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Products in stock
+                  </p>
+                </CardContent>
+              </Card>
+            </div>
           </div>
-        </div>
+        </>
       )}
 
       {/* Notable Events - Only in Store View */}

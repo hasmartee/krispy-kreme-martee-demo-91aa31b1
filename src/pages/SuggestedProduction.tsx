@@ -483,7 +483,7 @@ export default function SuggestedProduction() {
                 <TableHead>Product</TableHead>
                 <TableHead>Category</TableHead>
                 {viewMode === "hq" && !groupByProduct && <TableHead>Store</TableHead>}
-                <TableHead>{viewMode === "hq" ? "Current Stock" : "Expected Delivery"}</TableHead>
+                {viewMode === "store_manager" && <TableHead>Expected Delivery</TableHead>}
                 {viewMode === "hq" && (
                   <TableHead className="bg-gradient-to-r from-[#ff914d]/20 to-[#ff914d]/10 relative text-center">
                     <div className="flex items-center justify-center gap-2 relative">
@@ -523,9 +523,11 @@ export default function SuggestedProduction() {
                       <span className="font-medium">{product.store}</span>
                     </TableCell>
                   )}
-                  <TableCell>
-                    <span className="font-mono">{product.currentStock}</span>
-                  </TableCell>
+                  {viewMode === "store_manager" && (
+                    <TableCell>
+                      <span className="font-mono">{product.currentStock}</span>
+                    </TableCell>
+                  )}
                   {viewMode === "hq" && (
                     <TableCell className="bg-gradient-to-r from-[#ff914d]/10 to-transparent relative group">
                       <div className="absolute inset-0 bg-gradient-to-r from-[#ff914d]/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
