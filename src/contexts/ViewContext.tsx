@@ -16,21 +16,20 @@ export function ViewProvider({ children }: { children: ReactNode }) {
   const [viewMode, setViewMode] = useState<ViewMode>("store_manager");
   const [selectedStore, setSelectedStore] = useState<string>("");
 
-  // Load first store on mount
+  // Load Bank Station as default for store manager view
   useEffect(() => {
     let mounted = true;
     
-    const loadFirstStore = async () => {
+    const loadBankStore = async () => {
       try {
         const { data, error } = await supabase
           .from('stores')
           .select('name')
-          .order('name')
-          .limit(1)
+          .eq('name', 'Bank Station')
           .maybeSingle() as any;
         
         if (error) {
-          console.error('Error loading store:', error);
+          console.error('Error loading Bank Station:', error);
           return;
         }
         
@@ -38,11 +37,11 @@ export function ViewProvider({ children }: { children: ReactNode }) {
           setSelectedStore(data.name);
         }
       } catch (error) {
-        console.error('Error loading store:', error);
+        console.error('Error loading Bank Station:', error);
       }
     };
     
-    loadFirstStore();
+    loadBankStore();
     
     return () => {
       mounted = false;

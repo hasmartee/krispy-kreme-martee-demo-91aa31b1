@@ -40,32 +40,12 @@ interface DeliverySchedule {
   is_active: boolean;
 }
 
-// Brand-specific store counts (matching homepage)
-const brandStoreCounts = {
-  "Pret a Manger": 156,
-  "Brioche Dorée": 118,
-  "Starbucks": 112
-};
+// All stores use Ole and Steen brand
+const storeBrands: Record<string, string> = {};
 
-// Brand to store name mapping (using actual database store names)
-const storeBrands: Record<string, string> = {
-  // Pret a Manger stores (transport hubs & high street)
-  "Kings Cross Station": "Pret a Manger",
-  "Liverpool Street Station": "Pret a Manger",
-  "St Pancras International": "Pret a Manger",
-  "Shoreditch High Street": "Pret a Manger",
-  
-  // Brioche Dorée stores (upscale & residential areas)
-  "Bond Street": "Brioche Dorée",
-  "Notting Hill Gate": "Brioche Dorée",
-  "Greenwich Village": "Brioche Dorée",
-  "Wimbledon Village": "Brioche Dorée",
-  
-  // Starbucks stores (business district & mixed)
-  "Bank Station": "Starbucks",
-  "Canary Wharf Plaza": "Starbucks",
-  "The City - Leadenhall": "Starbucks",
-  "Camden Town": "Starbucks"
+// Ole and Steen store counts
+const brandStoreCounts = {
+  "Ole and Steen": 12
 };
 
 // Mock store data inspired by Pret a Manger locations
@@ -724,7 +704,7 @@ const initialMockStores: Store[] = [
 
 export default function StoreManagement() {
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedBrand, setSelectedBrand] = useState("Pret a Manger");
+  const [selectedBrand, setSelectedBrand] = useState("Ole and Steen");
   const [stores, setStores] = useState<Store[]>([]);
   const [editingStore, setEditingStore] = useState<Store | null>(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
@@ -958,15 +938,11 @@ export default function StoreManagement() {
     
     const matchesViewMode = viewMode === "hq" || store.name === contextSelectedStore;
     
-    // Filter by brand for both HQ and store manager views
-    const storeBrand = storeBrands[store.name] || "Pret a Manger";
-    const matchesBrand = selectedBrand === storeBrand;
-    
-    return matchesSearch && matchesViewMode && (viewMode === "store_manager" || matchesBrand);
+    return matchesSearch && matchesViewMode;
   });
 
   // Get the total store count for the selected brand
-  const totalBrandStores = brandStoreCounts[selectedBrand as keyof typeof brandStoreCounts] || 0;
+  const totalBrandStores = brandStoreCounts["Ole and Steen"];
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -1186,9 +1162,7 @@ export default function StoreManagement() {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="Pret a Manger">Pret a Manger</SelectItem>
-                    <SelectItem value="Brioche Dorée">Brioche Dorée</SelectItem>
-                    <SelectItem value="Starbucks">Starbucks</SelectItem>
+                    <SelectItem value="Ole and Steen">Ole and Steen</SelectItem>
                   </SelectContent>
                 </Select>
               </div>

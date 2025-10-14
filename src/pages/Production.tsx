@@ -372,33 +372,6 @@ export default function Production() {
         </div>
       </div>
 
-      {/* Context Cards */}
-      <Card className="shadow-card border-l-4 border-l-primary">
-        <CardContent className="p-6">
-          <div className="flex flex-col md:flex-row items-start md:items-center gap-6">
-            <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-primary/10">
-                <CloudRain className="h-5 w-5 text-primary" />
-              </div>
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Predicted Weather</p>
-                <p className="text-base font-semibold text-foreground">Rainy, 12°C - Lower footfall expected</p>
-              </div>
-            </div>
-            <div className="h-8 w-px bg-border hidden md:block" />
-            <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-destructive/10">
-                <AlertTriangle className="h-5 w-5 text-destructive" />
-              </div>
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Key Events</p>
-                <p className="text-base font-semibold text-foreground">Train strike in Central London - Reduced commuter traffic</p>
-              </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
       {/* Last Updated */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
@@ -443,7 +416,7 @@ export default function Production() {
               <TableRow>
                 <TableHead>Product</TableHead>
                 <TableHead>Category</TableHead>
-                <TableHead>Store</TableHead>
+                {viewMode === "hq" && <TableHead>Store</TableHead>}
                 <TableHead>Current Stock</TableHead>
                 <TableHead className="bg-gradient-to-r from-[#ff914d]/20 to-[#ff914d]/10 relative text-center">
                   <div className="flex items-center justify-center gap-2 relative">
@@ -475,9 +448,11 @@ export default function Production() {
                   <TableCell>
                     {getCategoryBadge(product.category)}
                   </TableCell>
-                  <TableCell>
-                    <span className="font-medium">{product.store}</span>
-                  </TableCell>
+                  {viewMode === "hq" && (
+                    <TableCell>
+                      <span className="font-medium">{product.store}</span>
+                    </TableCell>
+                  )}
                   <TableCell>
                     <span className="font-mono">{product.currentStock}</span>
                   </TableCell>
