@@ -21,6 +21,7 @@ import Inventory from "./pages/Inventory";
 import MyTasks from "./pages/MyTasks";
 import Deliveries from "./pages/Deliveries";
 import Production from "./pages/Production";
+import DailyWaste from "./pages/DailyWaste";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 
@@ -46,6 +47,7 @@ const App = () => (
                       <Route path="/analytics" element={<Analytics />} />
                       <Route path="/live-sales" element={<LiveSales />} />
                       <Route path="/suggested-production" element={<SuggestedProduction />} />
+                      <Route path="/daily-waste" element={<DailyWaste />} />
                       <Route path="/products" element={<ProductRange />} />
                       <Route path="/store-products" element={<StoreProductRange />} />
                       <Route path="/stores" element={<StoreManagement />} />

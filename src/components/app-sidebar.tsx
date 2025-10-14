@@ -1,4 +1,4 @@
-import { BarChart3, Package, Store, TrendingUp, ShoppingCart, Settings, ChevronRight, Target, BookOpen, CheckSquare, Activity, Truck, Home, ChefHat, Sparkles } from "lucide-react";
+import { BarChart3, Package, Store, TrendingUp, ShoppingCart, Settings, ChevronRight, Target, BookOpen, CheckSquare, Activity, Truck, Home, ChefHat, Sparkles, Trash2 } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import { useState } from "react";
 import { useView } from "@/contexts/ViewContext";
@@ -22,6 +22,7 @@ const mainNavigationStoreManager: Array<{ title: string; url: string; icon: any;
   { title: "Home", url: "/", icon: Home },
   { title: "My Tasks", url: "/tasks", icon: CheckSquare },
   { title: "Store Deliveries", url: "/suggested-production", icon: Truck, sparkles: true },
+  { title: "Daily Waste", url: "/daily-waste", icon: Trash2 },
   { title: "Live Sales", url: "/live-sales", icon: Activity },
 ];
 
