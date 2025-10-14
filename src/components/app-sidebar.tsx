@@ -27,16 +27,10 @@ const mainNavigationStoreManager: Array<{ title: string; url: string; icon: any;
   { title: "Live Sales", url: "/live-sales", icon: Activity },
 ];
 
-const mainNavigationStoreTeam: Array<{ title: string; url: string; icon: any; sparkles?: boolean }> = [
-  { title: "Home", url: "/store-team-home", icon: Home },
-  { title: "My Tasks", url: "/tasks", icon: CheckSquare },
-  { title: "Production", url: "/production", icon: ChefHat },
-  { title: "Live Availability", url: "/inventory", icon: Package },
-];
-
 const mainNavigationHQ: Array<{ title: string; url: string; icon: any; sparkles?: boolean }> = [
   { title: "Home", url: "/", icon: Home },
   { title: "Performance", url: "/analytics", icon: BarChart3 },
+  { title: "Production", url: "/production", icon: ChefHat },
 ];
 
 const settingsNavigationHQ = [
@@ -53,30 +47,20 @@ const settingsNavigationStoreManager = [
   { title: "Store Details", url: "/store-details", icon: Store },
 ];
 
-const settingsNavigationStoreTeam = [
-  { title: "Products", url: "/products", icon: Package },
-  { title: "Range", url: "/store-products", icon: ShoppingCart },
-  { title: "Recipes", url: "/recipes", icon: BookOpen },
-  { title: "Store Details", url: "/store-details", icon: Store },
-];
 
 export function AppSidebar() {
   const { viewMode } = useView();
   const [settingsOpen, setSettingsOpen] = useState(false);
   
-  const mainNavigation = viewMode === "store_team" 
-    ? mainNavigationStoreTeam 
-    : viewMode === "store_manager" 
+  const mainNavigation = viewMode === "store_manager" 
     ? mainNavigationStoreManager 
     : mainNavigationHQ;
   
-  const settingsNavigation = viewMode === "store_team"
-    ? settingsNavigationStoreTeam
-    : viewMode === "store_manager" 
+  const settingsNavigation = viewMode === "store_manager" 
     ? settingsNavigationStoreManager 
     : settingsNavigationHQ;
   
-  const businessLabel = viewMode === "store_manager" || viewMode === "store_team" ? "My Store" : "My Business";
+  const businessLabel = viewMode === "store_manager" ? "My Store" : "My Business";
   const showSettings = true; // Show settings for all views now
 
   return (
@@ -88,7 +72,7 @@ export function AppSidebar() {
           </div>
           <div>
             <h2 className="text-lg font-bold text-foreground">Martee AI</h2>
-            <p className="text-xs text-muted-foreground">SSP</p>
+            <p className="text-xs text-muted-foreground">Ole and Steen</p>
           </div>
         </div>
       </SidebarHeader>

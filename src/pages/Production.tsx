@@ -55,7 +55,7 @@ const getStatusBadge = (status: ProductionItem["status"]) => {
 };
 
 export default function Production() {
-  const { selectedStore } = useView();
+  const { selectedStore, viewMode } = useView();
   const { toast } = useToast();
   const [openSections, setOpenSections] = useState<string[]>(["morning"]);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
@@ -500,7 +500,7 @@ export default function Production() {
         <div>
           <h1 className="text-3xl font-bold text-foreground">Production Plans</h1>
           <p className="text-muted-foreground">
-            {selectedStore} - Today's production schedule
+            {viewMode === "hq" ? "All Stores - Today's production schedule" : `${selectedStore} - Today's production schedule`}
           </p>
         </div>
         

@@ -1,7 +1,7 @@
 import { createContext, useContext, useState, ReactNode, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
-export type ViewMode = "hq" | "store_manager" | "store_team";
+export type ViewMode = "hq" | "store_manager";
 
 interface ViewContextType {
   viewMode: ViewMode;
@@ -13,7 +13,7 @@ interface ViewContextType {
 const ViewContext = createContext<ViewContextType | undefined>(undefined);
 
 export function ViewProvider({ children }: { children: ReactNode }) {
-  const [viewMode, setViewMode] = useState<ViewMode>("store_team");
+  const [viewMode, setViewMode] = useState<ViewMode>("store_manager");
   const [selectedStore, setSelectedStore] = useState<string>("");
 
   // Load first store on mount

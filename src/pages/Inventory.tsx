@@ -123,7 +123,7 @@ export default function Inventory() {
     setLoading(true);
     console.log('Loading inventory - viewMode:', viewMode, 'selectedStore:', selectedStore);
     try {
-      if (viewMode === "store_manager" || viewMode === "store_team") {
+      if (viewMode === "store_manager") {
         // Store view: Show ALL products for store team, or cluster-based for manager
         const { data: storeData, error: storeError } = await supabase
           .from("stores")
@@ -445,10 +445,10 @@ export default function Inventory() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-foreground">
-            {viewMode === "store_manager" || viewMode === "store_team" ? `${selectedStore} - Live Availability` : "Live Availability - All Stores"}
+            {viewMode === "store_manager" ? `${selectedStore} - Live Availability` : "Live Availability - All Stores"}
           </h1>
           <p className="text-muted-foreground">
-            {viewMode === "store_manager" || viewMode === "store_team"
+            {viewMode === "store_manager"
               ? "Real-time product availability for your store"
               : "Monitor product availability across all stores"
             }

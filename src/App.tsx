@@ -8,7 +8,6 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import { ViewProvider } from "@/contexts/ViewContext";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import Home from "./pages/Home";
-import StoreTeamHome from "./pages/StoreTeamHome";
 import SuggestedProduction from "./pages/SuggestedProduction";
 import SuggestedOrdering from "./pages/SuggestedOrdering";
 import ProductRange from "./pages/ProductRange";
@@ -45,7 +44,6 @@ const App = () => (
                     <Layout>
                     <Routes>
                       <Route path="/" element={<Home />} />
-                      <Route path="/store-team-home" element={<StoreTeamHome />} />
                       <Route path="/analytics" element={<Analytics />} />
                       <Route path="/live-sales" element={<LiveSales />} />
                       <Route path="/suggested-production" element={<SuggestedProduction />} />
