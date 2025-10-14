@@ -3,11 +3,14 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { TrendingUp, TrendingDown, RefreshCw, Plus, Minus, CloudRain, AlertTriangle, Sparkles, Download, Send, BookOpen, Loader2 } from "lucide-react";
+import { TrendingUp, TrendingDown, RefreshCw, Plus, Minus, CloudRain, AlertTriangle, Sparkles, Download, Send, BookOpen, Loader2, CalendarIcon } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
 import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
+import { cn } from "@/lib/utils";
 import heroImage from "@/assets/hero-food.jpg";
 import { useView } from "@/contexts/ViewContext";
 import { supabase } from "@/lib/supabase-helper";
@@ -196,10 +199,10 @@ export default function Production() {
   const [selectedRecipe, setSelectedRecipe] = useState<string | null>(null);
   const [confirmingProduction, setConfirmingProduction] = useState<string | null>(null);
   const [groupByProduct, setGroupByProduct] = useState(false);
+  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const { toast } = useToast();
   
-  const tomorrow = new Date(Date.now() + 86400000);
-  const formattedDate = tomorrow.toLocaleDateString('en-GB', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+  const formattedDate = selectedDate.toLocaleDateString('en-GB', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
 
   useEffect(() => {
     loadData();
@@ -323,7 +326,7 @@ export default function Production() {
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `production-${format(tomorrow, 'yyyy-MM-dd')}.csv`;
+    a.download = `production-${format(selectedDate, 'yyyy-MM-dd')}.csv`;
     a.click();
     window.URL.revokeObjectURL(url);
     
@@ -402,41 +405,66 @@ export default function Production() {
         </div>
       </div>
 
-      {/* Last Updated and View Toggle */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-          <span>Last updated: {format(new Date(), "EEEE, MMMM d, yyyy 'at' h:mm a")}</span>
-        </div>
-        <div className="flex items-center gap-2">
-          {viewMode === "hq" && (
-            <div className="flex items-center gap-2 bg-muted/50 rounded-lg p-1">
-              <Button
-                size="sm"
-                variant={!groupByProduct ? "default" : "ghost"}
-                onClick={() => setGroupByProduct(false)}
-                className="h-8"
-              >
-                By Line
-              </Button>
-              <Button
-                size="sm"
-                variant={groupByProduct ? "default" : "ghost"}
-                onClick={() => setGroupByProduct(true)}
-                className="h-8"
-              >
-                By Product
-              </Button>
-            </div>
-          )}
-          <Button 
-            onClick={handleRefresh}
-            size="sm"
-            variant="outline"
-            disabled={isRefreshing}
-          >
-            <RefreshCw className={`h-4 w-4 mr-2 ${isRefreshing ? 'animate-spin' : ''}`} />
-            Refresh
-          </Button>
+      {/* Date Picker and View Toggle */}
+      <div className="flex items-center justify-between gap-4">
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button
+              variant="outline"
+              className={cn(
+                "justify-start text-left font-normal",
+                !selectedDate && "text-muted-foreground"
+              )}
+            >
+              <CalendarIcon className="mr-2 h-4 w-4" />
+              {selectedDate ? format(selectedDate, "PPP") : <span>Pick a date</span>}
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-auto p-0" align="start">
+            <Calendar
+              mode="single"
+              selected={selectedDate}
+              onSelect={(date) => date && setSelectedDate(date)}
+              initialFocus
+              className="p-3 pointer-events-auto"
+            />
+          </PopoverContent>
+        </Popover>
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+            <span>Last updated: {format(new Date(), "EEEE, MMMM d, yyyy 'at' h:mm a")}</span>
+          </div>
+          <div className="flex items-center gap-2">
+            {viewMode === "hq" && (
+              <div className="flex items-center gap-2 bg-muted/50 rounded-lg p-1">
+                <Button
+                  size="sm"
+                  variant={!groupByProduct ? "default" : "ghost"}
+                  onClick={() => setGroupByProduct(false)}
+                  className="h-8"
+                >
+                  By Line
+                </Button>
+                <Button
+                  size="sm"
+                  variant={groupByProduct ? "default" : "ghost"}
+                  onClick={() => setGroupByProduct(true)}
+                  className="h-8"
+                >
+                  By Product
+                </Button>
+              </div>
+            )}
+            <Button 
+              onClick={handleRefresh}
+              size="sm"
+              variant="outline"
+              disabled={isRefreshing}
+            >
+              <RefreshCw className={`h-4 w-4 mr-2 ${isRefreshing ? 'animate-spin' : ''}`} />
+              Refresh
+            </Button>
+          </div>
         </div>
       </div>
 
