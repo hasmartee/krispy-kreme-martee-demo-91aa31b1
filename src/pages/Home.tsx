@@ -1,12 +1,17 @@
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
 import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
 import { DollarSign, TrendingUp, Trash2, CheckCircle, ArrowRight, ClipboardCheck, BrainCircuit, Sparkles, Users, CloudRain, AlertTriangle, Bell, TrendingDown, MessageSquare, Package } from "lucide-react";
 import { useView } from "@/contexts/ViewContext";
 import { useNavigate } from "react-router-dom";
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Area, AreaChart, ComposedChart } from "recharts";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 // Revenue forecast data (next 7 days)
 const revenueForecastStore = [
@@ -135,6 +140,153 @@ const storePerformance = {
     ],
   },
 };
+
+function ShareWithHQCard() {
+  const [messageType, setMessageType] = useState<string>('comment');
+  const [priority, setPriority] = useState<string>('medium');
+  const [subject, setSubject] = useState('');
+  const [message, setMessage] = useState('');
+  const [isSending, setIsSending] = useState(false);
+  const { toast } = useToast();
+
+  const handleSendMessage = async () => {
+    if (!subject.trim() || !message.trim()) {
+      toast({
+        title: "Error",
+        description: "Please fill in both subject and message",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsSending(true);
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('Not authenticated');
+
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('store_id')
+        .eq('id', user.id)
+        .single();
+
+      const { error } = await supabase
+        .from('team_messages')
+        .insert({
+          user_id: user.id,
+          store_id: profile?.store_id,
+          message_type: messageType,
+          subject: subject.trim(),
+          message: message.trim(),
+          priority,
+          status: 'new',
+        });
+
+      if (error) throw error;
+
+      toast({
+        title: "Success",
+        description: "Your message has been sent to HQ",
+      });
+
+      // Reset form
+      setSubject('');
+      setMessage('');
+      setMessageType('comment');
+      setPriority('medium');
+    } catch (error) {
+      console.error('Error sending message:', error);
+      toast({
+        title: "Error",
+        description: "Failed to send message. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSending(false);
+    }
+  };
+
+  return (
+    <Card className="border-2 border-primary shadow-lg bg-gradient-to-br from-primary/10 via-primary/5 to-transparent">
+      <CardHeader className="pb-4">
+        <div className="flex items-center gap-3">
+          <div className="p-2 rounded-lg bg-primary/20">
+            <MessageSquare className="h-6 w-6 text-primary" />
+          </div>
+          <div>
+            <CardTitle className="text-2xl">Share with HQ</CardTitle>
+            <CardDescription className="text-base">
+              Have insights, concerns, or feedback? Let headquarters know what's happening.
+            </CardDescription>
+          </div>
+        </div>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <div className="grid gap-4 md:grid-cols-2">
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-foreground">Message Type</label>
+            <Select value={messageType} onValueChange={setMessageType}>
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="comment">Comment</SelectItem>
+                <SelectItem value="observation">Observation</SelectItem>
+                <SelectItem value="issue">Issue</SelectItem>
+                <SelectItem value="equipment">Equipment Problem</SelectItem>
+                <SelectItem value="delivery">Delivery Issue</SelectItem>
+                <SelectItem value="contamination">Contamination</SelectItem>
+                <SelectItem value="other">Other</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-foreground">Priority</label>
+            <Select value={priority} onValueChange={setPriority}>
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="low">Low</SelectItem>
+                <SelectItem value="medium">Medium</SelectItem>
+                <SelectItem value="high">High</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+        <div className="space-y-2">
+          <label className="text-sm font-medium text-foreground">Subject</label>
+          <Input 
+            placeholder="Brief summary of your message..."
+            value={subject}
+            onChange={(e) => setSubject(e.target.value)}
+            className="bg-background/50 border-primary/20 focus:border-primary"
+          />
+        </div>
+        <div className="space-y-2">
+          <label className="text-sm font-medium text-foreground">Message</label>
+          <Textarea 
+            placeholder="Share your comments, observations, or suggestions for HQ..."
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+            className="min-h-[120px] resize-none bg-background/50 border-primary/20 focus:border-primary"
+          />
+        </div>
+        <div className="flex justify-end">
+          <Button 
+            size="lg" 
+            className="gap-2 shadow-md"
+            onClick={handleSendMessage}
+            disabled={isSending}
+          >
+            <MessageSquare className="h-5 w-5" />
+            {isSending ? 'Sending...' : 'Send to HQ'}
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
 
 export default function Home() {
   const { viewMode, selectedStore } = useView();
@@ -671,33 +823,7 @@ export default function Home() {
 
       {/* Share Comments with HQ - Store Manager Only - PROMINENT */}
       {viewMode === "store_manager" && (
-        <Card className="border-2 border-primary shadow-lg bg-gradient-to-br from-primary/10 via-primary/5 to-transparent">
-          <CardHeader className="pb-4">
-            <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-primary/20">
-                <MessageSquare className="h-6 w-6 text-primary" />
-              </div>
-              <div>
-                <CardTitle className="text-2xl">Share with HQ</CardTitle>
-                <CardDescription className="text-base">
-                  Have insights, concerns, or feedback? Let headquarters know what's happening.
-                </CardDescription>
-              </div>
-            </div>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <Textarea 
-              placeholder="Share your comments, observations, or suggestions for HQ..."
-              className="min-h-[120px] resize-none bg-background/50 border-primary/20 focus:border-primary"
-            />
-            <div className="flex justify-end">
-              <Button size="lg" className="gap-2 shadow-md">
-                <MessageSquare className="h-5 w-5" />
-                Send to HQ
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
+        <ShareWithHQCard />
       )}
     </div>
   );

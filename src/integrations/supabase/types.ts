@@ -14,16 +14,646 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      delivery_items: {
+        Row: {
+          created_at: string
+          delivery_log_id: string
+          id: string
+          ingredient_id: string
+          quantity_ordered: number
+          quantity_received: number
+          unit: string
+        }
+        Insert: {
+          created_at?: string
+          delivery_log_id: string
+          id?: string
+          ingredient_id: string
+          quantity_ordered: number
+          quantity_received: number
+          unit: string
+        }
+        Update: {
+          created_at?: string
+          delivery_log_id?: string
+          id?: string
+          ingredient_id?: string
+          quantity_ordered?: number
+          quantity_received?: number
+          unit?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "delivery_items_delivery_log_id_fkey"
+            columns: ["delivery_log_id"]
+            isOneToOne: false
+            referencedRelation: "delivery_logs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "delivery_items_ingredient_id_fkey"
+            columns: ["ingredient_id"]
+            isOneToOne: false
+            referencedRelation: "ingredients"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      delivery_logs: {
+        Row: {
+          created_at: string
+          delivery_date: string
+          id: string
+          notes: string | null
+          receipt_url: string | null
+          received_by: string
+          status: string
+          store_id: string
+          supplier_name: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          delivery_date: string
+          id?: string
+          notes?: string | null
+          receipt_url?: string | null
+          received_by: string
+          status?: string
+          store_id: string
+          supplier_name: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          delivery_date?: string
+          id?: string
+          notes?: string | null
+          receipt_url?: string | null
+          received_by?: string
+          status?: string
+          store_id?: string
+          supplier_name?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "delivery_logs_store_id_fkey"
+            columns: ["store_id"]
+            isOneToOne: false
+            referencedRelation: "stores"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      delivery_schedules: {
+        Row: {
+          created_at: string
+          day_of_week: string
+          delivery_time: string
+          delivery_type: string
+          id: string
+          is_active: boolean
+          notes: string | null
+          store_id: string
+          supplier: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          day_of_week: string
+          delivery_time: string
+          delivery_type: string
+          id?: string
+          is_active?: boolean
+          notes?: string | null
+          store_id: string
+          supplier: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          day_of_week?: string
+          delivery_time?: string
+          delivery_type?: string
+          id?: string
+          is_active?: boolean
+          notes?: string | null
+          store_id?: string
+          supplier?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "delivery_schedules_store_id_fkey"
+            columns: ["store_id"]
+            isOneToOne: false
+            referencedRelation: "stores"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ingredient_suppliers: {
+        Row: {
+          created_at: string
+          id: string
+          ingredient_id: string
+          supplier_name: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          ingredient_id: string
+          supplier_name: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          ingredient_id?: string
+          supplier_name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ingredient_suppliers_ingredient_id_fkey"
+            columns: ["ingredient_id"]
+            isOneToOne: false
+            referencedRelation: "ingredients"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ingredients: {
+        Row: {
+          category: string
+          created_at: string
+          id: string
+          name: string
+          unit: string
+          updated_at: string
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          id?: string
+          name: string
+          unit?: string
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          id?: string
+          name?: string
+          unit?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      ingredients_inventory: {
+        Row: {
+          created_at: string
+          current_stock: number
+          id: string
+          ingredient_id: string
+          last_updated: string
+          min_stock_level: number
+          store_id: string
+          updated_by: string | null
+        }
+        Insert: {
+          created_at?: string
+          current_stock?: number
+          id?: string
+          ingredient_id: string
+          last_updated?: string
+          min_stock_level?: number
+          store_id: string
+          updated_by?: string | null
+        }
+        Update: {
+          created_at?: string
+          current_stock?: number
+          id?: string
+          ingredient_id?: string
+          last_updated?: string
+          min_stock_level?: number
+          store_id?: string
+          updated_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ingredients_inventory_ingredient_id_fkey"
+            columns: ["ingredient_id"]
+            isOneToOne: false
+            referencedRelation: "ingredients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ingredients_inventory_store_id_fkey"
+            columns: ["store_id"]
+            isOneToOne: false
+            referencedRelation: "stores"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      par_levels: {
+        Row: {
+          created_at: string
+          day_of_week: number | null
+          id: string
+          is_overridden: boolean
+          manual_override: number | null
+          month: number | null
+          product_id: string
+          store_id: string
+          suggested_par_level: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          day_of_week?: number | null
+          id?: string
+          is_overridden?: boolean
+          manual_override?: number | null
+          month?: number | null
+          product_id: string
+          store_id: string
+          suggested_par_level: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          day_of_week?: number | null
+          id?: string
+          is_overridden?: boolean
+          manual_override?: number | null
+          month?: number | null
+          product_id?: string
+          store_id?: string
+          suggested_par_level?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "par_levels_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "par_levels_store_id_fkey"
+            columns: ["store_id"]
+            isOneToOne: false
+            referencedRelation: "stores"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      products: {
+        Row: {
+          category: string | null
+          created_at: string
+          id: string
+          image_url: string | null
+          name: string
+          sku: string
+          unit: string
+          updated_at: string
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          name: string
+          sku: string
+          unit?: string
+          updated_at?: string
+        }
+        Update: {
+          category?: string | null
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          name?: string
+          sku?: string
+          unit?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          full_name: string | null
+          id: string
+          store_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          full_name?: string | null
+          id: string
+          store_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          full_name?: string | null
+          id?: string
+          store_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "profiles_store_id_fkey"
+            columns: ["store_id"]
+            isOneToOne: false
+            referencedRelation: "stores"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      recipe_ingredients: {
+        Row: {
+          created_at: string
+          id: string
+          ingredient_id: string
+          product_id: string
+          quantity: number
+          unit: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          ingredient_id: string
+          product_id: string
+          quantity: number
+          unit: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          ingredient_id?: string
+          product_id?: string
+          quantity?: number
+          unit?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "recipe_ingredients_ingredient_id_fkey"
+            columns: ["ingredient_id"]
+            isOneToOne: false
+            referencedRelation: "ingredients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "recipe_ingredients_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      store_inventory: {
+        Row: {
+          created_at: string
+          current_stock: number
+          id: string
+          last_updated: string
+          product_id: string
+          store_id: string
+          updated_by: string | null
+        }
+        Insert: {
+          created_at?: string
+          current_stock?: number
+          id?: string
+          last_updated?: string
+          product_id: string
+          store_id: string
+          updated_by?: string | null
+        }
+        Update: {
+          created_at?: string
+          current_stock?: number
+          id?: string
+          last_updated?: string
+          product_id?: string
+          store_id?: string
+          updated_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "store_inventory_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "store_inventory_store_id_fkey"
+            columns: ["store_id"]
+            isOneToOne: false
+            referencedRelation: "stores"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      stores: {
+        Row: {
+          address: string
+          cluster: string | null
+          created_at: string
+          daily_target: number
+          id: string
+          manager: string
+          name: string
+          opening_hours: string
+          phone: string
+          postcode: string
+          status: string
+          store_id: string
+          updated_at: string
+          weekly_average: number
+        }
+        Insert: {
+          address: string
+          cluster?: string | null
+          created_at?: string
+          daily_target?: number
+          id?: string
+          manager: string
+          name: string
+          opening_hours: string
+          phone: string
+          postcode: string
+          status?: string
+          store_id: string
+          updated_at?: string
+          weekly_average?: number
+        }
+        Update: {
+          address?: string
+          cluster?: string | null
+          created_at?: string
+          daily_target?: number
+          id?: string
+          manager?: string
+          name?: string
+          opening_hours?: string
+          phone?: string
+          postcode?: string
+          status?: string
+          store_id?: string
+          updated_at?: string
+          weekly_average?: number
+        }
+        Relationships: []
+      }
+      team_members: {
+        Row: {
+          available_days: string[]
+          created_at: string
+          full_name: string
+          hourly_rate: number
+          id: string
+          is_active: boolean
+          role: string
+          seniority: string
+          start_date: string
+          store_id: string
+          updated_at: string
+        }
+        Insert: {
+          available_days?: string[]
+          created_at?: string
+          full_name: string
+          hourly_rate: number
+          id?: string
+          is_active?: boolean
+          role: string
+          seniority: string
+          start_date: string
+          store_id: string
+          updated_at?: string
+        }
+        Update: {
+          available_days?: string[]
+          created_at?: string
+          full_name?: string
+          hourly_rate?: number
+          id?: string
+          is_active?: boolean
+          role?: string
+          seniority?: string
+          start_date?: string
+          store_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "team_members_store_id_fkey"
+            columns: ["store_id"]
+            isOneToOne: false
+            referencedRelation: "stores"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      team_messages: {
+        Row: {
+          created_at: string
+          id: string
+          message: string
+          message_type: string
+          priority: string
+          status: string
+          store_id: string | null
+          subject: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          message: string
+          message_type: string
+          priority?: string
+          status?: string
+          store_id?: string | null
+          subject: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          message?: string
+          message_type?: string
+          priority?: string
+          status?: string
+          store_id?: string | null
+          subject?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "team_messages_store_id_fkey"
+            columns: ["store_id"]
+            isOneToOne: false
+            referencedRelation: "stores"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_user_store: {
+        Args: { _user_id: string }
+        Returns: string
+      }
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "store_manager" | "staff"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +780,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "store_manager", "staff"],
+    },
   },
 } as const
