@@ -1,7 +1,8 @@
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { DollarSign, TrendingUp, Trash2, CheckCircle, ArrowRight, ClipboardCheck, BrainCircuit, Sparkles, Users, CloudRain, AlertTriangle } from "lucide-react";
+import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
+import { DollarSign, TrendingUp, Trash2, CheckCircle, ArrowRight, ClipboardCheck, BrainCircuit, Sparkles, Users, CloudRain, AlertTriangle, Bell, TrendingDown } from "lucide-react";
 import { useView } from "@/contexts/ViewContext";
 import { useNavigate } from "react-router-dom";
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Area, AreaChart, ComposedChart } from "recharts";
@@ -68,6 +69,71 @@ const footfallForecastHQ = [
   { day: "Sat", footfall: 2125, morning: 700, afternoon: 900, evening: 525 },
   { day: "Sun", footfall: 1525, morning: 500, afternoon: 640, evening: 385 },
 ];
+
+// Store alerts data
+const storeAlerts = [
+  {
+    id: "1",
+    type: "waste_variance",
+    store: "Liverpool Street Station",
+    metric: "Waste variance: 112% higher than reported",
+    severity: "high",
+  },
+  {
+    id: "2",
+    type: "delivery_variance",
+    store: "Bond Street",
+    metric: "Delivery shortfall: 8.4% under expected",
+    severity: "medium",
+  },
+  {
+    id: "3",
+    type: "reduced_sales",
+    store: "Camden Town",
+    metric: "Reduced price sales: 34% of total",
+    severity: "high",
+  },
+];
+
+// Top/Bottom store performance data
+const storePerformance = {
+  sales: {
+    top: [
+      { store: "St Pancras International", value: "892", change: "+12%" },
+      { store: "Liverpool Street Station", value: "845", change: "+8%" },
+      { store: "Kings Cross Station", value: "780", change: "+5%" },
+    ],
+    bottom: [
+      { store: "Wimbledon Village", value: "342", change: "-3%" },
+      { store: "Greenwich Village", value: "368", change: "-1%" },
+      { store: "Notting Hill Gate", value: "395", change: "+2%" },
+    ],
+  },
+  waste: {
+    top: [
+      { store: "Canary Wharf Plaza", value: "18", change: "2.1%" },
+      { store: "The City - Leadenhall", value: "22", change: "2.5%" },
+      { store: "Bank Station", value: "25", change: "2.8%" },
+    ],
+    bottom: [
+      { store: "Liverpool Street Station", value: "78", change: "8.2%" },
+      { store: "Camden Town", value: "65", change: "7.1%" },
+      { store: "Bond Street", value: "58", change: "6.4%" },
+    ],
+  },
+  deliveries: {
+    top: [
+      { store: "St Pancras International", value: "99.8%", change: "+0.2%" },
+      { store: "Kings Cross Station", value: "99.2%", change: "0%" },
+      { store: "Shoreditch High Street", value: "98.9%", change: "+0.1%" },
+    ],
+    bottom: [
+      { store: "Bond Street", value: "91.6%", change: "-8.4%" },
+      { store: "Camden Town", value: "94.2%", change: "-5.8%" },
+      { store: "Notting Hill Gate", value: "95.5%", change: "-4.5%" },
+    ],
+  },
+};
 
 export default function Home() {
   const { viewMode, selectedStore } = useView();
@@ -140,95 +206,263 @@ export default function Home() {
       </div>
 
       {viewMode === "hq" ? (
-        /* HQ View - Three Main Metrics */
-        <div className="grid gap-6 md:grid-cols-3">
-          {/* Sold Qty */}
-          <Card className="shadow-lg">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-lg font-semibold">Sold Qty</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <div className="text-4xl font-bold text-foreground">8,420</div>
-                <div className="text-sm text-muted-foreground mt-1">94.2% of total</div>
-              </div>
-              <div className="grid grid-cols-2 gap-3">
-                <Card className="bg-muted/50">
-                  <CardContent className="p-3">
-                    <div className="text-xs text-muted-foreground mb-1">Full Price Sales</div>
-                    <div className="text-xl font-semibold">6,890</div>
-                    <div className="text-xs text-muted-foreground">81.8%</div>
+        <>
+          {/* Store Alerts */}
+          <div>
+            <div className="flex items-center gap-2 mb-4">
+              <Bell className="h-5 w-5 text-primary" />
+              <h2 className="text-xl font-semibold text-foreground">Store Alerts</h2>
+              <Badge variant="destructive">{storeAlerts.length}</Badge>
+            </div>
+            <div className="grid gap-3">
+              {storeAlerts.map((alert) => (
+                <Card 
+                  key={alert.id} 
+                  className={`border-l-4 ${
+                    alert.severity === "high" 
+                      ? "border-l-destructive bg-destructive/5" 
+                      : "border-l-amber-500 bg-amber-500/5"
+                  }`}
+                >
+                  <CardContent className="p-4">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <AlertTriangle 
+                          className={`h-5 w-5 ${
+                            alert.severity === "high" ? "text-destructive" : "text-amber-500"
+                          }`} 
+                        />
+                        <div>
+                          <div className="font-semibold">{alert.store}</div>
+                          <div className="text-sm text-muted-foreground">{alert.metric}</div>
+                        </div>
+                      </div>
+                      <Button size="sm" variant="outline">
+                        View Details
+                      </Button>
+                    </div>
                   </CardContent>
                 </Card>
-                <Card className="bg-muted/50">
-                  <CardContent className="p-3">
-                    <div className="text-xs text-muted-foreground mb-1">Reduced Price Sales</div>
-                    <div className="text-xl font-semibold">1,530</div>
-                    <div className="text-xs text-muted-foreground">18.2%</div>
-                  </CardContent>
-                </Card>
-              </div>
-            </CardContent>
-          </Card>
+              ))}
+            </div>
+          </div>
 
-          {/* Wasted Qty */}
-          <Card className="shadow-lg">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-lg font-semibold">Wasted Qty</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <div className="text-4xl font-bold text-foreground">385</div>
-                <div className="text-sm text-muted-foreground mt-1">4.3% of total</div>
-              </div>
-              <div className="grid grid-cols-2 gap-3">
-                <Card className="bg-muted/50">
-                  <CardContent className="p-3">
-                    <div className="text-xs text-muted-foreground mb-1">Reported</div>
-                    <div className="text-xl font-semibold">185</div>
-                    <div className="text-xs text-muted-foreground">2.1%</div>
+          {/* Three Main Metrics with Hover Details */}
+          <div className="grid gap-6 md:grid-cols-3">
+            {/* Sold Qty */}
+            <HoverCard openDelay={200}>
+              <HoverCardTrigger asChild>
+                <Card className="shadow-lg cursor-pointer hover:shadow-xl transition-all">
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-lg font-semibold">Sold Qty</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div>
+                      <div className="text-4xl font-bold text-foreground">8,420</div>
+                      <div className="text-sm text-muted-foreground mt-1">94.2% of total</div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-3">
+                      <Card className="bg-muted/50">
+                        <CardContent className="p-3">
+                          <div className="text-xs text-muted-foreground mb-1">Full Price Sales</div>
+                          <div className="text-xl font-semibold">6,890</div>
+                          <div className="text-xs text-muted-foreground">81.8%</div>
+                        </CardContent>
+                      </Card>
+                      <Card className="bg-muted/50">
+                        <CardContent className="p-3">
+                          <div className="text-xs text-muted-foreground mb-1">Reduced Price Sales</div>
+                          <div className="text-xl font-semibold">1,530</div>
+                          <div className="text-xs text-muted-foreground">18.2%</div>
+                        </CardContent>
+                      </Card>
+                    </div>
                   </CardContent>
                 </Card>
-                <Card className="bg-destructive/10 border-destructive/20">
-                  <CardContent className="p-3">
-                    <div className="text-xs text-muted-foreground mb-1">Calculated</div>
-                    <div className="text-xl font-semibold text-destructive">385</div>
-                    <div className="text-xs text-destructive">4.3%</div>
-                  </CardContent>
-                </Card>
-              </div>
-            </CardContent>
-          </Card>
+              </HoverCardTrigger>
+              <HoverCardContent className="w-80" side="bottom">
+                <div className="space-y-4">
+                  <div>
+                    <h4 className="font-semibold mb-2 flex items-center gap-2">
+                      <TrendingUp className="h-4 w-4 text-green-600" />
+                      Top Performing Stores
+                    </h4>
+                    <div className="space-y-2">
+                      {storePerformance.sales.top.map((store, idx) => (
+                        <div key={idx} className="flex justify-between text-sm">
+                          <span className="text-muted-foreground">{store.store}</span>
+                          <div className="flex items-center gap-2">
+                            <span className="font-medium">{store.value}</span>
+                            <span className="text-green-600 text-xs">{store.change}</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="border-t pt-3">
+                    <h4 className="font-semibold mb-2 flex items-center gap-2">
+                      <TrendingDown className="h-4 w-4 text-amber-600" />
+                      Needs Attention
+                    </h4>
+                    <div className="space-y-2">
+                      {storePerformance.sales.bottom.map((store, idx) => (
+                        <div key={idx} className="flex justify-between text-sm">
+                          <span className="text-muted-foreground">{store.store}</span>
+                          <div className="flex items-center gap-2">
+                            <span className="font-medium">{store.value}</span>
+                            <span className="text-amber-600 text-xs">{store.change}</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </HoverCardContent>
+            </HoverCard>
 
-          {/* Delivered Qty */}
-          <Card className="shadow-lg">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-lg font-semibold">Delivered Qty</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <div className="text-4xl font-bold text-foreground">8,950</div>
-                <div className="text-sm text-muted-foreground mt-1">Total delivered</div>
-              </div>
-              <div className="grid grid-cols-2 gap-3">
-                <Card className="bg-muted/50">
-                  <CardContent className="p-3">
-                    <div className="text-xs text-muted-foreground mb-1">Expected</div>
-                    <div className="text-xl font-semibold">9,100</div>
-                    <div className="text-xs text-muted-foreground">100%</div>
+            {/* Wasted Qty */}
+            <HoverCard openDelay={200}>
+              <HoverCardTrigger asChild>
+                <Card className="shadow-lg cursor-pointer hover:shadow-xl transition-all">
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-lg font-semibold">Wasted Qty</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div>
+                      <div className="text-4xl font-bold text-foreground">385</div>
+                      <div className="text-sm text-muted-foreground mt-1">4.3% of total</div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-3">
+                      <Card className="bg-muted/50">
+                        <CardContent className="p-3">
+                          <div className="text-xs text-muted-foreground mb-1">Reported</div>
+                          <div className="text-xl font-semibold">185</div>
+                          <div className="text-xs text-muted-foreground">2.1%</div>
+                        </CardContent>
+                      </Card>
+                      <Card className="bg-destructive/10 border-destructive/20">
+                        <CardContent className="p-3">
+                          <div className="text-xs text-muted-foreground mb-1">Calculated</div>
+                          <div className="text-xl font-semibold text-destructive">385</div>
+                          <div className="text-xs text-destructive">4.3%</div>
+                        </CardContent>
+                      </Card>
+                    </div>
                   </CardContent>
                 </Card>
-                <Card className="bg-muted/50">
-                  <CardContent className="p-3">
-                    <div className="text-xs text-muted-foreground mb-1">Received</div>
-                    <div className="text-xl font-semibold">8,950</div>
-                    <div className="text-xs text-muted-foreground">98.4%</div>
+              </HoverCardTrigger>
+              <HoverCardContent className="w-80" side="bottom">
+                <div className="space-y-4">
+                  <div>
+                    <h4 className="font-semibold mb-2 flex items-center gap-2">
+                      <TrendingUp className="h-4 w-4 text-green-600" />
+                      Best Waste Management
+                    </h4>
+                    <div className="space-y-2">
+                      {storePerformance.waste.top.map((store, idx) => (
+                        <div key={idx} className="flex justify-between text-sm">
+                          <span className="text-muted-foreground">{store.store}</span>
+                          <div className="flex items-center gap-2">
+                            <span className="font-medium">{store.value}</span>
+                            <span className="text-green-600 text-xs">{store.change}</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="border-t pt-3">
+                    <h4 className="font-semibold mb-2 flex items-center gap-2">
+                      <TrendingDown className="h-4 w-4 text-destructive" />
+                      High Waste Stores
+                    </h4>
+                    <div className="space-y-2">
+                      {storePerformance.waste.bottom.map((store, idx) => (
+                        <div key={idx} className="flex justify-between text-sm">
+                          <span className="text-muted-foreground">{store.store}</span>
+                          <div className="flex items-center gap-2">
+                            <span className="font-medium">{store.value}</span>
+                            <span className="text-destructive text-xs">{store.change}</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </HoverCardContent>
+            </HoverCard>
+
+            {/* Delivered Qty */}
+            <HoverCard openDelay={200}>
+              <HoverCardTrigger asChild>
+                <Card className="shadow-lg cursor-pointer hover:shadow-xl transition-all">
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-lg font-semibold">Delivered Qty</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div>
+                      <div className="text-4xl font-bold text-foreground">8,950</div>
+                      <div className="text-sm text-muted-foreground mt-1">Total delivered</div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-3">
+                      <Card className="bg-muted/50">
+                        <CardContent className="p-3">
+                          <div className="text-xs text-muted-foreground mb-1">Expected</div>
+                          <div className="text-xl font-semibold">9,100</div>
+                          <div className="text-xs text-muted-foreground">100%</div>
+                        </CardContent>
+                      </Card>
+                      <Card className="bg-muted/50">
+                        <CardContent className="p-3">
+                          <div className="text-xs text-muted-foreground mb-1">Received</div>
+                          <div className="text-xl font-semibold">8,950</div>
+                          <div className="text-xs text-muted-foreground">98.4%</div>
+                        </CardContent>
+                      </Card>
+                    </div>
                   </CardContent>
                 </Card>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+              </HoverCardTrigger>
+              <HoverCardContent className="w-80" side="bottom">
+                <div className="space-y-4">
+                  <div>
+                    <h4 className="font-semibold mb-2 flex items-center gap-2">
+                      <TrendingUp className="h-4 w-4 text-green-600" />
+                      Best Delivery Accuracy
+                    </h4>
+                    <div className="space-y-2">
+                      {storePerformance.deliveries.top.map((store, idx) => (
+                        <div key={idx} className="flex justify-between text-sm">
+                          <span className="text-muted-foreground">{store.store}</span>
+                          <div className="flex items-center gap-2">
+                            <span className="font-medium">{store.value}</span>
+                            <span className="text-green-600 text-xs">{store.change}</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="border-t pt-3">
+                    <h4 className="font-semibold mb-2 flex items-center gap-2">
+                      <TrendingDown className="h-4 w-4 text-amber-600" />
+                      Delivery Shortfalls
+                    </h4>
+                    <div className="space-y-2">
+                      {storePerformance.deliveries.bottom.map((store, idx) => (
+                        <div key={idx} className="flex justify-between text-sm">
+                          <span className="text-muted-foreground">{store.store}</span>
+                          <div className="flex items-center gap-2">
+                            <span className="font-medium">{store.value}</span>
+                            <span className="text-amber-600 text-xs">{store.change}</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </HoverCardContent>
+            </HoverCard>
+          </div>
+        </>
       ) : (
         /* Store Manager View - Keep existing content */
         <>
