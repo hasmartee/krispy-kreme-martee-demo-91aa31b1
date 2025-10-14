@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, ReactNode, useEffect } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase } from "@/lib/supabase-helper";
 
 export type ViewMode = "hq" | "store_manager";
 
@@ -27,7 +27,7 @@ export function ViewProvider({ children }: { children: ReactNode }) {
           .select('name')
           .order('name')
           .limit(1)
-          .maybeSingle();
+          .maybeSingle() as any;
         
         if (error) {
           console.error('Error loading store:', error);

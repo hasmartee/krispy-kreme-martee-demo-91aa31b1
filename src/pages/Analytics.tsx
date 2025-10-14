@@ -13,7 +13,7 @@ import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, L
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { useView } from "@/contexts/ViewContext";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase } from "@/lib/supabase-helper";
 import { toast } from "sonner";
 
 // Mock data for charts

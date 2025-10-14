@@ -10,7 +10,7 @@ import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
 import heroImage from "@/assets/hero-food.jpg";
 import { useView } from "@/contexts/ViewContext";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase } from "@/lib/supabase-helper";
 import bltSandwich from "@/assets/products/blt-sandwich.jpg";
 import chickenCaesarWrap from "@/assets/products/chicken-caesar-wrap.jpg";
 import avocadoHummusWrap from "@/assets/products/avocado-hummus-wrap.jpg";
@@ -208,13 +208,13 @@ export default function SuggestedProduction() {
     setLoading(true);
     try {
       // Load stores
-      const { data: storesData } = await supabase
+      const { data, error } = await supabase
         .from('stores')
-        .select('id, name, cluster')
-        .order('name');
+        .select('*')
+        .order('name') as any;
 
-      if (storesData) {
-        setStores(storesData);
+      if (data) {
+        setStores(data);
         
         // Generate mock production data for each store
         const mockProducts: Product[] = [];
@@ -228,10 +228,10 @@ export default function SuggestedProduction() {
         ];
 
         const targetStores = viewMode === "store_manager" 
-          ? storesData.filter(s => s.name === selectedStore)
-          : storesData;
+          ? data.filter((s: any) => s.name === selectedStore)
+          : data;
 
-        targetStores.forEach(store => {
+        targetStores.forEach((store: any) => {
           productsList.forEach(product => {
             const baseQty = 15 + Math.floor(Math.random() * 15);
             const currentStock = Math.floor(Math.random() * 10);

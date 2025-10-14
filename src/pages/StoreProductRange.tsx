@@ -8,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Search, Store, Package, Filter, TrendingUp, AlertCircle, CheckCircle, Sparkles, Settings, ChevronDown, ChevronUp, Edit, Plus, Trash2 } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase } from "@/lib/supabase-helper";
 import { useToast } from "@/hooks/use-toast";
 import { useView } from "@/contexts/ViewContext";
 
@@ -444,10 +444,10 @@ export default function StoreProductRange() {
       <div className="flex flex-col gap-4">
         <div>
           <h1 className="text-3xl font-bold text-foreground">
-            {viewMode === "store_manager" || viewMode === "store_team" ? `My Store - ${selectedStore}` : "My Range Manager"}
+            {viewMode === "store_manager" ? `My Store - ${selectedStore}` : "My Range Manager"}
           </h1>
           <p className="text-muted-foreground">
-            {viewMode === "store_manager" || viewMode === "store_team"
+            {viewMode === "store_manager"
               ? `Manage product availability for ${selectedStore}`
               : "Manage product availability across store clusters and individual locations"
             }
@@ -804,7 +804,7 @@ export default function StoreProductRange() {
         ) : null}
         
         {/* Store View: Show ranges split by day parts */}
-        {(viewMode === "store_manager" || viewMode === "store_team") && filteredStores.map((store) => {
+        {viewMode === "store_manager" && filteredStores.map((store) => {
         const breakfastProducts = store.activeProducts.filter(p => p.dayParts?.includes('breakfast'));
         const lunchProducts = store.activeProducts.filter(p => p.dayParts?.includes('lunch'));
         const afternoonProducts = store.activeProducts.filter(p => p.dayParts?.includes('afternoon'));
