@@ -2,7 +2,8 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
-import { DollarSign, TrendingUp, Trash2, CheckCircle, ArrowRight, ClipboardCheck, BrainCircuit, Sparkles, Users, CloudRain, AlertTriangle, Bell, TrendingDown } from "lucide-react";
+import { Textarea } from "@/components/ui/textarea";
+import { DollarSign, TrendingUp, Trash2, CheckCircle, ArrowRight, ClipboardCheck, BrainCircuit, Sparkles, Users, CloudRain, AlertTriangle, Bell, TrendingDown, MessageSquare, Package } from "lucide-react";
 import { useView } from "@/contexts/ViewContext";
 import { useNavigate } from "react-router-dom";
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Area, AreaChart, ComposedChart } from "recharts";
@@ -207,46 +208,6 @@ export default function Home() {
 
       {viewMode === "hq" ? (
         <>
-          {/* Store Alerts */}
-          <div>
-            <div className="flex items-center gap-2 mb-4">
-              <Bell className="h-5 w-5 text-primary" />
-              <h2 className="text-xl font-semibold text-foreground">Store Alerts</h2>
-              <Badge variant="destructive">{storeAlerts.length}</Badge>
-            </div>
-            <div className="grid gap-3">
-              {storeAlerts.map((alert) => (
-                <Card 
-                  key={alert.id} 
-                  className={`border-l-4 ${
-                    alert.severity === "high" 
-                      ? "border-l-destructive bg-destructive/5" 
-                      : "border-l-amber-500 bg-amber-500/5"
-                  }`}
-                >
-                  <CardContent className="p-4">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <AlertTriangle 
-                          className={`h-5 w-5 ${
-                            alert.severity === "high" ? "text-destructive" : "text-amber-500"
-                          }`} 
-                        />
-                        <div>
-                          <div className="font-semibold">{alert.store}</div>
-                          <div className="text-sm text-muted-foreground">{alert.metric}</div>
-                        </div>
-                      </div>
-                      <Button size="sm" variant="outline">
-                        View Details
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </div>
-
           {/* Three Main Metrics with Hover Details */}
           <div className="grid gap-6 md:grid-cols-3">
             {/* Sold Qty */}
@@ -477,10 +438,122 @@ export default function Home() {
               </HoverCardContent>
             </HoverCard>
           </div>
+
+          {/* Store Alerts */}
+          <div>
+            <div className="flex items-center gap-2 mb-4">
+              <Bell className="h-5 w-5 text-primary" />
+              <h2 className="text-xl font-semibold text-foreground">Store Alerts</h2>
+              <Badge variant="destructive">{storeAlerts.length}</Badge>
+            </div>
+            <div className="grid gap-3">
+              {storeAlerts.map((alert) => (
+                <Card 
+                  key={alert.id} 
+                  className={`border-l-4 ${
+                    alert.severity === "high" 
+                      ? "border-l-destructive bg-destructive/5" 
+                      : "border-l-amber-500 bg-amber-500/5"
+                  }`}
+                >
+                  <CardContent className="p-4">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <AlertTriangle 
+                          className={`h-5 w-5 ${
+                            alert.severity === "high" ? "text-destructive" : "text-amber-500"
+                          }`} 
+                        />
+                        <div>
+                          <div className="font-semibold">{alert.store}</div>
+                          <div className="text-sm text-muted-foreground">{alert.metric}</div>
+                        </div>
+                      </div>
+                      <Button size="sm" variant="outline">
+                        View Details
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+
+          {/* New Launches This Week */}
+          <div>
+            <div className="flex items-center gap-2 mb-4">
+              <Package className="h-5 w-5 text-primary" />
+              <h2 className="text-xl font-semibold text-foreground">New Launches This Week</h2>
+            </div>
+            <Card className="border-l-4 border-l-blue-500 bg-blue-500/5">
+              <CardContent className="p-4">
+                <div className="flex items-start gap-3">
+                  <Sparkles className="h-5 w-5 text-blue-600 mt-0.5" />
+                  <div>
+                    <div className="font-semibold text-foreground mb-1">
+                      2 New Products Launching Next Monday
+                    </div>
+                    <div className="text-sm text-muted-foreground mb-2">
+                      Get ready to introduce these exciting new items:
+                    </div>
+                    <ul className="text-sm space-y-1 ml-4">
+                      <li className="text-foreground">• Spicy Chicken & Avocado Wrap</li>
+                      <li className="text-foreground">• Mediterranean Quinoa Bowl</li>
+                    </ul>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         </>
       ) : (
         /* Store Manager View - Keep existing content */
         <>
+          {/* Disparity Alerts - Store View */}
+          <div>
+            <div className="flex items-center gap-2 mb-4">
+              <AlertTriangle className="h-5 w-5 text-amber-500" />
+              <h2 className="text-xl font-semibold text-foreground">Attention Required</h2>
+            </div>
+            <div className="grid gap-3 md:grid-cols-2">
+              <Card className="border-l-4 border-l-amber-500 bg-amber-500/5">
+                <CardContent className="p-4">
+                  <div className="flex items-start gap-3">
+                    <Trash2 className="h-5 w-5 text-amber-600 mt-0.5" />
+                    <div className="flex-1">
+                      <div className="font-semibold text-foreground mb-1">Waste Discrepancy</div>
+                      <div className="text-sm text-muted-foreground mb-2">
+                        Recorded: <span className="font-medium text-foreground">12 items</span> | 
+                        Expected: <span className="font-medium text-foreground">28 items</span>
+                      </div>
+                      <Badge variant="outline" className="text-xs text-amber-600 border-amber-600">
+                        +133% variance
+                      </Badge>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+              
+              <Card className="border-l-4 border-l-amber-500 bg-amber-500/5">
+                <CardContent className="p-4">
+                  <div className="flex items-start gap-3">
+                    <Package className="h-5 w-5 text-amber-600 mt-0.5" />
+                    <div className="flex-1">
+                      <div className="font-semibold text-foreground mb-1">Delivery Shortfall</div>
+                      <div className="text-sm text-muted-foreground mb-2">
+                        Expected: <span className="font-medium text-foreground">450 items</span> | 
+                        Received: <span className="font-medium text-foreground">428 items</span>
+                      </div>
+                      <Badge variant="outline" className="text-xs text-amber-600 border-amber-600">
+                        -4.9% shortage
+                      </Badge>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+
           {/* This Week's Metrics */}
           <div>
             <div className="flex items-center justify-between mb-4">
@@ -639,6 +712,36 @@ export default function Home() {
                   </div>
                 </div>
                 <ArrowRight className="h-5 w-5 text-muted-foreground" />
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
+
+      {/* Share Comments with HQ - Store Manager Only */}
+      {viewMode === "store_manager" && (
+        <div>
+          <div className="flex items-center gap-2 mb-4">
+            <MessageSquare className="h-5 w-5 text-primary" />
+            <h2 className="text-xl font-semibold text-foreground">Share with HQ</h2>
+          </div>
+          
+          <Card className="border-l-4 border-l-primary bg-gradient-to-br from-primary/5 to-transparent">
+            <CardContent className="p-6 space-y-4">
+              <div>
+                <p className="text-sm text-muted-foreground mb-3">
+                  Have insights, concerns, or feedback to share with headquarters? Let us know what's happening at your store.
+                </p>
+                <Textarea 
+                  placeholder="Share your comments, observations, or suggestions for HQ..."
+                  className="min-h-[100px] resize-none"
+                />
+              </div>
+              <div className="flex justify-end">
+                <Button className="gap-2">
+                  <MessageSquare className="h-4 w-4" />
+                  Send to HQ
+                </Button>
               </div>
             </CardContent>
           </Card>
