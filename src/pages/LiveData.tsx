@@ -34,10 +34,10 @@ const generateProductData = (storeName: string): ProductData[] => {
   const baseMultiplier = storeName.includes("Station") ? 1.2 : storeName.includes("Street") ? 1.1 : 1.0;
   
   return [
-    // Pastries
-    { productName: "Cinnamon Swirl", planned: Math.round(60 * baseMultiplier), produced: Math.round(60 * baseMultiplier), delivered: Math.round(60 * baseMultiplier), sold: Math.round(52 * baseMultiplier), wasted: Math.round(5 * baseMultiplier), unaccountedFor: Math.round(3 * baseMultiplier) },
+    // Pastries (some with discrepancies)
+    { productName: "Cinnamon Swirl", planned: Math.round(60 * baseMultiplier), produced: Math.round(55 * baseMultiplier), delivered: Math.round(55 * baseMultiplier), sold: Math.round(52 * baseMultiplier), wasted: Math.round(5 * baseMultiplier), unaccountedFor: Math.round(3 * baseMultiplier) }, // produced < planned
     { productName: "Poppy Seed Pastry", planned: Math.round(50 * baseMultiplier), produced: Math.round(50 * baseMultiplier), delivered: Math.round(50 * baseMultiplier), sold: Math.round(44 * baseMultiplier), wasted: Math.round(4 * baseMultiplier), unaccountedFor: Math.round(2 * baseMultiplier) },
-    { productName: "Danish Pastry", planned: Math.round(70 * baseMultiplier), produced: Math.round(70 * baseMultiplier), delivered: Math.round(70 * baseMultiplier), sold: Math.round(63 * baseMultiplier), wasted: Math.round(5 * baseMultiplier), unaccountedFor: Math.round(2 * baseMultiplier) },
+    { productName: "Danish Pastry", planned: Math.round(70 * baseMultiplier), produced: Math.round(70 * baseMultiplier), delivered: Math.round(65 * baseMultiplier), sold: Math.round(63 * baseMultiplier), wasted: Math.round(5 * baseMultiplier), unaccountedFor: Math.round(2 * baseMultiplier) }, // delivered < produced (lost in transit)
     { productName: "Butter Croissant", planned: Math.round(120 * baseMultiplier), produced: Math.round(120 * baseMultiplier), delivered: Math.round(120 * baseMultiplier), sold: Math.round(105 * baseMultiplier), wasted: Math.round(8 * baseMultiplier), unaccountedFor: Math.round(7 * baseMultiplier) },
     { productName: "Pain au Chocolat", planned: Math.round(100 * baseMultiplier), produced: Math.round(100 * baseMultiplier), delivered: Math.round(100 * baseMultiplier), sold: Math.round(92 * baseMultiplier), wasted: Math.round(5 * baseMultiplier), unaccountedFor: Math.round(3 * baseMultiplier) },
     { productName: "Almond Croissant", planned: Math.round(80 * baseMultiplier), produced: Math.round(80 * baseMultiplier), delivered: Math.round(80 * baseMultiplier), sold: Math.round(74 * baseMultiplier), wasted: Math.round(4 * baseMultiplier), unaccountedFor: Math.round(2 * baseMultiplier) },
@@ -46,8 +46,8 @@ const generateProductData = (storeName: string): ProductData[] => {
     { productName: "Rye Bread Whole", planned: Math.round(30 * baseMultiplier), produced: Math.round(30 * baseMultiplier), delivered: Math.round(30 * baseMultiplier), sold: Math.round(26 * baseMultiplier), wasted: Math.round(2 * baseMultiplier), unaccountedFor: Math.round(2 * baseMultiplier) },
     { productName: "Sourdough Loaf", planned: Math.round(40 * baseMultiplier), produced: Math.round(40 * baseMultiplier), delivered: Math.round(40 * baseMultiplier), sold: Math.round(35 * baseMultiplier), wasted: Math.round(3 * baseMultiplier), unaccountedFor: Math.round(2 * baseMultiplier) },
     
-    // Hot Breakfast
-    { productName: "Scrambled Eggs on Sourdough", planned: Math.round(45 * baseMultiplier), produced: Math.round(45 * baseMultiplier), delivered: Math.round(45 * baseMultiplier), sold: Math.round(41 * baseMultiplier), wasted: Math.round(3 * baseMultiplier), unaccountedFor: Math.round(1 * baseMultiplier) },
+    // Hot Breakfast (with discrepancies)
+    { productName: "Scrambled Eggs on Sourdough", planned: Math.round(45 * baseMultiplier), produced: Math.round(45 * baseMultiplier), delivered: Math.round(45 * baseMultiplier), sold: Math.round(41 * baseMultiplier), wasted: Math.round(3 * baseMultiplier), unaccountedFor: Math.round(3 * baseMultiplier) }, // numbers don't add up
     { productName: "Bacon & Egg Roll", planned: Math.round(55 * baseMultiplier), produced: Math.round(55 * baseMultiplier), delivered: Math.round(55 * baseMultiplier), sold: Math.round(50 * baseMultiplier), wasted: Math.round(4 * baseMultiplier), unaccountedFor: Math.round(1 * baseMultiplier) },
     { productName: "Ham & Cheese Croissant", planned: Math.round(40 * baseMultiplier), produced: Math.round(40 * baseMultiplier), delivered: Math.round(40 * baseMultiplier), sold: Math.round(36 * baseMultiplier), wasted: Math.round(3 * baseMultiplier), unaccountedFor: Math.round(1 * baseMultiplier) },
     { productName: "Avocado Toast with Egg", planned: Math.round(35 * baseMultiplier), produced: Math.round(35 * baseMultiplier), delivered: Math.round(35 * baseMultiplier), sold: Math.round(32 * baseMultiplier), wasted: Math.round(2 * baseMultiplier), unaccountedFor: Math.round(1 * baseMultiplier) },
@@ -56,9 +56,9 @@ const generateProductData = (storeName: string): ProductData[] => {
     { productName: "Granola Bowl", planned: Math.round(30 * baseMultiplier), produced: Math.round(30 * baseMultiplier), delivered: Math.round(30 * baseMultiplier), sold: Math.round(28 * baseMultiplier), wasted: Math.round(1 * baseMultiplier), unaccountedFor: Math.round(1 * baseMultiplier) },
     { productName: "Fruit Parfait", planned: Math.round(25 * baseMultiplier), produced: Math.round(25 * baseMultiplier), delivered: Math.round(25 * baseMultiplier), sold: Math.round(23 * baseMultiplier), wasted: Math.round(1 * baseMultiplier), unaccountedFor: Math.round(1 * baseMultiplier) },
     
-    // Sandwiches
-    { productName: "Classic BLT", planned: Math.round(50 * baseMultiplier), produced: Math.round(50 * baseMultiplier), delivered: Math.round(50 * baseMultiplier), sold: Math.round(45 * baseMultiplier), wasted: Math.round(3 * baseMultiplier), unaccountedFor: Math.round(2 * baseMultiplier) },
-    { productName: "Chicken Bacon Sandwich", planned: Math.round(60 * baseMultiplier), produced: Math.round(60 * baseMultiplier), delivered: Math.round(60 * baseMultiplier), sold: Math.round(54 * baseMultiplier), wasted: Math.round(4 * baseMultiplier), unaccountedFor: Math.round(2 * baseMultiplier) },
+    // Sandwiches (with discrepancies)
+    { productName: "Classic BLT", planned: Math.round(50 * baseMultiplier), produced: Math.round(50 * baseMultiplier), delivered: Math.round(50 * baseMultiplier), sold: Math.round(45 * baseMultiplier), wasted: Math.round(3 * baseMultiplier), unaccountedFor: Math.round(5 * baseMultiplier) }, // high unaccounted
+    { productName: "Chicken Bacon Sandwich", planned: Math.round(60 * baseMultiplier), produced: Math.round(65 * baseMultiplier), delivered: Math.round(65 * baseMultiplier), sold: Math.round(54 * baseMultiplier), wasted: Math.round(4 * baseMultiplier), unaccountedFor: Math.round(2 * baseMultiplier) }, // overproduced
     { productName: "Salmon & Cream Cheese Bagel", planned: Math.round(40 * baseMultiplier), produced: Math.round(40 * baseMultiplier), delivered: Math.round(40 * baseMultiplier), sold: Math.round(37 * baseMultiplier), wasted: Math.round(2 * baseMultiplier), unaccountedFor: Math.round(1 * baseMultiplier) },
     { productName: "Tuna Melt Panini", planned: Math.round(35 * baseMultiplier), produced: Math.round(35 * baseMultiplier), delivered: Math.round(35 * baseMultiplier), sold: Math.round(32 * baseMultiplier), wasted: Math.round(2 * baseMultiplier), unaccountedFor: Math.round(1 * baseMultiplier) },
     
@@ -156,6 +156,16 @@ const LiveData = () => {
     return "text-muted-foreground";
   };
 
+  const hasDiscrepancy = (product: ProductData) => {
+    // Check if produced doesn't match planned
+    if (product.produced !== product.planned) return true;
+    // Check if delivered doesn't match produced
+    if (product.delivered !== product.produced) return true;
+    // Check if sold + wasted + unaccounted doesn't match delivered
+    if (product.sold + product.wasted + product.unaccountedFor !== product.delivered) return true;
+    return false;
+  };
+
   return (
     <div className="container mx-auto p-6 space-y-6">
       <div>
@@ -231,12 +241,26 @@ const LiveData = () => {
                         </TableRow>
                       </TableHeader>
                       <TableBody>
-                        {store.products.map((product, index) => (
-                          <TableRow key={product.productName} className={index % 2 === 0 ? "bg-background" : "bg-muted/30"}>
-                            <TableCell className="font-medium">{product.productName}</TableCell>
-                            <TableCell className="text-right text-muted-foreground">{product.planned}</TableCell>
-                            <TableCell className="text-right text-muted-foreground">{product.produced}</TableCell>
-                            <TableCell className="text-right text-muted-foreground">{product.delivered}</TableCell>
+                        {store.products.map((product, index) => {
+                          const hasIssue = hasDiscrepancy(product);
+                          return (
+                          <TableRow 
+                            key={product.productName} 
+                            className={`${index % 2 === 0 ? "bg-background" : "bg-muted/30"} ${hasIssue ? "bg-orange-50 dark:bg-orange-950/20 border-l-4 border-l-orange-500" : ""}`}
+                          >
+                            <TableCell className="font-medium">
+                              {product.productName}
+                              {hasIssue && <AlertCircle className="inline-block ml-2 h-4 w-4 text-orange-600" />}
+                            </TableCell>
+                            <TableCell className={`text-right ${product.planned !== product.produced ? "text-orange-600 font-bold" : "text-muted-foreground"}`}>
+                              {product.planned}
+                            </TableCell>
+                            <TableCell className={`text-right ${product.produced !== product.planned ? "text-orange-600 font-bold" : "text-muted-foreground"}`}>
+                              {product.produced}
+                            </TableCell>
+                            <TableCell className={`text-right ${product.delivered !== product.produced ? "text-orange-600 font-bold" : "text-muted-foreground"}`}>
+                              {product.delivered}
+                            </TableCell>
                             <TableCell className="text-right">
                               <span className="text-green-700 font-semibold">{product.sold}</span>
                             </TableCell>
@@ -251,7 +275,8 @@ const LiveData = () => {
                               </span>
                             </TableCell>
                           </TableRow>
-                        ))}
+                          );
+                        })}
                         <TableRow className="bg-primary/10 font-bold border-t-2 border-primary sticky bottom-0">
                           <TableCell className="text-lg">
                             <div className="flex items-center gap-2">
