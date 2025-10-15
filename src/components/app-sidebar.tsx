@@ -1,4 +1,4 @@
-import { BarChart3, Package, Store, TrendingUp, ShoppingCart, Settings, ChevronRight, Target, BookOpen, CheckSquare, Activity, Truck, Home, ChefHat, Sparkles, Trash2, MessageSquare } from "lucide-react";
+import { BarChart3, Package, Store, TrendingUp, ShoppingCart, Settings, ChevronRight, Target, BookOpen, CheckSquare, Activity, Truck, Home, ChefHat, Sparkles, Trash2, MessageSquare, ClipboardList } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import { useState } from "react";
 import { useView } from "@/contexts/ViewContext";
@@ -31,6 +31,7 @@ const mainNavigationHQ: Array<{ title: string; url: string; icon: any; sparkles?
   { title: "Team Messages", url: "/team-messages", icon: MessageSquare },
   { title: "Performance", url: "/analytics", icon: BarChart3 },
   { title: "Suggested Production", url: "/production", icon: ChefHat, sparkles: true },
+  { title: "Delivery Plan", url: "/delivery-plan", icon: ClipboardList },
 ];
 
 const settingsNavigationHQ = [
