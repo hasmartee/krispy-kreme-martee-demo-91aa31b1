@@ -40,38 +40,27 @@ const storeClusters = [
   },
 ];
 
-// Ole and Steen product images
-import cinnamonSwirl from "@/assets/products/cinnamon-swirl.jpg";
-import poppySeedPastry from "@/assets/products/poppy-seed-pastry.jpg";
-import danishPastry from "@/assets/products/danish-pastry.jpg";
-import butterCroissant from "@/assets/products/butter-croissant.jpg";
-import painAuChocolat from "@/assets/products/pain-au-chocolat.jpg";
-import almondCroissant from "@/assets/products/almond-croissant.jpg";
-import ryeBreadWhole from "@/assets/products/rye-bread-whole.jpg";
-import sourdoughLoaf from "@/assets/products/sourdough-loaf.jpg";
-import wholeGrainRoll from "@/assets/products/whole-grain-roll.jpg";
-import sesameRoll from "@/assets/products/sesame-roll.jpg";
-import scrambledEggsToast from "@/assets/products/scrambled-eggs-sourdough.jpg";
-import baconEggRoll from "@/assets/products/bacon-egg-roll.jpg";
-import hamCheeseCroissantHot from "@/assets/products/ham-cheese-croissant-hot.jpg";
-import avocadoEggToast from "@/assets/products/avocado-toast-egg.jpg";
-import porridgeHoney from "@/assets/products/porridge-honey-nuts.jpg";
-import granolaYogurtBowl from "@/assets/products/granola-yogurt-bowl.jpg";
-import fruitParfait from "@/assets/products/fruit-parfait.jpg";
-import almondBananaToast from "@/assets/products/almond-butter-banana-toast.jpg";
-import classicBlt from "@/assets/products/classic-blt.jpg";
-import chickenBacon from "@/assets/products/chicken-bacon-sandwich.jpg";
-import salmonCreamBagel from "@/assets/products/salmon-cream-bagel.jpg";
-import tunaMelt from "@/assets/products/tuna-melt-panini.jpg";
-import hamCheeseToastie from "@/assets/products/ham-cheese-toastie.jpg";
-import eggCheeseEnglishMuffin from "@/assets/products/egg-cheese-english-muffin.jpg";
-import chickenCaesar from "@/assets/products/chicken-caesar-wrap.jpg";
-import avocadoHummus from "@/assets/products/avocado-hummus-wrap.jpg";
-import veganMediterraneanWrap from "@/assets/products/vegan-mediterranean-wrap.jpg";
-import breakfastBurritoWrap from "@/assets/products/breakfast-burrito-wrap.jpg";
-import mediterraneanSaladBowl from "@/assets/products/mediterranean-salad-bowl.jpg";
-import greekSaladBowl from "@/assets/products/greek-salad-bowl.jpg";
-import coffeePastry from "@/assets/products/coffee-pastry-combo.jpg";
+// Krispy Kreme product images
+import originalGlazed from "@/assets/products/original-glazed.jpg";
+import chocolateIcedGlazed from "@/assets/products/chocolate-iced-glazed.jpg";
+import strawberryIced from "@/assets/products/strawberry-iced.jpg";
+import chocolateSprinkles from "@/assets/products/chocolate-sprinkles.jpg";
+import raspberryFilled from "@/assets/products/raspberry-filled.jpg";
+import caramelIced from "@/assets/products/caramel-iced.jpg";
+import bostonKreme from "@/assets/products/boston-kreme.jpg";
+import cookiesKreme from "@/assets/products/cookies-kreme.jpg";
+import lemonFilled from "@/assets/products/lemon-filled.jpg";
+import mapleIced from "@/assets/products/maple-iced.jpg";
+import glazedBlueberry from "@/assets/products/glazed-blueberry.jpg";
+import powderedSugar from "@/assets/products/powdered-sugar.jpg";
+import cinnamonSugar from "@/assets/products/cinnamon-sugar.jpg";
+import doubleChocolate from "@/assets/products/double-chocolate.jpg";
+import chocolateKremeFilled from "@/assets/products/chocolate-kreme-filled.jpg";
+import vanillaSprinkles from "@/assets/products/vanilla-sprinkles.jpg";
+import appleFritter from "@/assets/products/apple-fritter.jpg";
+import glazedCruller from "@/assets/products/glazed-cruller.jpg";
+import dulceLeche from "@/assets/products/dulce-leche.jpg";
+import coffeeGlazed from "@/assets/products/coffee-glazed.jpg";
 
 const rangingInsights = [
   {
@@ -120,58 +109,41 @@ interface StoreInfo {
   cluster: string;
 }
 
-// All stores use Ole and Steen products
+// All stores use Krispy Kreme products
 const storeBrands: Record<string, string> = {};
 
-// Ole and Steen product templates with day parts
+// Krispy Kreme product templates with day parts
 const brandProductTemplates = {
-  "Ole and Steen": [
-    // Pastries & Viennoiserie
-    { id: "OS-P001", name: "Kanelstang (Cinnamon Swirl)", category: "Pastries", dayPart: "Morning", active: true, image: cinnamonSwirl },
-    { id: "OS-P002", name: "Tebirkes (Poppy Seed Pastry)", category: "Pastries", dayPart: "Morning", active: true, image: poppySeedPastry },
-    { id: "OS-P003", name: "Wienerbrød (Danish Pastry)", category: "Pastries", dayPart: "Morning", active: true, image: danishPastry },
-    { id: "OS-P004", name: "Croissant", category: "Pastries", dayPart: "Morning", active: true, image: butterCroissant },
-    { id: "OS-P005", name: "Pain au Chocolat", category: "Pastries", dayPart: "Morning", active: true, image: painAuChocolat },
-    { id: "OS-P006", name: "Almond Croissant", category: "Pastries", dayPart: "Morning", active: true, image: almondCroissant },
+  "Krispy Kreme": [
+    // Classic Glazed
+    { id: "KK-G001", name: "Original Glazed", category: "Glazed", dayPart: "Morning", active: true, image: originalGlazed },
+    { id: "KK-G002", name: "Chocolate Iced Glazed", category: "Glazed", dayPart: "Morning", active: true, image: chocolateIcedGlazed },
+    { id: "KK-G003", name: "Maple Iced", category: "Glazed", dayPart: "Morning", active: true, image: mapleIced },
+    { id: "KK-G004", name: "Glazed Blueberry", category: "Glazed", dayPart: "Morning", active: true, image: glazedBlueberry },
+    { id: "KK-G005", name: "Caramel Iced", category: "Glazed", dayPart: "Afternoon", active: true, image: caramelIced },
+    { id: "KK-G006", name: "Coffee Glazed", category: "Glazed", dayPart: "Morning", active: true, image: coffeeGlazed },
+    { id: "KK-G007", name: "Dulce de Leche", category: "Glazed", dayPart: "Afternoon", active: true, image: dulceLeche },
     
-    // Breads & Baked Goods
-    { id: "OS-B001", name: "Rugbrød (Rye Bread) Whole", category: "Breads", dayPart: "Morning", active: true, image: ryeBreadWhole },
-    { id: "OS-B002", name: "Sourdough Loaf", category: "Breads", dayPart: "Morning", active: true, image: sourdoughLoaf },
-    { id: "OS-B003", name: "Whole Grain Roll", category: "Breads", dayPart: "Morning", active: true, image: wholeGrainRoll },
-    { id: "OS-B004", name: "Sesame Roll", category: "Breads", dayPart: "Morning", active: true, image: sesameRoll },
+    // Iced & Sprinkles
+    { id: "KK-I001", name: "Strawberry Iced with Sprinkles", category: "Iced", dayPart: "Afternoon", active: true, image: strawberryIced },
+    { id: "KK-I002", name: "Chocolate Iced with Sprinkles", category: "Iced", dayPart: "Afternoon", active: true, image: chocolateSprinkles },
+    { id: "KK-I003", name: "Vanilla Iced with Sprinkles", category: "Iced", dayPart: "Afternoon", active: true, image: vanillaSprinkles },
     
-    // Hot Breakfast Items
-    { id: "OS-HB001", name: "Scrambled Eggs on Sourdough", category: "Hot Breakfast", dayPart: "Morning", active: true, image: scrambledEggsToast },
-    { id: "OS-HB002", name: "Bacon & Egg Roll", category: "Hot Breakfast", dayPart: "Morning", active: true, image: baconEggRoll },
-    { id: "OS-HB003", name: "Ham & Cheese Croissant", category: "Hot Breakfast", dayPart: "Morning", active: true, image: hamCheeseCroissantHot },
-    { id: "OS-HB004", name: "Avocado Toast with Egg", category: "Hot Breakfast", dayPart: "Morning", active: true, image: avocadoEggToast },
-    { id: "OS-HB005", name: "Porridge with Honey & Nuts", category: "Hot Breakfast", dayPart: "Morning", active: true, image: porridgeHoney },
+    // Filled Donuts
+    { id: "KK-F001", name: "Raspberry Filled", category: "Filled", dayPart: "Morning", active: true, image: raspberryFilled },
+    { id: "KK-F002", name: "Lemon Filled", category: "Filled", dayPart: "Morning", active: true, image: lemonFilled },
+    { id: "KK-F003", name: "Boston Kreme", category: "Filled", dayPart: "Afternoon", active: true, image: bostonKreme },
+    { id: "KK-F004", name: "Chocolate Kreme Filled", category: "Filled", dayPart: "Afternoon", active: true, image: chocolateKremeFilled },
     
-    // Cold Breakfast
-    { id: "OS-CB001", name: "Granola Bowl with Yogurt", category: "Cold Breakfast", dayPart: "Morning", active: true, image: granolaYogurtBowl },
-    { id: "OS-CB002", name: "Fruit & Yogurt Parfait", category: "Cold Breakfast", dayPart: "Morning", active: true, image: fruitParfait },
-    { id: "OS-CB003", name: "Almond Butter & Banana Toast", category: "Cold Breakfast", dayPart: "Morning", active: true, image: almondBananaToast },
+    // Cake Donuts
+    { id: "KK-C001", name: "Powdered Sugar", category: "Cake", dayPart: "Morning", active: true, image: powderedSugar },
+    { id: "KK-C002", name: "Cinnamon Sugar", category: "Cake", dayPart: "Morning", active: true, image: cinnamonSugar },
+    { id: "KK-C003", name: "Double Chocolate", category: "Cake", dayPart: "Afternoon", active: true, image: doubleChocolate },
     
-    // Sandwiches & Smørrebrød
-    { id: "OS-S001", name: "Classic BLT Sandwich", category: "Sandwiches", dayPart: "Lunch", active: true, image: classicBlt },
-    { id: "OS-S002", name: "Chicken Bacon Sandwich", category: "Sandwiches", dayPart: "Lunch", active: true, image: chickenBacon },
-    { id: "OS-S003", name: "Salmon & Cream Cheese Bagel", category: "Sandwiches", dayPart: "Lunch", active: true, image: salmonCreamBagel },
-    { id: "OS-S004", name: "Tuna Melt Panini", category: "Sandwiches", dayPart: "Lunch", active: true, image: tunaMelt },
-    { id: "OS-S005", name: "Ham & Cheese Toastie", category: "Sandwiches", dayPart: "Lunch", active: true, image: hamCheeseToastie },
-    { id: "OS-S006", name: "Egg & Cheese Muffin", category: "Sandwiches", dayPart: "Lunch", active: true, image: eggCheeseEnglishMuffin },
-    
-    // Wraps
-    { id: "OS-W001", name: "Chicken Caesar Wrap", category: "Wraps", dayPart: "Lunch", active: true, image: chickenCaesar },
-    { id: "OS-W002", name: "Avocado & Hummus Wrap", category: "Wraps", dayPart: "Lunch", active: true, image: avocadoHummus },
-    { id: "OS-W003", name: "Vegan Mediterranean Wrap", category: "Wraps", dayPart: "Lunch", active: true, image: veganMediterraneanWrap },
-    { id: "OS-W004", name: "Breakfast Burrito", category: "Wraps", dayPart: "Morning", active: true, image: breakfastBurritoWrap },
-    
-    // Salads
-    { id: "OS-L001", name: "Mediterranean Salad", category: "Salads", dayPart: "Lunch", active: true, image: mediterraneanSaladBowl },
-    { id: "OS-L002", name: "Greek Feta Salad", category: "Salads", dayPart: "Lunch", active: true, image: greekSaladBowl },
-    
-    // Combo Meals
-    { id: "OS-C001", name: "Coffee & Pastry Combo", category: "Combos", dayPart: "Afternoon", active: true, image: coffeePastry },
+    // Specialty
+    { id: "KK-S001", name: "Cookies and Kreme", category: "Specialty", dayPart: "Afternoon", active: true, image: cookiesKreme },
+    { id: "KK-S002", name: "Apple Fritter", category: "Specialty", dayPart: "Morning", active: true, image: appleFritter },
+    { id: "KK-S003", name: "Glazed Cruller", category: "Specialty", dayPart: "Afternoon", active: true, image: glazedCruller },
   ]
 };
 
@@ -199,7 +171,7 @@ const generateBrandProducts = (brand: string, cluster: string) => {
 
 export default function StoreProductRange() {
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedBrand, setSelectedBrand] = useState("Ole and Steen");
+  const [selectedBrand, setSelectedBrand] = useState("Krispy Kreme");
   const [selectedCluster, setSelectedCluster] = useState<string>("all");
   const [selectedDayPart, setSelectedDayPart] = useState<string>("all");
   const [storeData, setStoreData] = useState<any[]>([]);
@@ -255,7 +227,7 @@ export default function StoreProductRange() {
             storeName: store.storeName,
             postcode: store.postcode,
             cluster: store.cluster,
-            activeProducts: generateBrandProducts("Ole and Steen", store.cluster)
+            activeProducts: generateBrandProducts("Krispy Kreme", store.cluster)
           };
         });
       setStoreData(updatedStoreData);
@@ -355,7 +327,7 @@ export default function StoreProductRange() {
 
   const handleEditTemplate = (clusterId: string) => {
     setEditingTemplateCluster(clusterId);
-    setTemplateProducts(generateBrandProducts("Ole and Steen", clusterId));
+    setTemplateProducts(generateBrandProducts("Krispy Kreme", clusterId));
     setIsEditTemplateOpen(true);
   };
 

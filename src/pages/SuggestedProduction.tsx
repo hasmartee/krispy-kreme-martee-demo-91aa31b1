@@ -224,26 +224,24 @@ export default function SuggestedProduction() {
         // Generate mock production data for each store
         const mockProducts: Product[] = [];
         const productsList = [
-          { id: "OS-P001", name: "Kanelstang (Cinnamon Swirl)", category: "Pastries", dayPart: "Morning" },
-          { id: "OS-P002", name: "Tebirkes (Poppy Seed Pastry)", category: "Pastries", dayPart: "Morning" },
-          { id: "OS-P003", name: "Wienerbrød (Danish Pastry)", category: "Pastries", dayPart: "Morning" },
-          { id: "OS-P004", name: "Croissant", category: "Pastries", dayPart: "Morning" },
-          { id: "OS-P005", name: "Pain au Chocolat", category: "Pastries", dayPart: "Morning" },
-          { id: "OS-P006", name: "Almond Croissant", category: "Pastries", dayPart: "Morning" },
-          { id: "OS-B001", name: "Rugbrød (Rye Bread) Whole", category: "Breads", dayPart: "Morning" },
-          { id: "OS-B002", name: "Sourdough Loaf", category: "Breads", dayPart: "Morning" },
-          { id: "OS-HB001", name: "Scrambled Eggs on Sourdough", category: "Hot Breakfast", dayPart: "Morning" },
-          { id: "OS-HB002", name: "Bacon & Egg Roll", category: "Hot Breakfast", dayPart: "Morning" },
-          { id: "OS-HB003", name: "Ham & Cheese Croissant", category: "Hot Breakfast", dayPart: "Morning" },
-          { id: "OS-CB001", name: "Granola Bowl with Yogurt", category: "Cold Breakfast", dayPart: "Morning" },
-          { id: "OS-S001", name: "Classic BLT Sandwich", category: "Sandwiches", dayPart: "Lunch" },
-          { id: "OS-S002", name: "Chicken Bacon Sandwich", category: "Sandwiches", dayPart: "Lunch" },
-          { id: "OS-S003", name: "Salmon & Cream Cheese Bagel", category: "Sandwiches", dayPart: "Lunch" },
-          { id: "OS-S004", name: "Tuna Melt Panini", category: "Sandwiches", dayPart: "Lunch" },
-          { id: "OS-W001", name: "Chicken Caesar Wrap", category: "Wraps", dayPart: "Lunch" },
-          { id: "OS-W002", name: "Avocado & Hummus Wrap", category: "Wraps", dayPart: "Lunch" },
-          { id: "OS-L001", name: "Mediterranean Salad", category: "Salads", dayPart: "Afternoon" },
-          { id: "OS-L002", name: "Greek Feta Salad", category: "Salads", dayPart: "Afternoon" },
+          { id: "KK-G001", name: "Original Glazed", category: "Glazed", dayPart: "Morning" },
+          { id: "KK-G002", name: "Chocolate Iced Glazed", category: "Glazed", dayPart: "Morning" },
+          { id: "KK-G003", name: "Maple Iced", category: "Glazed", dayPart: "Morning" },
+          { id: "KK-G004", name: "Glazed Blueberry", category: "Glazed", dayPart: "Morning" },
+          { id: "KK-G005", name: "Caramel Iced", category: "Glazed", dayPart: "Afternoon" },
+          { id: "KK-I001", name: "Strawberry Iced with Sprinkles", category: "Iced", dayPart: "Afternoon" },
+          { id: "KK-I002", name: "Chocolate Iced with Sprinkles", category: "Iced", dayPart: "Afternoon" },
+          { id: "KK-I003", name: "Vanilla Iced with Sprinkles", category: "Iced", dayPart: "Afternoon" },
+          { id: "KK-F001", name: "Raspberry Filled", category: "Filled", dayPart: "Morning" },
+          { id: "KK-F002", name: "Lemon Filled", category: "Filled", dayPart: "Morning" },
+          { id: "KK-F003", name: "Boston Kreme", category: "Filled", dayPart: "Afternoon" },
+          { id: "KK-F004", name: "Chocolate Kreme Filled", category: "Filled", dayPart: "Afternoon" },
+          { id: "KK-C001", name: "Powdered Sugar", category: "Cake", dayPart: "Morning" },
+          { id: "KK-C002", name: "Cinnamon Sugar", category: "Cake", dayPart: "Morning" },
+          { id: "KK-C003", name: "Double Chocolate", category: "Cake", dayPart: "Afternoon" },
+          { id: "KK-S001", name: "Cookies and Kreme", category: "Specialty", dayPart: "Afternoon" },
+          { id: "KK-S002", name: "Apple Fritter", category: "Specialty", dayPart: "Morning" },
+          { id: "KK-S003", name: "Glazed Cruller", category: "Specialty", dayPart: "Afternoon" },
         ];
 
         const targetStores = viewMode === "store_manager" 
@@ -345,17 +343,11 @@ export default function SuggestedProduction() {
 
   const getCategoryBadge = (category: string) => {
     const colors: Record<string, string> = {
-      "Sandwich": "bg-blue-100 text-blue-800",
-      "Wrap": "bg-green-100 text-green-800",
-      "Hot Food": "bg-orange-100 text-orange-800",
-      "Salad": "bg-emerald-100 text-emerald-800",
-      "Pastries": "bg-purple-100 text-purple-800",
-      "Breads": "bg-amber-100 text-amber-800",
-      "Hot Breakfast": "bg-red-100 text-red-800",
-      "Cold Breakfast": "bg-cyan-100 text-cyan-800",
-      "Sandwiches": "bg-blue-100 text-blue-800",
-      "Wraps": "bg-green-100 text-green-800",
-      "Salads": "bg-emerald-100 text-emerald-800",
+      "Glazed": "bg-amber-100 text-amber-800",
+      "Iced": "bg-pink-100 text-pink-800",
+      "Filled": "bg-purple-100 text-purple-800",
+      "Cake": "bg-orange-100 text-orange-800",
+      "Specialty": "bg-blue-100 text-blue-800",
     };
     return <Badge className={colors[category] || "bg-gray-100 text-gray-800"}>{category}</Badge>;
   };
