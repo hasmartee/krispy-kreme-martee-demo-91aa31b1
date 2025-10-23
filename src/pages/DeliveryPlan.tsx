@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,36 +8,13 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Package, Store, TrendingUp, AlertTriangle, Download, Lock, Unlock, Edit } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/lib/supabase-helper";
 
-// Mock stores data
-const stores = [
-  "St Pancras International",
-  "Liverpool Street Station",
-  "Kings Cross Station",
-  "Canary Wharf Plaza",
-  "The City - Leadenhall",
-  "Bank Station",
-  "Bond Street",
-  "Camden Town",
-  "Wimbledon Village",
-  "Greenwich Village",
-  "Notting Hill Gate",
-  "Shoreditch High Street"
-];
+// Mock stores data - will be loaded from database
+const initialStores: string[] = [];
 
-// Mock products with production quantities
-const products = [
-  { id: 1, name: "Classic BLT", sku: "BLT-001", produced: 520, dayPart: "Morning", confirmed: true },
-  { id: 2, name: "Chicken Caesar Wrap", sku: "CCW-001", produced: 450, dayPart: "Lunch", confirmed: false },
-  { id: 3, name: "Avocado & Egg Toast", sku: "AET-001", produced: 380, dayPart: "Morning", confirmed: true },
-  { id: 4, name: "Tuna Melt Panini", sku: "TMP-001", produced: 320, dayPart: "Lunch", confirmed: false },
-  { id: 5, name: "Mediterranean Salad Bowl", sku: "MSB-001", produced: 280, dayPart: "Afternoon", confirmed: true },
-  { id: 6, name: "Almond Croissant", sku: "ACR-001", produced: 600, dayPart: "Morning", confirmed: true },
-  { id: 7, name: "Ham & Cheese Croissant", sku: "HCC-001", produced: 480, dayPart: "Morning", confirmed: false },
-  { id: 8, name: "Salmon & Cream Bagel", sku: "SCB-001", produced: 360, dayPart: "Morning", confirmed: true },
-  { id: 9, name: "Greek Salad Bowl", sku: "GSB-001", produced: 240, dayPart: "Lunch", confirmed: false },
-  { id: 10, name: "Porridge with Honey", sku: "PWH-001", produced: 200, dayPart: "Morning", confirmed: true },
-];
+// Mock products - will be loaded from database
+const initialProducts: any[] = [];
 
 interface StoreAllocation {
   storeName: string;
@@ -87,31 +64,77 @@ export default function DeliveryPlan() {
   const [selectedDayPart, setSelectedDayPart] = useState<string>("all");
   const [viewMode, setViewMode] = useState<"store" | "product">("store");
   const [editingProduct, setEditingProduct] = useState<number | null>(null);
-  
-  // Initialize allocations with equal distribution
-  const [allocations, setAllocations] = useState<ProductAllocation[]>(() => {
-    return products.map(product => {
-      const perStore = Math.floor(product.produced / stores.length);
-      const storeAllocations = stores.map(store => ({
-        storeName: store,
-        allocated: perStore,
-      }));
-      const totalAllocated = perStore * stores.length;
-      
-      return {
-        productId: product.id,
-        productName: product.name,
-        sku: product.sku,
-        produced: product.produced,
-        dayPart: product.dayPart,
-        confirmed: product.confirmed,
-        stores: storeAllocations,
-        totalAllocated,
-        remaining: product.produced - totalAllocated,
-        overridden: false,
-      };
-    });
-  });
+  const [stores, setStores] = useState<string[]>([]);
+  const [allocations, setAllocations] = useState<ProductAllocation[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    loadData();
+  }, []);
+
+  const loadData = async () => {
+    try {
+      // Load stores from database
+      const { data: storesData } = await supabase
+        .from('stores')
+        .select('name')
+        .order('name') as any;
+
+      // Load products from database
+      const { data: productsData } = await supabase
+        .from('products')
+        .select('*')
+        .order('name') as any;
+
+      if (storesData && productsData) {
+        const storeNames = storesData.map((s: any) => s.name);
+        setStores(storeNames);
+
+        // Initialize allocations with real products
+        const initialAllocations = productsData.map((product: any, index: number) => {
+          // Assign dayPart based on category
+          let dayPart = "Morning";
+          if (product.category === "Sandwiches" || product.category === "Wraps" || product.category === "Salads") {
+            dayPart = "Lunch";
+          } else if (product.sku.includes("F0") || product.sku.includes("S00")) {
+            dayPart = "Afternoon";
+          }
+
+          const produced = 100 + Math.floor(Math.random() * 400);
+          const perStore = Math.floor(produced / storeNames.length);
+          const storeAllocations = storeNames.map(store => ({
+            storeName: store,
+            allocated: perStore,
+          }));
+          const totalAllocated = perStore * storeNames.length;
+
+          return {
+            productId: index + 1,
+            productName: product.name,
+            sku: product.sku,
+            produced,
+            dayPart,
+            confirmed: Math.random() > 0.5,
+            stores: storeAllocations,
+            totalAllocated,
+            remaining: produced - totalAllocated,
+            overridden: false,
+          };
+        });
+
+        setAllocations(initialAllocations);
+      }
+    } catch (error) {
+      console.error("Error loading data:", error);
+      toast({
+        title: "Error",
+        description: "Failed to load delivery plan data",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const updateAllocation = (productId: number, storeName: string, newValue: string) => {
     const value = parseInt(newValue) || 0;
@@ -262,6 +285,14 @@ export default function DeliveryPlan() {
   const totalProduced = filteredAllocations.reduce((sum, p) => sum + p.produced, 0);
   const totalAllocated = filteredAllocations.reduce((sum, p) => sum + p.totalAllocated, 0);
   const totalRemaining = filteredAllocations.reduce((sum, p) => sum + p.remaining, 0);
+
+  if (loading) {
+    return (
+      <div className="flex-1 p-6 flex items-center justify-center">
+        <div className="text-center">Loading...</div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex-1 space-y-6 p-6">

@@ -213,57 +213,51 @@ export default function SuggestedProduction() {
     setLoading(true);
     try {
       // Load stores
-      const { data, error } = await supabase
+      const { data: storesData } = await supabase
         .from('stores')
         .select('*')
         .order('name') as any;
 
-      if (data) {
-        setStores(data);
-        
-        // Generate mock production data for each store
-        const mockProducts: Product[] = [];
-        const productsList = [
-          { id: "KK-G001", name: "Original Glazed", category: "Glazed", dayPart: "Morning" },
-          { id: "KK-G002", name: "Chocolate Iced Glazed", category: "Glazed", dayPart: "Morning" },
-          { id: "KK-G003", name: "Maple Iced", category: "Glazed", dayPart: "Morning" },
-          { id: "KK-G004", name: "Glazed Blueberry", category: "Glazed", dayPart: "Morning" },
-          { id: "KK-G005", name: "Caramel Iced", category: "Glazed", dayPart: "Afternoon" },
-          { id: "KK-I001", name: "Strawberry Iced with Sprinkles", category: "Iced", dayPart: "Afternoon" },
-          { id: "KK-I002", name: "Chocolate Iced with Sprinkles", category: "Iced", dayPart: "Afternoon" },
-          { id: "KK-I003", name: "Vanilla Iced with Sprinkles", category: "Iced", dayPart: "Afternoon" },
-          { id: "KK-F001", name: "Raspberry Filled", category: "Filled", dayPart: "Morning" },
-          { id: "KK-F002", name: "Lemon Filled", category: "Filled", dayPart: "Morning" },
-          { id: "KK-F003", name: "Boston Kreme", category: "Filled", dayPart: "Afternoon" },
-          { id: "KK-F004", name: "Chocolate Kreme Filled", category: "Filled", dayPart: "Afternoon" },
-          { id: "KK-C001", name: "Powdered Sugar", category: "Cake", dayPart: "Morning" },
-          { id: "KK-C002", name: "Cinnamon Sugar", category: "Cake", dayPart: "Morning" },
-          { id: "KK-C003", name: "Double Chocolate", category: "Cake", dayPart: "Afternoon" },
-          { id: "KK-S001", name: "Cookies and Kreme", category: "Specialty", dayPart: "Afternoon" },
-          { id: "KK-S002", name: "Apple Fritter", category: "Specialty", dayPart: "Morning" },
-          { id: "KK-S003", name: "Glazed Cruller", category: "Specialty", dayPart: "Afternoon" },
-        ];
+      // Load products
+      const { data: productsData } = await supabase
+        .from('products')
+        .select('*')
+        .order('name') as any;
 
+      if (storesData && productsData) {
+        setStores(storesData);
+        
+        // Generate production data for each store using real products
+        const mockProducts: Product[] = [];
+        
         const targetStores = viewMode === "store_manager" 
-          ? data.filter((s: any) => s.name === selectedStore)
-          : data;
+          ? storesData.filter((s: any) => s.name === selectedStore)
+          : storesData;
 
         targetStores.forEach((store: any) => {
-          productsList.forEach(product => {
+          productsData.forEach((product: any) => {
+            // Assign dayPart based on category
+            let dayPart = "Morning";
+            if (product.category === "Sandwiches" || product.category === "Wraps" || product.category === "Salads") {
+              dayPart = "Lunch";
+            } else if (product.sku.includes("F0") || product.sku.includes("S00")) {
+              dayPart = "Afternoon";
+            }
+
             const baseQty = 15 + Math.floor(Math.random() * 15);
             mockProducts.push({
-              id: product.id,
+              id: product.sku,
               productName: product.name,
-              category: product.category,
+              category: product.category || "General",
               store: store.name,
               storeId: store.id,
-              currentStock: baseQty, // Expected = same as delivered for store view
+              currentStock: baseQty,
               recommendedOrder: baseQty,
               finalOrder: baseQty,
               trend: Math.random() > 0.3 ? "up" : "down",
               historicalSales: baseQty * 0.9,
               predictedSales: baseQty * 1.05,
-              dayPart: product.dayPart,
+              dayPart,
             });
           });
         });

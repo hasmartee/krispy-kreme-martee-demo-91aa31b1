@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { AlertCircle, TrendingUp, TrendingDown, CheckCircle2, Sparkles } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { supabase } from "@/lib/supabase-helper";
 
 interface ProductData {
   productName: string;
@@ -29,61 +30,67 @@ interface AIInsight {
   store?: string;
 }
 
-// Generate comprehensive product data
-const generateProductData = (storeName: string): ProductData[] => {
-  const baseMultiplier = storeName.includes("Station") ? 1.2 : storeName.includes("Street") ? 1.1 : 1.0;
-  
-  return [
-    // Pastries (some with discrepancies)
-    { productName: "Cinnamon Swirl", planned: Math.round(60 * baseMultiplier), produced: Math.round(55 * baseMultiplier), delivered: Math.round(55 * baseMultiplier), sold: Math.round(52 * baseMultiplier), wasted: Math.round(5 * baseMultiplier), unaccountedFor: Math.round(3 * baseMultiplier) }, // produced < planned
-    { productName: "Poppy Seed Pastry", planned: Math.round(50 * baseMultiplier), produced: Math.round(50 * baseMultiplier), delivered: Math.round(50 * baseMultiplier), sold: Math.round(44 * baseMultiplier), wasted: Math.round(4 * baseMultiplier), unaccountedFor: Math.round(2 * baseMultiplier) },
-    { productName: "Danish Pastry", planned: Math.round(70 * baseMultiplier), produced: Math.round(70 * baseMultiplier), delivered: Math.round(65 * baseMultiplier), sold: Math.round(63 * baseMultiplier), wasted: Math.round(5 * baseMultiplier), unaccountedFor: Math.round(2 * baseMultiplier) }, // delivered < produced (lost in transit)
-    { productName: "Butter Croissant", planned: Math.round(120 * baseMultiplier), produced: Math.round(120 * baseMultiplier), delivered: Math.round(120 * baseMultiplier), sold: Math.round(105 * baseMultiplier), wasted: Math.round(8 * baseMultiplier), unaccountedFor: Math.round(7 * baseMultiplier) },
-    { productName: "Pain au Chocolat", planned: Math.round(100 * baseMultiplier), produced: Math.round(100 * baseMultiplier), delivered: Math.round(100 * baseMultiplier), sold: Math.round(92 * baseMultiplier), wasted: Math.round(5 * baseMultiplier), unaccountedFor: Math.round(3 * baseMultiplier) },
-    { productName: "Almond Croissant", planned: Math.round(80 * baseMultiplier), produced: Math.round(80 * baseMultiplier), delivered: Math.round(80 * baseMultiplier), sold: Math.round(74 * baseMultiplier), wasted: Math.round(4 * baseMultiplier), unaccountedFor: Math.round(2 * baseMultiplier) },
-    
-    // Breads
-    { productName: "Rye Bread Whole", planned: Math.round(30 * baseMultiplier), produced: Math.round(30 * baseMultiplier), delivered: Math.round(30 * baseMultiplier), sold: Math.round(26 * baseMultiplier), wasted: Math.round(2 * baseMultiplier), unaccountedFor: Math.round(2 * baseMultiplier) },
-    { productName: "Sourdough Loaf", planned: Math.round(40 * baseMultiplier), produced: Math.round(40 * baseMultiplier), delivered: Math.round(40 * baseMultiplier), sold: Math.round(35 * baseMultiplier), wasted: Math.round(3 * baseMultiplier), unaccountedFor: Math.round(2 * baseMultiplier) },
-    
-    // Hot Breakfast (with discrepancies)
-    { productName: "Scrambled Eggs on Sourdough", planned: Math.round(45 * baseMultiplier), produced: Math.round(45 * baseMultiplier), delivered: Math.round(45 * baseMultiplier), sold: Math.round(41 * baseMultiplier), wasted: Math.round(3 * baseMultiplier), unaccountedFor: Math.round(3 * baseMultiplier) }, // numbers don't add up
-    { productName: "Bacon & Egg Roll", planned: Math.round(55 * baseMultiplier), produced: Math.round(55 * baseMultiplier), delivered: Math.round(55 * baseMultiplier), sold: Math.round(50 * baseMultiplier), wasted: Math.round(4 * baseMultiplier), unaccountedFor: Math.round(1 * baseMultiplier) },
-    { productName: "Ham & Cheese Croissant", planned: Math.round(40 * baseMultiplier), produced: Math.round(40 * baseMultiplier), delivered: Math.round(40 * baseMultiplier), sold: Math.round(36 * baseMultiplier), wasted: Math.round(3 * baseMultiplier), unaccountedFor: Math.round(1 * baseMultiplier) },
-    { productName: "Avocado Toast with Egg", planned: Math.round(35 * baseMultiplier), produced: Math.round(35 * baseMultiplier), delivered: Math.round(35 * baseMultiplier), sold: Math.round(32 * baseMultiplier), wasted: Math.round(2 * baseMultiplier), unaccountedFor: Math.round(1 * baseMultiplier) },
-    
-    // Cold Breakfast
-    { productName: "Granola Bowl", planned: Math.round(30 * baseMultiplier), produced: Math.round(30 * baseMultiplier), delivered: Math.round(30 * baseMultiplier), sold: Math.round(28 * baseMultiplier), wasted: Math.round(1 * baseMultiplier), unaccountedFor: Math.round(1 * baseMultiplier) },
-    { productName: "Fruit Parfait", planned: Math.round(25 * baseMultiplier), produced: Math.round(25 * baseMultiplier), delivered: Math.round(25 * baseMultiplier), sold: Math.round(23 * baseMultiplier), wasted: Math.round(1 * baseMultiplier), unaccountedFor: Math.round(1 * baseMultiplier) },
-    
-    // Sandwiches (with discrepancies)
-    { productName: "Classic BLT", planned: Math.round(50 * baseMultiplier), produced: Math.round(50 * baseMultiplier), delivered: Math.round(50 * baseMultiplier), sold: Math.round(45 * baseMultiplier), wasted: Math.round(3 * baseMultiplier), unaccountedFor: Math.round(5 * baseMultiplier) }, // high unaccounted
-    { productName: "Chicken Bacon Sandwich", planned: Math.round(60 * baseMultiplier), produced: Math.round(65 * baseMultiplier), delivered: Math.round(65 * baseMultiplier), sold: Math.round(54 * baseMultiplier), wasted: Math.round(4 * baseMultiplier), unaccountedFor: Math.round(2 * baseMultiplier) }, // overproduced
-    { productName: "Salmon & Cream Cheese Bagel", planned: Math.round(40 * baseMultiplier), produced: Math.round(40 * baseMultiplier), delivered: Math.round(40 * baseMultiplier), sold: Math.round(37 * baseMultiplier), wasted: Math.round(2 * baseMultiplier), unaccountedFor: Math.round(1 * baseMultiplier) },
-    { productName: "Tuna Melt Panini", planned: Math.round(35 * baseMultiplier), produced: Math.round(35 * baseMultiplier), delivered: Math.round(35 * baseMultiplier), sold: Math.round(32 * baseMultiplier), wasted: Math.round(2 * baseMultiplier), unaccountedFor: Math.round(1 * baseMultiplier) },
-    
-    // Wraps
-    { productName: "Chicken Caesar Wrap", planned: Math.round(55 * baseMultiplier), produced: Math.round(55 * baseMultiplier), delivered: Math.round(55 * baseMultiplier), sold: Math.round(50 * baseMultiplier), wasted: Math.round(3 * baseMultiplier), unaccountedFor: Math.round(2 * baseMultiplier) },
-    { productName: "Avocado Hummus Wrap", planned: Math.round(45 * baseMultiplier), produced: Math.round(45 * baseMultiplier), delivered: Math.round(45 * baseMultiplier), sold: Math.round(41 * baseMultiplier), wasted: Math.round(3 * baseMultiplier), unaccountedFor: Math.round(1 * baseMultiplier) },
-    { productName: "Breakfast Burrito", planned: Math.round(40 * baseMultiplier), produced: Math.round(40 * baseMultiplier), delivered: Math.round(40 * baseMultiplier), sold: Math.round(37 * baseMultiplier), wasted: Math.round(2 * baseMultiplier), unaccountedFor: Math.round(1 * baseMultiplier) },
-    
-    // Salads
-    { productName: "Mediterranean Salad", planned: Math.round(35 * baseMultiplier), produced: Math.round(35 * baseMultiplier), delivered: Math.round(35 * baseMultiplier), sold: Math.round(32 * baseMultiplier), wasted: Math.round(2 * baseMultiplier), unaccountedFor: Math.round(1 * baseMultiplier) },
-    { productName: "Greek Feta Salad", planned: Math.round(30 * baseMultiplier), produced: Math.round(30 * baseMultiplier), delivered: Math.round(30 * baseMultiplier), sold: Math.round(28 * baseMultiplier), wasted: Math.round(1 * baseMultiplier), unaccountedFor: Math.round(1 * baseMultiplier) },
-  ];
-};
-
-// Mock data with comprehensive product range
-const mockStores: StoreData[] = [
-  { storeId: "OS-001", storeName: "Kings Cross Station", products: generateProductData("Kings Cross Station") },
-  { storeId: "OS-002", storeName: "Liverpool Street Station", products: generateProductData("Liverpool Street Station") },
-  { storeId: "OS-003", storeName: "St Pancras International", products: generateProductData("St Pancras International") },
-  { storeId: "OS-004", storeName: "Shoreditch High Street", products: generateProductData("Shoreditch High Street") },
-  { storeId: "OS-005", storeName: "Bond Street", products: generateProductData("Bond Street") },
-];
-
 const LiveData = () => {
-  const [stores] = useState<StoreData[]>(mockStores);
+  const [stores, setStores] = useState<StoreData[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    loadData();
+  }, []);
+
+  const loadData = async () => {
+    try {
+      // Load stores from database
+      const { data: storesData } = await supabase
+        .from('stores')
+        .select('*')
+        .order('name') as any;
+
+      // Load products from database
+      const { data: productsData } = await supabase
+        .from('products')
+        .select('*')
+        .order('name') as any;
+
+      if (storesData && productsData) {
+        // Generate comprehensive product data for each store
+        const storesWithProducts: StoreData[] = storesData.map((store: any) => {
+          const baseMultiplier = store.name.includes("Station") ? 1.2 : store.name.includes("Street") ? 1.1 : 1.0;
+          
+          const products: ProductData[] = productsData.map((product: any) => {
+            const planned = Math.round((50 + Math.floor(Math.random() * 100)) * baseMultiplier);
+            const produced = Math.round(planned * (0.95 + Math.random() * 0.1)); // Sometimes under/overproduced
+            const delivered = Math.round(produced * (0.95 + Math.random() * 0.05)); // Sometimes lost in transit
+            const sold = Math.round(delivered * (0.8 + Math.random() * 0.15));
+            const wasted = Math.round(delivered * (0.03 + Math.random() * 0.07));
+            const unaccountedFor = Math.max(0, delivered - sold - wasted);
+
+            return {
+              productName: product.name,
+              planned,
+              produced,
+              delivered,
+              sold,
+              wasted,
+              unaccountedFor,
+            };
+          });
+
+          return {
+            storeId: store.store_id || store.id,
+            storeName: store.name,
+            products,
+          };
+        });
+
+        setStores(storesWithProducts);
+      }
+    } catch (error) {
+      console.error("Error loading data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const calculateStoreTotals = (products: ProductData[]) => {
     return products.reduce(
@@ -141,6 +148,14 @@ const LiveData = () => {
   };
 
   const insights = generateInsights();
+
+  if (loading) {
+    return (
+      <div className="container mx-auto p-6 flex items-center justify-center min-h-[400px]">
+        <div className="text-center">Loading...</div>
+      </div>
+    );
+  }
 
   const getWasteColor = (wasted: number, total: number) => {
     const rate = (wasted / total) * 100;
