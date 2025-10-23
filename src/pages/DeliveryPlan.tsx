@@ -72,34 +72,43 @@ export default function DeliveryPlan() {
     loadData();
   }, []);
 
+  // Krispy Kreme products matching StoreProductRange
+  const allKrispyKremeProducts = [
+    { id: "KK-G001", name: "Original Glazed", sku: "KK-G001", category: "Glazed", dayPart: "Morning" },
+    { id: "KK-G002", name: "Chocolate Iced Glazed", sku: "KK-G002", category: "Glazed", dayPart: "Morning" },
+    { id: "KK-G003", name: "Maple Iced", sku: "KK-G003", category: "Glazed", dayPart: "Morning" },
+    { id: "KK-G004", name: "Glazed Blueberry", sku: "KK-G004", category: "Glazed", dayPart: "Morning" },
+    { id: "KK-G005", name: "Caramel Iced", sku: "KK-G005", category: "Glazed", dayPart: "Afternoon" },
+    { id: "KK-G006", name: "Coffee Glazed", sku: "KK-G006", category: "Glazed", dayPart: "Morning" },
+    { id: "KK-G007", name: "Dulce de Leche", sku: "KK-G007", category: "Glazed", dayPart: "Afternoon" },
+    { id: "KK-I001", name: "Strawberry Iced with Sprinkles", sku: "KK-I001", category: "Iced", dayPart: "Afternoon" },
+    { id: "KK-I002", name: "Chocolate Iced with Sprinkles", sku: "KK-I002", category: "Iced", dayPart: "Afternoon" },
+    { id: "KK-I003", name: "Vanilla Iced with Sprinkles", sku: "KK-I003", category: "Iced", dayPart: "Afternoon" },
+    { id: "KK-F001", name: "Raspberry Filled", sku: "KK-F001", category: "Filled", dayPart: "Morning" },
+    { id: "KK-F002", name: "Lemon Filled", sku: "KK-F002", category: "Filled", dayPart: "Morning" },
+    { id: "KK-F003", name: "Boston Kreme", sku: "KK-F003", category: "Filled", dayPart: "Afternoon" },
+    { id: "KK-F004", name: "Chocolate Kreme Filled", sku: "KK-F004", category: "Filled", dayPart: "Afternoon" },
+    { id: "KK-C001", name: "Powdered Sugar", sku: "KK-C001", category: "Cake", dayPart: "Morning" },
+    { id: "KK-C002", name: "Cinnamon Sugar", sku: "KK-C002", category: "Cake", dayPart: "Morning" },
+    { id: "KK-C003", name: "Double Chocolate", sku: "KK-C003", category: "Cake", dayPart: "Afternoon" },
+    { id: "KK-S001", name: "Cookies and Kreme", sku: "KK-S001", category: "Specialty", dayPart: "Afternoon" },
+    { id: "KK-S002", name: "Apple Fritter", sku: "KK-S002", category: "Specialty", dayPart: "Morning" },
+    { id: "KK-S003", name: "Glazed Cruller", sku: "KK-S003", category: "Specialty", dayPart: "Afternoon" },
+  ];
+
   const loadData = async () => {
     try {
-      // Load stores from database
       const { data: storesData } = await supabase
         .from('stores')
         .select('name')
         .order('name') as any;
 
-      // Load products from database
-      const { data: productsData } = await supabase
-        .from('products')
-        .select('*')
-        .order('name') as any;
-
-      if (storesData && productsData) {
+      if (storesData) {
         const storeNames = storesData.map((s: any) => s.name);
         setStores(storeNames);
 
-        // Initialize allocations with real products
-        const initialAllocations = productsData.map((product: any, index: number) => {
-          // Assign dayPart based on category
-          let dayPart = "Morning";
-          if (product.category === "Sandwiches" || product.category === "Wraps" || product.category === "Salads") {
-            dayPart = "Lunch";
-          } else if (product.sku.includes("F0") || product.sku.includes("S00")) {
-            dayPart = "Afternoon";
-          }
-
+        // Initialize allocations with Krispy Kreme products
+        const initialAllocations = allKrispyKremeProducts.map((product, index) => {
           const produced = 100 + Math.floor(Math.random() * 400);
           const perStore = Math.floor(produced / storeNames.length);
           const storeAllocations = storeNames.map(store => ({
@@ -113,7 +122,7 @@ export default function DeliveryPlan() {
             productName: product.name,
             sku: product.sku,
             produced,
-            dayPart,
+            dayPart: product.dayPart,
             confirmed: Math.random() > 0.5,
             stores: storeAllocations,
             totalAllocated,

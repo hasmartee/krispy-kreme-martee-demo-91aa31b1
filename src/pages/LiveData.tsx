@@ -38,35 +38,53 @@ const LiveData = () => {
     loadData();
   }, []);
 
+  // Krispy Kreme products matching StoreProductRange
+  const allKrispyKremeProducts = [
+    "Original Glazed", "Chocolate Iced Glazed", "Maple Iced", "Glazed Blueberry", 
+    "Caramel Iced", "Coffee Glazed", "Dulce de Leche",
+    "Strawberry Iced with Sprinkles", "Chocolate Iced with Sprinkles", "Vanilla Iced with Sprinkles",
+    "Raspberry Filled", "Lemon Filled", "Boston Kreme", "Chocolate Kreme Filled",
+    "Powdered Sugar", "Cinnamon Sugar", "Double Chocolate",
+    "Cookies and Kreme", "Apple Fritter", "Glazed Cruller"
+  ];
+
+  const getProductsForCluster = (cluster: string) => {
+    switch (cluster) {
+      case "transport_hub":
+        return allKrispyKremeProducts.slice(0, 20);
+      case "business_district":
+        return allKrispyKremeProducts.slice(0, 25);
+      case "residential":
+      case "high_street":
+        return allKrispyKremeProducts;
+      default:
+        return allKrispyKremeProducts.slice(0, 15);
+    }
+  };
+
   const loadData = async () => {
     try {
-      // Load stores from database
       const { data: storesData } = await supabase
         .from('stores')
         .select('*')
         .order('name') as any;
 
-      // Load products from database
-      const { data: productsData } = await supabase
-        .from('products')
-        .select('*')
-        .order('name') as any;
-
-      if (storesData && productsData) {
-        // Generate comprehensive product data for each store
+      if (storesData) {
+        // Generate product data matching each store's range plan
         const storesWithProducts: StoreData[] = storesData.map((store: any) => {
           const baseMultiplier = store.name.includes("Station") ? 1.2 : store.name.includes("Street") ? 1.1 : 1.0;
+          const storeProducts = getProductsForCluster(store.cluster || 'high_street');
           
-          const products: ProductData[] = productsData.map((product: any) => {
+          const products: ProductData[] = storeProducts.map((productName: string) => {
             const planned = Math.round((50 + Math.floor(Math.random() * 100)) * baseMultiplier);
-            const produced = Math.round(planned * (0.95 + Math.random() * 0.1)); // Sometimes under/overproduced
-            const delivered = Math.round(produced * (0.95 + Math.random() * 0.05)); // Sometimes lost in transit
+            const produced = Math.round(planned * (0.95 + Math.random() * 0.1));
+            const delivered = Math.round(produced * (0.95 + Math.random() * 0.05));
             const sold = Math.round(delivered * (0.8 + Math.random() * 0.15));
             const wasted = Math.round(delivered * (0.03 + Math.random() * 0.07));
             const unaccountedFor = Math.max(0, delivered - sold - wasted);
 
             return {
-              productName: product.name,
+              productName,
               planned,
               produced,
               delivered,
