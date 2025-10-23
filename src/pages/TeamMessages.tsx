@@ -68,7 +68,7 @@ export default function TeamMessages() {
   const fetchMessages = async () => {
     try {
       setLoading(true);
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from('team_messages')
         .select(`
           *,
@@ -92,7 +92,7 @@ export default function TeamMessages() {
 
   const updateMessageStatus = async (messageId: string, newStatus: 'new' | 'in_progress' | 'resolved') => {
     try {
-      const { error } = await supabase
+      const { error } = await (supabase as any)
         .from('team_messages')
         .update({ status: newStatus })
         .eq('id', messageId);

@@ -164,17 +164,17 @@ function ShareWithHQCard() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error('Not authenticated');
 
-      const { data: profile } = await supabase
+      const { data: profile } = await (supabase as any)
         .from('profiles')
         .select('store_id')
         .eq('id', user.id)
         .single();
 
-      const { error } = await supabase
+      const { error } = await (supabase as any)
         .from('team_messages')
         .insert({
           user_id: user.id,
-          store_id: profile?.store_id,
+          store_id: profile?.store_id || null,
           message_type: messageType,
           subject: subject.trim(),
           message: message.trim(),
