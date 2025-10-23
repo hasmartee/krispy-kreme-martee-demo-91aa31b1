@@ -95,10 +95,13 @@ export default function SuggestedProduction() {
   const loadData = async () => {
     setLoading(true);
     try {
+      console.log('🔍 PRODUCTION PAGE: Loading data...');
       const { data: storesData } = await supabase
         .from('stores')
         .select('*')
         .order('name') as any;
+
+      console.log('🏪 PRODUCTION PAGE: Stores loaded:', storesData?.length, storesData);
 
       if (storesData) {
         setStores(storesData);
@@ -108,8 +111,11 @@ export default function SuggestedProduction() {
           ? storesData.filter((s: any) => s.name === selectedStore)
           : storesData;
 
+        console.log('🎯 PRODUCTION PAGE: Target stores:', targetStores.length);
+
         targetStores.forEach((store: any) => {
           const storeProducts = getProductsForCluster(store.cluster || 'high_street');
+          console.log(`📦 PRODUCTION PAGE: Store ${store.name} (${store.cluster}) - ${storeProducts.length} products:`, storeProducts.map(p => p.name));
           
           storeProducts.forEach(product => {
             const baseQty = 15 + Math.floor(Math.random() * 15);
@@ -130,10 +136,12 @@ export default function SuggestedProduction() {
           });
         });
 
+        console.log('✅ PRODUCTION PAGE: Total products generated:', mockProducts.length);
+        console.log('📋 PRODUCTION PAGE: First 5 products:', mockProducts.slice(0, 5).map(p => ({ name: p.productName, id: p.id, store: p.store })));
         setProducts(mockProducts);
       }
     } catch (error) {
-      console.error("Error loading data:", error);
+      console.error("❌ PRODUCTION PAGE: Error loading data:", error);
       toast({
         title: "Error",
         description: "Failed to load production data",
