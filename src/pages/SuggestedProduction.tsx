@@ -3,7 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { TrendingUp, TrendingDown, RefreshCw, Plus, Minus, CloudRain, AlertTriangle, Sparkles, Download, Send, BookOpen, Loader2, CalendarIcon } from "lucide-react";
+import { TrendingUp, TrendingDown, RefreshCw, Plus, Minus, CloudRain, AlertTriangle, Sparkles, Download, Send, Loader2, CalendarIcon } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -14,161 +14,6 @@ import { cn } from "@/lib/utils";
 import heroImage from "@/assets/hero-food.jpg";
 import { useView } from "@/contexts/ViewContext";
 import { supabase } from "@/lib/supabase-helper";
-import classicBlt from "@/assets/products/classic-blt.jpg";
-import chickenCaesar from "@/assets/products/chicken-caesar.jpg";
-import avocadoHummus from "@/assets/products/avocado-hummus.jpg";
-import salmonCreamBagel from "@/assets/products/salmon-cream-bagel.jpg";
-import greekSaladBowl from "@/assets/products/greek-salad-bowl.jpg";
-
-// Recipe data
-const recipes = {
-  "OS-S001": {
-    productName: "Classic BLT Sandwich",
-    image: classicBlt,
-    prepTime: "5 minutes",
-    ingredients: [
-      { item: "Bacon", quantity: "3 rashers (60g)" },
-      { item: "Romaine Lettuce", quantity: "2 leaves (30g)" },
-      { item: "Tomato", quantity: "3 slices (50g)" },
-      { item: "Whole Wheat Bread", quantity: "2 slices (80g)" },
-      { item: "Mayonnaise", quantity: "1 tbsp (15ml)" },
-      { item: "Black Pepper", quantity: "Pinch" },
-    ],
-    instructions: [
-      "Cook bacon rashers in a pan over medium heat until crispy (approximately 4-5 minutes per side).",
-      "While bacon is cooking, wash and dry the romaine lettuce leaves thoroughly.",
-      "Slice the tomato into 3 even slices, approximately 5mm thick.",
-      "Toast the whole wheat bread slices until golden brown.",
-      "Spread mayonnaise evenly on one side of each toasted bread slice.",
-      "On the first slice, layer the lettuce leaves, followed by the tomato slices.",
-      "Place the crispy bacon rashers on top of the tomatoes.",
-      "Season with a pinch of black pepper.",
-      "Top with the second slice of bread, mayo side down.",
-      "Cut diagonally and wrap immediately in food-safe packaging.",
-    ],
-  },
-  "OS-W001": {
-    productName: "Chicken Caesar Wrap",
-    image: chickenCaesar,
-    prepTime: "7 minutes",
-    ingredients: [
-      { item: "Grilled Chicken", quantity: "120g" },
-      { item: "Romaine Lettuce", quantity: "3 leaves (45g)" },
-      { item: "Caesar Dressing", quantity: "2 tbsp (30ml)" },
-      { item: "Parmesan Cheese", quantity: "1 tbsp (5g)" },
-      { item: "Whole Wheat Tortilla", quantity: "1 (60g)" },
-      { item: "Black Pepper", quantity: "Pinch" },
-    ],
-    instructions: [
-      "Grill chicken breast until fully cooked and slightly browned (approximately 6-8 minutes per side).",
-      "Let the chicken cool slightly, then slice into thin strips.",
-      "Wash and dry the romaine lettuce leaves thoroughly.",
-      "Lay the whole wheat tortilla flat on a clean surface.",
-      "Spread Caesar dressing evenly over the tortilla, leaving a 1-inch border.",
-      "Layer the lettuce leaves, followed by the sliced chicken strips.",
-      "Sprinkle with Parmesan cheese and season with a pinch of black pepper.",
-      "Fold in the sides of the tortilla, then tightly roll up from the bottom.",
-      "Cut in half diagonally and wrap immediately in food-safe packaging.",
-    ],
-  },
-  "OS-W002": {
-    productName: "Avocado & Hummus Wrap",
-    image: avocadoHummus,
-    prepTime: "5 minutes",
-    ingredients: [
-      { item: "Avocado", quantity: "1/2 (70g)" },
-      { item: "Hummus", quantity: "2 tbsp (40g)" },
-      { item: "Spinach", quantity: "2 handfuls (50g)" },
-      { item: "Red Bell Pepper", quantity: "1/4 (40g)" },
-      { item: "Whole Wheat Tortilla", quantity: "1 (60g)" },
-      { item: "Lemon Juice", quantity: "1 tsp (5ml)" },
-    ],
-    instructions: [
-      "Slice the avocado in half, remove the pit, and scoop out the flesh. Mash lightly with a fork.",
-      "Add a squeeze of lemon juice to the mashed avocado to prevent browning.",
-      "Wash and dry the spinach leaves thoroughly.",
-      "Slice the red bell pepper into thin strips.",
-      "Lay the whole wheat tortilla flat on a clean surface.",
-      "Spread hummus evenly over the tortilla, leaving a 1-inch border.",
-      "Layer the spinach leaves, followed by the mashed avocado and red bell pepper strips.",
-      "Fold in the sides of the tortilla, then tightly roll up from the bottom.",
-      "Cut in half diagonally and wrap immediately in food-safe packaging.",
-    ],
-  },
-  "OS-S004": {
-    productName: "Tuna Melt Panini",
-    image: null,
-    prepTime: "8 minutes",
-    ingredients: [
-      { item: "Canned Tuna", quantity: "120g" },
-      { item: "Cheddar Cheese", quantity: "2 slices (40g)" },
-      { item: "Red Onion", quantity: "2 tbsp (20g)" },
-      { item: "Mayonnaise", quantity: "1 tbsp (15ml)" },
-      { item: "Sourdough Bread", quantity: "2 slices (80g)" },
-      { item: "Black Pepper", quantity: "Pinch" },
-    ],
-    instructions: [
-      "Drain the canned tuna thoroughly and flake it into a bowl.",
-      "Finely chop the red onion.",
-      "Add mayonnaise to the tuna and mix well. Season with a pinch of black pepper.",
-      "Butter one side of each slice of sourdough bread.",
-      "Place one slice of bread, butter-side down, in a panini press or skillet.",
-      "Layer the tuna mixture, followed by the cheddar cheese slices, and top with the red onion.",
-      "Place the second slice of bread on top, butter-side up.",
-      "Grill in the panini press or skillet until the bread is golden brown and the cheese is melted and bubbly (approximately 3-4 minutes).",
-      "Cut in half diagonally and wrap immediately in food-safe packaging.",
-    ],
-  },
-  "OS-L001": {
-    productName: "Mediterranean Salad Bowl",
-    image: greekSaladBowl,
-    prepTime: "10 minutes",
-    ingredients: [
-      { item: "Cucumber", quantity: "1/2 (60g)" },
-      { item: "Cherry Tomatoes", quantity: "10 (80g)" },
-      { item: "Kalamata Olives", quantity: "10 (30g)" },
-      { item: "Feta Cheese", quantity: "50g" },
-      { item: "Red Onion", quantity: "1/4 (30g)" },
-      { item: "Mixed Greens", quantity: "2 handfuls (60g)" },
-      { item: "Olive Oil", quantity: "2 tbsp (30ml)" },
-      { item: "Lemon Juice", quantity: "1 tbsp (15ml)" },
-      { item: "Dried Oregano", quantity: "1/2 tsp" },
-      { item: "Black Pepper", quantity: "Pinch" },
-    ],
-    instructions: [
-      "Wash and dry the mixed greens thoroughly.",
-      "Dice the cucumber and halve the cherry tomatoes.",
-      "Slice the red onion thinly.",
-      "In a large bowl, combine the mixed greens, cucumber, cherry tomatoes, Kalamata olives, red onion, and feta cheese.",
-      "In a small bowl, whisk together olive oil, lemon juice, dried oregano, and black pepper to make the dressing.",
-      "Pour the dressing over the salad and toss gently to combine.",
-      "Serve immediately in a bowl or portion into food-safe containers for later.",
-    ],
-  },
-  "OS-S003": {
-    productName: "Smoked Salmon Bagel",
-    image: salmonCreamBagel,
-    prepTime: "5 minutes",
-    ingredients: [
-      { item: "Smoked Salmon", quantity: "80g" },
-      { item: "Cream Cheese", quantity: "2 tbsp (40g)" },
-      { item: "Red Onion", quantity: "1 tbsp (10g)" },
-      { item: "Capers", quantity: "1 tsp (5g)" },
-      { item: "Everything Bagel", quantity: "1 (85g)" },
-      { item: "Black Pepper", quantity: "Pinch" },
-    ],
-    instructions: [
-      "Slice the everything bagel in half horizontally.",
-      "Spread cream cheese evenly on both halves of the bagel.",
-      "Thinly slice the red onion.",
-      "Layer smoked salmon on one half of the bagel.",
-      "Sprinkle with red onion and capers.",
-      "Season with a pinch of black pepper.",
-      "Top with the other half of the bagel.",
-      "Cut in half and wrap immediately in food-safe packaging.",
-    ],
-  },
-};
 
 interface Product {
   id: string;
@@ -197,7 +42,6 @@ export default function SuggestedProduction() {
   const [products, setProducts] = useState<Product[]>([]);
   const [stores, setStores] = useState<Store[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selectedRecipe, setSelectedRecipe] = useState<string | null>(null);
   const [confirmingProduction, setConfirmingProduction] = useState<string | null>(null);
   const [groupByProduct, setGroupByProduct] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
@@ -556,10 +400,7 @@ export default function SuggestedProduction() {
                 <TableRow key={`${product.id}-${product.storeId}`}>
                   <TableCell>
                     <div>
-                      <div 
-                        className={`font-medium ${recipes[product.id as keyof typeof recipes] ? 'cursor-pointer hover:text-primary hover:underline' : ''}`}
-                        onClick={() => recipes[product.id as keyof typeof recipes] && setSelectedRecipe(product.id)}
-                      >
+                      <div className="font-medium">
                         {product.productName}
                       </div>
                       <div className="text-sm text-muted-foreground">{product.id}</div>
@@ -659,55 +500,6 @@ export default function SuggestedProduction() {
           </Table>
         </CardContent>
       </Card>
-
-      {/* Recipe Dialog */}
-      {selectedRecipe && recipes[selectedRecipe as keyof typeof recipes] && (
-        <Dialog open={!!selectedRecipe} onOpenChange={() => setSelectedRecipe(null)}>
-          <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
-            <DialogHeader>
-              <DialogTitle className="flex items-center gap-2">
-                <BookOpen className="h-5 w-5 text-primary" />
-                {recipes[selectedRecipe as keyof typeof recipes].productName}
-              </DialogTitle>
-              <DialogDescription>
-                Preparation time: {recipes[selectedRecipe as keyof typeof recipes].prepTime}
-              </DialogDescription>
-            </DialogHeader>
-            <div className="space-y-6">
-              <img 
-                src={recipes[selectedRecipe as keyof typeof recipes].image} 
-                alt={recipes[selectedRecipe as keyof typeof recipes].productName}
-                className="w-full h-64 object-cover rounded-lg"
-              />
-              <div>
-                <h3 className="font-semibold text-lg mb-3">Ingredients (per unit)</h3>
-                <div className="grid gap-2">
-                  {recipes[selectedRecipe as keyof typeof recipes].ingredients.map((ing, idx) => (
-                    <div key={idx} className="flex justify-between p-2 bg-muted rounded">
-                      <span>{ing.item}</span>
-                      <span className="font-mono text-sm">{ing.quantity}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-              <div>
-                <h3 className="font-semibold text-lg mb-3">Instructions</h3>
-                <ol className="space-y-2">
-                  {recipes[selectedRecipe as keyof typeof recipes].instructions.map((inst, idx) => (
-                    <li key={idx} className="flex gap-3">
-                      <span className="font-semibold text-primary min-w-[24px]">{idx + 1}.</span>
-                      <span className="text-sm">{inst}</span>
-                    </li>
-                  ))}
-                </ol>
-              </div>
-            </div>
-            <DialogFooter>
-              <Button onClick={() => setSelectedRecipe(null)}>Close</Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-      )}
     </div>
   );
 }
