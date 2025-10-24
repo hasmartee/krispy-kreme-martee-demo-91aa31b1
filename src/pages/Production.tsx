@@ -146,6 +146,7 @@ export default function Production() {
               
               if (productTemplate) {
                 // Always initialize manufactured_qty to match planned quantity
+                console.log('Loading product:', alloc.product_sku, 'quantity:', alloc.quantity, 'manufactured:', alloc.manufactured_quantity);
                 productsToDisplay.push({
                   id: alloc.product_sku,
                   productName: productTemplate.name,
@@ -162,6 +163,7 @@ export default function Production() {
                   dayPart: alloc.day_part,
                   allocationId: alloc.id,
                 });
+                console.log('Added product with manufacturedQty:', alloc.quantity);
               }
             });
             console.log('✅ PRODUCTION PAGE: Loaded from DB:', productsToDisplay.length);
