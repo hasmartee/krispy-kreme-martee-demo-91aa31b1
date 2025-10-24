@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
-import { TrendingUp, TrendingDown, CalendarIcon, Award, AlertTriangle } from "lucide-react";
+import { TrendingUp, TrendingDown, CalendarIcon, Award, AlertTriangle, Package, CheckCircle, Trash2 } from "lucide-react";
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ComposedChart } from "recharts";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
@@ -82,6 +82,27 @@ const mockProductPerformance = [
   { id: "OS106", name: "Salmon Cream Bagel", soldUnits: 1280, revenue: 9600, margin: 68.2, waste: 48, wastePercentage: 3.7, trend: "up" },
   { id: "OS107", name: "Ham & Cheese Croissant", soldUnits: 2180, revenue: 9810, margin: 55.8, waste: 86, wastePercentage: 3.8, trend: "up" },
   { id: "OS108", name: "Avocado Hummus Wrap", soldUnits: 1520, revenue: 9120, margin: 63.5, waste: 62, wastePercentage: 3.9, trend: "down" },
+];
+
+// Weekly trend data for Week Overview graph
+const weeklyTrendData = [
+  { day: "Mon", delivered: 8750, sold: 8100, wasted: 420 },
+  { day: "Tue", delivered: 8950, sold: 8300, wasted: 385 },
+  { day: "Wed", delivered: 9200, sold: 8650, wasted: 360 },
+  { day: "Thu", delivered: 8880, sold: 8250, wasted: 410 },
+  { day: "Fri", delivered: 9500, sold: 9100, wasted: 380 },
+  { day: "Sat", delivered: 9800, sold: 9450, wasted: 340 },
+  { day: "Sun", delivered: 9100, sold: 8520, wasted: 395 },
+];
+
+const weeklyTrendDataStore = [
+  { day: "Mon", delivered: 320, sold: 298, wasted: 18 },
+  { day: "Tue", delivered: 305, sold: 282, wasted: 16 },
+  { day: "Wed", delivered: 335, sold: 315, wasted: 14 },
+  { day: "Thu", delivered: 310, sold: 289, wasted: 15 },
+  { day: "Fri", delivered: 360, sold: 345, wasted: 12 },
+  { day: "Sat", delivered: 385, sold: 370, wasted: 13 },
+  { day: "Sun", delivered: 340, sold: 318, wasted: 16 },
 ];
 
 export default function Analytics() {
@@ -190,7 +211,7 @@ export default function Analytics() {
       </div>
 
       {/* Big Orange Box with Metrics */}
-      <Card className="shadow-lg" style={{ backgroundColor: 'hsl(var(--warning-orange))' }}>
+      <Card className="shadow-lg" style={{ backgroundColor: '#7ea058' }}>
         <CardContent className="p-6">
           {/* Heading */}
           <div className="mb-4">
@@ -451,6 +472,186 @@ export default function Analytics() {
                 </div>
               </CardContent>
             </Card>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Week Overview Graph */}
+      <Card className="shadow-lg border-2 border-primary/20 animate-fade-in">
+        <CardHeader className="pb-4 bg-gradient-to-r from-primary/5 to-accent/5 rounded-t-lg">
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle className="text-2xl font-bold flex items-center gap-2">
+                <div className="h-10 w-10 rounded-lg bg-primary/20 flex items-center justify-center">
+                  📊
+                </div>
+                Week Overview
+              </CardTitle>
+              <CardDescription className="text-base mt-1">
+                Track delivered, sold, and wasted quantities across the week
+              </CardDescription>
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent className="pt-6">
+          <ResponsiveContainer width="100%" height={350}>
+            <ComposedChart data={viewMode === "hq" ? weeklyTrendData : weeklyTrendDataStore} margin={{ top: 5, right: 30, left: 0, bottom: 5 }}>
+              <defs>
+                <linearGradient id="deliveredGradientAnalytics" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="hsl(var(--brand-peach))" stopOpacity={0.8}/>
+                  <stop offset="95%" stopColor="hsl(var(--brand-peach))" stopOpacity={0.3}/>
+                </linearGradient>
+              </defs>
+              <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.5} />
+              <XAxis 
+                dataKey="day" 
+                stroke="hsl(var(--foreground))"
+                fontSize={13}
+                fontWeight={500}
+                tick={{ fill: 'hsl(var(--foreground))' }}
+              />
+              <YAxis 
+                stroke="hsl(var(--foreground))"
+                fontSize={13}
+                fontWeight={500}
+                tick={{ fill: 'hsl(var(--foreground))' }}
+                tickFormatter={(value) => value.toLocaleString()}
+              />
+              <Tooltip
+                contentStyle={{
+                  backgroundColor: "hsl(var(--card))",
+                  border: "2px solid hsl(var(--border))",
+                  borderRadius: "12px",
+                  padding: "12px",
+                  boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)"
+                }}
+                labelStyle={{
+                  color: "hsl(var(--foreground))",
+                  fontWeight: "bold",
+                  marginBottom: "8px"
+                }}
+                formatter={(value: number, name: string) => [
+                  value.toLocaleString() + " units",
+                  name
+                ]}
+              />
+              <Legend 
+                wrapperStyle={{
+                  paddingTop: "20px"
+                }}
+                iconType="circle"
+              />
+              <Bar 
+                dataKey="delivered" 
+                fill="url(#deliveredGradientAnalytics)" 
+                name="Delivered"
+                radius={[8, 8, 0, 0]}
+                maxBarSize={60}
+              />
+              <Line 
+                type="monotone" 
+                dataKey="sold" 
+                stroke="hsl(var(--success-green))" 
+                strokeWidth={4}
+                name="Sold"
+                dot={{ 
+                  fill: "hsl(var(--success-green))", 
+                  r: 6,
+                  strokeWidth: 2,
+                  stroke: "hsl(var(--background))"
+                }}
+                activeDot={{ r: 8 }}
+              />
+              <Line 
+                type="monotone" 
+                dataKey="wasted" 
+                stroke="hsl(var(--warning-orange))" 
+                strokeWidth={4}
+                name="Wasted"
+                dot={{ 
+                  fill: "hsl(var(--warning-orange))", 
+                  r: 6,
+                  strokeWidth: 2,
+                  stroke: "hsl(var(--background))"
+                }}
+                activeDot={{ r: 8 }}
+                strokeDasharray="5 5"
+              />
+            </ComposedChart>
+          </ResponsiveContainer>
+          
+          {/* Summary Statistics */}
+          <div className="mt-8 grid grid-cols-3 gap-4">
+            <div className="p-4 rounded-lg border hover-scale" style={{ backgroundColor: 'hsl(var(--brand-peach) / 0.1)', borderColor: 'hsl(var(--brand-peach) / 0.3)' }}>
+              <div className="flex items-center gap-3">
+                <div className="h-12 w-12 rounded-lg flex items-center justify-center" style={{ backgroundColor: 'hsl(var(--brand-peach) / 0.2)' }}>
+                  <Package className="h-6 w-6" style={{ color: 'hsl(var(--brand-peach))' }} />
+                </div>
+                <div>
+                  <div className="text-xs text-muted-foreground font-medium">Total Delivered</div>
+                  <div className="text-2xl font-bold text-foreground">
+                    {(viewMode === "hq" ? weeklyTrendData : weeklyTrendDataStore).reduce((sum, d) => sum + d.delivered, 0).toLocaleString()}
+                  </div>
+                  <div className="text-xs text-muted-foreground">units this week</div>
+                </div>
+              </div>
+            </div>
+
+            <div className="p-4 rounded-lg bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-800 hover-scale">
+              <div className="flex items-center gap-3">
+                <div className="h-12 w-12 rounded-lg" style={{ backgroundColor: 'hsl(var(--success-green) / 0.2)' }}>
+                  <div className="h-full w-full flex items-center justify-center">
+                    <CheckCircle className="h-6 w-6" style={{ color: 'hsl(var(--success-green))' }} />
+                  </div>
+                </div>
+                <div>
+                  <div className="text-xs text-muted-foreground font-medium">Total Sold</div>
+                  <div className="text-2xl font-bold" style={{ color: 'hsl(var(--success-green))' }}>
+                    {(viewMode === "hq" ? weeklyTrendData : weeklyTrendDataStore).reduce((sum, d) => sum + d.sold, 0).toLocaleString()}
+                  </div>
+                  <div className="text-xs text-muted-foreground">
+                    {(((viewMode === "hq" ? weeklyTrendData : weeklyTrendDataStore).reduce((sum, d) => sum + d.sold, 0) / 
+                      (viewMode === "hq" ? weeklyTrendData : weeklyTrendDataStore).reduce((sum, d) => sum + d.delivered, 0)) * 100).toFixed(1)}% of delivered
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="p-4 rounded-lg bg-orange-50 dark:bg-orange-950/20 border border-orange-200 dark:border-orange-800 hover-scale">
+              <div className="flex items-center gap-3">
+                <div className="h-12 w-12 rounded-lg" style={{ backgroundColor: 'hsl(var(--warning-orange) / 0.2)' }}>
+                  <div className="h-full w-full flex items-center justify-center">
+                    <Trash2 className="h-6 w-6" style={{ color: 'hsl(var(--warning-orange))' }} />
+                  </div>
+                </div>
+                <div>
+                  <div className="text-xs text-muted-foreground font-medium">Total Wasted</div>
+                  <div className="text-2xl font-bold" style={{ color: 'hsl(var(--warning-orange))' }}>
+                    {(viewMode === "hq" ? weeklyTrendData : weeklyTrendDataStore).reduce((sum, d) => sum + d.wasted, 0).toLocaleString()}
+                  </div>
+                  <div className="text-xs text-muted-foreground">
+                    {(((viewMode === "hq" ? weeklyTrendData : weeklyTrendDataStore).reduce((sum, d) => sum + d.wasted, 0) / 
+                      (viewMode === "hq" ? weeklyTrendData : weeklyTrendDataStore).reduce((sum, d) => sum + d.delivered, 0)) * 100).toFixed(1)}% of delivered
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Best Day Badge */}
+          <div className="mt-4 p-3 rounded-lg bg-primary/10 border border-primary/30 flex items-center gap-2">
+            <TrendingUp className="h-5 w-5 text-primary" />
+            <span className="text-sm text-foreground">
+              <strong>Best performing day:</strong> {
+                (viewMode === "hq" ? weeklyTrendData : weeklyTrendDataStore).reduce((prev, current) => 
+                  current.sold > prev.sold ? current : prev
+                ).day
+              } with {
+                (viewMode === "hq" ? weeklyTrendData : weeklyTrendDataStore).reduce((prev, current) => 
+                  current.sold > prev.sold ? current : prev
+                ).sold.toLocaleString()
+              } units sold
+            </span>
           </div>
         </CardContent>
       </Card>
