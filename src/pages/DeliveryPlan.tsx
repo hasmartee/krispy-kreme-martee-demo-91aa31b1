@@ -9,6 +9,7 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Package, Store, TrendingUp, AlertTriangle, Download, Lock, Unlock, Edit } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/lib/supabase-helper";
+import { format } from "date-fns";
 
 // Mock stores data - will be loaded from database
 const initialStores: string[] = [];
@@ -67,6 +68,7 @@ export default function DeliveryPlan() {
   const [stores, setStores] = useState<string[]>([]);
   const [allocations, setAllocations] = useState<ProductAllocation[]>([]);
   const [loading, setLoading] = useState(true);
+  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
 
   useEffect(() => {
     loadData();
@@ -91,7 +93,7 @@ export default function DeliveryPlan() {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, []);
+  }, [selectedDate]);
 
   // Krispy Kreme products matching StoreProductRange
   const allKrispyKremeProducts = [
@@ -119,9 +121,9 @@ export default function DeliveryPlan() {
 
   const loadData = async () => {
     try {
-      // Get today's date for the production plan
-      const today = new Date().toISOString().split('T')[0];
-      console.log('📦 DELIVERY PLAN: Loading data for date:', today);
+      // Get selected date for the production plan
+      const dateStr = selectedDate.toISOString().split('T')[0];
+      console.log('📦 DELIVERY PLAN: Loading data for date:', dateStr);
       
       // Fetch stores with their IDs
       const { data: storesData } = await supabase
@@ -137,11 +139,11 @@ export default function DeliveryPlan() {
       const storeMap = new Map(storesData.map((s: any) => [s.id, s.name]));
       setStores(storeNames);
 
-      // Fetch production plan for today
+      // Fetch production plan for selected date
       const { data: productionPlan } = await supabase
         .from('production_plans')
         .select('id, status')
-        .eq('production_date', today)
+        .eq('production_date', dateStr)
         .single() as any;
 
       console.log('📦 DELIVERY PLAN: Production plan:', productionPlan);
@@ -372,13 +374,13 @@ export default function DeliveryPlan() {
     }
 
     try {
-      const today = new Date().toISOString().split('T')[0];
+      const dateStr = selectedDate.toISOString().split('T')[0];
 
       // Update production plan status to confirmed
       const { error: updateError } = await supabase
         .from('production_plans')
         .update({ status: 'confirmed' })
-        .eq('production_date', today) as any;
+        .eq('production_date', dateStr) as any;
 
       if (updateError) throw updateError;
 
@@ -417,11 +419,36 @@ export default function DeliveryPlan() {
 
   return (
     <div className="flex-1 space-y-6 p-6">
-      <div>
-        <h1 className="text-3xl font-bold text-foreground">Delivery Plan</h1>
-        <p className="text-muted-foreground">
-          Allocate produced quantities to stores
-        </p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold text-foreground">Delivery Plan</h1>
+          <p className="text-muted-foreground">
+            Allocate produced quantities to stores
+          </p>
+        </div>
+        <div className="flex items-center gap-2">
+          <span className="text-sm font-medium text-muted-foreground">Delivery Date:</span>
+          <Select
+            value={selectedDate.toISOString()}
+            onValueChange={(value) => setSelectedDate(new Date(value))}
+          >
+            <SelectTrigger className="w-[240px]">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {Array.from({ length: 7 }, (_, i) => {
+                const date = new Date();
+                date.setDate(date.getDate() + i);
+                return (
+                  <SelectItem key={i} value={date.toISOString()}>
+                    {format(date, "EEEE, MMM d, yyyy")}
+                    {i === 0 && " (Today)"}
+                  </SelectItem>
+                );
+              })}
+            </SelectContent>
+          </Select>
+        </div>
       </div>
 
       {/* Summary Cards */}
