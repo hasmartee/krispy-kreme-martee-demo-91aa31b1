@@ -35,8 +35,8 @@ const mainNavigationHQ: Array<{ title: string; url: string; icon: any; sparkles?
 ];
 
 const mainNavigationManufacturing: Array<{ title: string; url: string; icon: any; sparkles?: boolean }> = [
-  { title: "Home", url: "/", icon: Home },
   { title: "Production Plan", url: "/production", icon: ChefHat, sparkles: true },
+  { title: "Delivery Plan", url: "/delivery-plan", icon: Truck },
 ];
 
 const settingsNavigationHQ = [
