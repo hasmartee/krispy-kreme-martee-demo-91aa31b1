@@ -21,7 +21,7 @@ import {
 const mainNavigationStoreManager: Array<{ title: string; url: string; icon: any; sparkles?: boolean }> = [
   { title: "Home", url: "/", icon: Home },
   { title: "Store Deliveries", url: "/suggested-production", icon: Truck, sparkles: true },
-  { title: "Daily Waste", url: "/daily-waste", icon: Trash2 },
+  { title: "Waste", url: "/daily-waste", icon: Trash2 },
   { title: "Live Sales", url: "/live-sales", icon: Activity },
 ];
 

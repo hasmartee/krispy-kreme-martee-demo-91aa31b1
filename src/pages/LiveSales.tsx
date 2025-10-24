@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Activity, CheckCircle } from "lucide-react";
 import { useView } from "@/contexts/ViewContext";
 
@@ -10,70 +9,50 @@ interface Sale {
   id: string;
   timestamp: Date;
   product: string;
-  store: string;
-  brand: string;
   quantity: number;
   price: number;
   total: number;
 }
 
-// Brand to store mapping
-const brandStoreMap = {
-  "Pret a Manger": [
-    "London Bridge", "Kings Cross", "Victoria Station", "Liverpool Street", 
-    "Paddington", "Waterloo", "Bank", "Monument", "Shoreditch", "Camden",
-    "Clapham", "Wimbledon", "Greenwich"
-  ],
-  "Brioche Dorée": [
-    "Oxford Street", "Canary Wharf", "Bond Street", "Leicester Square", 
-    "Covent Garden", "Notting Hill", "Chelsea", "Hampstead"
-  ],
-  "Starbucks": [
-    "London Bridge", "Oxford Street", "Tower Hill", "Holborn", "Canary Wharf",
-    "Richmond", "Brixton", "Camden"
-  ]
-};
-
-// Store to brand mapping
-const storeToBrand: Record<string, string> = {};
-Object.entries(brandStoreMap).forEach(([brand, stores]) => {
-  if (brand !== "All Brands") {
-    stores.forEach(store => {
-      storeToBrand[store] = brand;
-    });
-  }
-});
+// Store products with realistic pricing
+const products = [
+  { name: "Kanelstang (Cinnamon Swirl)", price: 3.50, category: "Pastries" },
+  { name: "Tebirkes (Poppy Seed Pastry)", price: 3.25, category: "Pastries" },
+  { name: "Wienerbrød (Danish Pastry)", price: 3.75, category: "Pastries" },
+  { name: "Butter Croissant", price: 2.95, category: "Pastries" },
+  { name: "Pain au Chocolat", price: 3.50, category: "Pastries" },
+  { name: "Almond Croissant", price: 4.25, category: "Pastries" },
+  { name: "Rugbrød (Rye Bread) Slice", price: 2.50, category: "Breads" },
+  { name: "Sourdough Slice", price: 2.75, category: "Breads" },
+  { name: "Scrambled Eggs on Sourdough", price: 6.50, category: "Hot Breakfast" },
+  { name: "Bacon & Egg Roll", price: 5.95, category: "Hot Breakfast" },
+  { name: "Ham & Cheese Croissant (Hot)", price: 5.50, category: "Hot Breakfast" },
+  { name: "Porridge with Honey & Nuts", price: 4.50, category: "Cold Breakfast" },
+  { name: "Granola Bowl with Yogurt", price: 5.25, category: "Cold Breakfast" },
+  { name: "Fruit & Yogurt Parfait", price: 4.75, category: "Cold Breakfast" },
+  { name: "Classic BLT Sandwich", price: 6.50, category: "Sandwiches" },
+  { name: "Chicken Bacon Sandwich", price: 6.95, category: "Sandwiches" },
+  { name: "Salmon & Cream Cheese Bagel", price: 7.50, category: "Sandwiches" },
+  { name: "Tuna Melt Panini", price: 6.50, category: "Sandwiches" },
+  { name: "Chicken Caesar Wrap", price: 6.50, category: "Wraps" },
+  { name: "Avocado & Hummus Wrap", price: 6.25, category: "Wraps" },
+  { name: "Vegan Mediterranean Wrap", price: 6.50, category: "Wraps" },
+  { name: "Mediterranean Salad Bowl", price: 7.25, category: "Salads" },
+  { name: "Greek Feta Salad", price: 7.50, category: "Salads" },
+  { name: "Flat White", price: 3.40, category: "Coffee" },
+  { name: "Cappuccino", price: 3.60, category: "Coffee" },
+  { name: "Latte", price: 3.80, category: "Coffee" },
+];
 
 // Generate mock sales data with current timestamps
-const generateMockSale = (forStore?: string, forBrand?: string): Sale => {
-  const products = [
-    { name: "Classic BLT Sandwich", price: 5.50 },
-    { name: "Chicken Caesar Wrap", price: 6.00 },
-    { name: "Avocado & Hummus Wrap", price: 6.00 },
-    { name: "Tuna Melt Panini", price: 6.00 },
-    { name: "Mediterranean Salad Bowl", price: 6.50 },
-    { name: "Smoked Salmon Bagel", price: 7.50 },
-    { name: "Ham & Cheese Croissant", price: 4.50 },
-    { name: "Vegan Buddha Bowl", price: 7.00 },
-  ];
-
-  // Get all stores from all brands
-  let stores = Object.values(brandStoreMap).flat();
-  if (forBrand) {
-    stores = brandStoreMap[forBrand as keyof typeof brandStoreMap] || stores;
-  }
-
+const generateMockSale = (): Sale => {
   const product = products[Math.floor(Math.random() * products.length)];
-  const quantity = Math.floor(Math.random() * 3) + 1;
-  const selectedStore = forStore || stores[Math.floor(Math.random() * stores.length)];
-  const brand = storeToBrand[selectedStore] || "Pret a Manger";
+  const quantity = Math.floor(Math.random() * 2) + 1; // 1-2 items
 
   return {
-    id: `SAL-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+    id: `POS-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
     timestamp: new Date(),
     product: product.name,
-    store: selectedStore,
-    brand,
     quantity,
     price: product.price,
     total: product.price * quantity
@@ -84,59 +63,43 @@ export default function LiveSales() {
   const { viewMode, selectedStore } = useView();
   const [sales, setSales] = useState<Sale[]>([]);
   const [isLive, setIsLive] = useState(true);
-  const [selectedBrand, setSelectedBrand] = useState<string>("Pret a Manger");
-  const [selectedStoreFilter, setSelectedStoreFilter] = useState<string>("All");
-
-  // Available stores based on selected brand
-  const availableStores = ["All", ...brandStoreMap[selectedBrand as keyof typeof brandStoreMap]];
 
   // Initialize with some sales
   useEffect(() => {
-    const initialSales = Array.from({ length: 20 }, () => {
+    const initialSales = Array.from({ length: 15 }, () => {
       const sale = generateMockSale();
-      // Randomize timestamps for initial data (last 30 minutes)
-      sale.timestamp = new Date(Date.now() - Math.random() * 30 * 60 * 1000);
+      // Randomize timestamps for initial data (last hour)
+      sale.timestamp = new Date(Date.now() - Math.random() * 60 * 60 * 1000);
       return sale;
     }).sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
 
     setSales(initialSales);
   }, []);
 
-  // Simulate live sales updates
+  // Simulate live sales updates - like a real POS system
   useEffect(() => {
     if (!isLive) return;
 
     const addNewSale = () => {
-      const newSale = generateMockSale(
-        viewMode === "store_manager" ? selectedStore : undefined,
-        viewMode === "hq" ? selectedBrand : undefined
-      );
-      setSales(prevSales => [newSale, ...prevSales].slice(0, 50)); // Keep only last 50 sales
+      const newSale = generateMockSale();
+      setSales(prevSales => [newSale, ...prevSales].slice(0, 100)); // Keep last 100 sales
     };
 
-    // Add a sale immediately
-    addNewSale();
+    // Add first sale after short delay
+    const initialTimeout = setTimeout(addNewSale, 2000);
 
-    // Then continue adding at random intervals
+    // Continue adding at intervals simulating customer purchases
     const interval = setInterval(() => {
       addNewSale();
-    }, Math.random() * 4000 + 3000); // Random interval between 3-7 seconds
+    }, Math.random() * 8000 + 4000); // Random interval between 4-12 seconds
 
-    return () => clearInterval(interval);
-  }, [isLive, viewMode, selectedStore, selectedBrand]);
+    return () => {
+      clearTimeout(initialTimeout);
+      clearInterval(interval);
+    };
+  }, [isLive]);
 
-  // Filter sales by store if in store view
-  let filteredSales = viewMode === "store_manager" 
-    ? sales.filter(sale => sale.store === selectedStore)
-    : sales;
-  
-  // Apply brand and store filters for HQ view
-  if (viewMode === "hq") {
-    filteredSales = filteredSales.filter(sale => sale.brand === selectedBrand);
-    if (selectedStoreFilter !== "All") {
-      filteredSales = filteredSales.filter(sale => sale.store === selectedStoreFilter);
-    }
-  }
+  const filteredSales = sales;
 
   const formatTime = (date: Date) => {
     return date.toLocaleTimeString('en-GB', { 
@@ -164,62 +127,12 @@ export default function LiveSales() {
       {/* Header */}
       <div>
         <h1 className="text-3xl font-bold text-foreground">
-          Live Sales {viewMode === "store_manager" ? `- ${selectedStore}` : ""}
+          Live Sales - {selectedStore}
         </h1>
         <p className="text-muted-foreground">
-          Real-time sales data from POS system integration
+          Real-time transaction feed from POS system
         </p>
       </div>
-
-      {/* Brand and Store Filters for HQ View */}
-      {viewMode === "hq" && (
-        <Card className="shadow-card border-l-4 border-l-[#7e9f57]">
-          <CardContent className="py-4">
-            <div className="space-y-4">
-              {/* Brand Filter - Higher Level */}
-              <div className="flex items-center gap-4">
-                <label className="text-sm font-medium">My Brand:</label>
-                <Select value={selectedBrand} onValueChange={(v) => {
-                  setSelectedBrand(v);
-                  setSelectedStoreFilter("All");
-                }}>
-                  <SelectTrigger className="w-[200px] h-9 border-[#7e9f57] focus:ring-[#7e9f57] font-semibold">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Pret a Manger">Pret a Manger</SelectItem>
-                    <SelectItem value="Brioche Dorée">Brioche Dorée</SelectItem>
-                    <SelectItem value="Starbucks">Starbucks</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              {/* Store Filter */}
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-4">
-                  <label className="text-sm font-medium">Filter by Store:</label>
-                  <Select value={selectedStoreFilter} onValueChange={setSelectedStoreFilter}>
-                    <SelectTrigger className="w-[180px] h-9 border-[#7e9f57] focus:ring-[#7e9f57]">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {availableStores.map(store => (
-                        <SelectItem key={store} value={store}>{store}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="text-sm text-muted-foreground">Viewing:</span>
-                  <Badge className="bg-[#7e9f57] text-white font-semibold">
-                    {selectedBrand} • {selectedStoreFilter}
-                  </Badge>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      )}
 
       {/* POS Integration Status */}
       <Card className="shadow-card border-success/20 bg-gradient-to-r from-background to-success/5">
@@ -234,13 +147,13 @@ export default function LiveSales() {
                 </span>
               </div>
               <div>
-                <CardTitle className="text-lg">POS Integration Status</CardTitle>
-                <CardDescription>Connected to all store terminals</CardDescription>
+                <CardTitle className="text-lg">POS Terminal Connection</CardTitle>
+                <CardDescription>Live feed from {selectedStore} POS system</CardDescription>
               </div>
             </div>
             <Badge className="bg-success text-white flex items-center gap-2 px-4 py-2">
               <CheckCircle className="h-4 w-4" />
-              LIVE
+              CONNECTED
             </Badge>
           </div>
         </CardHeader>
@@ -251,7 +164,7 @@ export default function LiveSales() {
         <Card className="shadow-card">
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">
-              Total Sales (Today)
+              Session Total
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -259,7 +172,7 @@ export default function LiveSales() {
               £{totalSales.toFixed(2)}
             </div>
             <p className="text-xs text-muted-foreground">
-              From {totalTransactions} transactions
+              {totalTransactions} transactions shown
             </p>
           </CardContent>
         </Card>
@@ -267,7 +180,7 @@ export default function LiveSales() {
         <Card className="shadow-card">
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">
-              Average Transaction
+              Average Basket
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -283,15 +196,19 @@ export default function LiveSales() {
         <Card className="shadow-card">
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">
-              Live Updates
+              Live Feed Status
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-foreground">
-              {filteredSales.length}
+            <div className="text-2xl font-bold text-success flex items-center gap-2">
+              <span className="relative flex h-3 w-3">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-success opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-3 w-3 bg-success"></span>
+              </span>
+              Active
             </div>
             <p className="text-xs text-muted-foreground">
-              Recent transactions
+              Auto-refreshing
             </p>
           </CardContent>
         </Card>
@@ -304,58 +221,63 @@ export default function LiveSales() {
             <div>
               <CardTitle>Live Transaction Feed</CardTitle>
               <CardDescription>
-                Real-time sales data from POS terminals - most recent first
+                Real-time sales from {selectedStore} POS terminals - most recent first
               </CardDescription>
             </div>
-            <Badge variant="outline" className="text-success border-success">
-              Auto-updating
-            </Badge>
+            <div className="flex items-center gap-2">
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-success opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-success"></span>
+              </span>
+              <Badge variant="outline" className="text-success border-success">
+                Live
+              </Badge>
+            </div>
           </div>
         </CardHeader>
         <CardContent>
-          <div className="border rounded-lg">
+          <div className="border rounded-lg overflow-hidden">
             <Table>
               <TableHeader>
                 <TableRow className="bg-muted/50">
-                  <TableHead className="w-[180px]">Timestamp</TableHead>
+                  <TableHead className="w-[150px]">Time</TableHead>
                   <TableHead>Product</TableHead>
-                  {viewMode === "hq" && <TableHead>Store</TableHead>}
-                  <TableHead className="text-right">Qty</TableHead>
-                  <TableHead className="text-right">Price</TableHead>
-                  <TableHead className="text-right">Total</TableHead>
+                  <TableHead className="text-center w-[80px]">Qty</TableHead>
+                  <TableHead className="text-right w-[100px]">Unit Price</TableHead>
+                  <TableHead className="text-right w-[120px] bg-success/5">Total</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {filteredSales.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={viewMode === "hq" ? 6 : 5} className="text-center text-muted-foreground">
-                      No sales data available for this store
+                    <TableCell colSpan={5} className="text-center text-muted-foreground py-8">
+                      Waiting for transactions...
                     </TableCell>
                   </TableRow>
                 ) : (
                   filteredSales.map((sale, index) => (
                     <TableRow 
                       key={sale.id}
-                      className={index === 0 ? "bg-success/5 animate-in fade-in duration-300" : ""}
+                      className={index === 0 ? "bg-success/10 animate-in fade-in duration-500 border-l-4 border-l-success" : "hover:bg-muted/30 transition-colors"}
                     >
                       <TableCell>
-                        <div className="flex flex-col">
-                          <span className="font-mono text-sm font-medium">{formatTime(sale.timestamp)}</span>
-                          <span className="font-mono text-xs text-muted-foreground">{formatDate(sale.timestamp)}</span>
+                        <div className="font-mono text-sm font-medium">
+                          {formatTime(sale.timestamp)}
                         </div>
                       </TableCell>
                       <TableCell>
                         <div className="font-medium">{sale.product}</div>
                       </TableCell>
-                      {viewMode === "hq" && (
-                        <TableCell>
-                          <Badge variant="outline">{sale.store}</Badge>
-                        </TableCell>
-                      )}
-                      <TableCell className="text-right font-mono">{sale.quantity}</TableCell>
-                      <TableCell className="text-right font-mono">£{sale.price.toFixed(2)}</TableCell>
-                      <TableCell className="text-right font-mono font-semibold text-success">
-                        £{sale.total.toFixed(2)}
+                      <TableCell className="text-center">
+                        <span className="font-mono font-semibold">{sale.quantity}</span>
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <span className="font-mono text-muted-foreground">£{sale.price.toFixed(2)}</span>
+                      </TableCell>
+                      <TableCell className="text-right bg-success/5">
+                        <span className="font-mono font-bold text-success text-base">
+                          £{sale.total.toFixed(2)}
+                        </span>
                       </TableCell>
                     </TableRow>
                   ))
