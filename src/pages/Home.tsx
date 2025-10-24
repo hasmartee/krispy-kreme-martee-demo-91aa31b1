@@ -438,20 +438,6 @@ const weeklyTrendData = [
 
   return (
     <div className="flex-1 space-y-6 p-6">
-      {/* Blank page for manufacturing view */}
-      {viewMode === "manufacturing" ? (
-        <div className="flex items-center justify-center min-h-[60vh]">
-          <div className="text-center space-y-4">
-            <h1 className="text-4xl font-bold text-foreground">
-              Manufacturing Dashboard
-            </h1>
-            <p className="text-muted-foreground text-lg">
-              Welcome to the manufacturing view
-            </p>
-          </div>
-        </div>
-      ) : (
-        <>
       {/* Header */}
       <div>
         <h1 className="text-3xl font-bold text-foreground">
@@ -588,36 +574,6 @@ const weeklyTrendData = [
                     </h3>
                     <p className="text-sm text-muted-foreground">
                       Check AI-powered inventory recommendations
-                    </p>
-                  </div>
-                  <ArrowRight className="h-5 w-5 text-orange-700 shrink-0" />
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      )}
-
-      {/* My Actions Section - Manufacturing Only */}
-      {viewMode === "manufacturing" && (
-        <div className="space-y-3">
-          <h2 className="text-xl font-semibold text-foreground">My Actions</h2>
-          <div className="grid gap-3 md:grid-cols-1 max-w-md">
-            <Card 
-              className="bg-gradient-to-r from-orange-100 to-amber-100 hover:from-orange-200 hover:to-amber-200 hover:shadow-lg shadow-md transition-all duration-200 border-orange-200 cursor-pointer"
-              onClick={() => navigate("/production")}
-            >
-              <CardContent className="p-4">
-                <div className="flex items-center gap-4">
-                  <div className="flex-shrink-0 w-10 h-10 bg-orange-200 rounded-full flex items-center justify-center">
-                    <ClipboardCheck className="h-5 w-5 text-orange-700" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <h3 className="text-base font-semibold text-foreground mb-1">
-                      View Production Plan
-                    </h3>
-                    <p className="text-sm text-muted-foreground">
-                      Track and update manufacturing quantities
                     </p>
                   </div>
                   <ArrowRight className="h-5 w-5 text-orange-700 shrink-0" />
@@ -1356,8 +1312,6 @@ const weeklyTrendData = [
             </CardContent>
           </Card>
         </div>
-      )}
-      </>
       )}
     </div>
   );

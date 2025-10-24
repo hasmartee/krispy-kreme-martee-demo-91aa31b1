@@ -597,10 +597,10 @@ export default function SuggestedProduction() {
                     <TableHead>Category</TableHead>
                     <TableHead>Day Part</TableHead>
                     <TableHead className="text-center">Expected Delivery</TableHead>
-                    <TableHead className="text-center">
+                    <TableHead className="text-center bg-[#f8b29c]/20">
                       <div className="flex items-center justify-center gap-2">
                         <CheckCircle2 className="h-4 w-4 text-[#f8b29c]" />
-                        <span className="font-bold">Confirmed Delivery</span>
+                        <span className="font-bold text-[#f8b29c]">Confirmed Delivery</span>
                       </div>
                     </TableHead>
                   </TableRow>
@@ -614,7 +614,7 @@ export default function SuggestedProduction() {
                       <TableCell className="text-center">
                         <span className="text-lg font-semibold">{item.expectedQuantity}</span>
                       </TableCell>
-                      <TableCell>
+                      <TableCell className="bg-[#f8b29c]/10">
                         <div className="flex justify-center">
                           <Input
                             type="number"
@@ -624,10 +624,13 @@ export default function SuggestedProduction() {
                               updateReceivedQuantity(item.allocationId, newValue);
                             }}
                             className={cn(
-                              "w-32 text-center font-bold text-lg",
-                              item.receivedQuantity > 0 ? "border-[#f8b29c] bg-[#f8b29c]/10" : ""
+                              "w-32 text-center font-bold text-lg border-2",
+                              item.receivedQuantity > 0 
+                                ? "border-[#f8b29c] bg-white" 
+                                : "border-muted bg-muted/30"
                             )}
                             min="0"
+                            placeholder="0"
                           />
                         </div>
                       </TableCell>
