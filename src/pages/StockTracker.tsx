@@ -303,12 +303,13 @@ const LiveData = () => {
   };
 
   const hasDiscrepancy = (product: ProductData) => {
-    // Check if produced doesn't match planned
-    if (product.produced !== product.planned) return true;
-    // Check if delivered doesn't match produced
-    if (product.delivered !== product.produced) return true;
-    // Check if sold + wasted + unaccounted doesn't match delivered
-    if (product.sold + product.wasted + product.unaccountedFor !== product.delivered) return true;
+    // Check if produced doesn't match planned (with >1 variance threshold)
+    if (Math.abs(product.produced - product.planned) > 1) return true;
+    // Check if delivered doesn't match produced (with >1 variance threshold)
+    if (Math.abs(product.delivered - product.produced) > 1) return true;
+    // Check if sold + wasted + unaccounted doesn't match delivered (with >1 variance threshold)
+    const accountedFor = product.sold + product.wasted + product.unaccountedFor;
+    if (Math.abs(accountedFor - product.delivered) > 1) return true;
     return false;
   };
 
@@ -371,37 +372,60 @@ const LiveData = () => {
 
       {/* AI Key Insights Section - Only for HQ/Demand Planners */}
       {viewMode === "hq" && insights.length > 0 && (
-        <Card className="shadow-lg border-2 border-orange-200 bg-gradient-to-r from-orange-50 via-amber-50 to-orange-50">
-          <CardHeader className="pb-3">
+        <Card className="relative overflow-hidden shadow-lg border-2 border-orange-300/50">
+          {/* Animated gradient background */}
+          <div className="absolute inset-0 bg-gradient-to-br from-orange-100 via-amber-50 to-orange-100 opacity-80" />
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-orange-200/40 via-transparent to-transparent" />
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,_var(--tw-gradient-stops))] from-amber-200/40 via-transparent to-transparent" />
+          
+          <CardHeader className="pb-3 relative z-10">
             <div className="flex items-center gap-3">
-              <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-orange-400 to-amber-500 flex items-center justify-center shadow-lg">
-                <Sparkles className="h-6 w-6 text-white" />
+              <div className="relative h-12 w-12 rounded-xl overflow-hidden shadow-lg">
+                <div className="absolute inset-0 bg-gradient-to-br from-orange-400 via-amber-500 to-orange-600 animate-pulse" />
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <Sparkles className="h-6 w-6 text-white relative z-10" />
+                </div>
               </div>
               <div>
-                <CardTitle className="text-xl font-bold bg-gradient-to-r from-orange-600 to-amber-600 bg-clip-text text-transparent flex items-center gap-2">
-                  AI Key Insights
-                  <Sparkles className="h-4 w-4 text-orange-500" />
+                <CardTitle className="text-xl font-bold flex items-center gap-2">
+                  <span className="bg-gradient-to-r from-orange-600 via-amber-600 to-orange-700 bg-clip-text text-transparent">
+                    AI Key Insights
+                  </span>
+                  <Sparkles className="h-4 w-4 text-orange-500 animate-pulse" />
                 </CardTitle>
-                <CardDescription className="text-sm">Data-driven discoveries from your business operations</CardDescription>
+                <CardDescription className="text-sm">Powered by advanced analytics</CardDescription>
               </div>
             </div>
           </CardHeader>
-          <CardContent className="space-y-3">
+          <CardContent className="space-y-3 relative z-10">
             {insights.map((insight, index) => (
               <div 
                 key={index} 
-                className={`p-4 rounded-xl border ${
+                className={`relative overflow-hidden p-4 rounded-xl border backdrop-blur-sm ${
                   insight.type === "warning" 
-                    ? "bg-gradient-to-r from-orange-50 to-amber-50 border-orange-200" 
-                    : "bg-gradient-to-r from-green-50 to-emerald-50 border-green-200"
+                    ? "bg-gradient-to-br from-orange-50/90 via-amber-50/90 to-orange-100/90 border-orange-300/50 shadow-sm" 
+                    : "bg-gradient-to-br from-green-50/90 via-emerald-50/90 to-green-100/90 border-green-300/50 shadow-sm"
                 }`}
               >
-                <div className="flex items-start gap-3">
-                  {insight.type === "warning" && <AlertCircle className="h-5 w-5 text-orange-500 mt-0.5 flex-shrink-0" />}
-                  {insight.type === "success" && <CheckCircle2 className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />}
-                  {insight.type === "info" && <TrendingUp className="h-5 w-5 text-blue-500 mt-0.5 flex-shrink-0" />}
+                {/* Subtle shine effect */}
+                <div className={`absolute inset-0 bg-gradient-to-r ${
+                  insight.type === "warning"
+                    ? "from-transparent via-orange-200/20 to-transparent"
+                    : "from-transparent via-green-200/20 to-transparent"
+                } -translate-x-full animate-[shimmer_3s_ease-in-out_infinite]`} />
+                
+                <div className="flex items-start gap-3 relative z-10">
+                  <div className={`rounded-full p-1.5 ${
+                    insight.type === "warning"
+                      ? "bg-gradient-to-br from-orange-400 to-amber-500"
+                      : "bg-gradient-to-br from-green-500 to-emerald-600"
+                  } shadow-md`}>
+                    {insight.type === "warning" && <AlertCircle className="h-4 w-4 text-white" />}
+                    {insight.type === "success" && <CheckCircle2 className="h-4 w-4 text-white" />}
+                    {insight.type === "info" && <TrendingUp className="h-4 w-4 text-white" />}
+                  </div>
                   <p className="text-sm text-foreground leading-relaxed">
-                    <span className={`font-semibold ${insight.type === "warning" ? "text-orange-600" : "text-green-600"}`}>
+                    <span className={`font-semibold ${insight.type === "warning" ? "text-orange-700" : "text-green-700"}`}>
                       {insight.title}
                     </span>
                     {" — "}

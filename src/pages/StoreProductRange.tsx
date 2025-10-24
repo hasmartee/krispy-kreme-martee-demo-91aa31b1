@@ -432,43 +432,68 @@ export default function StoreProductRange() {
 
       {/* AI Range Insights Section - Only for HQ/Demand Planners */}
       {viewMode === "hq" && (
-        <Card className="shadow-lg border-2 border-orange-200 bg-gradient-to-r from-orange-50 via-amber-50 to-orange-50">
-          <CardHeader className="pb-3">
+        <Card className="relative overflow-hidden shadow-lg border-2 border-orange-300/50">
+          {/* Animated gradient background */}
+          <div className="absolute inset-0 bg-gradient-to-br from-orange-100 via-amber-50 to-orange-100 opacity-80" />
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-orange-200/40 via-transparent to-transparent" />
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,_var(--tw-gradient-stops))] from-amber-200/40 via-transparent to-transparent" />
+          
+          <CardHeader className="pb-3 relative z-10">
             <div className="flex items-center gap-3">
-              <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-orange-400 to-amber-500 flex items-center justify-center shadow-lg">
-                <Sparkles className="h-6 w-6 text-white" />
+              <div className="relative h-12 w-12 rounded-xl overflow-hidden shadow-lg">
+                <div className="absolute inset-0 bg-gradient-to-br from-orange-400 via-amber-500 to-orange-600 animate-pulse" />
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <Sparkles className="h-6 w-6 text-white relative z-10" />
+                </div>
               </div>
               <div>
-                <CardTitle className="text-xl font-bold bg-gradient-to-r from-orange-600 to-amber-600 bg-clip-text text-transparent flex items-center gap-2">
-                  AI Key Insights
-                  <Sparkles className="h-4 w-4 text-orange-500" />
+                <CardTitle className="text-xl font-bold flex items-center gap-2">
+                  <span className="bg-gradient-to-r from-orange-600 via-amber-600 to-orange-700 bg-clip-text text-transparent">
+                    AI Key Insights
+                  </span>
+                  <Sparkles className="h-4 w-4 text-orange-500 animate-pulse" />
                 </CardTitle>
-                <CardDescription className="text-sm">Data-driven discoveries from your business operations</CardDescription>
+                <CardDescription className="text-sm">Powered by advanced analytics</CardDescription>
               </div>
             </div>
           </CardHeader>
-          <CardContent className="space-y-3">
-            <div className="p-4 rounded-xl bg-gradient-to-r from-orange-50 to-amber-50 border border-orange-200">
-              <div className="flex items-start gap-3">
-                <TrendingUp className="h-5 w-5 text-orange-500 mt-0.5 flex-shrink-0" />
+          <CardContent className="space-y-3 relative z-10">
+            <div className="relative overflow-hidden p-4 rounded-xl border backdrop-blur-sm bg-gradient-to-br from-orange-50/90 via-amber-50/90 to-orange-100/90 border-orange-300/50 shadow-sm">
+              {/* Subtle shine effect */}
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-orange-200/20 to-transparent -translate-x-full animate-[shimmer_3s_ease-in-out_infinite]" />
+              
+              <div className="flex items-start gap-3 relative z-10">
+                <div className="rounded-full p-1.5 bg-gradient-to-br from-orange-400 to-amber-500 shadow-md">
+                  <TrendingUp className="h-4 w-4 text-white" />
+                </div>
                 <p className="text-sm text-foreground leading-relaxed">
-                  <span className="font-semibold text-orange-600">Capacity Utilization</span> — 3 high street stores show room to expand range complexity without production bottlenecks.
+                  <span className="font-semibold text-orange-700">Capacity Utilization</span> — 3 high street stores show room to expand range complexity without production bottlenecks.
                 </p>
               </div>
             </div>
-            <div className="p-4 rounded-xl bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200">
-              <div className="flex items-start gap-3">
-                <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
+            
+            <div className="relative overflow-hidden p-4 rounded-xl border backdrop-blur-sm bg-gradient-to-br from-green-50/90 via-emerald-50/90 to-green-100/90 border-green-300/50 shadow-sm">
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-green-200/20 to-transparent -translate-x-full animate-[shimmer_3s_ease-in-out_infinite]" />
+              
+              <div className="flex items-start gap-3 relative z-10">
+                <div className="rounded-full p-1.5 bg-gradient-to-br from-green-500 to-emerald-600 shadow-md">
+                  <CheckCircle className="h-4 w-4 text-white" />
+                </div>
                 <p className="text-sm text-foreground leading-relaxed">
-                  <span className="font-semibold text-green-600">Product Alignment</span> — 87% of current range aligns with customer preferences based on sales data.
+                  <span className="font-semibold text-green-700">Product Alignment</span> — 87% of current range aligns with customer preferences based on sales data.
                 </p>
               </div>
             </div>
-            <div className="p-4 rounded-xl bg-gradient-to-r from-red-50 to-orange-50 border border-red-200">
-              <div className="flex items-start gap-3">
-                <AlertCircle className="h-5 w-5 text-red-500 mt-0.5 flex-shrink-0" />
+            
+            <div className="relative overflow-hidden p-4 rounded-xl border backdrop-blur-sm bg-gradient-to-br from-red-50/90 via-orange-50/90 to-red-100/90 border-red-300/50 shadow-sm">
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-red-200/20 to-transparent -translate-x-full animate-[shimmer_3s_ease-in-out_infinite]" />
+              
+              <div className="flex items-start gap-3 relative z-10">
+                <div className="rounded-full p-1.5 bg-gradient-to-br from-red-500 to-orange-600 shadow-md">
+                  <AlertCircle className="h-4 w-4 text-white" />
+                </div>
                 <p className="text-sm text-foreground leading-relaxed">
-                  <span className="font-semibold text-red-600">Range Gap Detected</span> — Transport hub stores missing quick-grab breakfast options that are trending in similar locations.
+                  <span className="font-semibold text-red-700">Range Gap Detected</span> — Transport hub stores missing quick-grab breakfast options that are trending in similar locations.
                 </p>
               </div>
             </div>
