@@ -23,7 +23,6 @@ import MyTasks from "./pages/MyTasks";
 import Deliveries from "./pages/Deliveries";
 import Production from "./pages/Production";
 import DailyWaste from "./pages/DailyWaste";
-import TeamMessages from "./pages/TeamMessages";
 import DeliveryPlan from "./pages/DeliveryPlan";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
@@ -59,7 +58,6 @@ const App = () => (
                       <Route path="/tasks" element={<MyTasks />} />
                       <Route path="/production" element={<Production />} />
                       <Route path="/delivery-plan" element={<DeliveryPlan />} />
-                      <Route path="/team-messages" element={<TeamMessages />} />
                       <Route path="/store-details" element={<StoreDetails />} />
                       <Route path="/ingredients" element={<Navigate to="/analytics" replace />} />
                       <Route path="/suppliers" element={<Navigate to="/analytics" replace />} />

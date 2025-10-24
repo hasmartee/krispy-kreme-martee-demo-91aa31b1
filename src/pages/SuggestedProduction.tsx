@@ -408,7 +408,7 @@ export default function SuggestedProduction() {
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              {Array.from({ length: 7 }, (_, i) => {
+              {Array.from({ length: 14 }, (_, i) => {
                 const date = new Date();
                 date.setDate(date.getDate() + i);
                 return (
@@ -491,8 +491,6 @@ export default function SuggestedProduction() {
             <TableHeader>
               <TableRow>
                 <TableHead>Product</TableHead>
-                <TableHead>Category</TableHead>
-                <TableHead>Day Part</TableHead>
                 {viewMode === "hq" && !groupByProduct && <TableHead>Store</TableHead>}
                 {viewMode === "hq" && (
                   <TableHead className="bg-gradient-to-r from-[#ff914d]/20 to-[#ff914d]/10 relative text-center">
@@ -521,12 +519,6 @@ export default function SuggestedProduction() {
                       </div>
                       <div className="text-sm text-muted-foreground">{product.id}</div>
                     </div>
-                  </TableCell>
-                  <TableCell>
-                    {getCategoryBadge(product.category)}
-                  </TableCell>
-                  <TableCell>
-                    {getDayPartBadge(product.dayPart)}
                   </TableCell>
                   {viewMode === "hq" && !groupByProduct && (
                     <TableCell>

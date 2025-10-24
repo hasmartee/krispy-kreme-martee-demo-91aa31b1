@@ -436,7 +436,7 @@ export default function DeliveryPlan() {
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              {Array.from({ length: 7 }, (_, i) => {
+              {Array.from({ length: 14 }, (_, i) => {
                 const date = new Date();
                 date.setDate(date.getDate() + i);
                 return (
@@ -561,7 +561,6 @@ export default function DeliveryPlan() {
                 <TableRow>
                   <TableHead className="w-[300px]">Product</TableHead>
                   <TableHead>SKU</TableHead>
-                  <TableHead>Day Part</TableHead>
                   <TableHead className="text-right">Allocated Quantity</TableHead>
                   <TableHead className="text-center">Status</TableHead>
                 </TableRow>
@@ -571,7 +570,6 @@ export default function DeliveryPlan() {
                   <TableRow key={product.productId}>
                     <TableCell className="font-medium">{product.productName}</TableCell>
                     <TableCell className="text-muted-foreground">{product.sku}</TableCell>
-                    <TableCell>{getDayPartBadge(product.dayPart)}</TableCell>
                     <TableCell className={`text-right ${product.confirmed ? 'font-bold text-foreground' : 'text-muted-foreground'}`}>
                       {product.allocated}
                     </TableCell>

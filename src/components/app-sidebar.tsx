@@ -28,7 +28,6 @@ const mainNavigationStoreManager: Array<{ title: string; url: string; icon: any;
 
 const mainNavigationHQ: Array<{ title: string; url: string; icon: any; sparkles?: boolean }> = [
   { title: "Home", url: "/", icon: Home },
-  { title: "Team Messages", url: "/team-messages", icon: MessageSquare },
   { title: "Performance", url: "/analytics", icon: BarChart3 },
   { title: "Suggested Production", url: "/production", icon: ChefHat, sparkles: true },
   { title: "Delivery Plan", url: "/delivery-plan", icon: ClipboardList },
