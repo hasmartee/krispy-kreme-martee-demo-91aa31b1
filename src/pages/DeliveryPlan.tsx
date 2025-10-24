@@ -3,7 +3,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { RefreshCw, Loader2, CalendarIcon, Package, Truck } from "lucide-react";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { RefreshCw, Loader2, CalendarIcon, Package, Truck, Store, Download } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
 import { useToast } from "@/hooks/use-toast";
@@ -28,12 +29,29 @@ interface ProductAllocation {
   storeAllocations: StoreAllocation[];
 }
 
+interface ProductInStore {
+  productSku: string;
+  productName: string;
+  category: string;
+  plannedQuantity: number;
+  deliveryQuantity: number;
+  adjustmentRatio: number;
+}
+
+interface StoreView {
+  storeName: string;
+  products: ProductInStore[];
+  totalPlanned: number;
+  totalDelivery: number;
+}
+
 export default function DeliveryPlan() {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [products, setProducts] = useState<ProductAllocation[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [planStatus, setPlanStatus] = useState<'pending' | 'confirmed'>('pending');
+  const [viewMode, setViewMode] = useState<'store' | 'product'>('store');
   const { toast } = useToast();
   
   const formattedDate = selectedDate.toLocaleDateString('en-GB', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
@@ -170,6 +188,81 @@ export default function DeliveryPlan() {
     setTimeout(() => setIsRefreshing(false), 1000);
   };
 
+  const getStoreView = (): StoreView[] => {
+    const storeMap: Record<string, StoreView> = {};
+
+    products.forEach(product => {
+      product.storeAllocations.forEach(store => {
+        if (!storeMap[store.storeName]) {
+          storeMap[store.storeName] = {
+            storeName: store.storeName,
+            products: [],
+            totalPlanned: 0,
+            totalDelivery: 0,
+          };
+        }
+
+        storeMap[store.storeName].products.push({
+          productSku: product.productSku,
+          productName: product.productName,
+          category: product.category,
+          plannedQuantity: store.plannedQuantity,
+          deliveryQuantity: store.deliveryQuantity,
+          adjustmentRatio: product.adjustmentRatio,
+        });
+
+        storeMap[store.storeName].totalPlanned += store.plannedQuantity;
+        storeMap[store.storeName].totalDelivery += store.deliveryQuantity;
+      });
+    });
+
+    return Object.values(storeMap).sort((a, b) => a.storeName.localeCompare(b.storeName));
+  };
+
+  const exportToCSV = () => {
+    if (viewMode === 'store') {
+      const storeViews = getStoreView();
+      let csvContent = "Store,Product,SKU,Category,Planned Quantity,Delivery Quantity,Adjustment\n";
+      
+      storeViews.forEach(store => {
+        store.products.forEach(product => {
+          const diff = product.deliveryQuantity - product.plannedQuantity;
+          csvContent += `"${store.storeName}","${product.productName}","${product.productSku}","${product.category}",${product.plannedQuantity},${product.deliveryQuantity},${diff}\n`;
+        });
+      });
+
+      const blob = new Blob([csvContent], { type: 'text/csv' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `delivery-plan-by-store-${format(selectedDate, 'yyyy-MM-dd')}.csv`;
+      a.click();
+      window.URL.revokeObjectURL(url);
+    } else {
+      let csvContent = "Product,SKU,Category,Store,Planned Quantity,Delivery Quantity,Adjustment\n";
+      
+      products.forEach(product => {
+        product.storeAllocations.forEach(store => {
+          const diff = store.deliveryQuantity - store.plannedQuantity;
+          csvContent += `"${product.productName}","${product.productSku}","${product.category}","${store.storeName}",${store.plannedQuantity},${store.deliveryQuantity},${diff}\n`;
+        });
+      });
+
+      const blob = new Blob([csvContent], { type: 'text/csv' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `delivery-plan-by-product-${format(selectedDate, 'yyyy-MM-dd')}.csv`;
+      a.click();
+      window.URL.revokeObjectURL(url);
+    }
+
+    toast({
+      title: "Export Successful",
+      description: "Delivery plan exported to CSV",
+    });
+  };
+
   const getCategoryBadge = (category: string) => {
     const colors: Record<string, string> = {
       "Glazed": "bg-amber-100 text-amber-800",
@@ -211,7 +304,7 @@ export default function DeliveryPlan() {
         </div>
       </div>
 
-      {/* Date Picker and Summary */}
+      {/* Date Picker and Controls */}
       <div className="flex items-center justify-between gap-4">
         <div className="flex items-center gap-2">
           <span className="text-sm font-medium text-muted-foreground">Delivery Date:</span>
@@ -240,6 +333,22 @@ export default function DeliveryPlan() {
           </Popover>
         </div>
         <div className="flex items-center gap-4">
+          <Tabs value={viewMode} onValueChange={(value) => setViewMode(value as 'store' | 'product')}>
+            <TabsList>
+              <TabsTrigger value="store" className="gap-2">
+                <Store className="h-4 w-4" />
+                By Store
+              </TabsTrigger>
+              <TabsTrigger value="product" className="gap-2">
+                <Package className="h-4 w-4" />
+                By Product
+              </TabsTrigger>
+            </TabsList>
+          </Tabs>
+          <Button onClick={exportToCSV} variant="outline" disabled={products.length === 0}>
+            <Download className="h-4 w-4 mr-2" />
+            Export CSV
+          </Button>
           <Button onClick={handleRefresh} variant="outline" disabled={isRefreshing}>
             <RefreshCw className={`h-4 w-4 mr-2 ${isRefreshing ? 'animate-spin' : ''}`} />
             Refresh
@@ -288,17 +397,87 @@ export default function DeliveryPlan() {
       {/* Delivery Plan Table */}
       <Card className="shadow-lg">
         <CardHeader>
-          <CardTitle className="text-2xl">Delivery Allocations by Store</CardTitle>
+          <CardTitle className="text-2xl">
+            {viewMode === 'store' ? 'Delivery Allocations by Store' : 'Delivery Allocations by Product'}
+          </CardTitle>
           <CardDescription>
             {products.length > 0 
-              ? `${products.length} products to be delivered`
+              ? viewMode === 'store' 
+                ? `${getStoreView().length} stores to receive deliveries`
+                : `${products.length} products to be delivered`
               : 'No delivery plan for this date'}
           </CardDescription>
         </CardHeader>
         <CardContent>
           {products.length > 0 ? (
-            <div className="space-y-6">
-              {products.map((product) => (
+            viewMode === 'store' ? (
+              // By Store View
+              <div className="space-y-6">
+                {getStoreView().map((store) => (
+                  <div key={store.storeName} className="border rounded-lg p-4">
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="flex items-center gap-3">
+                        <Store className="h-5 w-5 text-muted-foreground" />
+                        <div>
+                          <h3 className="font-semibold text-lg">{store.storeName}</h3>
+                          <p className="text-sm text-muted-foreground">{store.products.length} products</p>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <div className="text-sm text-muted-foreground">Total Delivery</div>
+                        <div className="text-xl font-bold text-primary">{store.totalDelivery}</div>
+                      </div>
+                    </div>
+                    
+                    <div className="rounded-md border">
+                      <Table>
+                        <TableHeader>
+                          <TableRow>
+                            <TableHead>Product</TableHead>
+                            <TableHead>Category</TableHead>
+                            <TableHead className="text-right">Planned</TableHead>
+                            <TableHead className="text-right">Delivery</TableHead>
+                            <TableHead className="text-right">Adjustment</TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {store.products.map((product) => {
+                            const diff = product.deliveryQuantity - product.plannedQuantity;
+                            return (
+                              <TableRow key={product.productSku}>
+                                <TableCell className="font-medium">{product.productName}</TableCell>
+                                <TableCell>{getCategoryBadge(product.category)}</TableCell>
+                                <TableCell className="text-right">{product.plannedQuantity}</TableCell>
+                                <TableCell className="text-right font-semibold text-primary">
+                                  {product.deliveryQuantity}
+                                </TableCell>
+                                <TableCell className="text-right">
+                                  <span className={`font-semibold ${diff < 0 ? 'text-red-600' : diff > 0 ? 'text-green-600' : ''}`}>
+                                    {diff >= 0 ? '+' : ''}{diff}
+                                  </span>
+                                </TableCell>
+                              </TableRow>
+                            );
+                          })}
+                          <TableRow className="bg-muted/50 font-semibold">
+                            <TableCell colSpan={2}>Total</TableCell>
+                            <TableCell className="text-right">{store.totalPlanned}</TableCell>
+                            <TableCell className="text-right text-primary">{store.totalDelivery}</TableCell>
+                            <TableCell className="text-right">
+                              {store.totalDelivery - store.totalPlanned >= 0 ? '+' : ''}
+                              {store.totalDelivery - store.totalPlanned}
+                            </TableCell>
+                          </TableRow>
+                        </TableBody>
+                      </Table>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              // By Product View
+              <div className="space-y-6">
+                {products.map((product) => (
                 <div key={product.productSku} className="border rounded-lg p-4">
                   <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center gap-3">
@@ -366,6 +545,7 @@ export default function DeliveryPlan() {
                 </div>
               ))}
             </div>
+            )
           ) : (
             <div className="flex flex-col items-center justify-center py-12 text-center">
               <Truck className="h-16 w-16 text-muted-foreground/50 mb-4" />
