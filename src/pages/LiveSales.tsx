@@ -2,8 +2,9 @@ import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Activity, CheckCircle } from "lucide-react";
+import { Activity, CheckCircle, Loader2 } from "lucide-react";
 import { useView } from "@/contexts/ViewContext";
+import { supabase } from "@/lib/supabase-helper";
 
 interface Sale {
   id: string;
@@ -14,38 +15,25 @@ interface Sale {
   total: number;
 }
 
-// Store products with realistic pricing
-const products = [
-  { name: "Kanelstang (Cinnamon Swirl)", price: 3.50, category: "Pastries" },
-  { name: "Tebirkes (Poppy Seed Pastry)", price: 3.25, category: "Pastries" },
-  { name: "Wienerbrød (Danish Pastry)", price: 3.75, category: "Pastries" },
-  { name: "Butter Croissant", price: 2.95, category: "Pastries" },
-  { name: "Pain au Chocolat", price: 3.50, category: "Pastries" },
-  { name: "Almond Croissant", price: 4.25, category: "Pastries" },
-  { name: "Rugbrød (Rye Bread) Slice", price: 2.50, category: "Breads" },
-  { name: "Sourdough Slice", price: 2.75, category: "Breads" },
-  { name: "Scrambled Eggs on Sourdough", price: 6.50, category: "Hot Breakfast" },
-  { name: "Bacon & Egg Roll", price: 5.95, category: "Hot Breakfast" },
-  { name: "Ham & Cheese Croissant (Hot)", price: 5.50, category: "Hot Breakfast" },
-  { name: "Porridge with Honey & Nuts", price: 4.50, category: "Cold Breakfast" },
-  { name: "Granola Bowl with Yogurt", price: 5.25, category: "Cold Breakfast" },
-  { name: "Fruit & Yogurt Parfait", price: 4.75, category: "Cold Breakfast" },
-  { name: "Classic BLT Sandwich", price: 6.50, category: "Sandwiches" },
-  { name: "Chicken Bacon Sandwich", price: 6.95, category: "Sandwiches" },
-  { name: "Salmon & Cream Cheese Bagel", price: 7.50, category: "Sandwiches" },
-  { name: "Tuna Melt Panini", price: 6.50, category: "Sandwiches" },
-  { name: "Chicken Caesar Wrap", price: 6.50, category: "Wraps" },
-  { name: "Avocado & Hummus Wrap", price: 6.25, category: "Wraps" },
-  { name: "Vegan Mediterranean Wrap", price: 6.50, category: "Wraps" },
-  { name: "Mediterranean Salad Bowl", price: 7.25, category: "Salads" },
-  { name: "Greek Feta Salad", price: 7.50, category: "Salads" },
-  { name: "Flat White", price: 3.40, category: "Coffee" },
-  { name: "Cappuccino", price: 3.60, category: "Coffee" },
-  { name: "Latte", price: 3.80, category: "Coffee" },
-];
+interface Product {
+  name: string;
+  price: number;
+  category: string;
+}
 
-// Generate mock sales data with current timestamps
-const generateMockSale = (): Sale => {
+// Generate mock sales data using products from database
+const generateMockSale = (products: Product[]): Sale => {
+  if (products.length === 0) {
+    return {
+      id: `POS-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      timestamp: new Date(),
+      product: "Loading...",
+      quantity: 1,
+      price: 0,
+      total: 0
+    };
+  }
+
   const product = products[Math.floor(Math.random() * products.length)];
   const quantity = Math.floor(Math.random() * 2) + 1; // 1-2 items
 
@@ -63,25 +51,73 @@ export default function LiveSales() {
   const { viewMode, selectedStore } = useView();
   const [sales, setSales] = useState<Sale[]>([]);
   const [isLive, setIsLive] = useState(true);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  // Initialize with some sales
+  // Fetch products from database
   useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('products')
+          .select('name, category');
+
+        if (error) throw error;
+
+        // Map products with realistic pricing based on category
+        const productsWithPricing: Product[] = (data || []).map(p => {
+          let price = 2.50;
+          
+          // Price based on category
+          if (p.category === 'Donuts') price = 2.25 + Math.random() * 0.50;
+          else if (p.category === 'Iced') price = 2.50 + Math.random() * 0.50;
+          else if (p.category === 'Filled') price = 2.75 + Math.random() * 0.50;
+          else if (p.category === 'Cake') price = 3.00 + Math.random() * 0.75;
+          else if (p.category === 'Pastries') price = 3.25 + Math.random() * 1.00;
+          else if (p.category === 'Breakfast') price = 4.50 + Math.random() * 2.50;
+          else if (p.category === 'Sandwiches') price = 5.50 + Math.random() * 2.00;
+          else if (p.category === 'Wraps') price = 5.75 + Math.random() * 1.50;
+          else if (p.category === 'Salads') price = 6.50 + Math.random() * 1.50;
+          else if (p.category === 'Breads') price = 2.00 + Math.random() * 1.50;
+
+          return {
+            name: p.name,
+            price: Math.round(price * 20) / 20, // Round to nearest 0.05
+            category: p.category
+          };
+        });
+
+        setProducts(productsWithPricing);
+      } catch (error) {
+        console.error('Error fetching products:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, []);
+
+  // Initialize with some sales once products are loaded
+  useEffect(() => {
+    if (products.length === 0) return;
+
     const initialSales = Array.from({ length: 15 }, () => {
-      const sale = generateMockSale();
+      const sale = generateMockSale(products);
       // Randomize timestamps for initial data (last hour)
       sale.timestamp = new Date(Date.now() - Math.random() * 60 * 60 * 1000);
       return sale;
     }).sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
 
     setSales(initialSales);
-  }, []);
+  }, [products]);
 
   // Simulate live sales updates - like a real POS system
   useEffect(() => {
-    if (!isLive) return;
+    if (!isLive || products.length === 0) return;
 
     const addNewSale = () => {
-      const newSale = generateMockSale();
+      const newSale = generateMockSale(products);
       setSales(prevSales => [newSale, ...prevSales].slice(0, 100)); // Keep last 100 sales
     };
 
@@ -97,7 +133,7 @@ export default function LiveSales() {
       clearTimeout(initialTimeout);
       clearInterval(interval);
     };
-  }, [isLive]);
+  }, [isLive, products]);
 
   const filteredSales = sales;
 
@@ -121,6 +157,17 @@ export default function LiveSales() {
   const totalSales = filteredSales.reduce((sum, sale) => sum + sale.total, 0);
   const totalTransactions = filteredSales.length;
   const averageTransaction = totalSales / totalTransactions || 0;
+
+  if (loading) {
+    return (
+      <div className="flex-1 flex items-center justify-center p-6 min-h-[400px]">
+        <div className="flex flex-col items-center gap-4">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          <p className="text-muted-foreground">Loading products from database...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex-1 space-y-6 p-6">
