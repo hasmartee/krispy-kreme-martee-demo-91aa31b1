@@ -19,6 +19,7 @@ interface WasteProduct {
   category: string;
   deliveredQty: number;
   soldQty: number;
+  stockAdjustments: number;
   expectedWaste: number;
   recordedWaste: number;
   hasUnsavedChanges?: boolean;
@@ -91,6 +92,30 @@ export default function DailyWaste() {
         .select('*') as any;
 
       const productMap = new Map(productsData?.map((p: any) => [p.sku, p]) || []);
+      const productIdMap = new Map(productsData?.map((p: any) => [p.id, p.sku]) || []);
+
+      // Get stock adjustments for today
+      const startOfDay = new Date();
+      startOfDay.setHours(0, 0, 0, 0);
+      const endOfDay = new Date();
+      endOfDay.setHours(23, 59, 59, 999);
+
+      const { data: stockAdjustments } = await supabase
+        .from('stock_adjustments')
+        .select('product_id, quantity')
+        .eq('store_id', profile.store_id)
+        .gte('created_at', startOfDay.toISOString())
+        .lte('created_at', endOfDay.toISOString()) as any;
+
+      // Group stock adjustments by product SKU
+      const adjustmentMap = new Map<string, number>();
+      (stockAdjustments || []).forEach((adj: any) => {
+        const productSku = productIdMap.get(adj.product_id) as string | undefined;
+        if (productSku) {
+          const currentTotal = adjustmentMap.get(productSku) || 0;
+          adjustmentMap.set(productSku, currentTotal + (adj.quantity as number));
+        }
+      });
 
       // Calculate waste for each product
       const wasteProducts: WasteProduct[] = (allocations || []).map((alloc: any) => {
@@ -100,7 +125,13 @@ export default function DailyWaste() {
         // For now, simulate sold quantity (15-90% of delivered)
         // TODO: Replace with actual sales data from live sales tracking
         const soldQty = Math.floor(deliveredQty * (0.15 + Math.random() * 0.75));
-        const expectedWaste = Math.max(0, deliveredQty - soldQty);
+        
+        // Get stock adjustments for this product
+        const stockAdjustments = adjustmentMap.get(alloc.product_sku) || 0;
+        
+        // Expected waste = delivered - sold - stock adjustments
+        // If stock adjustment is negative (write-off), it reduces expected waste
+        const expectedWaste = Math.max(0, deliveredQty - soldQty - stockAdjustments);
         
         return {
           id: alloc.id,
@@ -109,6 +140,7 @@ export default function DailyWaste() {
           category: product?.category || 'Unknown',
           deliveredQty,
           soldQty,
+          stockAdjustments,
           expectedWaste,
           recordedWaste: expectedWaste, // Pre-populate with expected
           hasUnsavedChanges: false,
@@ -224,7 +256,7 @@ export default function DailyWaste() {
           <div>
             <CardTitle className="text-xl">End of Day Waste Recording</CardTitle>
             <CardDescription>
-              Expected waste is calculated from confirmed deliveries minus sales. Adjust if needed and confirm.
+              Expected waste is calculated from confirmed deliveries minus sales and stock adjustments. Adjust if needed and confirm.
             </CardDescription>
           </div>
         </CardHeader>
@@ -238,10 +270,11 @@ export default function DailyWaste() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead className="w-[25%]">Product</TableHead>
-                  <TableHead className="text-center w-[15%]">Delivered</TableHead>
-                  <TableHead className="text-center w-[15%]">Sold</TableHead>
-                  <TableHead className="text-center w-[15%]">Expected Waste</TableHead>
+                  <TableHead className="w-[20%]">Product</TableHead>
+                  <TableHead className="text-center w-[12%]">Delivered</TableHead>
+                  <TableHead className="text-center w-[12%]">Sold</TableHead>
+                  <TableHead className="text-center w-[13%]">Stock Adjustments</TableHead>
+                  <TableHead className="text-center w-[13%]">Expected Waste</TableHead>
                   <TableHead className="text-center w-[20%] bg-gradient-to-r from-[#ff914d]/20 to-[#ff914d]/10 border-l-4 border-l-[#ff914d]">
                     <div className="flex items-center justify-center gap-2 py-1">
                       <Trash2 className="h-5 w-5 text-[#ff914d]" />
@@ -268,6 +301,14 @@ export default function DailyWaste() {
                     </TableCell>
                     <TableCell className="text-center">
                       <span className="font-mono font-semibold text-green-600">{product.soldQty}</span>
+                    </TableCell>
+                    <TableCell className="text-center">
+                      <span className={cn(
+                        "font-mono font-semibold",
+                        product.stockAdjustments > 0 ? "text-blue-600" : product.stockAdjustments < 0 ? "text-red-600" : "text-muted-foreground"
+                      )}>
+                        {product.stockAdjustments > 0 ? '+' : ''}{product.stockAdjustments}
+                      </span>
                     </TableCell>
                     <TableCell className="text-center bg-muted/30">
                       <span className="font-mono font-bold text-lg">{product.expectedWaste}</span>
