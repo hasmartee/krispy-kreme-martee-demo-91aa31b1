@@ -70,6 +70,27 @@ export default function DeliveryPlan() {
 
   useEffect(() => {
     loadData();
+    
+    // Set up real-time subscription to reload when allocations change
+    const channel = supabase
+      .channel('production-allocations-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'production_allocations'
+        },
+        () => {
+          console.log('Production allocations changed, reloading...');
+          loadData();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, []);
 
   // Krispy Kreme products matching StoreProductRange

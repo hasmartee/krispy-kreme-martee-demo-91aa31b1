@@ -139,6 +139,9 @@ export default function SuggestedProduction() {
         console.log('✅ PRODUCTION PAGE: Total products generated:', mockProducts.length);
         console.log('📋 PRODUCTION PAGE: First 5 products:', mockProducts.slice(0, 5).map(p => ({ name: p.productName, id: p.id, store: p.store })));
         setProducts(mockProducts);
+
+        // Automatically save to database as pending allocations
+        await savePendingAllocations(mockProducts);
       }
     } catch (error) {
       console.error("❌ PRODUCTION PAGE: Error loading data:", error);
@@ -158,68 +161,99 @@ export default function SuggestedProduction() {
     setTimeout(() => setIsRefreshing(false), 1000);
   };
 
-  const updateFinalOrder = (productId: string, storeId: string, delta: number) => {
-    setProducts(prev => prev.map(p => 
+  const savePendingAllocations = async (productsToSave: Product[]) => {
+    try {
+      const productionDate = format(selectedDate, 'yyyy-MM-dd');
+      
+      // Get or create production plan
+      let { data: existingPlan } = await supabase
+        .from('production_plans')
+        .select('id')
+        .eq('production_date', productionDate)
+        .single() as any;
+
+      let planId = existingPlan?.id;
+
+      if (!existingPlan) {
+        const { data: newPlan } = await supabase
+          .from('production_plans')
+          .insert({
+            production_date: productionDate,
+            status: 'pending',
+          })
+          .select()
+          .single() as any;
+        planId = newPlan?.id;
+      }
+
+      if (!planId) return;
+
+      // Save all allocations
+      const allocations = productsToSave.map(p => ({
+        production_plan_id: planId,
+        store_id: p.storeId,
+        product_sku: p.id,
+        quantity: p.finalOrder,
+        day_part: p.dayPart || 'Morning',
+      }));
+
+      await supabase
+        .from('production_allocations')
+        .upsert(allocations, {
+          onConflict: 'production_plan_id,store_id,product_sku,day_part'
+        }) as any;
+    } catch (error) {
+      console.error('Error saving pending allocations:', error);
+    }
+  };
+
+  const updateFinalOrder = async (productId: string, storeId: string, delta: number) => {
+    const updatedProducts = products.map(p => 
       p.id === productId && p.storeId === storeId
         ? { ...p, finalOrder: Math.max(0, p.finalOrder + delta) }
         : p
-    ));
+    );
+    setProducts(updatedProducts);
+
+    // Find the updated product and save to database
+    const updatedProduct = updatedProducts.find(p => p.id === productId && p.storeId === storeId);
+    if (updatedProduct) {
+      await savePendingAllocations([updatedProduct]);
+    }
   };
 
   const handleConfirmProduction = async (product: Product) => {
     setConfirmingProduction(`${product.id}-${product.storeId}`);
     
     try {
-      // Create or update production plan for the selected date
-      const { data: existingPlan } = await supabase
+      const productionDate = format(selectedDate, 'yyyy-MM-dd');
+      
+      // Get the production plan
+      const { data: plan } = await supabase
         .from('production_plans')
-        .select('id, status')
-        .eq('production_date', format(selectedDate, 'yyyy-MM-dd'))
+        .select('id')
+        .eq('production_date', productionDate)
         .single() as any;
 
-      let planId = existingPlan?.id;
-
-      if (!existingPlan) {
-        // Create new production plan
-        const { data: newPlan, error: planError } = await supabase
-          .from('production_plans')
-          .insert({
-            production_date: format(selectedDate, 'yyyy-MM-dd'),
-            status: 'pending',
-          })
-          .select()
-          .single() as any;
-
-        if (planError) throw planError;
-        planId = newPlan.id;
+      if (!plan) {
+        throw new Error('Production plan not found');
       }
 
-      // Upsert production allocation
-      const { error: allocationError } = await supabase
-        .from('production_allocations')
-        .upsert({
-          production_plan_id: planId,
-          store_id: product.storeId,
-          product_sku: product.id,
-          quantity: product.finalOrder,
-          day_part: product.dayPart || 'Morning',
-        }, {
-          onConflict: 'production_plan_id,store_id,product_sku,day_part'
-        }) as any;
-
-      if (allocationError) throw allocationError;
+      // Update the allocation to mark it as confirmed (status will be on the plan level)
+      // For now, we just ensure the allocation is saved with the current finalOrder
+      await savePendingAllocations([product]);
 
       toast({
         title: viewMode === "hq" ? "✓ Production Confirmed" : "✓ Delivery Logged",
         description: viewMode === "hq" 
-          ? `${product.productName} added to production queue for ${product.store}`
+          ? `${product.productName} confirmed for ${product.store}`
           : `${product.productName} delivery logged - ${product.finalOrder} units received`,
       });
     } catch (error) {
       console.error('Error confirming production:', error);
       toast({
         title: "Error",
-        description: "Failed to save production allocation",
+        description: "Failed to confirm production",
         variant: "destructive",
       });
     } finally {
