@@ -76,15 +76,37 @@ export default function SuggestedProduction() {
     try {
       const productionDate = format(selectedDate, 'yyyy-MM-dd');
       
-      // Get the store ID
+      // Get the current user's profile to find their store
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (!user) {
+        console.log('No user found');
+        setDeliveryItems([]);
+        setLoading(false);
+        return;
+      }
+
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('store_id')
+        .eq('id', user.id)
+        .maybeSingle() as any;
+
+      if (!profile?.store_id) {
+        console.log('No store assigned to user');
+        setDeliveryItems([]);
+        setLoading(false);
+        return;
+      }
+
       const { data: storeData } = await supabase
         .from('stores')
         .select('id, name')
-        .eq('name', selectedStore)
+        .eq('id', profile.store_id)
         .maybeSingle() as any;
 
       if (!storeData) {
-        console.log('Store not found:', selectedStore);
+        console.log('Store not found for ID:', profile.store_id);
         setDeliveryItems([]);
         setLoading(false);
         return;
