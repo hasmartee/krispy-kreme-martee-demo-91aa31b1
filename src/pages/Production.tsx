@@ -21,10 +21,12 @@ interface Product {
   currentStock: number;
   recommendedOrder: number;
   finalOrder: number;
+  manufacturedQty: number;
   trend: "up" | "down" | "stable";
   historicalSales: number;
   predictedSales: number;
   dayPart?: string;
+  allocationId?: string;
 }
 
 interface Store {
@@ -126,7 +128,7 @@ export default function Production() {
           // Load existing allocations from database
           const { data: allocationsData } = await supabase
             .from('production_allocations')
-            .select('store_id, product_sku, quantity, day_part')
+            .select('id, store_id, product_sku, quantity, manufactured_quantity, day_part')
             .eq('production_plan_id', productionPlan.id) as any;
 
           console.log('📦 PRODUCTION PAGE: Loaded allocations:', allocationsData?.length);
@@ -143,6 +145,9 @@ export default function Production() {
                 .find(p => p.id === alloc.product_sku);
               
               if (productTemplate) {
+                // Pre-populate manufactured_qty with planned quantity if not set
+                const manufacturedQty = alloc.manufactured_quantity ?? alloc.quantity;
+                
                 productsToDisplay.push({
                   id: alloc.product_sku,
                   productName: productTemplate.name,
@@ -152,10 +157,12 @@ export default function Production() {
                   currentStock: alloc.quantity,
                   recommendedOrder: alloc.quantity,
                   finalOrder: alloc.quantity,
+                  manufacturedQty: manufacturedQty,
                   trend: "stable" as const,
                   historicalSales: alloc.quantity * 0.9,
                   predictedSales: alloc.quantity * 1.05,
                   dayPart: alloc.day_part,
+                  allocationId: alloc.id,
                 });
               }
             });
@@ -180,6 +187,7 @@ export default function Production() {
                 currentStock: baseQty,
                 recommendedOrder: baseQty,
                 finalOrder: baseQty,
+                manufacturedQty: baseQty,
                 trend: Math.random() > 0.3 ? "up" : "down",
                 historicalSales: baseQty * 0.9,
                 predictedSales: baseQty * 1.05,
@@ -299,6 +307,33 @@ export default function Production() {
     }
   };
 
+  const updateManufacturedQty = async (productId: string, storeId: string, delta: number) => {
+    const updatedProducts = products.map(p => 
+      p.id === productId && p.storeId === storeId
+        ? { ...p, manufacturedQty: Math.max(0, p.manufacturedQty + delta) }
+        : p
+    );
+    setProducts(updatedProducts);
+
+    // Save manufactured quantity to database
+    const updatedProduct = updatedProducts.find(p => p.id === productId && p.storeId === storeId);
+    if (updatedProduct?.allocationId) {
+      const { error } = await supabase
+        .from('production_allocations')
+        .update({ manufactured_quantity: updatedProduct.manufacturedQty })
+        .eq('id', updatedProduct.allocationId) as any;
+
+      if (error) {
+        console.error('Error updating manufactured quantity:', error);
+        toast({
+          title: "Error",
+          description: "Failed to update manufactured quantity",
+          variant: "destructive",
+        });
+      }
+    }
+  };
+
   const handleConfirmProduction = async (product: Product) => {
     setConfirmingProduction(`${product.id}-${product.storeId}`);
     
@@ -375,11 +410,13 @@ export default function Production() {
               currentStock: 0,
               recommendedOrder: 0,
               finalOrder: 0,
+              manufacturedQty: 0,
             };
           }
           acc[product.id].currentStock += product.currentStock;
           acc[product.id].recommendedOrder += product.recommendedOrder;
           acc[product.id].finalOrder += product.finalOrder;
+          acc[product.id].manufacturedQty += product.manufacturedQty;
           return acc;
         }, {} as Record<string, Product>)
       )
@@ -526,11 +563,11 @@ export default function Production() {
                     <div className="absolute inset-0 bg-[#ff914d]/5 blur-sm" />
                     <Sparkles className="h-4 w-4 text-[#ff914d] relative z-10 animate-pulse" />
                     <span className="relative z-10 font-semibold bg-gradient-to-r from-[#ff914d] to-[#ff914d]/70 bg-clip-text text-transparent">
-                      AI Recommended Qty
+                      Planned Qty
                     </span>
                   </div>
                 </TableHead>
-                <TableHead className="bg-brand-green/10 text-center">Final Qty</TableHead>
+                <TableHead className="bg-blue-500/10 text-center">Manufactured Qty</TableHead>
                 <TableHead>Action</TableHead>
               </TableRow>
             </TableHeader>
@@ -559,24 +596,24 @@ export default function Production() {
                       <Sparkles className="h-3 w-3 text-[#ff914d] opacity-0 group-hover:opacity-100 transition-opacity" />
                     </div>
                   </TableCell>
-                  <TableCell className="bg-brand-green/5">
+                  <TableCell className="bg-blue-500/5">
                     <div className="flex items-center gap-2 justify-center">
                       <Button
                         size="sm"
                         variant="outline"
-                        onClick={() => updateFinalOrder(product.id, product.storeId, -1)}
-                        className="h-8 w-8 p-0 rounded-full border-brand-green hover:bg-brand-green hover:text-white transition-colors"
+                        onClick={() => updateManufacturedQty(product.id, product.storeId, -1)}
+                        className="h-8 w-8 p-0 rounded-full border-blue-500 hover:bg-blue-500 hover:text-white transition-colors"
                       >
                         <Minus className="h-4 w-4" />
                       </Button>
-                      <span className="font-mono font-bold text-brand-green min-w-[2.5rem] text-center text-lg">
-                        {product.finalOrder}
+                      <span className="font-mono font-bold text-blue-600 min-w-[2.5rem] text-center text-lg">
+                        {product.manufacturedQty}
                       </span>
                       <Button
                         size="sm"
                         variant="outline"
-                        onClick={() => updateFinalOrder(product.id, product.storeId, 1)}
-                        className="h-8 w-8 p-0 rounded-full border-brand-green hover:bg-brand-green hover:text-white transition-colors"
+                        onClick={() => updateManufacturedQty(product.id, product.storeId, 1)}
+                        className="h-8 w-8 p-0 rounded-full border-blue-500 hover:bg-blue-500 hover:text-white transition-colors"
                       >
                         <Plus className="h-4 w-4" />
                       </Button>
