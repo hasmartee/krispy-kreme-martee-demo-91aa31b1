@@ -19,15 +19,15 @@ export function ViewSelector() {
         <TabsList className="grid w-[360px] grid-cols-3">
           <TabsTrigger value="store_manager" className="gap-2">
             <Store className="h-4 w-4" />
-            Store Manager
+            Store View
           </TabsTrigger>
           <TabsTrigger value="hq" className="gap-2">
             <Building2 className="h-4 w-4" />
-            HQ View
+            Demand Planner
           </TabsTrigger>
           <TabsTrigger value="manufacturing" className="gap-2">
             <Factory className="h-4 w-4" />
-            Manufacturing
+            Manufacturer
           </TabsTrigger>
         </TabsList>
       </Tabs>
