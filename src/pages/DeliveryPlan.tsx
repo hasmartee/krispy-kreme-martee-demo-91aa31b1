@@ -340,9 +340,9 @@ export default function DeliveryPlan() {
                 )}
               >
                 {isPending && (
-                  <Badge variant="secondary" className="absolute -top-1 -right-1 text-[8px] px-1 py-0 h-4">
-                    Pending
-                  </Badge>
+                  <div className="absolute -top-1.5 -right-1.5 bg-muted text-muted-foreground text-[9px] font-semibold px-1.5 py-0.5 rounded-full border border-border">
+                    P
+                  </div>
                 )}
                 <span className="text-sm font-medium">{dayOfWeek}</span>
                 <span className="text-lg font-bold">{dayOfMonth}</span>
