@@ -3,14 +3,11 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { TrendingUp, TrendingDown, RefreshCw, Plus, Minus, CloudRain, AlertTriangle, Sparkles, Download, Send, Loader2, CalendarIcon } from "lucide-react";
+import { TrendingUp, TrendingDown, RefreshCw, Plus, Minus, CloudRain, AlertTriangle, Sparkles, Download, Send, Loader2 } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Calendar } from "@/components/ui/calendar";
 import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
-import { cn } from "@/lib/utils";
 import heroImage from "@/assets/hero-food.jpg";
 import { useView } from "@/contexts/ViewContext";
 import { supabase } from "@/lib/supabase-helper";
@@ -172,10 +169,14 @@ export default function Production() {
   };
 
   const handleExportCSV = () => {
-    const headers = ["Product", "Category", "Store", "Current Stock", "Recommended Qty", "Final Qty"];
+    const headers = viewMode === "hq" 
+      ? ["Product", "Store", "Recommended Qty", "Final Qty"]
+      : ["Product", "Recommended Qty", "Final Qty"];
     
     const rows = products.map(p => 
-      [p.productName, p.category, p.store, p.currentStock, p.recommendedOrder, p.finalOrder]
+      viewMode === "hq"
+        ? [p.productName, p.store, p.recommendedOrder, p.finalOrder]
+        : [p.productName, p.recommendedOrder, p.finalOrder]
     );
     
     const csvContent = [
@@ -272,29 +273,29 @@ export default function Production() {
 
       {/* Date Picker and View Toggle */}
       <div className="flex items-center justify-between gap-4">
-        <Popover>
-          <PopoverTrigger asChild>
-            <Button
-              variant="outline"
-              className={cn(
-                "justify-start text-left font-normal",
-                !selectedDate && "text-muted-foreground"
-              )}
-            >
-              <CalendarIcon className="mr-2 h-4 w-4" />
-              {selectedDate ? format(selectedDate, "PPP") : <span>Pick a date</span>}
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-auto p-0" align="start">
-            <Calendar
-              mode="single"
-              selected={selectedDate}
-              onSelect={(date) => date && setSelectedDate(date)}
-              initialFocus
-              className="p-3 pointer-events-auto"
-            />
-          </PopoverContent>
-        </Popover>
+        <div className="flex items-center gap-2">
+          <span className="text-sm font-medium text-muted-foreground">Production Date:</span>
+          <Select
+            value={selectedDate.toISOString()}
+            onValueChange={(value) => setSelectedDate(new Date(value))}
+          >
+            <SelectTrigger className="w-[240px]">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {Array.from({ length: 14 }, (_, i) => {
+                const date = new Date();
+                date.setDate(date.getDate() + i);
+                return (
+                  <SelectItem key={i} value={date.toISOString()}>
+                    {format(date, "EEEE, MMM d, yyyy")}
+                    {i === 0 && " (Today)"}
+                  </SelectItem>
+                );
+              })}
+            </SelectContent>
+          </Select>
+        </div>
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <span>Last updated: {format(new Date(), "EEEE, MMMM d, yyyy 'at' h:mm a")}</span>
@@ -360,10 +361,7 @@ export default function Production() {
             <TableHeader>
               <TableRow>
                 <TableHead>Product</TableHead>
-                <TableHead>Category</TableHead>
-                <TableHead>Day Part</TableHead>
                 {viewMode === "hq" && !groupByProduct && <TableHead>Store</TableHead>}
-                <TableHead>Current Stock</TableHead>
                 <TableHead className="bg-gradient-to-r from-[#ff914d]/20 to-[#ff914d]/10 relative text-center">
                   <div className="flex items-center justify-center gap-2 relative">
                     <div className="absolute inset-0 bg-[#ff914d]/5 blur-sm" />
@@ -388,20 +386,11 @@ export default function Production() {
                       <div className="text-sm text-muted-foreground">{product.id}</div>
                     </div>
                   </TableCell>
-                  <TableCell>
-                    {getCategoryBadge(product.category)}
-                  </TableCell>
-                  <TableCell>
-                    {getDayPartBadge(product.dayPart)}
-                  </TableCell>
                   {viewMode === "hq" && !groupByProduct && (
                     <TableCell>
                       <span className="font-medium">{product.store}</span>
                     </TableCell>
                   )}
-                  <TableCell>
-                    <span className="font-mono">{product.currentStock}</span>
-                  </TableCell>
                   <TableCell className="bg-gradient-to-r from-[#ff914d]/10 to-transparent relative group">
                     <div className="absolute inset-0 bg-gradient-to-r from-[#ff914d]/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                     <div className="flex items-center justify-center gap-2 relative z-10">
