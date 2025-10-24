@@ -461,7 +461,7 @@ export default function Production() {
         </div>
         
         {/* Horizontal Date Selector */}
-        <div className="flex gap-2 overflow-x-auto pb-2">
+        <div className="flex gap-2 overflow-x-auto pb-4">
           {Array.from({ length: 14 }, (_, i) => {
             const date = new Date();
             date.setDate(date.getDate() + i);
@@ -476,14 +476,14 @@ export default function Production() {
                 variant={isSelected ? "default" : "outline"}
                 onClick={() => setSelectedDate(date)}
                 className={cn(
-                  "flex-shrink-0 flex flex-col items-center gap-1 h-auto py-3 px-6 min-w-[100px] relative",
+                  "flex-shrink-0 flex flex-col items-center gap-1 h-auto py-3 px-6 min-w-[100px] relative mt-2",
                   isSelected 
                     ? "bg-primary text-primary-foreground shadow-md border-2 border-primary" 
                     : "bg-background hover:bg-muted text-muted-foreground"
                 )}
               >
                 {isPending && (
-                  <div className="absolute -top-1.5 -right-1.5 bg-muted text-muted-foreground text-[9px] font-semibold px-1.5 py-0.5 rounded-full border border-border">
+                  <div className="absolute -top-2 -right-2 bg-muted text-muted-foreground text-[9px] font-semibold px-1.5 py-0.5 rounded-full border border-border shadow-sm">
                     P
                   </div>
                 )}
@@ -579,9 +579,9 @@ export default function Production() {
                     <span className="font-bold text-[#ff914d] text-lg">AI Recommended</span>
                   </div>
                 </TableHead>
-                <TableHead className="bg-gradient-to-r from-primary/20 to-primary/10 border-l-4 border-l-primary text-center">
+                <TableHead className="bg-gradient-to-r from-[#7ea058]/20 to-[#7ea058]/10 border-l-4 border-l-[#7ea058] text-center">
                   <div className="flex items-center justify-center gap-2 py-1">
-                    <span className="font-bold text-primary text-lg">Final Quantity</span>
+                    <span className="font-bold text-[#7ea058] text-lg">Final Quantity</span>
                   </div>
                 </TableHead>
                 <TableHead>Action</TableHead>
@@ -610,26 +610,26 @@ export default function Production() {
                       </span>
                     </div>
                   </TableCell>
-                  <TableCell className="bg-gradient-to-r from-primary/10 to-primary/5 border-l-4 border-l-primary/30">
+                  <TableCell className="bg-gradient-to-r from-[#7ea058]/10 to-[#7ea058]/5 border-l-4 border-l-[#7ea058]/30">
                     <div className="flex items-center gap-2 justify-center">
                       <Button
                         variant="outline"
                         size="icon"
                         onClick={() => updateFinalOrder(product.id, product.storeId, -1)}
-                        className="h-10 w-10 rounded-full border-2 border-primary/40 hover:border-primary hover:bg-primary/10 transition-all duration-200 hover:scale-110"
+                        className="h-10 w-10 rounded-full border-2 border-[#7ea058]/40 hover:border-[#7ea058] hover:bg-[#7ea058]/10 transition-all duration-200 hover:scale-110"
                       >
-                        <Minus className="h-4 w-4 text-primary" />
+                        <Minus className="h-4 w-4 text-[#7ea058]" />
                       </Button>
-                      <span className="text-2xl font-bold text-primary w-16 text-center">
+                      <span className="text-2xl font-bold text-[#7ea058] w-16 text-center">
                         {product.finalOrder}
                       </span>
                       <Button
                         variant="outline"
                         size="icon"
                         onClick={() => updateFinalOrder(product.id, product.storeId, 1)}
-                        className="h-10 w-10 rounded-full border-2 border-primary/40 hover:border-primary hover:bg-primary/10 transition-all duration-200 hover:scale-110"
+                        className="h-10 w-10 rounded-full border-2 border-[#7ea058]/40 hover:border-[#7ea058] hover:bg-[#7ea058]/10 transition-all duration-200 hover:scale-110"
                       >
-                        <Plus className="h-4 w-4 text-primary" />
+                        <Plus className="h-4 w-4 text-[#7ea058]" />
                       </Button>
                     </div>
                   </TableCell>

@@ -312,7 +312,7 @@ export default function DeliveryPlan() {
         </div>
         
         {/* Horizontal Date Selector */}
-        <div className="flex gap-2 overflow-x-auto pb-2">
+        <div className="flex gap-2 overflow-x-auto pb-4">
           {Array.from({ length: 14 }, (_, i) => {
             const date = new Date();
             date.setDate(date.getDate() + i);
@@ -329,7 +329,7 @@ export default function DeliveryPlan() {
                 variant={isSelected ? "default" : "outline"}
                 onClick={() => setSelectedDate(date)}
                 className={cn(
-                  "flex-shrink-0 flex flex-col items-center gap-1 h-auto py-3 px-6 min-w-[100px] relative",
+                  "flex-shrink-0 flex flex-col items-center gap-1 h-auto py-3 px-6 min-w-[100px] relative mt-2",
                   isSelected 
                     ? "bg-primary text-primary-foreground shadow-md border-2 border-primary" 
                     : isPast
@@ -340,7 +340,7 @@ export default function DeliveryPlan() {
                 )}
               >
                 {isPending && (
-                  <div className="absolute -top-1.5 -right-1.5 bg-muted text-muted-foreground text-[9px] font-semibold px-1.5 py-0.5 rounded-full border border-border">
+                  <div className="absolute -top-2 -right-2 bg-muted text-muted-foreground text-[9px] font-semibold px-1.5 py-0.5 rounded-full border border-border shadow-sm">
                     P
                   </div>
                 )}
