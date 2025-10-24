@@ -603,56 +603,182 @@ const weeklyTrendData = [
           </div>
 
           {/* Weekly Trend Graph */}
-          <Card className="shadow-lg">
-            <CardHeader>
-              <CardTitle className="text-xl">Week Overview</CardTitle>
-              <CardDescription>Delivered, Sold, and Wasted quantities over the week</CardDescription>
+          <Card className="shadow-lg border-2 border-primary/20 animate-fade-in">
+            <CardHeader className="pb-4 bg-gradient-to-r from-primary/5 to-accent/5 rounded-t-lg">
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle className="text-2xl font-bold flex items-center gap-2">
+                    <div className="h-10 w-10 rounded-lg bg-primary/20 flex items-center justify-center">
+                      📊
+                    </div>
+                    Week Overview
+                  </CardTitle>
+                  <CardDescription className="text-base mt-1">
+                    Track delivered, sold, and wasted quantities across the week
+                  </CardDescription>
+                </div>
+              </div>
             </CardHeader>
-            <CardContent>
-              <ResponsiveContainer width="100%" height={300}>
-                <ComposedChart data={weeklyTrendData}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--muted))" />
+            <CardContent className="pt-6">
+              <ResponsiveContainer width="100%" height={350}>
+                <ComposedChart data={weeklyTrendData} margin={{ top: 5, right: 30, left: 0, bottom: 5 }}>
+                  <defs>
+                    <linearGradient id="deliveredGradient" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="hsl(var(--accent))" stopOpacity={0.8}/>
+                      <stop offset="95%" stopColor="hsl(var(--accent))" stopOpacity={0.3}/>
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.5} />
                   <XAxis 
                     dataKey="day" 
-                    stroke="hsl(var(--muted-foreground))"
-                    fontSize={12}
+                    stroke="hsl(var(--foreground))"
+                    fontSize={13}
+                    fontWeight={500}
+                    tick={{ fill: 'hsl(var(--foreground))' }}
                   />
                   <YAxis 
-                    stroke="hsl(var(--muted-foreground))"
-                    fontSize={12}
+                    stroke="hsl(var(--foreground))"
+                    fontSize={13}
+                    fontWeight={500}
+                    tick={{ fill: 'hsl(var(--foreground))' }}
+                    tickFormatter={(value) => value.toLocaleString()}
                   />
                   <Tooltip
                     contentStyle={{
-                      backgroundColor: "hsl(var(--background))",
-                      border: "1px solid hsl(var(--border))",
-                      borderRadius: "8px",
+                      backgroundColor: "hsl(var(--card))",
+                      border: "2px solid hsl(var(--border))",
+                      borderRadius: "12px",
+                      padding: "12px",
+                      boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)"
                     }}
+                    labelStyle={{
+                      color: "hsl(var(--foreground))",
+                      fontWeight: "bold",
+                      marginBottom: "8px"
+                    }}
+                    formatter={(value: number, name: string) => [
+                      value.toLocaleString() + " units",
+                      name
+                    ]}
                   />
-                  <Legend />
+                  <Legend 
+                    wrapperStyle={{
+                      paddingTop: "20px"
+                    }}
+                    iconType="circle"
+                  />
                   <Bar 
                     dataKey="delivered" 
-                    fill="hsl(var(--accent))" 
+                    fill="url(#deliveredGradient)" 
                     name="Delivered"
-                    radius={[4, 4, 0, 0]}
+                    radius={[8, 8, 0, 0]}
+                    maxBarSize={60}
                   />
                   <Line 
                     type="monotone" 
                     dataKey="sold" 
                     stroke="hsl(var(--success-green))" 
-                    strokeWidth={3}
+                    strokeWidth={4}
                     name="Sold"
-                    dot={{ fill: "hsl(var(--success-green))", r: 4 }}
+                    dot={{ 
+                      fill: "hsl(var(--success-green))", 
+                      r: 6,
+                      strokeWidth: 2,
+                      stroke: "hsl(var(--background))"
+                    }}
+                    activeDot={{ r: 8 }}
                   />
                   <Line 
                     type="monotone" 
                     dataKey="wasted" 
-                    stroke="hsl(var(--destructive))" 
-                    strokeWidth={3}
+                    stroke="hsl(var(--warning-orange))" 
+                    strokeWidth={4}
                     name="Wasted"
-                    dot={{ fill: "hsl(var(--destructive))", r: 4 }}
+                    dot={{ 
+                      fill: "hsl(var(--warning-orange))", 
+                      r: 6,
+                      strokeWidth: 2,
+                      stroke: "hsl(var(--background))"
+                    }}
+                    activeDot={{ r: 8 }}
+                    strokeDasharray="5 5"
                   />
                 </ComposedChart>
               </ResponsiveContainer>
+              
+              {/* Summary Statistics */}
+              <div className="mt-8 grid grid-cols-3 gap-4">
+                <div className="p-4 rounded-lg bg-accent/10 border border-accent/30 hover-scale">
+                  <div className="flex items-center gap-3">
+                    <div className="h-12 w-12 rounded-lg bg-accent/20 flex items-center justify-center">
+                      <Package className="h-6 w-6" style={{ color: 'hsl(var(--accent))' }} />
+                    </div>
+                    <div>
+                      <div className="text-xs text-muted-foreground font-medium">Total Delivered</div>
+                      <div className="text-2xl font-bold text-foreground">
+                        {weeklyTrendData.reduce((sum, d) => sum + d.delivered, 0).toLocaleString()}
+                      </div>
+                      <div className="text-xs text-muted-foreground">units this week</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="p-4 rounded-lg bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-800 hover-scale">
+                  <div className="flex items-center gap-3">
+                    <div className="h-12 w-12 rounded-lg" style={{ backgroundColor: 'hsl(var(--success-green) / 0.2)' }}>
+                      <div className="h-full w-full flex items-center justify-center">
+                        <CheckCircle className="h-6 w-6" style={{ color: 'hsl(var(--success-green))' }} />
+                      </div>
+                    </div>
+                    <div>
+                      <div className="text-xs text-muted-foreground font-medium">Total Sold</div>
+                      <div className="text-2xl font-bold" style={{ color: 'hsl(var(--success-green))' }}>
+                        {weeklyTrendData.reduce((sum, d) => sum + d.sold, 0).toLocaleString()}
+                      </div>
+                      <div className="text-xs text-muted-foreground">
+                        {((weeklyTrendData.reduce((sum, d) => sum + d.sold, 0) / 
+                          weeklyTrendData.reduce((sum, d) => sum + d.delivered, 0)) * 100).toFixed(1)}% of delivered
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="p-4 rounded-lg bg-orange-50 dark:bg-orange-950/20 border border-orange-200 dark:border-orange-800 hover-scale">
+                  <div className="flex items-center gap-3">
+                    <div className="h-12 w-12 rounded-lg" style={{ backgroundColor: 'hsl(var(--warning-orange) / 0.2)' }}>
+                      <div className="h-full w-full flex items-center justify-center">
+                        <Trash2 className="h-6 w-6" style={{ color: 'hsl(var(--warning-orange))' }} />
+                      </div>
+                    </div>
+                    <div>
+                      <div className="text-xs text-muted-foreground font-medium">Total Wasted</div>
+                      <div className="text-2xl font-bold" style={{ color: 'hsl(var(--warning-orange))' }}>
+                        {weeklyTrendData.reduce((sum, d) => sum + d.wasted, 0).toLocaleString()}
+                      </div>
+                      <div className="text-xs text-muted-foreground">
+                        {((weeklyTrendData.reduce((sum, d) => sum + d.wasted, 0) / 
+                          weeklyTrendData.reduce((sum, d) => sum + d.delivered, 0)) * 100).toFixed(1)}% of delivered
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Best Day Badge */}
+              <div className="mt-4 p-3 rounded-lg bg-primary/10 border border-primary/30 flex items-center gap-2">
+                <TrendingUp className="h-5 w-5 text-primary" />
+                <span className="text-sm text-foreground">
+                  <strong>Best performing day:</strong> {
+                    weeklyTrendData.reduce((prev, current) => 
+                      current.sold > prev.sold ? current : prev
+                    ).day
+                  } with {
+                    weeklyTrendData.reduce((prev, current) => 
+                      current.sold > prev.sold ? current : prev
+                    ).sold.toLocaleString()
+                  } units sold
+                </span>
+              </div>
             </CardContent>
           </Card>
 
