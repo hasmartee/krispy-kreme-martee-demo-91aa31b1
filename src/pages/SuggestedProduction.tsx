@@ -46,6 +46,7 @@ interface DeliveryItem {
   receivedQuantity: number;
   dayPart: string;
   allocationId: string;
+  hasUnsavedChanges?: boolean;
 }
 
 export default function SuggestedProduction() {
@@ -365,33 +366,47 @@ export default function SuggestedProduction() {
     }
   };
 
-  const updateReceivedQuantity = async (allocationId: string, newQuantity: number) => {
+  const updateReceivedQuantity = (allocationId: string, newQuantity: number) => {
+    // Update local state and mark as having unsaved changes
+    setDeliveryItems(items =>
+      items.map(item =>
+        item.allocationId === allocationId
+          ? { ...item, receivedQuantity: newQuantity, hasUnsavedChanges: true }
+          : item
+      )
+    );
+  };
+
+  const confirmReceivedQuantity = async (allocationId: string) => {
+    const item = deliveryItems.find(i => i.allocationId === allocationId);
+    if (!item) return;
+
     try {
       const { error } = await supabase
         .from('production_allocations')
-        .update({ received_quantity: newQuantity })
+        .update({ received_quantity: item.receivedQuantity })
         .eq('id', allocationId) as any;
 
       if (error) throw error;
 
-      // Update local state
+      // Clear unsaved changes flag
       setDeliveryItems(items =>
-        items.map(item =>
-          item.allocationId === allocationId
-            ? { ...item, receivedQuantity: newQuantity }
-            : item
+        items.map(i =>
+          i.allocationId === allocationId
+            ? { ...i, hasUnsavedChanges: false }
+            : i
         )
       );
 
       toast({
         title: "✓ Confirmed",
-        description: "Received quantity updated",
+        description: `${item.productName} delivery confirmed - ${item.receivedQuantity} units`,
       });
     } catch (error) {
-      console.error('Error updating received quantity:', error);
+      console.error('Error confirming received quantity:', error);
       toast({
         title: "Error",
-        description: "Failed to update received quantity",
+        description: "Failed to confirm delivery",
         variant: "destructive",
       });
     }
@@ -603,21 +618,25 @@ export default function SuggestedProduction() {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead className="w-[35%]">Product</TableHead>
-                    <TableHead className="text-center w-[25%]">Expected Delivery</TableHead>
-                    <TableHead className="text-center w-[40%] bg-gradient-to-r from-[#ff914d]/20 to-[#ff914d]/10 border-l-4 border-l-[#ff914d]">
+                    <TableHead className="w-[30%]">Product</TableHead>
+                    <TableHead className="text-center w-[20%]">Expected Delivery</TableHead>
+                    <TableHead className="text-center w-[35%] bg-gradient-to-r from-[#ff914d]/20 to-[#ff914d]/10 border-l-4 border-l-[#ff914d]">
                       <div className="flex items-center justify-center gap-2 py-1">
                         <CheckCircle2 className="h-5 w-5 text-[#ff914d] animate-pulse" />
                         <span className="font-bold text-[#ff914d] text-lg">Confirmed Delivery</span>
                       </div>
                     </TableHead>
+                    <TableHead className="w-[15%]"></TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {deliveryItems.map((item) => (
                     <TableRow 
                       key={item.id}
-                      className="hover:bg-muted/30 transition-colors"
+                      className={cn(
+                        "hover:bg-muted/30 transition-colors",
+                        item.hasUnsavedChanges && "bg-amber-50/50"
+                      )}
                     >
                       <TableCell className="font-medium text-base">{item.productName}</TableCell>
                       <TableCell className="text-center">
@@ -645,7 +664,10 @@ export default function SuggestedProduction() {
                                 const newValue = parseInt(e.target.value) || 0;
                                 updateReceivedQuantity(item.allocationId, newValue);
                               }}
-                              className="w-24 text-center font-bold text-2xl border-3 border-[#ff914d] bg-white shadow-lg rounded-lg hover:shadow-xl transition-all duration-200 focus:ring-4 focus:ring-[#ff914d]/30 text-[#ff914d]"
+                              className={cn(
+                                "w-24 text-center font-bold text-2xl border-3 bg-white shadow-lg rounded-lg hover:shadow-xl transition-all duration-200 focus:ring-4 focus:ring-[#ff914d]/30 text-[#ff914d]",
+                                item.hasUnsavedChanges ? "border-amber-400 animate-pulse" : "border-[#ff914d]"
+                              )}
                               min="0"
                             />
                             {item.receivedQuantity !== item.expectedQuantity && (
@@ -671,6 +693,21 @@ export default function SuggestedProduction() {
                             <Plus className="h-4 w-4 text-[#ff914d]" />
                           </Button>
                         </div>
+                      </TableCell>
+                      <TableCell>
+                        <Button
+                          onClick={() => confirmReceivedQuantity(item.allocationId)}
+                          disabled={!item.hasUnsavedChanges}
+                          className={cn(
+                            "w-full font-semibold transition-all duration-200",
+                            item.hasUnsavedChanges
+                              ? "bg-[#ff914d] hover:bg-[#ff7a2d] text-white shadow-lg hover:shadow-xl hover:scale-105 animate-in fade-in zoom-in"
+                              : "bg-muted text-muted-foreground cursor-not-allowed opacity-50"
+                          )}
+                        >
+                          <CheckCircle2 className="h-4 w-4 mr-2" />
+                          {item.hasUnsavedChanges ? "Confirm" : "Confirmed"}
+                        </Button>
                       </TableCell>
                     </TableRow>
                   ))}
