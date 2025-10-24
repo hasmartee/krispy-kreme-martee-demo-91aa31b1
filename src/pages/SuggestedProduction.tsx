@@ -141,7 +141,9 @@ export default function SuggestedProduction() {
         setProducts(mockProducts);
 
         // Automatically save to database as pending allocations
-        await savePendingAllocations(mockProducts);
+        console.log('💾 PRODUCTION PAGE: About to save pending allocations...');
+        const saveResult = await savePendingAllocations(mockProducts);
+        console.log('💾 PRODUCTION PAGE: Save result:', saveResult);
       }
     } catch (error) {
       console.error("❌ PRODUCTION PAGE: Error loading data:", error);
@@ -165,26 +167,21 @@ export default function SuggestedProduction() {
     try {
       const productionDate = format(selectedDate, 'yyyy-MM-dd');
       console.log('🔄 SAVING ALLOCATIONS for date:', productionDate);
-      console.log('🔄 Products to save:', productsToSave.map(p => ({ 
-        sku: p.id, 
-        store: p.store, 
-        storeId: p.storeId,
-        qty: p.finalOrder,
-        dayPart: p.dayPart 
-      })));
+      console.log('🔄 Products to save:', productsToSave.length);
+      console.log('🔄 First product:', productsToSave[0]);
       
       // Get or create production plan
-      let { data: existingPlan } = await supabase
+      const { data: existingPlans } = await supabase
         .from('production_plans')
-        .select('id')
-        .eq('production_date', productionDate)
-        .single() as any;
+        .select('id, status')
+        .eq('production_date', productionDate) as any;
 
-      let planId = existingPlan?.id;
-      console.log('🔄 Existing plan ID:', planId);
+      let planId = existingPlans?.[0]?.id;
+      console.log('🔄 Existing plan ID:', planId, 'from query:', existingPlans);
 
-      if (!existingPlan) {
-        const { data: newPlan } = await supabase
+      if (!planId) {
+        console.log('🔄 Creating new production plan...');
+        const { data: newPlan, error: planError } = await supabase
           .from('production_plans')
           .insert({
             production_date: productionDate,
@@ -192,13 +189,18 @@ export default function SuggestedProduction() {
           })
           .select()
           .single() as any;
+
+        if (planError) {
+          console.error('❌ Error creating plan:', planError);
+          throw planError;
+        }
         planId = newPlan?.id;
-        console.log('🔄 Created new plan ID:', planId);
+        console.log('✅ Created new plan ID:', planId);
       }
 
       if (!planId) {
-        console.error('❌ No plan ID available');
-        return;
+        console.error('❌ No plan ID available after creation attempt');
+        return { success: false, error: 'No plan ID' };
       }
 
       // Save all allocations
@@ -210,7 +212,8 @@ export default function SuggestedProduction() {
         day_part: p.dayPart || 'Morning',
       }));
 
-      console.log('🔄 Upserting allocations:', allocations);
+      console.log('🔄 Upserting', allocations.length, 'allocations');
+      console.log('🔄 Sample allocation:', allocations[0]);
 
       const { data: upsertResult, error } = await supabase
         .from('production_allocations')
@@ -221,11 +224,14 @@ export default function SuggestedProduction() {
 
       if (error) {
         console.error('❌ Upsert error:', error);
+        return { success: false, error };
       } else {
-        console.log('✅ Upserted successfully:', upsertResult);
+        console.log('✅ Upserted successfully:', upsertResult?.length, 'records');
+        return { success: true, count: upsertResult?.length };
       }
     } catch (error) {
       console.error('❌ Error saving pending allocations:', error);
+      return { success: false, error };
     }
   };
 
