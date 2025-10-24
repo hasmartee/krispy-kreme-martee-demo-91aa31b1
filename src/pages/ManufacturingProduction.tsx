@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
-import { RefreshCw, Loader2, CalendarIcon, Package, CheckCircle, Clock } from "lucide-react";
+import { RefreshCw, Loader2, CalendarIcon, Package, CheckCircle, Clock, Lock } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
 import { useToast } from "@/hooks/use-toast";
@@ -20,6 +20,7 @@ interface AggregatedProduct {
   plannedQuantity: number;
   manufacturedQuantity: number;
   status: 'pending' | 'confirmed';
+  isLocked: boolean;
 }
 
 export default function ManufacturingProduction() {
@@ -103,6 +104,7 @@ export default function ManufacturingProduction() {
               plannedQuantity: 0,
               manufacturedQuantity: 0,
               status: productionPlan.status,
+              isLocked: false,
             };
           }
           acc[alloc.product_sku].plannedQuantity += alloc.quantity;
@@ -139,6 +141,16 @@ export default function ManufacturingProduction() {
 
   const updateManufacturedQuantity = async (productSku: string, newQuantity: number) => {
     if (newQuantity < 0) return;
+
+    const product = products.find(p => p.productSku === productSku);
+    if (product?.isLocked) {
+      toast({
+        title: "Product Locked",
+        description: "This product has been confirmed and cannot be modified",
+        variant: "destructive",
+      });
+      return;
+    }
 
     // Update local state
     setProducts(products.map(p => 
@@ -181,6 +193,23 @@ export default function ManufacturingProduction() {
     }
   };
 
+  const confirmProduct = async (productSku: string) => {
+    const product = products.find(p => p.productSku === productSku);
+    if (!product) return;
+
+    // Update local state
+    setProducts(products.map(p => 
+      p.productSku === productSku
+        ? { ...p, isLocked: true }
+        : p
+    ));
+
+    toast({
+      title: "Product Confirmed",
+      description: `${product.productName} production has been locked`,
+    });
+  };
+
   const getCategoryBadge = (category: string) => {
     const colors: Record<string, string> = {
       "Glazed": "bg-amber-100 text-amber-800",
@@ -192,18 +221,18 @@ export default function ManufacturingProduction() {
     return <Badge className={colors[category] || "bg-gray-100 text-gray-800"}>{category}</Badge>;
   };
 
-  const getStatusBadge = (status: 'pending' | 'confirmed') => {
-    if (status === 'confirmed') {
+  const getStatusBadge = (status: 'pending' | 'confirmed', isLocked: boolean = false) => {
+    if (status === 'confirmed' || isLocked) {
       return (
-        <Badge className="bg-green-100 text-green-800 border-green-300">
-          <CheckCircle className="h-3 w-3 mr-1" />
+        <Badge className="bg-gradient-to-r from-emerald-500 to-green-600 text-white border-0 shadow-md font-semibold px-3 py-1">
+          <CheckCircle className="h-3.5 w-3.5 mr-1.5" />
           Confirmed
         </Badge>
       );
     }
     return (
-      <Badge variant="outline" className="bg-amber-50 text-amber-800 border-amber-300">
-        <Clock className="h-3 w-3 mr-1" />
+      <Badge className="bg-gradient-to-r from-[#ff914d] to-[#ff7a2f] text-white border-0 shadow-md font-semibold px-3 py-1">
+        <Clock className="h-3.5 w-3.5 mr-1.5" />
         Pending
       </Badge>
     );
@@ -312,7 +341,7 @@ export default function ManufacturingProduction() {
             <CardTitle className="text-sm font-medium text-muted-foreground">Plan Status</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="mt-2">{getStatusBadge(planStatus)}</div>
+            <div className="mt-2 flex justify-start">{getStatusBadge(planStatus)}</div>
           </CardContent>
         </Card>
       </div>
@@ -338,8 +367,14 @@ export default function ManufacturingProduction() {
                     <TableHead>Category</TableHead>
                     <TableHead className="text-right">Planned Qty</TableHead>
                     <TableHead className="text-center">Status</TableHead>
-                    <TableHead className="text-right">Manufactured Qty</TableHead>
+                    <TableHead className="text-right bg-primary/5">
+                      <div className="flex items-center justify-end gap-2">
+                        <span>Manufactured Qty</span>
+                        <Package className="h-4 w-4 text-primary" />
+                      </div>
+                    </TableHead>
                     <TableHead className="text-right">Variance</TableHead>
+                    <TableHead className="text-center">Action</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -350,12 +385,15 @@ export default function ManufacturingProduction() {
                       : '0';
                     
                     return (
-                      <TableRow key={product.productSku}>
+                      <TableRow key={product.productSku} className={product.isLocked ? 'bg-green-50/30' : ''}>
                         <TableCell className="font-medium text-muted-foreground">
                           {index + 1}
                         </TableCell>
                         <TableCell className="font-medium">
-                          {product.productName}
+                          <div className="flex items-center gap-2">
+                            {product.productName}
+                            {product.isLocked && <Lock className="h-3.5 w-3.5 text-green-600" />}
+                          </div>
                         </TableCell>
                         <TableCell>
                           {getCategoryBadge(product.category)}
@@ -364,15 +402,21 @@ export default function ManufacturingProduction() {
                           {product.plannedQuantity.toLocaleString()}
                         </TableCell>
                         <TableCell className="text-center">
-                          {getStatusBadge(product.status)}
+                          {getStatusBadge(product.status, product.isLocked)}
                         </TableCell>
-                        <TableCell>
+                        <TableCell className="bg-primary/5">
                           <Input
                             type="number"
                             min="0"
                             value={product.manufacturedQuantity}
                             onChange={(e) => updateManufacturedQuantity(product.productSku, parseInt(e.target.value) || 0)}
-                            className="w-32 ml-auto text-right font-semibold"
+                            disabled={product.isLocked}
+                            className={cn(
+                              "w-32 ml-auto text-right font-bold text-lg",
+                              product.isLocked 
+                                ? "bg-muted cursor-not-allowed" 
+                                : "border-2 border-primary/40 focus:border-primary shadow-sm bg-white"
+                            )}
                           />
                         </TableCell>
                         <TableCell className="text-right">
@@ -380,6 +424,23 @@ export default function ManufacturingProduction() {
                             {variance >= 0 ? '+' : ''}{variance}
                             <span className="text-xs ml-1">({variancePercent}%)</span>
                           </div>
+                        </TableCell>
+                        <TableCell className="text-center">
+                          {!product.isLocked ? (
+                            <Button
+                              size="sm"
+                              onClick={() => confirmProduct(product.productSku)}
+                              className="bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white shadow-md"
+                            >
+                              <CheckCircle className="h-4 w-4 mr-1" />
+                              Confirm
+                            </Button>
+                          ) : (
+                            <Badge className="bg-green-100 text-green-700 border-green-300">
+                              <Lock className="h-3 w-3 mr-1" />
+                              Locked
+                            </Badge>
+                          )}
                         </TableCell>
                       </TableRow>
                     );

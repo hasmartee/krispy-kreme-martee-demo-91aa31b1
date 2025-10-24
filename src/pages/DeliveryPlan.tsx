@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { RefreshCw, Loader2, CalendarIcon, Package, Truck, Store, Download } from "lucide-react";
+import { RefreshCw, Loader2, CalendarIcon, Package, Truck, Store, Download, CheckCircle, Clock } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
 import { useToast } from "@/hooks/use-toast";
@@ -383,11 +383,17 @@ export default function DeliveryPlan() {
             <CardTitle className="text-sm font-medium text-muted-foreground">Plan Status</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="mt-2">
+            <div className="mt-2 flex justify-start">
               {planStatus === 'confirmed' ? (
-                <Badge className="bg-green-100 text-green-800 border-green-300">Confirmed</Badge>
+                <Badge className="bg-gradient-to-r from-emerald-500 to-green-600 text-white border-0 shadow-md font-semibold px-3 py-1.5">
+                  <CheckCircle className="h-3.5 w-3.5 mr-1.5" />
+                  Confirmed
+                </Badge>
               ) : (
-                <Badge variant="outline" className="bg-amber-50 text-amber-800 border-amber-300">Pending</Badge>
+                <Badge className="bg-gradient-to-r from-[#ff914d] to-[#ff7a2f] text-white border-0 shadow-md font-semibold px-3 py-1.5">
+                  <Clock className="h-3.5 w-3.5 mr-1.5" />
+                  Pending
+                </Badge>
               )}
             </div>
           </CardContent>
