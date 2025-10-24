@@ -16,20 +16,20 @@ export function ViewProvider({ children }: { children: ReactNode }) {
   const [viewMode, setViewMode] = useState<ViewMode>("store_manager");
   const [selectedStore, setSelectedStore] = useState<string>("");
 
-  // Load Bank Station as default for store manager view
+  // Load Camden Town as default for store manager view
   useEffect(() => {
     let mounted = true;
     
-    const loadBankStore = async () => {
+    const loadCamdenStore = async () => {
       try {
         const { data, error } = await supabase
           .from('stores')
           .select('name')
-          .eq('name', 'Bank Station')
+          .eq('name', 'Camden Town')
           .maybeSingle() as any;
         
         if (error) {
-          console.error('Error loading Bank Station:', error);
+          console.error('Error loading Camden Town:', error);
           return;
         }
         
@@ -37,11 +37,11 @@ export function ViewProvider({ children }: { children: ReactNode }) {
           setSelectedStore(data.name);
         }
       } catch (error) {
-        console.error('Error loading Bank Station:', error);
+        console.error('Error loading Camden Town:', error);
       }
     };
     
-    loadBankStore();
+    loadCamdenStore();
     
     return () => {
       mounted = false;
