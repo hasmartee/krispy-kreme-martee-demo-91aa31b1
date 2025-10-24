@@ -30,7 +30,7 @@ const mainNavigationHQ: Array<{ title: string; url: string; icon: any; sparkles?
   { title: "Home", url: "/", icon: Home },
   { title: "Performance", url: "/analytics", icon: BarChart3 },
   { title: "Suggested Production", url: "/production", icon: ChefHat, sparkles: true },
-  { title: "Delivery Plan", url: "/delivery-plan", icon: ClipboardList },
+  { title: "Delivery Plan", url: "/delivery-plan", icon: Truck },
   { title: "Stock Tracker", url: "/live-data", icon: Database },
 ];
 
