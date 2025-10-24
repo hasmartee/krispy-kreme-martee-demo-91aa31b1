@@ -28,8 +28,8 @@
     --muted: 51 50% 92%;
     --muted-foreground: 140 15% 45%;
 
-    /* Medium Green */
-    --accent: 88 32% 62%;
+    /* Medium Green - Martee Green */
+    --accent: 94 42% 58%;
     --accent-foreground: 140 24% 24%;
 
     --destructive: 0 84.2% 60.2%;
@@ -44,9 +44,9 @@
     /* Custom Design Tokens */
     --brand-peach: 18 85% 78%;
     --brand-green: 140 24% 24%;
-    --brand-green-medium: 88 32% 62%;
+    --brand-green-medium: 94 42% 58%; /* Martee Green #7ea058 */
     --brand-cream: 51 100% 95%;
-    --success-green: 88 32% 62%;
+    --success-green: 94 42% 58%; /* Martee Green */
     --warning-orange: 23 100% 65%;
     
     /* Gradients */

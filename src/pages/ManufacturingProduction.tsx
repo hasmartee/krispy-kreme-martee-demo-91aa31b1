@@ -212,19 +212,19 @@ export default function ManufacturingProduction() {
 
   const getCategoryBadge = (category: string) => {
     const colors: Record<string, string> = {
-      "Glazed": "bg-amber-100 text-amber-800",
-      "Iced": "bg-pink-100 text-pink-800",
-      "Filled": "bg-purple-100 text-purple-800",
-      "Cake": "bg-orange-100 text-orange-800",
-      "Specialty": "bg-blue-100 text-blue-800",
+      "Glazed": "bg-gradient-to-r from-amber-400 to-amber-500 text-white shadow-sm",
+      "Iced": "bg-gradient-to-r from-pink-400 to-pink-500 text-white shadow-sm",
+      "Filled": "bg-gradient-to-r from-purple-400 to-purple-500 text-white shadow-sm",
+      "Cake": "bg-gradient-to-r from-orange-400 to-orange-500 text-white shadow-sm",
+      "Specialty": "bg-gradient-to-r from-[#7ea058] to-[#6d9148] text-white shadow-sm",
     };
-    return <Badge className={colors[category] || "bg-gray-100 text-gray-800"}>{category}</Badge>;
+    return <Badge className={colors[category] || "bg-gradient-to-r from-gray-400 to-gray-500 text-white shadow-sm"}>{category}</Badge>;
   };
 
   const getStatusBadge = (status: 'pending' | 'confirmed', isLocked: boolean = false) => {
     if (status === 'confirmed' || isLocked) {
       return (
-        <Badge className="bg-gradient-to-r from-emerald-500 to-green-600 text-white border-0 shadow-md font-semibold px-3 py-1">
+        <Badge className="bg-gradient-to-r from-[#7ea058] to-[#6d9148] text-white border-0 shadow-md font-semibold px-3 py-1">
           <CheckCircle className="h-3.5 w-3.5 mr-1.5" />
           Confirmed
         </Badge>
@@ -331,7 +331,7 @@ export default function ManufacturingProduction() {
             <CardTitle className="text-sm font-medium text-muted-foreground">Completion Rate</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-green-600">{completionRate}%</div>
+            <div className="text-3xl font-bold text-[#7ea058]">{completionRate}%</div>
             <p className="text-xs text-muted-foreground mt-1">of planned quantity</p>
           </CardContent>
         </Card>
@@ -367,10 +367,10 @@ export default function ManufacturingProduction() {
                     <TableHead>Category</TableHead>
                     <TableHead className="text-right">Planned Qty</TableHead>
                     <TableHead className="text-center">Status</TableHead>
-                    <TableHead className="text-right bg-primary/5">
+                    <TableHead className="text-right bg-[#ff914d]/20 border-l-4 border-[#ff914d]">
                       <div className="flex items-center justify-end gap-2">
-                        <span>Manufactured Qty</span>
-                        <Package className="h-4 w-4 text-primary" />
+                        <span className="font-bold text-[#ff914d]">Manufactured Qty</span>
+                        <Package className="h-4 w-4 text-[#ff914d]" />
                       </div>
                     </TableHead>
                     <TableHead className="text-right">Variance</TableHead>
@@ -404,7 +404,7 @@ export default function ManufacturingProduction() {
                         <TableCell className="text-center">
                           {getStatusBadge(product.status, product.isLocked)}
                         </TableCell>
-                        <TableCell className="bg-primary/5">
+                        <TableCell className="bg-[#ff914d]/20 border-l-4 border-[#ff914d]">
                           <Input
                             type="number"
                             min="0"
@@ -415,12 +415,12 @@ export default function ManufacturingProduction() {
                               "w-32 ml-auto text-right font-bold text-lg",
                               product.isLocked 
                                 ? "bg-muted cursor-not-allowed" 
-                                : "border-2 border-primary/40 focus:border-primary shadow-sm bg-white"
+                                : "border-2 border-[#ff914d] focus:border-[#ff7a2f] shadow-lg bg-white focus:ring-2 focus:ring-[#ff914d]/30"
                             )}
                           />
                         </TableCell>
                         <TableCell className="text-right">
-                          <div className={`font-semibold ${variance >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                          <div className={`font-semibold ${variance >= 0 ? 'text-[#7ea058]' : 'text-red-600'}`}>
                             {variance >= 0 ? '+' : ''}{variance}
                             <span className="text-xs ml-1">({variancePercent}%)</span>
                           </div>
@@ -430,13 +430,13 @@ export default function ManufacturingProduction() {
                             <Button
                               size="sm"
                               onClick={() => confirmProduct(product.productSku)}
-                              className="bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white shadow-md"
+                              className="bg-gradient-to-r from-[#7ea058] to-[#6d9148] hover:from-[#6d9148] hover:to-[#5c8038] text-white shadow-md"
                             >
                               <CheckCircle className="h-4 w-4 mr-1" />
                               Confirm
                             </Button>
                           ) : (
-                            <Badge className="bg-green-100 text-green-700 border-green-300">
+                            <Badge className="bg-[#7ea058]/20 text-[#7ea058] border border-[#7ea058]/30">
                               <Lock className="h-3 w-3 mr-1" />
                               Locked
                             </Badge>

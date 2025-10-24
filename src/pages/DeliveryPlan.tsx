@@ -265,13 +265,13 @@ export default function DeliveryPlan() {
 
   const getCategoryBadge = (category: string) => {
     const colors: Record<string, string> = {
-      "Glazed": "bg-amber-100 text-amber-800",
-      "Iced": "bg-pink-100 text-pink-800",
-      "Filled": "bg-purple-100 text-purple-800",
-      "Cake": "bg-orange-100 text-orange-800",
-      "Specialty": "bg-blue-100 text-blue-800",
+      "Glazed": "bg-gradient-to-r from-amber-400 to-amber-500 text-white shadow-sm",
+      "Iced": "bg-gradient-to-r from-pink-400 to-pink-500 text-white shadow-sm",
+      "Filled": "bg-gradient-to-r from-purple-400 to-purple-500 text-white shadow-sm",
+      "Cake": "bg-gradient-to-r from-orange-400 to-orange-500 text-white shadow-sm",
+      "Specialty": "bg-gradient-to-r from-[#7ea058] to-[#6d9148] text-white shadow-sm",
     };
-    return <Badge className={colors[category] || "bg-gray-100 text-gray-800"}>{category}</Badge>;
+    return <Badge className={colors[category] || "bg-gradient-to-r from-gray-400 to-gray-500 text-white shadow-sm"}>{category}</Badge>;
   };
 
   if (loading) {
@@ -385,7 +385,7 @@ export default function DeliveryPlan() {
           <CardContent>
             <div className="mt-2 flex justify-start">
               {planStatus === 'confirmed' ? (
-                <Badge className="bg-gradient-to-r from-emerald-500 to-green-600 text-white border-0 shadow-md font-semibold px-3 py-1.5">
+                <Badge className="bg-gradient-to-r from-[#7ea058] to-[#6d9148] text-white border-0 shadow-md font-semibold px-3 py-1.5">
                   <CheckCircle className="h-3.5 w-3.5 mr-1.5" />
                   Confirmed
                 </Badge>
