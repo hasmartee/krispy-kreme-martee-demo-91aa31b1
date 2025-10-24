@@ -289,6 +289,10 @@ export default function SuggestedProduction() {
             const capacityKey = `${product.id}-${store.id}`;
             const capacity = capacitiesMap[capacityKey];
             
+            console.log(`🔍 Product: ${product.id}, Store: ${store.id}, Key: ${capacityKey}`);
+            console.log(`🔍 Capacity found:`, capacity);
+            console.log(`🔍 All capacity keys:`, Object.keys(capacitiesMap).filter(k => k.startsWith(product.id)));
+            
             if (capacity) {
               console.log(`✅ Found capacity for ${product.id} at ${store.name}:`, capacity);
             } else {
