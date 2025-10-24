@@ -73,7 +73,7 @@ const getInitialProducts = (brand: string) => brandProducts[brand as keyof typeo
 export default function ProductRange() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
-  const [viewMode, setViewMode] = useState<"card" | "list">("card");
+  const [viewMode, setViewMode] = useState<"card" | "list">("list");
   const [products, setProducts] = useState(getInitialProducts("Krispy Kreme"));
   const [isBulkUploadOpen, setIsBulkUploadOpen] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);

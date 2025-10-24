@@ -444,20 +444,57 @@ export default function StoreProductRange() {
         </div>
       </div>
 
-      {/* Brand Filter - Only show in HQ view */}
-      {viewMode === "hq" && (
-        <Card className="shadow-card">
-          <CardContent className="p-4">
-            <div className="flex items-center gap-4">
-              <label className="text-sm font-medium">My Brand:</label>
-              <Select value={selectedBrand} onValueChange={setSelectedBrand}>
-                <SelectTrigger className="w-[200px] h-9 border-[#7e9f57] focus:ring-[#7e9f57] font-semibold">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Ole and Steen">Ole and Steen</SelectItem>
-                </SelectContent>
-              </Select>
+      {/* AI Range Insights Section - Demand Planner View */}
+      {viewMode === "store_manager" && (
+        <Card className="shadow-lg border-2 border-primary/20 bg-gradient-to-r from-primary/5 to-accent/5">
+          <CardHeader>
+            <div className="flex items-center gap-3">
+              <div className="h-10 w-10 rounded-lg bg-primary/20 flex items-center justify-center">
+                <Sparkles className="h-5 w-5 text-primary" />
+              </div>
+              <div>
+                <CardTitle className="text-xl font-bold">AI Range Insights</CardTitle>
+                <CardDescription>Automated recommendations based on sales patterns and stockout analysis</CardDescription>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <div className="p-4 rounded-lg bg-destructive/10 border border-destructive/30">
+              <div className="flex items-start gap-3">
+                <AlertCircle className="h-5 w-5 text-destructive mt-0.5 flex-shrink-0" />
+                <div className="flex-1">
+                  <p className="text-sm font-semibold text-foreground mb-1">Frequent Stockouts Detected</p>
+                  <p className="text-sm text-muted-foreground">
+                    <span className="font-medium">Biscoff Donuts</span> experiencing stockouts in the following stores: Kings Cross Station, Liverpool Street, St Pancras International. 
+                    Consider increasing capacity limits for this SKU.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="p-4 rounded-lg bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800">
+              <div className="flex items-start gap-3">
+                <TrendingUp className="h-5 w-5 text-amber-600 mt-0.5 flex-shrink-0" />
+                <div className="flex-1">
+                  <p className="text-sm font-semibold text-foreground mb-1">Underperforming SKU</p>
+                  <p className="text-sm text-muted-foreground">
+                    <span className="font-medium">Lemon Filled</span> showing consistently low sales velocity across all locations. 
+                    Consider delisting to make room for higher-performing items.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="p-4 rounded-lg border" style={{ backgroundColor: 'hsl(var(--success-green) / 0.1)', borderColor: 'hsl(var(--success-green) / 0.3)' }}>
+              <div className="flex items-start gap-3">
+                <CheckCircle className="h-5 w-5 mt-0.5 flex-shrink-0" style={{ color: 'hsl(var(--success-green))' }} />
+                <div className="flex-1">
+                  <p className="text-sm font-semibold text-foreground mb-1">Optimization Opportunity</p>
+                  <p className="text-sm text-muted-foreground">
+                    Morning slot capacity at 95% utilization. Consider shifting some <span className="font-medium">Afternoon items</span> to evening slots to balance demand.
+                  </p>
+                </div>
+              </div>
             </div>
           </CardContent>
         </Card>
