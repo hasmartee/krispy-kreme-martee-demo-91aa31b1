@@ -183,13 +183,91 @@ export default function StoreProductRange() {
   const [editingTemplateCluster, setEditingTemplateCluster] = useState<string | null>(null);
   const [templateProducts, setTemplateProducts] = useState<any[]>([]);
   const [changingStoreCluster, setChangingStoreCluster] = useState<string | null>(null);
+  const [productCapacities, setProductCapacities] = useState<Record<string, { min: number; max: number }>>({});
   const { toast } = useToast();
   const { viewMode, selectedStore } = useView();
 
   // Load all stores from database
   useEffect(() => {
     loadStores();
+    loadProductCapacities();
   }, []);
+
+  const loadProductCapacities = async () => {
+    console.log('📊 Loading product capacities...');
+    const { data, error } = await supabase
+      .from('product_capacities')
+      .select('*');
+    
+    if (error) {
+      console.error('❌ Error loading capacities:', error);
+      return;
+    }
+    
+    if (data) {
+      const capacitiesMap: Record<string, { min: number; max: number }> = {};
+      data.forEach((cap: any) => {
+        const key = `${cap.product_sku}-${cap.store_id}`;
+        capacitiesMap[key] = {
+          min: cap.capacity_min || 0,
+          max: cap.capacity_max || 0,
+        };
+      });
+      setProductCapacities(capacitiesMap);
+      console.log('✅ Loaded capacities:', Object.keys(capacitiesMap).length);
+    }
+  };
+
+  const updateProductCapacity = async (productSku: string, storeId: string, field: 'min' | 'max', value: number) => {
+    const key = `${productSku}-${storeId}`;
+    const newCapacities = {
+      ...productCapacities,
+      [key]: {
+        ...productCapacities[key],
+        [field]: value,
+      }
+    };
+    setProductCapacities(newCapacities);
+    
+    // Save to database
+    try {
+      // First check if it exists
+      const { data: existing } = await supabase
+        .from('product_capacities')
+        .select('id')
+        .eq('product_sku', productSku)
+        .eq('store_id', storeId)
+        .maybeSingle();
+      
+      if (existing) {
+        // Update
+        await supabase
+          .from('product_capacities')
+          .update({
+            [`capacity_${field}`]: value,
+            updated_at: new Date().toISOString(),
+          })
+          .eq('id', existing.id);
+      } else {
+        // Insert
+        await supabase
+          .from('product_capacities')
+          .insert({
+            product_sku: productSku,
+            store_id: storeId,
+            capacity_min: field === 'min' ? value : (newCapacities[key]?.min || 0),
+            capacity_max: field === 'max' ? value : (newCapacities[key]?.max || 0),
+          });
+      }
+    } catch (error) {
+      console.error('Error saving capacity:', error);
+      toast({
+        title: "Error",
+        description: "Failed to save capacity value",
+        variant: "destructive",
+      });
+    }
+  };
 
   const loadStores = async () => {
     console.log('📦 Loading all stores from database...');
@@ -721,39 +799,78 @@ export default function StoreProductRange() {
                                 <TableRow>
                                   <TableHead>Product</TableHead>
                                   <TableHead>Category</TableHead>
+                                  {viewMode === "hq" && <TableHead className="text-center">Min Capacity</TableHead>}
+                                  {viewMode === "hq" && <TableHead className="text-center">Max Capacity</TableHead>}
                                   <TableHead>Status</TableHead>
                                   <TableHead>Action</TableHead>
                                 </TableRow>
                               </TableHeader>
                               <TableBody>
                                 {store.activeProducts
-                                  .map((product) => (
-                                  <TableRow key={product.id}>
-                                    <TableCell>
-                                      <div>
-                                        <div className="font-medium">{product.name}</div>
-                                        <div className="text-sm text-muted-foreground">{product.id}</div>
-                                      </div>
-                                    </TableCell>
-                                    <TableCell>
-                                      {getCategoryBadge(product.category)}
-                                    </TableCell>
-                                    <TableCell>
-                                      <Badge variant={product.active ? "default" : "secondary"}>
-                                        {product.active ? "Active" : "Inactive"}
-                                      </Badge>
-                                    </TableCell>
-                                    <TableCell>
-                                      <Button
-                                        size="sm"
-                                        variant={product.active ? "outline" : "default"}
-                                        onClick={() => toggleProductStatus(store.storeId, product.id)}
-                                      >
-                                        {product.active ? "Disable" : "Enable"}
-                                      </Button>
-                                    </TableCell>
-                                  </TableRow>
-                                ))}
+                                  .map((product) => {
+                                    const capacityKey = `${product.id}-${allStores.find(s => s.storeId === store.storeId)?.id}`;
+                                    const capacity = productCapacities[capacityKey] || { min: 0, max: 0 };
+                                    
+                                    return (
+                                      <TableRow key={product.id}>
+                                        <TableCell>
+                                          <div>
+                                            <div className="font-medium">{product.name}</div>
+                                            <div className="text-sm text-muted-foreground">{product.id}</div>
+                                          </div>
+                                        </TableCell>
+                                        <TableCell>
+                                          {getCategoryBadge(product.category)}
+                                        </TableCell>
+                                        {viewMode === "hq" && (
+                                          <TableCell className="text-center">
+                                            <Input
+                                              type="number"
+                                              min="0"
+                                              value={capacity.min}
+                                              onChange={(e) => {
+                                                const storeDbId = allStores.find(s => s.storeId === store.storeId)?.id;
+                                                if (storeDbId) {
+                                                  updateProductCapacity(product.id, storeDbId, 'min', parseInt(e.target.value) || 0);
+                                                }
+                                              }}
+                                              className="w-20 text-center"
+                                            />
+                                          </TableCell>
+                                        )}
+                                        {viewMode === "hq" && (
+                                          <TableCell className="text-center">
+                                            <Input
+                                              type="number"
+                                              min="0"
+                                              value={capacity.max}
+                                              onChange={(e) => {
+                                                const storeDbId = allStores.find(s => s.storeId === store.storeId)?.id;
+                                                if (storeDbId) {
+                                                  updateProductCapacity(product.id, storeDbId, 'max', parseInt(e.target.value) || 0);
+                                                }
+                                              }}
+                                              className="w-20 text-center"
+                                            />
+                                          </TableCell>
+                                        )}
+                                        <TableCell>
+                                          <Badge variant={product.active ? "default" : "secondary"}>
+                                            {product.active ? "Active" : "Inactive"}
+                                          </Badge>
+                                        </TableCell>
+                                        <TableCell>
+                                          <Button
+                                            size="sm"
+                                            variant={product.active ? "outline" : "default"}
+                                            onClick={() => toggleProductStatus(store.storeId, product.id)}
+                                          >
+                                            {product.active ? "Disable" : "Enable"}
+                                          </Button>
+                                        </TableCell>
+                                      </TableRow>
+                                    );
+                                  })}
                               </TableBody>
                             </Table>
                           </CardContent>

@@ -311,6 +311,44 @@ export type Database = {
           },
         ]
       }
+      product_capacities: {
+        Row: {
+          capacity_max: number
+          capacity_min: number
+          created_at: string
+          id: string
+          product_sku: string
+          store_id: string
+          updated_at: string
+        }
+        Insert: {
+          capacity_max?: number
+          capacity_min?: number
+          created_at?: string
+          id?: string
+          product_sku: string
+          store_id: string
+          updated_at?: string
+        }
+        Update: {
+          capacity_max?: number
+          capacity_min?: number
+          created_at?: string
+          id?: string
+          product_sku?: string
+          store_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_capacities_store_id_fkey"
+            columns: ["store_id"]
+            isOneToOne: false
+            referencedRelation: "stores"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       production_allocations: {
         Row: {
           created_at: string

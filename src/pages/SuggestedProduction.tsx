@@ -28,6 +28,8 @@ interface Product {
   trend: "up" | "down" | "stable";
   historicalSales: number;
   predictedSales: number;
+  capacityMin?: number;
+  capacityMax?: number;
 }
 
 interface Store {
@@ -57,15 +59,18 @@ export default function SuggestedProduction() {
   const [confirmingProduction, setConfirmingProduction] = useState<string | null>(null);
   const [groupByProduct, setGroupByProduct] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+  const [productCapacities, setProductCapacities] = useState<Record<string, { min: number; max: number }>>({});
   const { toast } = useToast();
   
   const formattedDate = selectedDate.toLocaleDateString('en-GB', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+  const isToday = format(selectedDate, 'yyyy-MM-dd') === format(new Date(), 'yyyy-MM-dd');
 
   useEffect(() => {
     if (viewMode === "store_manager") {
       loadStoreDeliveries();
     } else {
       loadData();
+      loadProductCapacities();
     }
   }, [viewMode, selectedStore, selectedDate]);
 
@@ -177,6 +182,33 @@ export default function SuggestedProduction() {
     }
   };
 
+  const loadProductCapacities = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('product_capacities')
+        .select('*');
+      
+      if (error) {
+        console.error('Error loading capacities:', error);
+        return;
+      }
+      
+      if (data) {
+        const capacitiesMap: Record<string, { min: number; max: number }> = {};
+        data.forEach((cap: any) => {
+          const key = `${cap.product_sku}-${cap.store_id}`;
+          capacitiesMap[key] = {
+            min: cap.capacity_min || 0,
+            max: cap.capacity_max || 0,
+          };
+        });
+        setProductCapacities(capacitiesMap);
+      }
+    } catch (error) {
+      console.error('Error loading product capacities:', error);
+    }
+  };
+
   // Krispy Kreme product templates matching StoreProductRange
   const getProductsForCluster = (cluster: string) => {
     const allProducts = [
@@ -255,6 +287,8 @@ export default function SuggestedProduction() {
               trend: Math.random() > 0.3 ? "up" : "down",
               historicalSales: baseQty * 0.9,
               predictedSales: baseQty * 1.05,
+              capacityMin: productCapacities[`${product.id}-${store.id}`]?.min || 0,
+              capacityMax: productCapacities[`${product.id}-${store.id}`]?.max || 0,
             });
           });
         });
@@ -721,6 +755,11 @@ export default function SuggestedProduction() {
               <Sparkles className="h-5 w-5 text-[#ff914d] animate-pulse" />
               <span className="text-white font-semibold text-sm">AI-Powered Suggestions</span>
             </div>
+            {isToday && (
+              <Badge className="bg-red-500 text-white px-4 py-2 text-sm font-bold animate-pulse">
+                LIVE
+              </Badge>
+            )}
           </div>
           <h1 className="text-4xl font-bold text-white mb-2">Suggested Production Plan</h1>
           <p className="text-xl text-white/90">All Stores - {formattedDate}</p>
@@ -792,15 +831,17 @@ export default function SuggestedProduction() {
 
       {/* Products Table */}
       <Card className={cn(
-        format(selectedDate, 'yyyy-MM-dd') !== format(new Date(), 'yyyy-MM-dd') && "bg-muted/50 border-muted"
+        !isToday && "bg-muted/50 border-muted"
       )}>
         <CardHeader className={cn(
-          format(selectedDate, 'yyyy-MM-dd') !== format(new Date(), 'yyyy-MM-dd') && "bg-muted/30"
+          !isToday && "bg-muted/30"
         )}>
           <CardTitle className="flex items-center gap-2">
             Production Recommendations
-            {format(selectedDate, 'yyyy-MM-dd') !== format(new Date(), 'yyyy-MM-dd') && (
+            {!isToday ? (
               <Badge variant="secondary" className="text-xs">Pending</Badge>
+            ) : (
+              <Badge className="bg-red-500 text-white text-xs animate-pulse">LIVE</Badge>
             )}
           </CardTitle>
           <CardDescription>
@@ -815,6 +856,8 @@ export default function SuggestedProduction() {
                 <TableHead>Category</TableHead>
                 {viewMode === "hq" && <TableHead>Store</TableHead>}
                 <TableHead className="text-center">Current Stock</TableHead>
+                <TableHead className="text-center bg-muted/30 text-muted-foreground">Min Cap</TableHead>
+                <TableHead className="text-center bg-muted/30 text-muted-foreground">Max Cap</TableHead>
                 <TableHead className="text-center bg-gradient-to-r from-[#ff914d]/20 to-[#ff914d]/10 border-l-4 border-l-[#ff914d]">
                   <div className="flex items-center justify-center gap-2 py-1">
                     <Sparkles className="h-5 w-5 text-[#ff914d] animate-pulse" />
@@ -836,6 +879,12 @@ export default function SuggestedProduction() {
                   <TableCell>{getCategoryBadge(product.category)}</TableCell>
                   {viewMode === "hq" && <TableCell>{product.store}</TableCell>}
                   <TableCell className="text-center">{product.currentStock}</TableCell>
+                  <TableCell className="text-center bg-muted/20 text-muted-foreground">
+                    {product.capacityMin || 0}
+                  </TableCell>
+                  <TableCell className="text-center bg-muted/20 text-muted-foreground">
+                    {product.capacityMax || 0}
+                  </TableCell>
                   <TableCell className="text-center bg-gradient-to-r from-[#ff914d]/10 to-[#ff914d]/5 border-l-4 border-l-[#ff914d]/30">
                     <div className="flex items-center justify-center gap-2">
                       {product.trend === "up" && <TrendingUp className="h-4 w-4 text-green-600" />}
