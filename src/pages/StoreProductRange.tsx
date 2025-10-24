@@ -612,20 +612,7 @@ export default function StoreProductRange() {
                   <TrendingUp className="h-4 w-4 text-white" />
                 </div>
                 <p className="text-sm text-foreground leading-relaxed">
-                  <span className="font-semibold text-orange-700">Capacity Utilization</span> — 3 high street stores show room to expand range complexity without production bottlenecks.
-                </p>
-              </div>
-            </div>
-            
-            <div className="relative overflow-hidden p-4 rounded-xl border backdrop-blur-sm bg-gradient-to-br from-green-50/90 via-emerald-50/90 to-green-100/90 border-green-300/50 shadow-sm">
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-green-200/20 to-transparent -translate-x-full animate-[shimmer_3s_ease-in-out_infinite]" />
-              
-              <div className="flex items-start gap-3 relative z-10">
-                <div className="rounded-full p-1.5 bg-gradient-to-br from-green-500 to-emerald-600 shadow-md">
-                  <CheckCircle className="h-4 w-4 text-white" />
-                </div>
-                <p className="text-sm text-foreground leading-relaxed">
-                  <span className="font-semibold text-green-700">Product Alignment</span> — 87% of current range aligns with customer preferences based on sales data.
+                  <span className="font-semibold text-orange-700">Capacity Utilisation</span> — Camden, Greenwich & Notting Hill stores sell out of Raspberry Filled more than 50% of the time. Consider increasing capacity for this SKU.
                 </p>
               </div>
             </div>
@@ -638,7 +625,7 @@ export default function StoreProductRange() {
                   <AlertCircle className="h-4 w-4 text-white" />
                 </div>
                 <p className="text-sm text-foreground leading-relaxed">
-                  <span className="font-semibold text-red-700">Range Gap Detected</span> — Transport hub stores missing quick-grab breakfast options that are trending in similar locations.
+                  <span className="font-semibold text-red-700">Range Gap Detected</span> — Consider delisting Maple Iced in the business district cluster. Waste is regularly over 60%.
                 </p>
               </div>
             </div>
