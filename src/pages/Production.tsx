@@ -93,6 +93,8 @@ export default function Production() {
     setLoading(true);
     try {
       console.log('🔍 PRODUCTION PAGE: Loading data...');
+      const productionDate = format(selectedDate, 'yyyy-MM-dd');
+      
       const { data: storesData } = await supabase
         .from('stores')
         .select('*')
@@ -103,42 +105,96 @@ export default function Production() {
       if (storesData) {
         setStores(storesData);
         
-        const mockProducts: Product[] = [];
         const targetStores = viewMode === "store_manager" 
           ? storesData.filter((s: any) => s.name === selectedStore)
           : storesData;
 
         console.log('🎯 PRODUCTION PAGE: Target stores:', targetStores.length);
 
-        targetStores.forEach((store: any) => {
-          const storeProducts = getProductsForCluster(store.cluster || 'high_street');
-          
-          storeProducts.forEach(product => {
-            const baseQty = 15 + Math.floor(Math.random() * 15);
-            mockProducts.push({
-              id: product.id,
-              productName: product.name,
-              category: product.category,
-              store: store.name,
-              storeId: store.id,
-              currentStock: baseQty,
-              recommendedOrder: baseQty,
-              finalOrder: baseQty,
-              trend: Math.random() > 0.3 ? "up" : "down",
-              historicalSales: baseQty * 0.9,
-              predictedSales: baseQty * 1.05,
-              dayPart: product.dayPart,
+        // Try to load existing production plan
+        const { data: productionPlan } = await supabase
+          .from('production_plans')
+          .select('id, status')
+          .eq('production_date', productionDate)
+          .single() as any;
+
+        console.log('📋 PRODUCTION PAGE: Production plan:', productionPlan);
+
+        let productsToDisplay: Product[] = [];
+
+        if (productionPlan) {
+          // Load existing allocations from database
+          const { data: allocationsData } = await supabase
+            .from('production_allocations')
+            .select('store_id, product_sku, quantity, day_part')
+            .eq('production_plan_id', productionPlan.id) as any;
+
+          console.log('📦 PRODUCTION PAGE: Loaded allocations:', allocationsData?.length);
+
+          // Build products from allocations
+          if (allocationsData && allocationsData.length > 0) {
+            const storeMap = new Map(storesData.map((s: any) => [s.id, s]));
+            
+            allocationsData.forEach((alloc: any) => {
+              const store: any = storeMap.get(alloc.store_id);
+              if (!store) return;
+
+              const productTemplate = getProductsForCluster(store.cluster || 'high_street')
+                .find(p => p.id === alloc.product_sku);
+              
+              if (productTemplate) {
+                productsToDisplay.push({
+                  id: alloc.product_sku,
+                  productName: productTemplate.name,
+                  category: productTemplate.category,
+                  store: store.name,
+                  storeId: store.id,
+                  currentStock: alloc.quantity,
+                  recommendedOrder: alloc.quantity,
+                  finalOrder: alloc.quantity,
+                  trend: "stable" as const,
+                  historicalSales: alloc.quantity * 0.9,
+                  predictedSales: alloc.quantity * 1.05,
+                  dayPart: alloc.day_part,
+                });
+              }
+            });
+            console.log('✅ PRODUCTION PAGE: Loaded from DB:', productsToDisplay.length);
+          }
+        }
+
+        // If no existing data, generate mock products
+        if (productsToDisplay.length === 0) {
+          console.log('🆕 PRODUCTION PAGE: No existing data, generating mock data');
+          targetStores.forEach((store: any) => {
+            const storeProducts = getProductsForCluster(store.cluster || 'high_street');
+            
+            storeProducts.forEach(product => {
+              const baseQty = 15 + Math.floor(Math.random() * 15);
+              productsToDisplay.push({
+                id: product.id,
+                productName: product.name,
+                category: product.category,
+                store: store.name,
+                storeId: store.id,
+                currentStock: baseQty,
+                recommendedOrder: baseQty,
+                finalOrder: baseQty,
+                trend: Math.random() > 0.3 ? "up" : "down",
+                historicalSales: baseQty * 0.9,
+                predictedSales: baseQty * 1.05,
+                dayPart: product.dayPart,
+              });
             });
           });
-        });
 
-        console.log('✅ PRODUCTION PAGE: Total products generated:', mockProducts.length);
-        setProducts(mockProducts);
+          // Save initial mock data to database
+          console.log('💾 PRODUCTION PAGE: Saving initial mock data...');
+          await savePendingAllocations(productsToDisplay);
+        }
 
-        // Automatically save to database as pending allocations
-        console.log('💾 PRODUCTION PAGE: About to save pending allocations...');
-        const saveResult = await savePendingAllocations(mockProducts);
-        console.log('💾 PRODUCTION PAGE: Save result:', saveResult);
+        console.log('✅ PRODUCTION PAGE: Total products:', productsToDisplay.length);
+        setProducts(productsToDisplay);
       }
     } catch (error) {
       console.error("❌ PRODUCTION PAGE: Error loading data:", error);
@@ -361,29 +417,35 @@ export default function Production() {
 
       {/* Date Picker and View Toggle */}
       <div className="flex items-center justify-between gap-4">
-        <Card className="border-primary/20 bg-gradient-to-r from-primary/5 to-transparent">
+        <Card className="border-2 border-primary bg-gradient-to-br from-primary/10 via-primary/5 to-transparent shadow-lg">
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
-              <div className="flex items-center justify-center w-10 h-10 rounded-full bg-primary/10">
-                <CalendarIcon className="h-5 w-5 text-primary" />
+              <div className="flex items-center justify-center w-12 h-12 rounded-full bg-primary text-primary-foreground shadow-md">
+                <CalendarIcon className="h-6 w-6" />
               </div>
               <div className="flex-1">
-                <label className="text-sm font-medium text-muted-foreground block mb-1">Production Date</label>
+                <label className="text-sm font-semibold text-foreground block mb-1.5">Production Date</label>
                 <Select
                   value={selectedDate.toISOString()}
                   onValueChange={(value) => setSelectedDate(new Date(value))}
                 >
-                  <SelectTrigger className="w-[280px] h-11 border-primary/30 hover:border-primary/50 transition-colors">
+                  <SelectTrigger className="w-[300px] h-12 border-2 border-primary/40 hover:border-primary bg-background font-medium transition-all hover:shadow-md">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
                     {Array.from({ length: 14 }, (_, i) => {
                       const date = new Date();
                       date.setDate(date.getDate() + i);
+                      const isToday = i === 0;
+                      const isSelected = format(date, 'yyyy-MM-dd') === format(selectedDate, 'yyyy-MM-dd');
                       return (
-                        <SelectItem key={i} value={date.toISOString()}>
+                        <SelectItem 
+                          key={i} 
+                          value={date.toISOString()}
+                          className={isSelected ? "bg-primary text-primary-foreground font-semibold" : ""}
+                        >
                           {format(date, "EEEE, MMM d, yyyy")}
-                          {i === 0 && " (Today)"}
+                          {isToday && " (Today)"}
                         </SelectItem>
                       );
                     })}

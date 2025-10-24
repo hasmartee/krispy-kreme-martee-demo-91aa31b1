@@ -426,29 +426,35 @@ export default function DeliveryPlan() {
             Allocate produced quantities to stores
           </p>
         </div>
-        <Card className="border-primary/20 bg-gradient-to-r from-primary/5 to-transparent">
+        <Card className="border-2 border-primary bg-gradient-to-br from-primary/10 via-primary/5 to-transparent shadow-lg">
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
-              <div className="flex items-center justify-center w-10 h-10 rounded-full bg-primary/10">
-                <CalendarIcon className="h-5 w-5 text-primary" />
+              <div className="flex items-center justify-center w-12 h-12 rounded-full bg-primary text-primary-foreground shadow-md">
+                <CalendarIcon className="h-6 w-6" />
               </div>
               <div className="flex-1">
-                <label className="text-sm font-medium text-muted-foreground block mb-1">Delivery Date</label>
+                <label className="text-sm font-semibold text-foreground block mb-1.5">Delivery Date</label>
                 <Select
                   value={selectedDate.toISOString()}
                   onValueChange={(value) => setSelectedDate(new Date(value))}
                 >
-                  <SelectTrigger className="w-[280px] h-11 border-primary/30 hover:border-primary/50 transition-colors">
+                  <SelectTrigger className="w-[300px] h-12 border-2 border-primary/40 hover:border-primary bg-background font-medium transition-all hover:shadow-md">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
                     {Array.from({ length: 14 }, (_, i) => {
                       const date = new Date();
                       date.setDate(date.getDate() + i);
+                      const isToday = i === 0;
+                      const isSelected = format(date, 'yyyy-MM-dd') === format(selectedDate, 'yyyy-MM-dd');
                       return (
-                        <SelectItem key={i} value={date.toISOString()}>
+                        <SelectItem 
+                          key={i} 
+                          value={date.toISOString()}
+                          className={isSelected ? "bg-primary text-primary-foreground font-semibold" : ""}
+                        >
                           {format(date, "EEEE, MMM d, yyyy")}
-                          {i === 0 && " (Today)"}
+                          {isToday && " (Today)"}
                         </SelectItem>
                       );
                     })}
