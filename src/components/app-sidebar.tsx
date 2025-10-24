@@ -34,6 +34,11 @@ const mainNavigationHQ: Array<{ title: string; url: string; icon: any; sparkles?
   { title: "Stock Tracker", url: "/live-data", icon: Database },
 ];
 
+const mainNavigationManufacturing: Array<{ title: string; url: string; icon: any; sparkles?: boolean }> = [
+  { title: "Home", url: "/", icon: Home },
+  { title: "Production Plan", url: "/production", icon: ChefHat, sparkles: true },
+];
+
 const settingsNavigationHQ = [
   { title: "My Products", url: "/products", icon: Package },
   { title: "My Stores", url: "/stores", icon: Store },
@@ -53,6 +58,8 @@ export function AppSidebar() {
   
   const mainNavigation = viewMode === "store_manager" 
     ? mainNavigationStoreManager 
+    : viewMode === "manufacturing"
+    ? mainNavigationManufacturing
     : mainNavigationHQ;
   
   const settingsNavigation = viewMode === "store_manager" 
@@ -60,7 +67,7 @@ export function AppSidebar() {
     : settingsNavigationHQ;
   
   const businessLabel = viewMode === "store_manager" ? "My Store" : "My Business";
-  const showSettings = true; // Show settings for all views now
+  const showSettings = viewMode !== "manufacturing"; // Hide settings for manufacturing view
 
   return (
     <Sidebar className="w-64" collapsible="none">

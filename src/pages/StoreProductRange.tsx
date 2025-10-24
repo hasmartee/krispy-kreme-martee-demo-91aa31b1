@@ -239,7 +239,7 @@ export default function StoreProductRange() {
                          store.postcode.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          store.storeId.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesCluster = selectedCluster === "all" || store.cluster === selectedCluster;
-    const matchesViewMode = viewMode === "hq" || viewMode === "store_manager" || viewMode === "store_team" ? (store.storeName === selectedStore || viewMode === "hq") : false;
+    const matchesViewMode = viewMode === "hq" || viewMode === "manufacturing" || (viewMode === "store_manager" && store.storeName === selectedStore);
     
     return matchesSearch && matchesCluster && matchesViewMode;
   });

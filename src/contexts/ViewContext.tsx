@@ -1,7 +1,7 @@
 import { createContext, useContext, useState, ReactNode, useEffect } from "react";
 import { supabase } from "@/lib/supabase-helper";
 
-export type ViewMode = "hq" | "store_manager";
+export type ViewMode = "hq" | "store_manager" | "manufacturing";
 
 interface ViewContextType {
   viewMode: ViewMode;
