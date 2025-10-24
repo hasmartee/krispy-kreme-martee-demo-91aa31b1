@@ -62,7 +62,6 @@ const getDayPartBadge = (dayPart: string) => {
 
 export default function DeliveryPlan() {
   const { toast } = useToast();
-  const [selectedDayPart, setSelectedDayPart] = useState<string>("all");
   const [viewMode, setViewMode] = useState<"store" | "product">("store");
   const [editingProduct, setEditingProduct] = useState<number | null>(null);
   const [stores, setStores] = useState<string[]>([]);
@@ -401,9 +400,7 @@ export default function DeliveryPlan() {
     }
   };
 
-  const filteredAllocations = allocations.filter(allocation => 
-    selectedDayPart === "all" || allocation.dayPart === selectedDayPart
-  );
+  const filteredAllocations = allocations;
 
   const totalProduced = filteredAllocations.reduce((sum, p) => sum + p.produced, 0);
   const totalAllocated = filteredAllocations.reduce((sum, p) => sum + p.totalAllocated, 0);
@@ -419,13 +416,7 @@ export default function DeliveryPlan() {
 
   return (
     <div className="flex-1 space-y-6 p-6">
-      <div className="flex items-center justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-bold text-foreground">Delivery Plan</h1>
-          <p className="text-muted-foreground">
-            Allocate produced quantities to stores
-          </p>
-        </div>
+      <div className="flex items-start justify-between gap-4">
         <Card className="border-2 border-primary bg-gradient-to-br from-primary/10 via-primary/5 to-transparent shadow-lg">
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
@@ -464,6 +455,12 @@ export default function DeliveryPlan() {
             </div>
           </CardContent>
         </Card>
+        <div>
+          <h1 className="text-3xl font-bold text-foreground">Delivery Plan</h1>
+          <p className="text-muted-foreground">
+            Allocate produced quantities to stores
+          </p>
+        </div>
       </div>
 
       {/* Summary Cards */}
@@ -527,20 +524,6 @@ export default function DeliveryPlan() {
                   <TabsTrigger value="product">Product View</TabsTrigger>
                 </TabsList>
               </Tabs>
-              <div className="flex items-center gap-2">
-                <label className="text-sm font-medium">Day Part:</label>
-                <Select value={selectedDayPart} onValueChange={setSelectedDayPart}>
-                  <SelectTrigger className="w-[180px]">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Day Parts</SelectItem>
-                    <SelectItem value="Morning">Morning</SelectItem>
-                    <SelectItem value="Lunch">Lunch</SelectItem>
-                    <SelectItem value="Afternoon">Afternoon</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
             </div>
             <div className="flex gap-2">
               <Button onClick={exportToCSV} variant="outline" className="gap-2">
