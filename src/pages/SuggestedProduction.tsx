@@ -66,12 +66,15 @@ export default function SuggestedProduction() {
   const isToday = format(selectedDate, 'yyyy-MM-dd') === format(new Date(), 'yyyy-MM-dd');
 
   useEffect(() => {
-    if (viewMode === "store_manager") {
-      loadStoreDeliveries();
-    } else {
-      loadData();
-      loadProductCapacities();
-    }
+    const loadAllData = async () => {
+      if (viewMode === "store_manager") {
+        await loadStoreDeliveries();
+      } else {
+        await loadProductCapacities();
+        await loadData();
+      }
+    };
+    loadAllData();
   }, [viewMode, selectedStore, selectedDate]);
 
   // Load store deliveries from production_allocations
@@ -184,6 +187,7 @@ export default function SuggestedProduction() {
 
   const loadProductCapacities = async () => {
     try {
+      console.log('📊 Loading product capacities...');
       const { data, error } = await supabase
         .from('product_capacities')
         .select('*');
@@ -202,11 +206,14 @@ export default function SuggestedProduction() {
             max: cap.capacity_max || 0,
           };
         });
+        console.log('✅ Loaded capacities:', Object.keys(capacitiesMap).length);
         setProductCapacities(capacitiesMap);
+        return capacitiesMap;
       }
     } catch (error) {
       console.error('Error loading product capacities:', error);
     }
+    return {};
   };
 
   // Krispy Kreme product templates matching StoreProductRange
@@ -252,6 +259,8 @@ export default function SuggestedProduction() {
     setLoading(true);
     try {
       console.log('🔍 PRODUCTION PAGE: Loading data...');
+      console.log('📊 Current productCapacities state:', Object.keys(productCapacities).length, 'entries');
+      
       const { data: storesData } = await supabase
         .from('stores')
         .select('*')
@@ -271,10 +280,19 @@ export default function SuggestedProduction() {
 
         targetStores.forEach((store: any) => {
           const storeProducts = getProductsForCluster(store.cluster || 'high_street');
-          console.log(`📦 PRODUCTION PAGE: Store ${store.name} (${store.cluster}) - ${storeProducts.length} products:`, storeProducts.map(p => p.name));
+          console.log(`📦 PRODUCTION PAGE: Store ${store.name} (${store.cluster}) - ${storeProducts.length} products`);
           
           storeProducts.forEach(product => {
             const baseQty = 15 + Math.floor(Math.random() * 15);
+            const capacityKey = `${product.id}-${store.id}`;
+            const capacity = productCapacities[capacityKey];
+            
+            if (capacity) {
+              console.log(`✅ Found capacity for ${product.id} at ${store.name}:`, capacity);
+            } else {
+              console.log(`⚠️ No capacity found for key: ${capacityKey}`);
+            }
+            
             mockProducts.push({
               id: product.id,
               productName: product.name,
@@ -287,14 +305,19 @@ export default function SuggestedProduction() {
               trend: Math.random() > 0.3 ? "up" : "down",
               historicalSales: baseQty * 0.9,
               predictedSales: baseQty * 1.05,
-              capacityMin: productCapacities[`${product.id}-${store.id}`]?.min || 0,
-              capacityMax: productCapacities[`${product.id}-${store.id}`]?.max || 0,
+              capacityMin: capacity?.min || 0,
+              capacityMax: capacity?.max || 0,
             });
           });
         });
 
         console.log('✅ PRODUCTION PAGE: Total products generated:', mockProducts.length);
-        console.log('📋 PRODUCTION PAGE: First 5 products:', mockProducts.slice(0, 5).map(p => ({ name: p.productName, id: p.id, store: p.store })));
+        console.log('📊 Sample capacities:', mockProducts.slice(0, 3).map(p => ({ 
+          name: p.productName, 
+          store: p.store,
+          min: p.capacityMin, 
+          max: p.capacityMax 
+        })));
         setProducts(mockProducts);
 
         // Automatically save to database as pending allocations
