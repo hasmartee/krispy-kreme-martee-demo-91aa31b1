@@ -438,6 +438,20 @@ const weeklyTrendData = [
 
   return (
     <div className="flex-1 space-y-6 p-6">
+      {/* Blank page for manufacturing view */}
+      {viewMode === "manufacturing" ? (
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <div className="text-center space-y-4">
+            <h1 className="text-4xl font-bold text-foreground">
+              Manufacturing Dashboard
+            </h1>
+            <p className="text-muted-foreground text-lg">
+              Welcome to the manufacturing view
+            </p>
+          </div>
+        </div>
+      ) : (
+        <>
       {/* Header */}
       <div>
         <h1 className="text-3xl font-bold text-foreground">
@@ -1342,6 +1356,8 @@ const weeklyTrendData = [
             </CardContent>
           </Card>
         </div>
+      )}
+      </>
       )}
     </div>
   );
