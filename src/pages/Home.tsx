@@ -441,7 +441,7 @@ const weeklyTrendData = [
       {/* Header */}
       <div>
         <h1 className="text-3xl font-bold text-foreground">
-          Welcome Back{viewMode === "store_manager" ? ` - ${selectedStore}` : ""}
+          {viewMode === "store_manager" ? "Welcome Back Camden Town" : "Welcome Back"}
         </h1>
         <p className="text-muted-foreground">
           Here's what's happening this week
@@ -1001,28 +1001,6 @@ const weeklyTrendData = [
       ) : (
         /* Store Manager View - Keep existing content */
         <>
-          {/* Attention Required - Compact Alert */}
-          <Card className="border-l-4 border-l-amber-500 bg-amber-500/5">
-            <CardContent className="p-4">
-              <div className="flex items-center gap-2 mb-3">
-                <AlertTriangle className="h-5 w-5 text-amber-500" />
-                <h3 className="font-semibold text-foreground">Attention Required</h3>
-              </div>
-              <div className="flex flex-col sm:flex-row gap-4 text-sm">
-                <div className="flex items-center gap-2">
-                  <Trash2 className="h-4 w-4 text-amber-600" />
-                  <span className="text-muted-foreground">Waste variance:</span>
-                  <span className="font-medium text-amber-600">+133%</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Package className="h-4 w-4 text-amber-600" />
-                  <span className="text-muted-foreground">Delivery shortfall:</span>
-                  <span className="font-medium text-amber-600">-4.9%</span>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
           {/* This Week's Metrics */}
           <div>
             <div className="flex items-center justify-between mb-4">
@@ -1112,6 +1090,28 @@ const weeklyTrendData = [
                 </CardContent>
               </Card>
             </div>
+          </div>
+
+          {/* Today's Context - Weather and Alerts */}
+          <div className="grid gap-3 md:grid-cols-2">
+            <Card className="bg-muted/30">
+              <CardContent className="p-4 flex items-center gap-3">
+                <CloudRain className="h-5 w-5 text-primary" />
+                <div>
+                  <p className="text-xs text-muted-foreground">Weather</p>
+                  <p className="text-sm font-semibold">Rainy, 12°C</p>
+                </div>
+              </CardContent>
+            </Card>
+            <Card className="bg-muted/30">
+              <CardContent className="p-4 flex items-center gap-3">
+                <AlertTriangle className="h-5 w-5 text-destructive" />
+                <div>
+                  <p className="text-xs text-muted-foreground">Alert</p>
+                  <p className="text-sm font-semibold">Train strike - Lower footfall</p>
+                </div>
+              </CardContent>
+            </Card>
           </div>
 
           {/* Weekly Trend - Store View */}
@@ -1288,30 +1288,6 @@ const weeklyTrendData = [
           </Card>
 
         </>
-      )}
-
-      {/* Today's Context - Store Manager Only - Compact */}
-      {viewMode === "store_manager" && (
-        <div className="grid gap-3 md:grid-cols-2">
-          <Card className="bg-muted/30">
-            <CardContent className="p-4 flex items-center gap-3">
-              <CloudRain className="h-5 w-5 text-primary" />
-              <div>
-                <p className="text-xs text-muted-foreground">Weather</p>
-                <p className="text-sm font-semibold">Rainy, 12°C</p>
-              </div>
-            </CardContent>
-          </Card>
-          <Card className="bg-muted/30">
-            <CardContent className="p-4 flex items-center gap-3">
-              <AlertTriangle className="h-5 w-5 text-destructive" />
-              <div>
-                <p className="text-xs text-muted-foreground">Alert</p>
-                <p className="text-sm font-semibold">Train strike - Lower footfall</p>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
       )}
     </div>
   );
