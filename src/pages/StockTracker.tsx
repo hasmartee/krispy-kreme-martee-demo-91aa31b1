@@ -88,8 +88,23 @@ const LiveData = () => {
           const baseMultiplier = store.name.includes("Station") ? 1.2 : store.name.includes("Street") ? 1.1 : 1.0;
           const storeProducts = getProductsForCluster(store.cluster || 'high_street');
           
-          // Create different scenario types for different stores
-          const scenarioType = storeIndex % 4;
+          // Create specific problem scenarios for certain stores
+          let scenarioType: number;
+          let isProblematicStore = false;
+          
+          // Force specific stores to have discrepancies
+          if (store.name.includes("Camden")) {
+            scenarioType = 0; // Production overrun for Camden
+            isProblematicStore = true;
+          } else if (store.name.includes("Bond Street")) {
+            scenarioType = 2; // Delivery discrepancy for Bond Street
+            isProblematicStore = true;
+          } else if (store.name.includes("Greenwich")) {
+            scenarioType = 3; // High unaccounted for Greenwich
+            isProblematicStore = true;
+          } else {
+            scenarioType = storeIndex % 4;
+          }
           
           const products: ProductData[] = storeProducts.map((productName: string, idx: number) => {
             const planned = Math.round((50 + Math.floor(Math.random() * 100)) * baseMultiplier);
@@ -99,9 +114,8 @@ const LiveData = () => {
             let sold: number;
             let wasted: number;
             
-            // Most products (85%) should have consistent numbers with good performance
-            // Only 15% should have notable discrepancies
-            const hasDiscrepancy = Math.random() < 0.15;
+            // For problematic stores, create multiple products with issues (not just 15%)
+            const hasDiscrepancy = isProblematicStore ? (Math.random() < 0.40) : (Math.random() < 0.15);
             
             if (!hasDiscrepancy) {
               // Normal scenario: planned ≈ produced ≈ delivered, with good sell-through
@@ -126,36 +140,35 @@ const LiveData = () => {
               }
             } else {
               // Outlier scenarios - various types of discrepancies
-              const outlierType = Math.floor(Math.random() * 4);
               
-              switch (outlierType) {
-                case 0: // Production overrun (10-15% over planned)
-                  produced = Math.round(planned * (1.10 + Math.random() * 0.05));
+              switch (scenarioType) {
+                case 0: // Production overrun (12-18% over planned) - CAMDEN
+                  produced = Math.round(planned * (1.12 + Math.random() * 0.06));
                   delivered = Math.round(produced * (0.97 + Math.random() * 0.03));
-                  sold = Math.round(delivered * (0.85 + Math.random() * 0.08));
-                  wasted = Math.round(delivered * (0.06 + Math.random() * 0.04)); // Higher waste
+                  sold = Math.round(delivered * (0.82 + Math.random() * 0.08));
+                  wasted = Math.round(delivered * (0.08 + Math.random() * 0.05)); // Higher waste 8-13%
                   break;
                 
-                case 1: // Production shortfall (10-15% under planned)
-                  produced = Math.round(planned * (0.85 + Math.random() * 0.05));
+                case 1: // Production shortfall (12-18% under planned)
+                  produced = Math.round(planned * (0.82 + Math.random() * 0.06));
                   delivered = Math.round(produced * (0.97 + Math.random() * 0.03));
                   sold = Math.round(delivered * (0.88 + Math.random() * 0.07));
                   wasted = Math.round(delivered * (0.03 + Math.random() * 0.03));
                   break;
                 
-                case 2: // Delivery discrepancy (8-12% delivery loss)
+                case 2: // Delivery discrepancy (12-18% delivery loss) - BOND STREET
                   produced = Math.round(planned * (0.98 + Math.random() * 0.04));
-                  delivered = Math.round(produced * (0.88 + Math.random() * 0.04)); // 8-12% loss
-                  sold = Math.round(delivered * (0.86 + Math.random() * 0.08));
-                  wasted = Math.round(delivered * (0.04 + Math.random() * 0.04));
+                  delivered = Math.round(produced * (0.82 + Math.random() * 0.06)); // 12-18% loss
+                  sold = Math.round(delivered * (0.84 + Math.random() * 0.08));
+                  wasted = Math.round(delivered * (0.05 + Math.random() * 0.04));
                   break;
                 
-                case 3: // High unaccounted (6-10% unaccounted)
+                case 3: // High unaccounted (8-14% unaccounted) - GREENWICH
                   produced = Math.round(planned * (0.98 + Math.random() * 0.04));
                   delivered = Math.round(produced * (0.98 + Math.random() * 0.02));
-                  sold = Math.round(delivered * (0.82 + Math.random() * 0.06));
+                  sold = Math.round(delivered * (0.78 + Math.random() * 0.06)); // Lower sell-through
                   wasted = Math.round(delivered * (0.03 + Math.random() * 0.03));
-                  // This will naturally create high unaccounted
+                  // This will naturally create high unaccounted (8-14%)
                   break;
               }
             }
