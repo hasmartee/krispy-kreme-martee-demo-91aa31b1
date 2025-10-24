@@ -28,7 +28,6 @@ interface Product {
   trend: "up" | "down" | "stable";
   historicalSales: number;
   predictedSales: number;
-  dayPart?: string;
 }
 
 interface Store {
@@ -44,7 +43,6 @@ interface DeliveryItem {
   category: string;
   expectedQuantity: number;
   receivedQuantity: number;
-  dayPart: string;
   allocationId: string;
   hasUnsavedChanges?: boolean;
 }
@@ -162,7 +160,6 @@ export default function SuggestedProduction() {
           category: product?.category || 'Unknown',
           expectedQuantity: expectedQty,
           receivedQuantity: receivedQty,
-          dayPart: alloc.day_part || 'Morning',
           allocationId: alloc.id,
         };
       });
@@ -183,26 +180,26 @@ export default function SuggestedProduction() {
   // Krispy Kreme product templates matching StoreProductRange
   const getProductsForCluster = (cluster: string) => {
     const allProducts = [
-      { id: "KK-G001", name: "Original Glazed", category: "Glazed", dayPart: "Morning" },
-      { id: "KK-G002", name: "Chocolate Iced Glazed", category: "Glazed", dayPart: "Morning" },
-      { id: "KK-G003", name: "Maple Iced", category: "Glazed", dayPart: "Morning" },
-      { id: "KK-G004", name: "Glazed Blueberry", category: "Glazed", dayPart: "Morning" },
-      { id: "KK-G005", name: "Caramel Iced", category: "Glazed", dayPart: "Afternoon" },
-      { id: "KK-G006", name: "Coffee Glazed", category: "Glazed", dayPart: "Morning" },
-      { id: "KK-G007", name: "Dulce de Leche", category: "Glazed", dayPart: "Afternoon" },
-      { id: "KK-I001", name: "Strawberry Iced with Sprinkles", category: "Iced", dayPart: "Afternoon" },
-      { id: "KK-I002", name: "Chocolate Iced with Sprinkles", category: "Iced", dayPart: "Afternoon" },
-      { id: "KK-I003", name: "Vanilla Iced with Sprinkles", category: "Iced", dayPart: "Afternoon" },
-      { id: "KK-F001", name: "Raspberry Filled", category: "Filled", dayPart: "Morning" },
-      { id: "KK-F002", name: "Lemon Filled", category: "Filled", dayPart: "Morning" },
-      { id: "KK-F003", name: "Boston Kreme", category: "Filled", dayPart: "Afternoon" },
-      { id: "KK-F004", name: "Chocolate Kreme Filled", category: "Filled", dayPart: "Afternoon" },
-      { id: "KK-C001", name: "Powdered Sugar", category: "Cake", dayPart: "Morning" },
-      { id: "KK-C002", name: "Cinnamon Sugar", category: "Cake", dayPart: "Morning" },
-      { id: "KK-C003", name: "Double Chocolate", category: "Cake", dayPart: "Afternoon" },
-      { id: "KK-S001", name: "Cookies and Kreme", category: "Specialty", dayPart: "Afternoon" },
-      { id: "KK-S002", name: "Apple Fritter", category: "Specialty", dayPart: "Morning" },
-      { id: "KK-S003", name: "Glazed Cruller", category: "Specialty", dayPart: "Afternoon" },
+      { id: "KK-G001", name: "Original Glazed", category: "Glazed" },
+      { id: "KK-G002", name: "Chocolate Iced Glazed", category: "Glazed" },
+      { id: "KK-G003", name: "Maple Iced", category: "Glazed" },
+      { id: "KK-G004", name: "Glazed Blueberry", category: "Glazed" },
+      { id: "KK-G005", name: "Caramel Iced", category: "Glazed" },
+      { id: "KK-G006", name: "Coffee Glazed", category: "Glazed" },
+      { id: "KK-G007", name: "Dulce de Leche", category: "Glazed" },
+      { id: "KK-I001", name: "Strawberry Iced with Sprinkles", category: "Iced" },
+      { id: "KK-I002", name: "Chocolate Iced with Sprinkles", category: "Iced" },
+      { id: "KK-I003", name: "Vanilla Iced with Sprinkles", category: "Iced" },
+      { id: "KK-F001", name: "Raspberry Filled", category: "Filled" },
+      { id: "KK-F002", name: "Lemon Filled", category: "Filled" },
+      { id: "KK-F003", name: "Boston Kreme", category: "Filled" },
+      { id: "KK-F004", name: "Chocolate Kreme Filled", category: "Filled" },
+      { id: "KK-C001", name: "Powdered Sugar", category: "Cake" },
+      { id: "KK-C002", name: "Cinnamon Sugar", category: "Cake" },
+      { id: "KK-C003", name: "Double Chocolate", category: "Cake" },
+      { id: "KK-S001", name: "Cookies and Kreme", category: "Specialty" },
+      { id: "KK-S002", name: "Apple Fritter", category: "Specialty" },
+      { id: "KK-S003", name: "Glazed Cruller", category: "Specialty" },
     ];
 
     // Match StoreProductRange logic
@@ -258,7 +255,6 @@ export default function SuggestedProduction() {
               trend: Math.random() > 0.3 ? "up" : "down",
               historicalSales: baseQty * 0.9,
               predictedSales: baseQty * 1.05,
-              dayPart: product.dayPart,
             });
           });
         });
@@ -340,7 +336,6 @@ export default function SuggestedProduction() {
         store_id: p.storeId,
         product_sku: p.id,
         quantity: p.finalOrder,
-        day_part: p.dayPart || 'Morning',
       }));
 
       console.log('🔄 Upserting', allocations.length, 'allocations');
@@ -349,7 +344,7 @@ export default function SuggestedProduction() {
       const { data: upsertResult, error } = await supabase
         .from('production_allocations')
         .upsert(allocations, {
-          onConflict: 'production_plan_id,store_id,product_sku,day_part'
+          onConflict: 'production_plan_id,store_id,product_sku'
         })
         .select() as any;
 
@@ -507,15 +502,6 @@ export default function SuggestedProduction() {
     return <Badge className={colors[category] || "bg-gray-100 text-gray-800"}>{category}</Badge>;
   };
 
-  const getDayPartBadge = (dayPart: string | undefined) => {
-    if (!dayPart) return null;
-    const colors: Record<string, string> = {
-      "Morning": "bg-amber-100 text-amber-800 border-amber-300",
-      "Lunch": "bg-blue-100 text-blue-800 border-blue-300",
-      "Afternoon": "bg-purple-100 text-purple-800 border-purple-300",
-    };
-    return <Badge variant="outline" className={colors[dayPart] || "bg-gray-100 text-gray-800"}>{dayPart}</Badge>;
-  };
 
   // Aggregate products by product ID when groupByProduct is true
   const displayProducts = viewMode === "hq" && groupByProduct
@@ -827,7 +813,6 @@ export default function SuggestedProduction() {
               <TableRow>
                 <TableHead>Product</TableHead>
                 <TableHead>Category</TableHead>
-                <TableHead>Day Part</TableHead>
                 {viewMode === "hq" && <TableHead>Store</TableHead>}
                 <TableHead className="text-center">Current Stock</TableHead>
                 <TableHead className="text-center bg-gradient-to-r from-[#ff914d]/20 to-[#ff914d]/10 border-l-4 border-l-[#ff914d]">
@@ -849,7 +834,6 @@ export default function SuggestedProduction() {
                 <TableRow key={`${product.id}-${product.storeId}`}>
                   <TableCell className="font-medium">{product.productName}</TableCell>
                   <TableCell>{getCategoryBadge(product.category)}</TableCell>
-                  <TableCell>{getDayPartBadge(product.dayPart)}</TableCell>
                   {viewMode === "hq" && <TableCell>{product.store}</TableCell>}
                   <TableCell className="text-center">{product.currentStock}</TableCell>
                   <TableCell className="text-center bg-gradient-to-r from-[#ff914d]/10 to-[#ff914d]/5 border-l-4 border-l-[#ff914d]/30">

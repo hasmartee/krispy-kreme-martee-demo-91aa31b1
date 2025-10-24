@@ -112,38 +112,38 @@ interface StoreInfo {
 // All stores use Krispy Kreme products
 const storeBrands: Record<string, string> = {};
 
-// Krispy Kreme product templates with day parts
+// Krispy Kreme product templates
 const brandProductTemplates = {
   "Krispy Kreme": [
     // Classic Glazed
-    { id: "KK-G001", name: "Original Glazed", category: "Glazed", dayPart: "Morning", active: true, image: originalGlazed },
-    { id: "KK-G002", name: "Chocolate Iced Glazed", category: "Glazed", dayPart: "Morning", active: true, image: chocolateIcedGlazed },
-    { id: "KK-G003", name: "Maple Iced", category: "Glazed", dayPart: "Morning", active: true, image: mapleIced },
-    { id: "KK-G004", name: "Glazed Blueberry", category: "Glazed", dayPart: "Morning", active: true, image: glazedBlueberry },
-    { id: "KK-G005", name: "Caramel Iced", category: "Glazed", dayPart: "Afternoon", active: true, image: caramelIced },
-    { id: "KK-G006", name: "Coffee Glazed", category: "Glazed", dayPart: "Morning", active: true, image: coffeeGlazed },
-    { id: "KK-G007", name: "Dulce de Leche", category: "Glazed", dayPart: "Afternoon", active: true, image: dulceLeche },
+    { id: "KK-G001", name: "Original Glazed", category: "Glazed", active: true, image: originalGlazed },
+    { id: "KK-G002", name: "Chocolate Iced Glazed", category: "Glazed", active: true, image: chocolateIcedGlazed },
+    { id: "KK-G003", name: "Maple Iced", category: "Glazed", active: true, image: mapleIced },
+    { id: "KK-G004", name: "Glazed Blueberry", category: "Glazed", active: true, image: glazedBlueberry },
+    { id: "KK-G005", name: "Caramel Iced", category: "Glazed", active: true, image: caramelIced },
+    { id: "KK-G006", name: "Coffee Glazed", category: "Glazed", active: true, image: coffeeGlazed },
+    { id: "KK-G007", name: "Dulce de Leche", category: "Glazed", active: true, image: dulceLeche },
     
     // Iced & Sprinkles
-    { id: "KK-I001", name: "Strawberry Iced with Sprinkles", category: "Iced", dayPart: "Afternoon", active: true, image: strawberryIced },
-    { id: "KK-I002", name: "Chocolate Iced with Sprinkles", category: "Iced", dayPart: "Afternoon", active: true, image: chocolateSprinkles },
-    { id: "KK-I003", name: "Vanilla Iced with Sprinkles", category: "Iced", dayPart: "Afternoon", active: true, image: vanillaSprinkles },
+    { id: "KK-I001", name: "Strawberry Iced with Sprinkles", category: "Iced", active: true, image: strawberryIced },
+    { id: "KK-I002", name: "Chocolate Iced with Sprinkles", category: "Iced", active: true, image: chocolateSprinkles },
+    { id: "KK-I003", name: "Vanilla Iced with Sprinkles", category: "Iced", active: true, image: vanillaSprinkles },
     
     // Filled Donuts
-    { id: "KK-F001", name: "Raspberry Filled", category: "Filled", dayPart: "Morning", active: true, image: raspberryFilled },
-    { id: "KK-F002", name: "Lemon Filled", category: "Filled", dayPart: "Morning", active: true, image: lemonFilled },
-    { id: "KK-F003", name: "Boston Kreme", category: "Filled", dayPart: "Afternoon", active: true, image: bostonKreme },
-    { id: "KK-F004", name: "Chocolate Kreme Filled", category: "Filled", dayPart: "Afternoon", active: true, image: chocolateKremeFilled },
+    { id: "KK-F001", name: "Raspberry Filled", category: "Filled", active: true, image: raspberryFilled },
+    { id: "KK-F002", name: "Lemon Filled", category: "Filled", active: true, image: lemonFilled },
+    { id: "KK-F003", name: "Boston Kreme", category: "Filled", active: true, image: bostonKreme },
+    { id: "KK-F004", name: "Chocolate Kreme Filled", category: "Filled", active: true, image: chocolateKremeFilled },
     
     // Cake Donuts
-    { id: "KK-C001", name: "Powdered Sugar", category: "Cake", dayPart: "Morning", active: true, image: powderedSugar },
-    { id: "KK-C002", name: "Cinnamon Sugar", category: "Cake", dayPart: "Morning", active: true, image: cinnamonSugar },
-    { id: "KK-C003", name: "Double Chocolate", category: "Cake", dayPart: "Afternoon", active: true, image: doubleChocolate },
+    { id: "KK-C001", name: "Powdered Sugar", category: "Cake", active: true, image: powderedSugar },
+    { id: "KK-C002", name: "Cinnamon Sugar", category: "Cake", active: true, image: cinnamonSugar },
+    { id: "KK-C003", name: "Double Chocolate", category: "Cake", active: true, image: doubleChocolate },
     
     // Specialty
-    { id: "KK-S001", name: "Cookies and Kreme", category: "Specialty", dayPart: "Afternoon", active: true, image: cookiesKreme },
-    { id: "KK-S002", name: "Apple Fritter", category: "Specialty", dayPart: "Morning", active: true, image: appleFritter },
-    { id: "KK-S003", name: "Glazed Cruller", category: "Specialty", dayPart: "Afternoon", active: true, image: glazedCruller },
+    { id: "KK-S001", name: "Cookies and Kreme", category: "Specialty", active: true, image: cookiesKreme },
+    { id: "KK-S002", name: "Apple Fritter", category: "Specialty", active: true, image: appleFritter },
+    { id: "KK-S003", name: "Glazed Cruller", category: "Specialty", active: true, image: glazedCruller },
   ]
 };
 
@@ -173,7 +173,6 @@ export default function StoreProductRange() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedBrand, setSelectedBrand] = useState("Krispy Kreme");
   const [selectedCluster, setSelectedCluster] = useState<string>("all");
-  const [selectedDayPart, setSelectedDayPart] = useState<string>("all");
   const [storeData, setStoreData] = useState<any[]>([]);
   const [allStores, setAllStores] = useState<StoreInfo[]>([]);
   const [isClusterDialogOpen, setIsClusterDialogOpen] = useState(false);
@@ -413,19 +412,6 @@ export default function StoreProductRange() {
     );
   };
 
-  const getDayPartBadge = (dayPart: string) => {
-    const dayPartColors = {
-      'Morning': 'bg-amber-100 text-amber-800',
-      'Lunch': 'bg-sky-100 text-sky-800',
-      'Afternoon': 'bg-purple-100 text-purple-800',
-    };
-    
-    return (
-      <Badge className={dayPartColors[dayPart as keyof typeof dayPartColors] || 'bg-muted'}>
-        {dayPart}
-      </Badge>
-    );
-  };
 
   return (
     <div className="flex-1 space-y-6 p-6">
@@ -518,17 +504,6 @@ export default function StoreProductRange() {
                       {cluster.name}
                     </SelectItem>
                   ))}
-                </SelectContent>
-              </Select>
-              <Select value={selectedDayPart} onValueChange={setSelectedDayPart}>
-                <SelectTrigger className="w-[200px]">
-                  <SelectValue placeholder="Filter by day part" />
-                </SelectTrigger>
-                <SelectContent className="bg-background border shadow-lg z-50">
-                  <SelectItem value="all">All Day Parts</SelectItem>
-                  <SelectItem value="Morning">Morning</SelectItem>
-                  <SelectItem value="Lunch">Lunch</SelectItem>
-                  <SelectItem value="Afternoon">Afternoon</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -721,14 +696,12 @@ export default function StoreProductRange() {
                                 <TableRow>
                                   <TableHead>Product</TableHead>
                                   <TableHead>Category</TableHead>
-                                  <TableHead>Day Part</TableHead>
                                   <TableHead>Status</TableHead>
                                   <TableHead>Action</TableHead>
                                 </TableRow>
                               </TableHeader>
                               <TableBody>
                                 {store.activeProducts
-                                  .filter(product => selectedDayPart === "all" || product.dayPart === selectedDayPart)
                                   .map((product) => (
                                   <TableRow key={product.id}>
                                     <TableCell>
@@ -739,9 +712,6 @@ export default function StoreProductRange() {
                                     </TableCell>
                                     <TableCell>
                                       {getCategoryBadge(product.category)}
-                                    </TableCell>
-                                    <TableCell>
-                                      {getDayPartBadge(product.dayPart)}
                                     </TableCell>
                                     <TableCell>
                                       <Badge variant={product.active ? "default" : "secondary"}>

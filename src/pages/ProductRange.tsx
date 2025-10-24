@@ -134,7 +134,6 @@ export default function ProductRange() {
             allergens: values[6] ? values[6].split(';') : [],
             shelfLife: parseInt(values[7]) || 2,
             ingredients: [],
-            dayParts: ["lunch", "afternoon"], // Default day parts
           };
         });
 
