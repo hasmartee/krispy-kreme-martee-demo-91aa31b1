@@ -121,12 +121,15 @@ export default function DeliveryPlan() {
     try {
       // Get today's date for the production plan
       const today = new Date().toISOString().split('T')[0];
+      console.log('📦 DELIVERY PLAN: Loading data for date:', today);
       
       // Fetch stores with their IDs
       const { data: storesData } = await supabase
         .from('stores')
         .select('id, name')
         .order('name') as any;
+
+      console.log('📦 DELIVERY PLAN: Stores loaded:', storesData?.length);
 
       if (!storesData) return;
 
@@ -141,7 +144,10 @@ export default function DeliveryPlan() {
         .eq('production_date', today)
         .single() as any;
 
+      console.log('📦 DELIVERY PLAN: Production plan:', productionPlan);
+
       if (!productionPlan) {
+        console.log('📦 DELIVERY PLAN: No production plan found for today');
         // No production plan yet, initialize with empty data
         const initialAllocations = allKrispyKremeProducts.map((product, index) => ({
           productId: index + 1,
@@ -169,6 +175,8 @@ export default function DeliveryPlan() {
         .select('store_id, product_sku, quantity, day_part')
         .eq('production_plan_id', productionPlan.id) as any;
 
+      console.log('📦 DELIVERY PLAN: Allocations data:', allocationsData?.length, allocationsData);
+
       // Group allocations by product SKU
       const productAllocations = new Map<string, any[]>();
       if (allocationsData) {
@@ -180,9 +188,13 @@ export default function DeliveryPlan() {
         });
       }
 
+      console.log('📦 DELIVERY PLAN: Product allocations map:', Array.from(productAllocations.entries()));
+
       // Build allocations array
       const loadedAllocations = allKrispyKremeProducts.map((product, index) => {
         const productAllocs = productAllocations.get(product.sku) || [];
+        console.log(`📦 DELIVERY PLAN: Product ${product.sku} - found ${productAllocs.length} allocations`);
+        
         const storeAllocations = storeNames.map(storeName => {
           const storeId = storesData.find((s: any) => s.name === storeName)?.id;
           const allocation = productAllocs.find(a => a.store_id === storeId);
@@ -209,9 +221,10 @@ export default function DeliveryPlan() {
         };
       });
 
+      console.log('📦 DELIVERY PLAN: Final allocations:', loadedAllocations.slice(0, 3));
       setAllocations(loadedAllocations);
     } catch (error) {
-      console.error("Error loading data:", error);
+      console.error("❌ DELIVERY PLAN: Error loading data:", error);
       toast({
         title: "Error",
         description: "Failed to load delivery plan data",

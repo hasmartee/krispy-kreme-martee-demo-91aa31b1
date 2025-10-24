@@ -164,6 +164,14 @@ export default function SuggestedProduction() {
   const savePendingAllocations = async (productsToSave: Product[]) => {
     try {
       const productionDate = format(selectedDate, 'yyyy-MM-dd');
+      console.log('🔄 SAVING ALLOCATIONS for date:', productionDate);
+      console.log('🔄 Products to save:', productsToSave.map(p => ({ 
+        sku: p.id, 
+        store: p.store, 
+        storeId: p.storeId,
+        qty: p.finalOrder,
+        dayPart: p.dayPart 
+      })));
       
       // Get or create production plan
       let { data: existingPlan } = await supabase
@@ -173,6 +181,7 @@ export default function SuggestedProduction() {
         .single() as any;
 
       let planId = existingPlan?.id;
+      console.log('🔄 Existing plan ID:', planId);
 
       if (!existingPlan) {
         const { data: newPlan } = await supabase
@@ -184,9 +193,13 @@ export default function SuggestedProduction() {
           .select()
           .single() as any;
         planId = newPlan?.id;
+        console.log('🔄 Created new plan ID:', planId);
       }
 
-      if (!planId) return;
+      if (!planId) {
+        console.error('❌ No plan ID available');
+        return;
+      }
 
       // Save all allocations
       const allocations = productsToSave.map(p => ({
@@ -197,13 +210,22 @@ export default function SuggestedProduction() {
         day_part: p.dayPart || 'Morning',
       }));
 
-      await supabase
+      console.log('🔄 Upserting allocations:', allocations);
+
+      const { data: upsertResult, error } = await supabase
         .from('production_allocations')
         .upsert(allocations, {
           onConflict: 'production_plan_id,store_id,product_sku,day_part'
-        }) as any;
+        })
+        .select() as any;
+
+      if (error) {
+        console.error('❌ Upsert error:', error);
+      } else {
+        console.log('✅ Upserted successfully:', upsertResult);
+      }
     } catch (error) {
-      console.error('Error saving pending allocations:', error);
+      console.error('❌ Error saving pending allocations:', error);
     }
   };
 
