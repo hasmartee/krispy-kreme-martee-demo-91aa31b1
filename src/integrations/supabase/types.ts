@@ -512,6 +512,42 @@ export type Database = {
           },
         ]
       }
+      stock_adjustments: {
+        Row: {
+          adjustment_type: string
+          comment: string | null
+          created_at: string
+          created_by: string
+          id: string
+          product_id: string
+          quantity: number
+          store_id: string
+          updated_at: string
+        }
+        Insert: {
+          adjustment_type: string
+          comment?: string | null
+          created_at?: string
+          created_by: string
+          id?: string
+          product_id: string
+          quantity: number
+          store_id: string
+          updated_at?: string
+        }
+        Update: {
+          adjustment_type?: string
+          comment?: string | null
+          created_at?: string
+          created_by?: string
+          id?: string
+          product_id?: string
+          quantity?: number
+          store_id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       store_inventory: {
         Row: {
           created_at: string
