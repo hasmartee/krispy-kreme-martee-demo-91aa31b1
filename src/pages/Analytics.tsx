@@ -6,26 +6,13 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
 import { Button } from "@/components/ui/button";
-import { TrendingUp, TrendingDown, DollarSign, AlertCircle, CheckCircle, Sparkles, BrainCircuit, Users, CalendarIcon, Award, AlertTriangle } from "lucide-react";
-import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Area, AreaChart, ComposedChart, PieChart, Pie, Cell } from "recharts";
+import { TrendingUp, TrendingDown, CalendarIcon, Award, AlertTriangle } from "lucide-react";
+import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ComposedChart } from "recharts";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { useView } from "@/contexts/ViewContext";
 import { supabase } from "@/lib/supabase-helper";
-import { toast } from "sonner";
-
-// Mock data for charts
-const salesWasteData = [
-  { date: "Mon", sales: 4200, waste: 180 },
-  { date: "Tue", sales: 3800, waste: 160 },
-  { date: "Wed", sales: 4500, waste: 140 },
-  { date: "Thu", sales: 4100, waste: 190 },
-  { date: "Fri", sales: 5200, waste: 210 },
-  { date: "Sat", sales: 5800, waste: 220 },
-  { date: "Sun", sales: 4600, waste: 170 },
-];
 
 // Mock cluster performance data
 const clusterPerformanceData = [
@@ -75,79 +62,7 @@ const clusterPerformanceData = [
   },
 ];
 
-const volumeComparisonData = [
-  { product: "BLT Sand", recommended: 45, actual: 42, missed: 3 },
-  { product: "Caesar Wrap", recommended: 38, actual: 40, waste: 2 },
-  { product: "Avo Wrap", recommended: 32, actual: 28, missed: 4 },
-  { product: "Tuna Panini", recommended: 28, actual: 30, waste: 2 },
-  { product: "Med Salad", recommended: 35, actual: 35, optimal: 0 },
-  { product: "Salmon Bagel", recommended: 25, actual: 22, missed: 3 },
-];
-
-// Revenue forecast data (next 7 days)
-const revenueForecastStore = [
-  { day: "Mon", forecast: 172, confidence: 95, lower: 164, upper: 180 },
-  { day: "Tue", forecast: 158, confidence: 94, lower: 150, upper: 166 },
-  { day: "Wed", forecast: 185, confidence: 96, lower: 177, upper: 193 },
-  { day: "Thu", forecast: 168, confidence: 93, lower: 159, upper: 177 },
-  { day: "Fri", forecast: 198, confidence: 97, lower: 191, upper: 205 },
-  { day: "Sat", forecast: 225, confidence: 96, lower: 216, upper: 234 },
-  { day: "Sun", forecast: 180, confidence: 95, lower: 171, upper: 189 },
-];
-
-const revenueForecastHQ = [
-  { day: "Mon", forecast: 4350, confidence: 95, lower: 4140, upper: 4560 },
-  { day: "Tue", forecast: 4050, confidence: 94, lower: 3850, upper: 4250 },
-  { day: "Wed", forecast: 4680, confidence: 96, lower: 4470, upper: 4890 },
-  { day: "Thu", forecast: 4280, confidence: 93, lower: 4050, upper: 4510 },
-  { day: "Fri", forecast: 5100, confidence: 97, lower: 4900, upper: 5300 },
-  { day: "Sat", forecast: 5950, confidence: 96, lower: 5700, upper: 6200 },
-  { day: "Sun", forecast: 4750, confidence: 95, lower: 4510, upper: 4990 },
-];
-
-// Volume forecast data (top products for next week)
-const volumeForecastStore = [
-  { day: "Mon", blt: 18, caesar: 15, avocado: 13, tuna: 12, salad: 14 },
-  { day: "Tue", blt: 16, caesar: 14, avocado: 12, tuna: 11, salad: 13 },
-  { day: "Wed", blt: 19, caesar: 16, avocado: 14, tuna: 13, salad: 15 },
-  { day: "Thu", blt: 17, caesar: 15, avocado: 12, tuna: 12, salad: 14 },
-  { day: "Fri", blt: 21, caesar: 18, avocado: 15, tuna: 14, salad: 16 },
-  { day: "Sat", blt: 24, caesar: 20, avocado: 17, tuna: 16, salad: 18 },
-  { day: "Sun", blt: 19, caesar: 16, avocado: 14, tuna: 13, salad: 15 },
-];
-
-const volumeForecastHQ = [
-  { day: "Mon", blt: 46, caesar: 39, avocado: 33, tuna: 29, salad: 36 },
-  { day: "Tue", blt: 42, caesar: 36, avocado: 30, tuna: 27, salad: 33 },
-  { day: "Wed", blt: 48, caesar: 41, avocado: 35, tuna: 31, salad: 38 },
-  { day: "Thu", blt: 44, caesar: 38, avocado: 32, tuna: 29, salad: 35 },
-  { day: "Fri", blt: 52, caesar: 45, avocado: 38, tuna: 34, salad: 41 },
-  { day: "Sat", blt: 58, caesar: 50, avocado: 42, tuna: 38, salad: 46 },
-  { day: "Sun", blt: 47, caesar: 41, avocado: 34, tuna: 31, salad: 37 },
-];
-
-// Footfall forecast data (next 7 days)
-const footfallForecastStore = [
-  { day: "Mon", footfall: 285, morning: 95, afternoon: 120, evening: 70 },
-  { day: "Tue", footfall: 265, morning: 88, afternoon: 112, evening: 65 },
-  { day: "Wed", footfall: 310, morning: 105, afternoon: 130, evening: 75 },
-  { day: "Thu", footfall: 278, morning: 92, afternoon: 118, evening: 68 },
-  { day: "Fri", footfall: 340, morning: 110, afternoon: 145, evening: 85 },
-  { day: "Sat", footfall: 425, morning: 140, afternoon: 180, evening: 105 },
-  { day: "Sun", footfall: 305, morning: 100, afternoon: 128, evening: 77 },
-];
-
-const footfallForecastHQ = [
-  { day: "Mon", footfall: 1425, morning: 475, afternoon: 600, evening: 350 },
-  { day: "Tue", footfall: 1325, morning: 440, afternoon: 560, evening: 325 },
-  { day: "Wed", footfall: 1550, morning: 525, afternoon: 650, evening: 375 },
-  { day: "Thu", footfall: 1390, morning: 460, afternoon: 590, evening: 340 },
-  { day: "Fri", footfall: 1700, morning: 550, afternoon: 725, evening: 425 },
-  { day: "Sat", footfall: 2125, morning: 700, afternoon: 900, evening: 525 },
-  { day: "Sun", footfall: 1525, morning: 500, afternoon: 640, evening: 385 },
-];
-
-// Mock store performance data (Ole and Steen stores)
+// Mock store performance data
 const mockStorePerformance = [
   { id: "OS001", name: "Kings Cross Station", revenue: 41200, target: 40000, variance: 3.0, grossProfit: 16480, grossProfitMargin: 40.0, waste: 890, wastePercentage: 2.2, topProduct: "Almond Croissant" },
   { id: "OS002", name: "Liverpool Street Station", revenue: 38500, target: 37000, variance: 4.1, grossProfit: 15400, grossProfitMargin: 40.0, waste: 820, wastePercentage: 2.1, topProduct: "BLT Sandwich" },
@@ -157,7 +72,7 @@ const mockStorePerformance = [
   { id: "OS006", name: "Bank Station", revenue: 36800, target: 35500, variance: 3.7, grossProfit: 14720, grossProfitMargin: 40.0, waste: 750, wastePercentage: 2.0, topProduct: "Salmon Bagel" },
 ];
 
-// Mock product performance data (Ole and Steen products)
+// Mock product performance data
 const mockProductPerformance = [
   { id: "OS101", name: "Almond Croissant", soldUnits: 2850, revenue: 11400, margin: 62.5, waste: 95, wastePercentage: 3.2, trend: "up" },
   { id: "OS102", name: "Pain au Chocolat", soldUnits: 2620, revenue: 10480, margin: 64.2, waste: 88, wastePercentage: 3.1, trend: "up" },
@@ -169,84 +84,6 @@ const mockProductPerformance = [
   { id: "OS108", name: "Avocado Hummus Wrap", soldUnits: 1520, revenue: 9120, margin: 63.5, waste: 62, wastePercentage: 3.9, trend: "down" },
 ];
 
-// Mock daily trend data
-const mockDailyTrend = [
-  { date: "Mon", revenue: 28500, target: 26000 },
-  { date: "Tue", revenue: 26800, target: 26000 },
-  { date: "Wed", revenue: 29200, target: 26000 },
-  { date: "Thu", revenue: 27600, target: 26000 },
-  { date: "Fri", revenue: 31400, target: 26000 },
-  { date: "Sat", revenue: 33800, target: 26000 },
-  { date: "Sun", revenue: 30200, target: 26000 },
-];
-
-// Meal period revenue breakdown (Store view)
-const mealPeriodRevenueStore = [
-  { name: "Breakfast", value: 580, percentage: 31.4 },
-  { name: "Lunch", value: 890, percentage: 48.1 },
-  { name: "Afternoon", value: 380, percentage: 20.5 },
-];
-
-// Meal period revenue breakdown (HQ view)
-const mealPeriodRevenueHQ = [
-  { name: "Breakfast", value: 14200, percentage: 31.4 },
-  { name: "Lunch", value: 21750, percentage: 48.1 },
-  { name: "Afternoon", value: 9281, percentage: 20.5 },
-];
-
-// Product category revenue by day (Store view)
-const categoryRevenueStore = [
-  { day: "Mon", pastries: 58, sandwiches: 48, wraps: 42, salads: 20 },
-  { day: "Tue", pastries: 52, sandwiches: 44, wraps: 38, salads: 18 },
-  { day: "Wed", pastries: 64, sandwiches: 52, wraps: 45, salads: 24 },
-  { day: "Thu", pastries: 56, sandwiches: 48, wraps: 40, salads: 21 },
-  { day: "Fri", pastries: 68, sandwiches: 58, wraps: 52, salads: 26 },
-  { day: "Sat", pastries: 78, sandwiches: 65, wraps: 58, salads: 30 },
-  { day: "Sun", pastries: 62, sandwiches: 52, wraps: 44, salads: 23 },
-];
-
-// Product category revenue by day (HQ view - 50 stores)
-const categoryRevenueHQ = [
-  { day: "Mon", pastries: 2900, sandwiches: 2400, wraps: 2100, salads: 1000 },
-  { day: "Tue", pastries: 2600, sandwiches: 2200, wraps: 1900, salads: 900 },
-  { day: "Wed", pastries: 3200, sandwiches: 2600, wraps: 2250, salads: 1200 },
-  { day: "Thu", pastries: 2800, sandwiches: 2400, wraps: 2000, salads: 1050 },
-  { day: "Fri", pastries: 3400, sandwiches: 2900, wraps: 2600, salads: 1300 },
-  { day: "Sat", pastries: 3900, sandwiches: 3250, wraps: 2900, salads: 1500 },
-  { day: "Sun", pastries: 3100, sandwiches: 2600, wraps: 2200, salads: 1150 },
-];
-
-const CHART_COLORS = {
-  breakfast: "hsl(18 85% 78%)", // primary/peach
-  lunch: "hsl(88 32% 62%)", // accent/green
-  afternoon: "hsl(23 100% 65%)", // warning/orange
-  pastries: "hsl(18 85% 78%)", // peach for pastries
-  sandwiches: "hsl(88 32% 62%)", // green for sandwiches
-  wraps: "hsl(23 100% 65%)", // orange for wraps
-  salads: "hsl(140 24% 24%)", // dark green for salads
-};
-
-// Brand to store mapping (using actual database store names)
-const storeBrands: Record<string, string> = {
-  // Pret a Manger stores (transport hubs & high street)
-  "Kings Cross Station": "Pret a Manger",
-  "Liverpool Street Station": "Pret a Manger",
-  "St Pancras International": "Pret a Manger",
-  "Shoreditch High Street": "Pret a Manger",
-  
-  // Brioche Dorée stores (upscale & residential areas)
-  "Bond Street": "Brioche Dorée",
-  "Notting Hill Gate": "Brioche Dorée",
-  "Greenwich Village": "Brioche Dorée",
-  "Wimbledon Village": "Brioche Dorée",
-  
-  // Starbucks stores (business district & mixed)
-  "Bank Station": "Starbucks",
-  "Canary Wharf Plaza": "Starbucks",
-  "The City - Leadenhall": "Starbucks",
-  "Camden Town": "Starbucks"
-};
-
 export default function Analytics() {
   const { viewMode, selectedStore: contextSelectedStore } = useView();
   const [selectedStore, setSelectedStore] = useState<string>("all");
@@ -255,8 +92,7 @@ export default function Analytics() {
     from: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
     to: new Date()
   });
-  const [aiInsights, setAiInsights] = useState<any[]>([]);
-  const [loadingInsights, setLoadingInsights] = useState(false);
+  const [compareRange, setCompareRange] = useState<{ from: Date; to: Date } | null>(null);
 
   useEffect(() => {
     const loadStores = async () => {
@@ -273,34 +109,6 @@ export default function Analytics() {
     loadStores();
   }, []);
 
-  const fetchAIInsights = async () => {
-    setLoadingInsights(true);
-    try {
-      const productData = [
-        { name: "Almond Croissant", category: "Pastries", expected: isSingleStoreView ? 57.0 : 2850, actual: isSingleStoreView ? 56.4 : 2820, variance: -1.1 },
-        { name: "Pain au Chocolat", category: "Pastries", expected: isSingleStoreView ? 52.4 : 2620, actual: isSingleStoreView ? 53.0 : 2650, variance: 1.1 },
-        { name: "BLT Sandwich", category: "Sandwiches", expected: isSingleStoreView ? 38.8 : 1940, actual: isSingleStoreView ? 38.2 : 1910, variance: -1.5 },
-        { name: "Caesar Wrap", category: "Wraps", expected: isSingleStoreView ? 33.6 : 1680, actual: isSingleStoreView ? 34.0 : 1700, variance: 1.2 },
-        { name: "Mediterranean Salad", category: "Salads", expected: isSingleStoreView ? 28.4 : 1420, actual: isSingleStoreView ? 28.4 : 1420, variance: 0.0 }
-      ];
-
-      const { data, error } = await supabase.functions.invoke('ingredient-insights', {
-        body: { ingredientData: productData }
-      });
-
-      if (error) throw error;
-      
-      if (data?.insights) {
-        setAiInsights(data.insights);
-      }
-    } catch (error) {
-      console.error('Error fetching AI insights:', error);
-      toast.error('Failed to load AI insights');
-    } finally {
-      setLoadingInsights(false);
-    }
-  };
-
   // Filter data based on view mode and selected store
   const filteredStorePerformance = viewMode === "store_manager" 
     ? mockStorePerformance.slice(0, 1)
@@ -308,117 +116,47 @@ export default function Analytics() {
       ? mockStorePerformance 
       : mockStorePerformance.filter(s => s.name === selectedStore);
 
-  // Determine if we're showing a single store (either in store view or filtered in HQ view)
   const isSingleStoreView = viewMode === "store_manager" || (viewMode === "hq" && selectedStore !== "all");
   
-  // Store-specific data (for Store View)
+  // Store-specific data
   const storeData = {
     revenue: 1286,
-    revenueChange: 18.2,
     grossProfit: 772,
-    grossProfitChange: 16.5,
     waste: 45,
-    wasteChange: -22.1,
-    salesWasteData: [
-      { date: "Mon", sales: 165, waste: 6 },
-      { date: "Tue", sales: 148, waste: 5 },
-      { date: "Wed", sales: 178, waste: 5 },
-      { date: "Thu", sales: 162, waste: 7 },
-      { date: "Fri", sales: 195, waste: 8 },
-      { date: "Sat", sales: 218, waste: 9 },
-      { date: "Sun", sales: 174, waste: 5 },
-    ],
+    soldQty: 342,
+    wastedQty: 18,
+    deliveredQty: 360,
     revenueComparisonData: [
-      { date: "Mon", predicted: 170, actual: 165 },
-      { date: "Tue", predicted: 155, actual: 148 },
-      { date: "Wed", predicted: 175, actual: 178 },
-      { date: "Thu", predicted: 168, actual: 162 },
-      { date: "Fri", predicted: 190, actual: 195 },
-      { date: "Sat", predicted: 210, actual: 218 },
-      { date: "Sun", predicted: 180, actual: 174 },
+      { date: "Mon", predicted: 170, actual: 165, variance: -2.9 },
+      { date: "Tue", predicted: 155, actual: 148, variance: -4.5 },
+      { date: "Wed", predicted: 175, actual: 178, variance: 1.7 },
+      { date: "Thu", predicted: 168, actual: 162, variance: -3.6 },
+      { date: "Fri", predicted: 190, actual: 195, variance: 2.6 },
+      { date: "Sat", predicted: 210, actual: 218, variance: 3.8 },
+      { date: "Sun", predicted: 180, actual: 174, variance: -3.3 },
     ],
-    volumeComparisonData: [
-      { product: "BLT Sand", recommended: 18, actual: 17, missed: 1 },
-      { product: "Caesar Wrap", recommended: 15, actual: 16, waste: 1 },
-      { product: "Avo Wrap", recommended: 13, actual: 11, missed: 2 },
-      { product: "Tuna Panini", recommended: 11, actual: 12, waste: 1 },
-      { product: "Med Salad", recommended: 14, actual: 14, optimal: 0 },
-      { product: "Salmon Bagel", recommended: 10, actual: 9, missed: 1 },
-    ]
   };
   
-  // HQ data (50 stores combined - Ole and Steen)
+  // HQ data
   const hqData = {
-    revenue: 1840000, // 50 stores * ~£36,800 average
-    revenueChange: 20.1,
-    grossProfit: 736000, // 40% margin
-    grossProfitChange: 15.3,
-    waste: 36800, // 2% waste rate
-    wasteChange: -18,
-    salesWasteData: [
-      { date: "Mon", sales: 258000, waste: 5160 },
-      { date: "Tue", sales: 246000, waste: 4920 },
-      { date: "Wed", sales: 272000, waste: 5440 },
-      { date: "Thu", sales: 254000, waste: 5080 },
-      { date: "Fri", sales: 289000, waste: 5780 },
-      { date: "Sat", sales: 315000, waste: 6300 },
-      { date: "Sun", sales: 268000, waste: 5360 },
-    ],
+    revenue: 1840000,
+    grossProfit: 736000,
+    waste: 36800,
+    soldQty: 8420,
+    wastedQty: 395,
+    deliveredQty: 8950,
     revenueComparisonData: [
-      { date: "Mon", predicted: 260000, actual: 258000 },
-      { date: "Tue", predicted: 248000, actual: 246000 },
-      { date: "Wed", predicted: 270000, actual: 272000 },
-      { date: "Thu", predicted: 256000, actual: 254000 },
-      { date: "Fri", predicted: 285000, actual: 289000 },
-      { date: "Sat", predicted: 310000, actual: 315000 },
-      { date: "Sun", predicted: 265000, actual: 268000 },
+      { date: "Mon", predicted: 260000, actual: 258000, variance: -0.8 },
+      { date: "Tue", predicted: 248000, actual: 246000, variance: -0.8 },
+      { date: "Wed", predicted: 270000, actual: 272000, variance: 0.7 },
+      { date: "Thu", predicted: 256000, actual: 254000, variance: -0.8 },
+      { date: "Fri", predicted: 285000, actual: 289000, variance: 1.4 },
+      { date: "Sat", predicted: 310000, actual: 315000, variance: 1.6 },
+      { date: "Sun", predicted: 265000, actual: 268000, variance: 1.1 },
     ],
-    volumeComparisonData: [
-      { product: "Almond Crois.", recommended: 2850, actual: 2820, missed: 30 },
-      { product: "Pain Choc.", recommended: 2620, actual: 2650, waste: 30 },
-      { product: "BLT Sand.", recommended: 1940, actual: 1910, missed: 30 },
-      { product: "Caesar Wrap", recommended: 1680, actual: 1700, waste: 20 },
-      { product: "Med Salad", recommended: 1420, actual: 1420, optimal: 0 },
-      { product: "Salmon Bagel", recommended: 1280, actual: 1250, missed: 30 },
-    ]
   };
   
-  // Calculate aggregated data for filtered stores
-  const getAggregatedData = () => {
-    if (viewMode === "store_manager") {
-      return storeData;
-    }
-    
-    if (selectedStore === "all") {
-      return hqData;
-    }
-    
-    // Single store selected in HQ view - use store-like data scaled appropriately
-    const storeInfo = filteredStorePerformance[0];
-    if (!storeInfo) return hqData;
-    
-    return {
-      revenue: Math.round(storeInfo.revenue / 100) * 10, // Scale to weekly
-      revenueChange: 18.2,
-      grossProfit: Math.round(storeInfo.grossProfit / 10),
-      grossProfitChange: 16.5,
-      waste: Math.round(storeInfo.waste / 10),
-      wasteChange: -18,
-      salesWasteData: storeData.salesWasteData.map(d => ({
-        ...d,
-        sales: Math.round(d.sales * (storeInfo.revenue / 1850)),
-        waste: Math.round(d.waste * (storeInfo.waste / 52))
-      })),
-      revenueComparisonData: storeData.revenueComparisonData.map(d => ({
-        ...d,
-        predicted: Math.round(d.predicted * (storeInfo.revenue / 1850)),
-        actual: Math.round(d.actual * (storeInfo.revenue / 1850))
-      })),
-      volumeComparisonData: storeData.volumeComparisonData
-    };
-  };
-  
-  const currentData = getAggregatedData();
+  const currentData = isSingleStoreView ? storeData : hqData;
 
   const getVarianceBadge = (variance: number) => {
     if (variance > 5) return <Badge className="bg-success text-success-foreground">+{variance.toFixed(1)}%</Badge>;
@@ -433,10 +171,9 @@ export default function Analytics() {
       <TrendingDown className="h-4 w-4 text-destructive" />
     );
   };
-  
-  const revenueForecast = isSingleStoreView ? revenueForecastStore : revenueForecastHQ;
-  const volumeForecast = isSingleStoreView ? volumeForecastStore : volumeForecastHQ;
-  const footfallForecast = isSingleStoreView ? footfallForecastStore : footfallForecastHQ;
+
+  // Calculate average variance
+  const avgVariance = currentData.revenueComparisonData.reduce((sum, d) => sum + d.variance, 0) / currentData.revenueComparisonData.length;
   
   return (
     <div className="flex-1 space-y-6 p-6">
@@ -452,8 +189,8 @@ export default function Analytics() {
         </div>
       </div>
 
-      {/* Big Box with Period and Store Selectors + KPIs */}
-      <Card className="shadow-card">
+      {/* Big Orange Box with Metrics */}
+      <Card className="shadow-lg" style={{ backgroundColor: 'hsl(var(--warning-orange))' }}>
         <CardContent className="p-6">
           {/* Heading */}
           <div className="mb-4">
@@ -466,7 +203,7 @@ export default function Analytics() {
           {viewMode === "hq" ? (
             <div className="flex flex-col sm:flex-row gap-4 mb-6">
               <Select value={selectedStore} onValueChange={setSelectedStore}>
-                <SelectTrigger className="w-[200px]">
+                <SelectTrigger className="w-[200px] bg-background">
                   <SelectValue placeholder="Select store" />
                 </SelectTrigger>
                 <SelectContent>
@@ -481,7 +218,7 @@ export default function Analytics() {
               
               <Popover>
                 <PopoverTrigger asChild>
-                  <Button variant="outline" className="w-[280px] justify-start text-left font-normal">
+                  <Button variant="outline" className="w-[280px] justify-start text-left font-normal bg-background">
                     <CalendarIcon className="mr-2 h-4 w-4" />
                     {dateRange?.from ? (
                       dateRange.to ? (
@@ -504,6 +241,36 @@ export default function Analytics() {
                     defaultMonth={dateRange?.from}
                     selected={{ from: dateRange?.from, to: dateRange?.to }}
                     onSelect={(range: any) => range && setDateRange(range)}
+                    numberOfMonths={2}
+                    className={cn("p-3 pointer-events-auto")}
+                  />
+                </PopoverContent>
+              </Popover>
+
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button variant="outline" className="w-[300px] justify-start text-left font-normal bg-background">
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {compareRange?.from ? (
+                      compareRange.to ? (
+                        <>
+                          Compare: {format(compareRange.from, "MMM dd")} - {format(compareRange.to, "MMM dd")}
+                        </>
+                      ) : (
+                        `Compare: ${format(compareRange.from, "MMM dd")}`
+                      )
+                    ) : (
+                      <span>Compare to previous period</span>
+                    )}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    initialFocus
+                    mode="range"
+                    defaultMonth={compareRange?.from}
+                    selected={compareRange ? { from: compareRange.from, to: compareRange.to } : undefined}
+                    onSelect={(range: any) => setCompareRange(range || null)}
                     numberOfMonths={2}
                     className={cn("p-3 pointer-events-auto")}
                   />
@@ -514,7 +281,7 @@ export default function Analytics() {
             <div className="flex flex-col sm:flex-row gap-4 mb-6">
               <Popover>
                 <PopoverTrigger asChild>
-                  <Button variant="outline" className="w-[280px] justify-start text-left font-normal">
+                  <Button variant="outline" className="w-[280px] justify-start text-left font-normal bg-background">
                     <CalendarIcon className="mr-2 h-4 w-4" />
                     {dateRange?.from ? (
                       dateRange.to ? (
@@ -542,318 +309,246 @@ export default function Analytics() {
                   />
                 </PopoverContent>
               </Popover>
+
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button variant="outline" className="w-[300px] justify-start text-left font-normal bg-background">
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {compareRange?.from ? (
+                      compareRange.to ? (
+                        <>
+                          Compare: {format(compareRange.from, "MMM dd")} - {format(compareRange.to, "MMM dd")}
+                        </>
+                      ) : (
+                        `Compare: ${format(compareRange.from, "MMM dd")}`
+                      )
+                    ) : (
+                      <span>Compare to previous period</span>
+                    )}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    initialFocus
+                    mode="range"
+                    defaultMonth={compareRange?.from}
+                    selected={compareRange ? { from: compareRange.from, to: compareRange.to } : undefined}
+                    onSelect={(range: any) => setCompareRange(range || null)}
+                    numberOfMonths={2}
+                    className={cn("p-3 pointer-events-auto")}
+                  />
+                </PopoverContent>
+              </Popover>
             </div>
           )}
 
-          {/* Four Main KPI Cards - Added Gross Profit */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            {/* Revenue Card with Sub-cards */}
-            <div className="space-y-3">
-              <Card className="bg-background shadow-lg">
-                <CardHeader className="pb-3">
-                  <CardTitle className="text-sm font-medium text-muted-foreground">Revenue</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-3xl font-bold" style={{ color: 'hsl(var(--success-green))' }}>£{currentData.revenue.toLocaleString()}</div>
-                  <p className="text-xs text-muted-foreground mt-2">
-                    {currentData.revenueChange > 0 ? (
-                      <><TrendingUp className="inline h-3 w-3 mr-1 text-success" />+{currentData.revenueChange}% from previous period</>
-                    ) : (
-                      <><TrendingDown className="inline h-3 w-3 mr-1 text-destructive" />{currentData.revenueChange}% from previous period</>
-                    )}
-                  </p>
-                </CardContent>
-              </Card>
-              
-              {/* Sub-cards: Full Price and Reduced Price */}
-              <div className="grid grid-cols-2 gap-2">
-                <Card className="bg-background shadow-md">
-                  <CardContent className="p-3">
-                    <div className="text-xs text-muted-foreground mb-1">Full Price</div>
-                    <div className="text-lg font-bold text-foreground">
-                      £{isSingleStoreView ? "1,480" : "36,185"}
-                    </div>
-                    <div className="text-xs text-muted-foreground">80% of revenue</div>
-                  </CardContent>
-                </Card>
-                <Card className="bg-background shadow-md">
-                  <CardContent className="p-3">
-                    <div className="text-xs text-muted-foreground mb-1">Reduced Price</div>
-                    <div className="text-lg font-bold text-foreground">
-                      £{isSingleStoreView ? "370" : "9,046"}
-                    </div>
-                    <div className="text-xs text-muted-foreground">20% of revenue</div>
-                  </CardContent>
-                </Card>
-              </div>
-            </div>
-
-            {/* Gross Profit Card */}
-            <div className="space-y-3">
-              <Card className="bg-background shadow-lg">
-                <CardHeader className="pb-3">
-                  <CardTitle className="text-sm font-medium text-muted-foreground">Gross Profit</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-3xl font-bold text-primary">
-                    £{currentData.grossProfit.toLocaleString()}
-                    <span className="text-lg text-muted-foreground ml-2">
-                      ({((currentData.grossProfit / currentData.revenue) * 100).toFixed(1)}%)
-                    </span>
+          {/* Three Main Metrics: Sold, Wasted, Delivered */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+            {/* Sold Qty */}
+            <Card className="bg-background/95 shadow-lg">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-lg font-semibold">Sold Qty</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div>
+                  <div className="text-4xl font-bold text-foreground">
+                    {currentData.soldQty.toLocaleString()}
                   </div>
-                  <p className="text-xs text-muted-foreground mt-2">
-                    {currentData.grossProfitChange > 0 ? (
-                      <><TrendingUp className="inline h-3 w-3 mr-1 text-success" />+{currentData.grossProfitChange}% from previous period</>
-                    ) : (
-                      <><TrendingDown className="inline h-3 w-3 mr-1 text-destructive" />{currentData.grossProfitChange}% from previous period</>
-                    )}
-                  </p>
-                </CardContent>
-              </Card>
-            </div>
-
-            {/* Waste Card with Sub-cards */}
-            <div className="space-y-3">
-              <Card className="bg-background shadow-lg">
-                <CardHeader className="pb-3">
-                  <CardTitle className="text-sm font-medium text-muted-foreground">Waste</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-3xl font-bold" style={{ color: 'hsl(var(--warning-orange))' }}>
-                    £{currentData.waste.toLocaleString()}
-                    <span className="text-lg text-muted-foreground ml-2">
-                      ({((currentData.waste / currentData.revenue) * 100).toFixed(1)}%)
-                    </span>
+                  <div className="flex items-center gap-2 mt-1">
+                    <div className="text-sm text-muted-foreground">94.2% of total</div>
+                    <Badge variant="outline" className="text-xs" style={{ color: 'hsl(var(--success-green))', borderColor: 'hsl(var(--success-green))' }}>
+                      +5.3% vs last week
+                    </Badge>
                   </div>
-                  <p className="text-xs text-muted-foreground mt-2">
-                    {currentData.wasteChange < 0 ? (
-                      <><TrendingDown className="inline h-3 w-3 mr-1 text-success" />{currentData.wasteChange}% from previous period</>
-                    ) : (
-                      <><TrendingUp className="inline h-3 w-3 mr-1 text-destructive" />+{currentData.wasteChange}% from previous period</>
-                    )}
-                  </p>
-                </CardContent>
-              </Card>
-              
-              {/* Sub-cards: End Product only */}
-              <div className="grid grid-cols-1 gap-2">
-                <Card className="bg-background shadow-md">
-                  <CardContent className="p-3">
-                    <div className="text-xs text-muted-foreground mb-1">Product Waste</div>
-                    <div className="text-lg font-bold text-foreground">
-                      £{currentData.waste.toLocaleString()}
-                    </div>
-                    <div className="text-xs text-muted-foreground">Finished products wasted</div>
-                  </CardContent>
-                </Card>
-              </div>
-            </div>
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <Card className="bg-muted/50">
+                    <CardContent className="p-3">
+                      <div className="text-xs text-muted-foreground mb-1">Full Price</div>
+                      <div className="text-xl font-semibold">{Math.round(currentData.soldQty * 0.818).toLocaleString()}</div>
+                      <div className="text-xs text-muted-foreground">81.8%</div>
+                    </CardContent>
+                  </Card>
+                  <Card className="bg-muted/50">
+                    <CardContent className="p-3">
+                      <div className="text-xs text-muted-foreground mb-1">Reduced Price</div>
+                      <div className="text-xl font-semibold">{Math.round(currentData.soldQty * 0.182).toLocaleString()}</div>
+                      <div className="text-xs text-muted-foreground">18.2%</div>
+                    </CardContent>
+                  </Card>
+                </div>
+              </CardContent>
+            </Card>
 
-            {/* Availability Card */}
-            <div className="space-y-3">
-              <Card className="bg-background shadow-lg">
-                <CardHeader className="pb-3">
-                  <CardTitle className="text-sm font-medium text-muted-foreground">Availability</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-3xl font-bold text-foreground">94.5%</div>
-                  <p className="text-xs text-muted-foreground mt-2">
-                    <TrendingUp className="inline h-3 w-3 mr-1 text-success" />
-                    +2.3% from previous period
-                  </p>
-                </CardContent>
-              </Card>
-            </div>
+            {/* Wasted Qty */}
+            <Card className="bg-background/95 shadow-lg">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-lg font-semibold">Wasted Qty</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div>
+                  <div className="text-4xl font-bold" style={{ color: 'hsl(var(--destructive))' }}>
+                    {currentData.wastedQty}
+                  </div>
+                  <div className="flex items-center gap-2 mt-1">
+                    <div className="text-sm text-muted-foreground">4.4% of total</div>
+                    <Badge variant="outline" className="text-xs" style={{ color: 'hsl(var(--success-green))', borderColor: 'hsl(var(--success-green))' }}>
+                      -2.1% vs last week
+                    </Badge>
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <Card className="bg-muted/50">
+                    <CardContent className="p-3">
+                      <div className="text-xs text-muted-foreground mb-1">Product Waste</div>
+                      <div className="text-xl font-semibold">{currentData.wastedQty}</div>
+                      <div className="text-xs text-muted-foreground">100%</div>
+                    </CardContent>
+                  </Card>
+                  <Card className="bg-muted/50">
+                    <CardContent className="p-3">
+                      <div className="text-xs text-muted-foreground mb-1">Value</div>
+                      <div className="text-xl font-semibold">£{currentData.waste.toLocaleString()}</div>
+                      <div className="text-xs text-muted-foreground">{((currentData.waste / currentData.revenue) * 100).toFixed(1)}%</div>
+                    </CardContent>
+                  </Card>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Delivered Qty */}
+            <Card className="bg-background/95 shadow-lg">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-lg font-semibold">Delivered Qty</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div>
+                  <div className="text-4xl font-bold" style={{ color: 'hsl(var(--accent))' }}>
+                    {currentData.deliveredQty.toLocaleString()}
+                  </div>
+                  <div className="flex items-center gap-2 mt-1">
+                    <div className="text-sm text-muted-foreground">Target delivery</div>
+                    <Badge variant="outline" className="text-xs" style={{ color: 'hsl(var(--success-green))', borderColor: 'hsl(var(--success-green))' }}>
+                      +1.2% vs target
+                    </Badge>
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <Card className="bg-muted/50">
+                    <CardContent className="p-3">
+                      <div className="text-xs text-muted-foreground mb-1">Expected</div>
+                      <div className="text-xl font-semibold">{Math.round(currentData.deliveredQty * 1.016).toLocaleString()}</div>
+                      <div className="text-xs text-muted-foreground">100%</div>
+                    </CardContent>
+                  </Card>
+                  <Card className="bg-muted/50">
+                    <CardContent className="p-3">
+                      <div className="text-xs text-muted-foreground mb-1">Received</div>
+                      <div className="text-xl font-semibold">{currentData.deliveredQty.toLocaleString()}</div>
+                      <div className="text-xs text-muted-foreground">98.4%</div>
+                    </CardContent>
+                  </Card>
+                </div>
+              </CardContent>
+            </Card>
           </div>
         </CardContent>
       </Card>
 
-      {/* Revenue Analysis Charts */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Meal Period Revenue Breakdown Pie Chart */}
-        <Card className="shadow-card">
-          <CardHeader>
-            <CardTitle>Revenue by Meal Period</CardTitle>
-            <CardDescription>Breakdown of revenue across Breakfast, Lunch, and Afternoon</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={300}>
-              <PieChart>
-                <Pie
-                  data={isSingleStoreView ? mealPeriodRevenueStore : mealPeriodRevenueHQ}
-                  cx="50%"
-                  cy="50%"
-                  labelLine={false}
-                  label={({ name, percentage }) => `${name} ${percentage}%`}
-                  outerRadius={100}
-                  fill="#8884d8"
-                  dataKey="value"
-                >
-                  <Cell fill={CHART_COLORS.breakfast} />
-                  <Cell fill={CHART_COLORS.lunch} />
-                  <Cell fill={CHART_COLORS.afternoon} />
-                </Pie>
-                <Tooltip 
-                  formatter={(value: number) => `£${value.toLocaleString()}`}
-                  contentStyle={{ 
-                    backgroundColor: "hsl(var(--popover))", 
-                    border: "1px solid hsl(var(--border))",
-                    borderRadius: "8px"
-                  }}
-                />
-                <Legend />
-              </PieChart>
-            </ResponsiveContainer>
-            <div className="mt-4 grid grid-cols-3 gap-3">
-              {(isSingleStoreView ? mealPeriodRevenueStore : mealPeriodRevenueHQ).map((period, index) => (
-                <div key={period.name} className="text-center p-3 rounded-lg border" style={{ borderColor: [CHART_COLORS.breakfast, CHART_COLORS.lunch, CHART_COLORS.afternoon][index] }}>
-                  <div className="text-sm text-muted-foreground">{period.name}</div>
-                  <div className="text-lg font-bold text-foreground">£{period.value.toLocaleString()}</div>
-                  <div className="text-xs text-muted-foreground">{period.percentage}%</div>
+      {/* Predicted vs Actual Sales Chart */}
+      <Card className="shadow-lg">
+        <CardHeader>
+          <CardTitle>Predicted vs Actual Sales</CardTitle>
+          <CardDescription>
+            AI revenue predictions compared to actual performance
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <ResponsiveContainer width="100%" height={350}>
+            <ComposedChart data={currentData.revenueComparisonData}>
+              <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--muted))" />
+              <XAxis 
+                dataKey="date" 
+                stroke="hsl(var(--muted-foreground))"
+                fontSize={12}
+              />
+              <YAxis 
+                stroke="hsl(var(--muted-foreground))"
+                fontSize={12}
+                tickFormatter={(value) => `£${(value / 1000).toFixed(0)}k`}
+              />
+              <Tooltip
+                formatter={(value: number) => [`£${value.toLocaleString()}`, '']}
+                contentStyle={{
+                  backgroundColor: "hsl(var(--background))",
+                  border: "1px solid hsl(var(--border))",
+                  borderRadius: "8px",
+                }}
+              />
+              <Legend />
+              <Bar 
+                dataKey="predicted" 
+                fill="hsl(var(--primary))" 
+                name="Predicted Revenue"
+                radius={[4, 4, 0, 0]}
+              />
+              <Line 
+                type="monotone" 
+                dataKey="actual" 
+                stroke="hsl(var(--accent))" 
+                strokeWidth={3}
+                name="Actual Revenue"
+                dot={{ fill: "hsl(var(--accent))", r: 5 }}
+              />
+            </ComposedChart>
+          </ResponsiveContainer>
+          <div className="mt-6 p-4 rounded-lg bg-muted/30 border">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="flex items-center gap-3">
+                <div className="h-12 w-12 rounded-lg bg-primary/20 flex items-center justify-center">
+                  <TrendingUp className="h-6 w-6 text-primary" />
                 </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Product Category Revenue Stacked Bar Chart */}
-        <Card className="shadow-card">
-          <CardHeader>
-            <CardTitle>Revenue by Product Category</CardTitle>
-            <CardDescription>Daily revenue contribution from each product category</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={isSingleStoreView ? categoryRevenueStore : categoryRevenueHQ}>
-                <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
-                <XAxis dataKey="day" stroke="hsl(var(--muted-foreground))" />
-                <YAxis stroke="hsl(var(--muted-foreground))" />
-                <Tooltip 
-                  formatter={(value: number) => `£${value.toLocaleString()}`}
-                  contentStyle={{ 
-                    backgroundColor: "hsl(var(--popover))", 
-                    border: "1px solid hsl(var(--border))",
-                    borderRadius: "8px"
-                  }}
-                />
-                <Legend />
-                <Bar dataKey="pastries" stackId="a" fill={CHART_COLORS.pastries} name="Pastries" />
-                <Bar dataKey="sandwiches" stackId="a" fill={CHART_COLORS.sandwiches} name="Sandwiches & Toasts" />
-                <Bar dataKey="wraps" stackId="a" fill={CHART_COLORS.wraps} name="Wraps" />
-                <Bar dataKey="salads" stackId="a" fill={CHART_COLORS.salads} name="Salads & Bowls" />
-              </BarChart>
-            </ResponsiveContainer>
-            <div className="mt-4 p-4 rounded-lg bg-muted/30 border">
-              <div className="grid grid-cols-2 gap-3 text-sm">
-                <div className="flex items-center gap-2">
-                  <div className="h-3 w-3 rounded" style={{ backgroundColor: CHART_COLORS.pastries }}></div>
-                  <span className="text-muted-foreground">Pastries</span>
+                <div>
+                  <div className="text-sm text-muted-foreground">Average Variance</div>
+                  <div className="text-xl font-bold" style={{ color: avgVariance >= 0 ? 'hsl(var(--success-green))' : 'hsl(var(--destructive))' }}>
+                    {avgVariance >= 0 ? '+' : ''}{avgVariance.toFixed(1)}%
+                  </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  <div className="h-3 w-3 rounded" style={{ backgroundColor: CHART_COLORS.sandwiches }}></div>
-                  <span className="text-muted-foreground">Sandwiches & Toasts</span>
+              </div>
+              <div className="flex items-center gap-3">
+                <div className="h-12 w-12 rounded-lg bg-accent/20 flex items-center justify-center">
+                  <TrendingUp className="h-6 w-6 text-accent" />
                 </div>
-                <div className="flex items-center gap-2">
-                  <div className="h-3 w-3 rounded" style={{ backgroundColor: CHART_COLORS.wraps }}></div>
-                  <span className="text-muted-foreground">Wraps</span>
+                <div>
+                  <div className="text-sm text-muted-foreground">Best Day</div>
+                  <div className="text-xl font-bold text-foreground">
+                    {currentData.revenueComparisonData.reduce((prev, curr) => 
+                      curr.variance > prev.variance ? curr : prev
+                    ).date} (+{currentData.revenueComparisonData.reduce((prev, curr) => 
+                      curr.variance > prev.variance ? curr : prev
+                    ).variance.toFixed(1)}%)
+                  </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  <div className="h-3 w-3 rounded" style={{ backgroundColor: CHART_COLORS.salads }}></div>
-                  <span className="text-muted-foreground">Salads & Bowls</span>
+              </div>
+              <div className="flex items-center gap-3">
+                <div className="h-12 w-12 rounded-lg bg-destructive/20 flex items-center justify-center">
+                  <TrendingDown className="h-6 w-6 text-destructive" />
+                </div>
+                <div>
+                  <div className="text-sm text-muted-foreground">Worst Day</div>
+                  <div className="text-xl font-bold text-foreground">
+                    {currentData.revenueComparisonData.reduce((prev, curr) => 
+                      curr.variance < prev.variance ? curr : prev
+                    ).date} ({currentData.revenueComparisonData.reduce((prev, curr) => 
+                      curr.variance < prev.variance ? curr : prev
+                    ).variance.toFixed(1)}%)
+                  </div>
                 </div>
               </div>
             </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Charts Row */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Sales & Waste Over Time */}
-        <Card className="shadow-card">
-          <CardHeader>
-            <CardTitle>Sales & Waste Trends</CardTitle>
-            <CardDescription>Daily performance over the past week</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={300}>
-              <LineChart data={currentData.salesWasteData}>
-                <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
-                <XAxis dataKey="date" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-                <Line 
-                  type="monotone" 
-                  dataKey="sales" 
-                  stroke="hsl(var(--primary))" 
-                  strokeWidth={2}
-                  name="Sales (£)"
-                />
-                <Line 
-                  type="monotone" 
-                  dataKey="waste" 
-                  stroke="hsl(var(--destructive))" 
-                  strokeWidth={2}
-                  name="Waste (£)"
-                />
-              </LineChart>
-            </ResponsiveContainer>
-            <div className="mt-4 space-y-2">
-              <div className="flex items-center gap-2 text-sm">
-                <TrendingUp className="h-4 w-4 text-success" />
-                <span className="text-muted-foreground">
-                  Sales peaked on Saturday with strong weekend performance
-                </span>
-              </div>
-              <div className="flex items-center gap-2 text-sm">
-                <TrendingDown className="h-4 w-4 text-success" />
-                <span className="text-muted-foreground">
-                  Waste reduced by 22% on Wednesday through better forecasting
-                </span>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Second Chart - Predicted vs Actual Revenue for both views */}
-        <Card className="shadow-card">
-          <CardHeader>
-            <CardTitle>Predicted vs Actual Revenue</CardTitle>
-            <CardDescription>
-              AI revenue predictions vs actual performance
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={(currentData as typeof hqData).revenueComparisonData}>
-                <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
-                <XAxis dataKey="date" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-                <Bar dataKey="predicted" fill="hsl(var(--primary))" name="Predicted Revenue (£)" />
-                <Bar dataKey="actual" fill="hsl(var(--accent))" name="Actual Revenue (£)" />
-              </BarChart>
-            </ResponsiveContainer>
-            <div className="mt-4 space-y-2">
-              <div className="flex items-center gap-2 text-sm">
-                <TrendingUp className="h-4 w-4 text-success" />
-                <span className="text-muted-foreground">
-                  <strong>Overall accuracy:</strong> {viewMode === "hq" ? "96.2%" : "97.1%"} predicted vs actual revenue
-                </span>
-              </div>
-              <div className="flex items-center gap-2 text-sm">
-                <CheckCircle className="h-4 w-4 text-success" />
-                <span className="text-muted-foreground">
-                  Saturday exceeded predictions by £{viewMode === "hq" ? "300" : "8"} due to excellent weather
-                </span>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Performance Analytics Section */}
       <div className="space-y-6 mt-12 pt-12 border-t">
@@ -914,16 +609,15 @@ export default function Analytics() {
               <Card className="shadow-card">
                 <CardHeader className="pb-2">
                   <CardTitle className="text-sm font-medium text-muted-foreground">
-                    Target Achievement
+                    Avg Variance
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold text-primary">
-                    {((filteredStorePerformance.reduce((acc, s) => acc + s.revenue, 0) / 
-                      filteredStorePerformance.reduce((acc, s) => acc + s.target, 0)) * 100).toFixed(1)}%
+                  <div className="text-2xl font-bold text-foreground">
+                    +{(filteredStorePerformance.reduce((acc, s) => acc + s.variance, 0) / filteredStorePerformance.length).toFixed(1)}%
                   </div>
                   <p className="text-xs text-muted-foreground">
-                    Target: £{filteredStorePerformance.reduce((acc, s) => acc + s.target, 0).toLocaleString()}
+                    Above target
                   </p>
                 </CardContent>
               </Card>
@@ -948,52 +642,26 @@ export default function Analytics() {
               <Card className="shadow-card">
                 <CardHeader className="pb-2">
                   <CardTitle className="text-sm font-medium text-muted-foreground">
-                    {viewMode === "store_manager" ? "Store Ranking" : "Top Performer"}
+                    Stores
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="flex items-center gap-2">
-                    <Award className="h-5 w-5 text-warning" />
-                    <div className="text-lg font-bold text-foreground">
-                      {viewMode === "store_manager" ? "#3 of 50" : "St Pancras"}
-                    </div>
+                  <div className="text-2xl font-bold text-foreground">
+                    {filteredStorePerformance.length}
                   </div>
                   <p className="text-xs text-muted-foreground">
-                    {viewMode === "store_manager" ? "Top quartile" : "£42.8k revenue"}
+                    Locations tracked
                   </p>
                 </CardContent>
               </Card>
             </div>
 
-            {/* Revenue Trend Chart */}
-            <Card className="shadow-card">
-              <CardHeader>
-                <CardTitle>Revenue vs Target</CardTitle>
-                <CardDescription>Daily performance over the selected period</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <ResponsiveContainer width="100%" height={300}>
-                  <BarChart data={mockDailyTrend}>
-                    <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
-                    <XAxis dataKey="date" />
-                    <YAxis />
-                    <Tooltip />
-                    <Legend />
-                    <Bar dataKey="revenue" fill="hsl(var(--primary))" name="Revenue (£)" />
-                    <Bar dataKey="target" fill="hsl(var(--accent))" name="Target (£)" />
-                  </BarChart>
-                </ResponsiveContainer>
-              </CardContent>
-            </Card>
-
             {/* Store Performance Table */}
             <Card className="shadow-card">
               <CardHeader>
-                <CardTitle>
-                  {viewMode === "store_manager" ? "Store Metrics" : "Store Performance Breakdown"}
-                </CardTitle>
+                <CardTitle>Store Performance Breakdown</CardTitle>
                 <CardDescription>
-                  Detailed performance metrics by store
+                  Detailed metrics for each store location
                 </CardDescription>
               </CardHeader>
               <CardContent>

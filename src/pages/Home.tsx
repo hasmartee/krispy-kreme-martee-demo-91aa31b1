@@ -631,7 +631,7 @@ const weeklyTrendData = [
                   <Legend />
                   <Bar 
                     dataKey="delivered" 
-                    fill="hsl(var(--chart-1))" 
+                    fill="hsl(var(--accent))" 
                     name="Delivered"
                     radius={[4, 4, 0, 0]}
                   />
