@@ -144,12 +144,17 @@ export default function SuggestedProduction() {
 
       const items: DeliveryItem[] = (allocations || []).map((alloc: any) => {
         const product: any = productMap.get(alloc.product_sku);
+        // Use manufactured quantity if set, otherwise fall back to planned quantity
+        const expectedQty = (alloc.manufactured_quantity && alloc.manufactured_quantity > 0) 
+          ? alloc.manufactured_quantity 
+          : alloc.quantity;
+        
         return {
           id: alloc.id,
           productName: product?.name || alloc.product_sku,
           productSku: alloc.product_sku,
           category: product?.category || 'Unknown',
-          expectedQuantity: alloc.manufactured_quantity || 0,
+          expectedQuantity: expectedQty,
           receivedQuantity: alloc.received_quantity || 0,
           dayPart: alloc.day_part || 'Morning',
           allocationId: alloc.id,
@@ -593,14 +598,12 @@ export default function SuggestedProduction() {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Product</TableHead>
-                    <TableHead>Category</TableHead>
-                    <TableHead>Day Part</TableHead>
-                    <TableHead className="text-center">Expected Delivery</TableHead>
-                    <TableHead className="text-center bg-[#f8b29c]/20">
+                    <TableHead className="w-[40%]">Product</TableHead>
+                    <TableHead className="text-center w-[30%]">Expected Delivery</TableHead>
+                    <TableHead className="text-center w-[30%] bg-[#f8b29c]/20">
                       <div className="flex items-center justify-center gap-2">
-                        <CheckCircle2 className="h-4 w-4 text-[#f8b29c]" />
-                        <span className="font-bold text-[#f8b29c]">Confirmed Delivery</span>
+                        <CheckCircle2 className="h-5 w-5 text-[#f8b29c]" />
+                        <span className="font-bold text-[#f8b29c] text-base">Confirmed Delivery</span>
                       </div>
                     </TableHead>
                   </TableRow>
@@ -608,9 +611,7 @@ export default function SuggestedProduction() {
                 <TableBody>
                   {deliveryItems.map((item) => (
                     <TableRow key={item.id}>
-                      <TableCell className="font-medium">{item.productName}</TableCell>
-                      <TableCell>{getCategoryBadge(item.category)}</TableCell>
-                      <TableCell>{getDayPartBadge(item.dayPart)}</TableCell>
+                      <TableCell className="font-medium text-base">{item.productName}</TableCell>
                       <TableCell className="text-center">
                         <span className="text-lg font-semibold">{item.expectedQuantity}</span>
                       </TableCell>
@@ -624,10 +625,10 @@ export default function SuggestedProduction() {
                               updateReceivedQuantity(item.allocationId, newValue);
                             }}
                             className={cn(
-                              "w-32 text-center font-bold text-lg border-2",
+                              "w-32 text-center font-bold text-xl border-2",
                               item.receivedQuantity > 0 
-                                ? "border-[#f8b29c] bg-white" 
-                                : "border-muted bg-muted/30"
+                                ? "border-[#f8b29c] bg-white shadow-md" 
+                                : "border-muted-foreground/30 bg-muted/50"
                             )}
                             min="0"
                             placeholder="0"
