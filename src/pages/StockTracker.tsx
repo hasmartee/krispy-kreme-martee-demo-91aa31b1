@@ -135,45 +135,79 @@ const LiveData = () => {
     );
   };
 
-  // Generate AI insights
+  // Generate AI insights - prioritize most significant issues
   const generateInsights = (): AIInsight[] => {
     const insights: AIInsight[] = [];
     
     stores.forEach((store) => {
       const totals = calculateStoreTotals(store.products);
+      
+      // Calculate various rates and discrepancies
       const wasteRate = (totals.wasted / totals.produced) * 100;
       const unaccountedRate = (totals.unaccountedFor / totals.produced) * 100;
       const sellThroughRate = (totals.sold / totals.delivered) * 100;
+      const productionVariance = ((totals.produced - totals.planned) / totals.planned) * 100;
+      const deliveryVariance = ((totals.delivered - totals.produced) / totals.produced) * 100;
       
-      if (wasteRate > 7) {
+      // Production Discrepancy - Planned vs Produced
+      if (Math.abs(productionVariance) > 10) {
+        insights.push({
+          type: "warning",
+          title: productionVariance > 0 ? "Overproduction Detected" : "Underproduction Issue",
+          description: `${store.storeName} ${productionVariance > 0 ? 'produced' : 'fell short by'} ${Math.abs(productionVariance).toFixed(1)}% ${productionVariance > 0 ? 'more than planned' : 'of planned production'}. Review production capacity.`,
+          store: store.storeName,
+        });
+      }
+      
+      // Delivery Discrepancy - Produced vs Delivered
+      if (Math.abs(deliveryVariance) > 8) {
+        insights.push({
+          type: "warning",
+          title: "Delivery Variance Alert",
+          description: `${store.storeName} delivery ${deliveryVariance > 0 ? 'exceeded' : 'fell short of'} production by ${Math.abs(deliveryVariance).toFixed(1)}%. Check logistics and delivery processes.`,
+          store: store.storeName,
+        });
+      }
+      
+      // High Waste Rate
+      if (wasteRate > 8) {
         insights.push({
           type: "warning",
           title: "High Waste Rate",
-          description: `${store.storeName} has ${wasteRate.toFixed(1)}% waste rate. Consider reducing production volumes.`,
+          description: `${store.storeName} has ${wasteRate.toFixed(1)}% waste rate. Optimize production planning to reduce waste.`,
           store: store.storeName,
         });
       }
       
-      if (unaccountedRate > 5) {
+      // Critical Unaccounted Items
+      if (unaccountedRate > 7) {
         insights.push({
           type: "warning",
-          title: "Inventory Discrepancy",
-          description: `${store.storeName} has ${unaccountedRate.toFixed(1)}% unaccounted items. Stock count review needed.`,
+          title: "Critical Inventory Gap",
+          description: `${store.storeName} has ${unaccountedRate.toFixed(1)}% unaccounted items. Urgent stock reconciliation required.`,
           store: store.storeName,
         });
       }
       
-      if (sellThroughRate > 95) {
+      // Excellent Performance
+      if (sellThroughRate > 95 && wasteRate < 5) {
         insights.push({
           type: "success",
-          title: "Excellent Performance",
-          description: `${store.storeName} achieved ${sellThroughRate.toFixed(1)}% sell-through rate. Consider increasing allocation.`,
+          title: "Outstanding Performance",
+          description: `${store.storeName} achieved ${sellThroughRate.toFixed(1)}% sell-through with minimal waste. Consider increasing allocation.`,
           store: store.storeName,
         });
       }
     });
     
-    return insights;
+    // Sort by priority (warnings first, then success) and limit to top 4 most significant
+    const sortedInsights = insights.sort((a, b) => {
+      if (a.type === "warning" && b.type !== "warning") return -1;
+      if (a.type !== "warning" && b.type === "warning") return 1;
+      return 0;
+    });
+    
+    return sortedInsights.slice(0, 4);
   };
 
   const insights = generateInsights();
