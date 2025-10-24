@@ -102,17 +102,27 @@ export default function StockAdjustments() {
           adjustment_type,
           quantity,
           comment,
-          created_at,
-          products (
-            name,
-            sku
-          )
+          created_at
         `)
         .eq("store_id", storeData.id)
         .order("created_at", { ascending: false });
 
       if (adjustmentsData) {
-        setAdjustments(adjustmentsData);
+        // Fetch product details separately
+        const productIds = adjustmentsData.map(adj => adj.product_id);
+        const { data: productsData } = await supabase
+          .from("products")
+          .select("id, name, sku")
+          .in("id", productIds);
+
+        const productsMap = new Map(productsData?.map(p => [p.id, p]));
+        
+        const enrichedAdjustments = adjustmentsData.map(adj => ({
+          ...adj,
+          products: productsMap.get(adj.product_id)
+        }));
+        
+        setAdjustments(enrichedAdjustments as any);
       }
     } catch (error) {
       console.error("Error loading data:", error);

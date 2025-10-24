@@ -23,6 +23,7 @@ import Deliveries from "./pages/Deliveries";
 import ProductionRouter from "./pages/ProductionRouter";
 import DailyWaste from "./pages/DailyWaste";
 import DeliveryPlan from "./pages/DeliveryPlan";
+import StockAdjustments from "./pages/StockAdjustments";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 
@@ -50,6 +51,7 @@ const App = () => (
                       <Route path="/live-data" element={<StockTracker />} />
                       <Route path="/suggested-production" element={<SuggestedProduction />} />
                       <Route path="/daily-waste" element={<DailyWaste />} />
+                      <Route path="/stock-adjustments" element={<StockAdjustments />} />
                       <Route path="/products" element={<ProductRange />} />
                       <Route path="/store-products" element={<StoreProductRange />} />
                       <Route path="/stores" element={<StoreManagement />} />
