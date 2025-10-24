@@ -211,11 +211,11 @@ export default function Analytics() {
       </div>
 
       {/* Big Orange Box with Metrics */}
-      <Card className="shadow-lg" style={{ backgroundColor: '#7ea058' }}>
+      <Card className="shadow-xl border-0 bg-gradient-to-br from-primary via-primary to-primary/80 animate-fade-in">
         <CardContent className="p-6">
           {/* Heading */}
-          <div className="mb-4">
-            <h2 className="text-2xl font-bold text-foreground">
+          <div className="mb-6">
+            <h2 className="text-3xl font-bold text-primary-foreground drop-shadow-sm">
               {selectedStore === "all" ? "All Stores" : selectedStore} • This Week's Performance
             </h2>
           </div>
@@ -364,20 +364,24 @@ export default function Analytics() {
           )}
 
           {/* Three Main Metrics: Sold, Wasted, Delivered */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
             {/* Sold Qty */}
-            <Card className="bg-background/95 shadow-lg">
+            <Card className="bg-background/95 shadow-xl border-2 border-success/20 hover:shadow-2xl transition-all duration-300 hover-scale">
               <CardHeader className="pb-3">
-                <CardTitle className="text-lg font-semibold">Sold Qty</CardTitle>
+                <div className="flex items-center gap-2">
+                  <CheckCircle className="h-5 w-5 text-success" />
+                  <CardTitle className="text-lg font-semibold">Sold Qty</CardTitle>
+                </div>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div>
-                  <div className="text-4xl font-bold text-foreground">
+                  <div className="text-5xl font-bold bg-gradient-to-r from-success to-success/70 bg-clip-text text-transparent">
                     {currentData.soldQty.toLocaleString()}
                   </div>
-                  <div className="flex items-center gap-2 mt-1">
+                  <div className="flex items-center gap-2 mt-2">
                     <div className="text-sm text-muted-foreground">94.2% of total</div>
-                    <Badge variant="outline" className="text-xs" style={{ color: 'hsl(var(--success-green))', borderColor: 'hsl(var(--success-green))' }}>
+                    <Badge className="text-xs bg-success/10 text-success border-success/30">
+                      <TrendingUp className="h-3 w-3 mr-1" />
                       +5.3% vs last week
                     </Badge>
                   </div>
@@ -402,18 +406,22 @@ export default function Analytics() {
             </Card>
 
             {/* Wasted Qty */}
-            <Card className="bg-background/95 shadow-lg">
+            <Card className="bg-background/95 shadow-xl border-2 border-destructive/20 hover:shadow-2xl transition-all duration-300 hover-scale">
               <CardHeader className="pb-3">
-                <CardTitle className="text-lg font-semibold">Wasted Qty</CardTitle>
+                <div className="flex items-center gap-2">
+                  <Trash2 className="h-5 w-5 text-destructive" />
+                  <CardTitle className="text-lg font-semibold">Wasted Qty</CardTitle>
+                </div>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div>
-                  <div className="text-4xl font-bold" style={{ color: 'hsl(var(--destructive))' }}>
+                  <div className="text-5xl font-bold bg-gradient-to-r from-destructive to-destructive/70 bg-clip-text text-transparent">
                     {currentData.wastedQty}
                   </div>
-                  <div className="flex items-center gap-2 mt-1">
+                  <div className="flex items-center gap-2 mt-2">
                     <div className="text-sm text-muted-foreground">4.4% of total</div>
-                    <Badge variant="outline" className="text-xs" style={{ color: 'hsl(var(--success-green))', borderColor: 'hsl(var(--success-green))' }}>
+                    <Badge className="text-xs bg-success/10 text-success border-success/30">
+                      <TrendingDown className="h-3 w-3 mr-1" />
                       -2.1% vs last week
                     </Badge>
                   </div>
@@ -438,18 +446,22 @@ export default function Analytics() {
             </Card>
 
             {/* Delivered Qty */}
-            <Card className="bg-background/95 shadow-lg">
+            <Card className="bg-background/95 shadow-xl border-2 border-primary/20 hover:shadow-2xl transition-all duration-300 hover-scale">
               <CardHeader className="pb-3">
-                <CardTitle className="text-lg font-semibold">Delivered Qty</CardTitle>
+                <div className="flex items-center gap-2">
+                  <Package className="h-5 w-5 text-primary" />
+                  <CardTitle className="text-lg font-semibold">Delivered Qty</CardTitle>
+                </div>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div>
-                  <div className="text-4xl font-bold" style={{ color: 'hsl(var(--accent))' }}>
+                  <div className="text-5xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
                     {currentData.deliveredQty.toLocaleString()}
                   </div>
-                  <div className="flex items-center gap-2 mt-1">
+                  <div className="flex items-center gap-2 mt-2">
                     <div className="text-sm text-muted-foreground">Target delivery</div>
-                    <Badge variant="outline" className="text-xs" style={{ color: 'hsl(var(--success-green))', borderColor: 'hsl(var(--success-green))' }}>
+                    <Badge className="text-xs bg-primary/10 text-primary border-primary/30">
+                      <TrendingUp className="h-3 w-3 mr-1" />
                       +1.2% vs target
                     </Badge>
                   </div>
@@ -657,10 +669,13 @@ export default function Analytics() {
       </Card>
 
       {/* Predicted vs Actual Sales Chart */}
-      <Card className="shadow-lg">
-        <CardHeader>
-          <CardTitle>Predicted vs Actual Sales</CardTitle>
-          <CardDescription>
+      <Card className="shadow-xl border-2 border-border/50 animate-fade-in hover:shadow-2xl transition-shadow duration-300">
+        <CardHeader className="pb-4">
+          <CardTitle className="text-2xl flex items-center gap-2">
+            <TrendingUp className="h-6 w-6 text-accent" />
+            Predicted vs Actual Sales
+          </CardTitle>
+          <CardDescription className="text-base">
             AI revenue predictions compared to actual performance
           </CardDescription>
         </CardHeader>
@@ -752,85 +767,97 @@ export default function Analytics() {
       </Card>
 
       {/* Performance Analytics Section */}
-      <div className="space-y-6 mt-12 pt-12 border-t">
-        <div>
-          <h2 className="text-2xl font-bold text-foreground">Performance Analytics</h2>
-          <p className="text-muted-foreground">
+      <div className="space-y-6 mt-12 pt-12 border-t border-border/50">
+        <div className="animate-fade-in">
+          <h2 className="text-3xl font-bold bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
+            Performance Analytics
+          </h2>
+          <p className="text-muted-foreground text-lg mt-1">
             Track store and product performance
             {viewMode === "hq" && selectedStore !== "all" && ` - ${selectedStore}`}
           </p>
         </div>
 
         {/* Performance Tabs */}
-        <Tabs defaultValue="store" className="space-y-4">
-          <TabsList>
-            <TabsTrigger value="store">Store Performance</TabsTrigger>
-            <TabsTrigger value="product">Product Performance</TabsTrigger>
-            <TabsTrigger value="cluster">Cluster Performance</TabsTrigger>
+        <Tabs defaultValue="store" className="space-y-6 animate-fade-in">
+          <TabsList className="grid w-full grid-cols-3 bg-muted/50 p-1">
+            <TabsTrigger value="store" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground transition-all">
+              Store Performance
+            </TabsTrigger>
+            <TabsTrigger value="product" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground transition-all">
+              Product Performance
+            </TabsTrigger>
+            <TabsTrigger value="cluster" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground transition-all">
+              Cluster Performance
+            </TabsTrigger>
           </TabsList>
 
           {/* Store Performance Tab */}
-          <TabsContent value="store" className="space-y-4">
+          <TabsContent value="store" className="space-y-6">
             {/* Summary Cards */}
             <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-              <Card className="shadow-card">
+              <Card className="shadow-xl hover:shadow-2xl transition-all duration-300 hover-scale border-2 border-success/20">
                 <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-medium text-muted-foreground">
+                  <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
+                    <Award className="h-4 w-4 text-success" />
                     Total Revenue
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold text-success">
+                  <div className="text-2xl font-bold bg-gradient-to-r from-success to-success/70 bg-clip-text text-transparent">
                     £{filteredStorePerformance.reduce((acc, s) => acc + s.revenue, 0).toLocaleString()}
                   </div>
-                  <p className="text-xs text-muted-foreground">
-                    <TrendingUp className="inline h-3 w-3 mr-1 text-success" />
+                  <p className="text-xs text-muted-foreground flex items-center gap-1 mt-1">
+                    <TrendingUp className="h-3 w-3 text-success" />
                     {viewMode === "store_manager" ? "+5.2%" : "+8.1%"} from last period
                   </p>
                 </CardContent>
               </Card>
 
-              <Card className="shadow-card">
+              <Card className="shadow-xl hover:shadow-2xl transition-all duration-300 hover-scale border-2 border-primary/20">
                 <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-medium text-muted-foreground">
+                  <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
+                    <Award className="h-4 w-4 text-primary" />
                     Gross Profit
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold text-primary">
+                  <div className="text-2xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
                     £{filteredStorePerformance.reduce((acc, s) => acc + s.grossProfit, 0).toLocaleString()}
                   </div>
-                  <p className="text-xs text-muted-foreground">
+                  <p className="text-xs text-muted-foreground mt-1">
                     {((filteredStorePerformance.reduce((acc, s) => acc + s.grossProfit, 0) / 
                       filteredStorePerformance.reduce((acc, s) => acc + s.revenue, 0)) * 100).toFixed(1)}% margin
                   </p>
                 </CardContent>
               </Card>
 
-              <Card className="shadow-card">
+              <Card className="shadow-xl hover:shadow-2xl transition-all duration-300 hover-scale border-2 border-accent/20">
                 <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-medium text-muted-foreground">
+                  <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
+                    <TrendingUp className="h-4 w-4 text-accent" />
                     Avg Variance
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold text-foreground">
+                  <div className="text-2xl font-bold bg-gradient-to-r from-accent to-accent/70 bg-clip-text text-transparent">
                     +{(filteredStorePerformance.reduce((acc, s) => acc + s.variance, 0) / filteredStorePerformance.length).toFixed(1)}%
                   </div>
-                  <p className="text-xs text-muted-foreground">
+                  <p className="text-xs text-muted-foreground mt-1">
                     Above target
                   </p>
                 </CardContent>
               </Card>
 
-              <Card className="shadow-card">
+              <Card className="shadow-xl hover:shadow-2xl transition-all duration-300 hover-scale border-2 border-destructive/20">
                 <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-medium text-muted-foreground">
+                  <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
+                    <AlertTriangle className="h-4 w-4 text-destructive" />
                     Total Waste
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold text-destructive">
+                  <div className="text-2xl font-bold bg-gradient-to-r from-destructive to-destructive/70 bg-clip-text text-transparent">
                     £{filteredStorePerformance.reduce((acc, s) => acc + s.waste, 0).toLocaleString()}
                   </div>
                   <p className="text-xs text-muted-foreground">
