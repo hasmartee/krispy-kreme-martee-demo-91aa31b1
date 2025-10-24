@@ -70,8 +70,8 @@ export default function SuggestedProduction() {
       if (viewMode === "store_manager") {
         await loadStoreDeliveries();
       } else {
-        await loadProductCapacities();
-        await loadData();
+        const capacities = await loadProductCapacities();
+        await loadData(capacities);
       }
     };
     loadAllData();
@@ -194,7 +194,7 @@ export default function SuggestedProduction() {
       
       if (error) {
         console.error('Error loading capacities:', error);
-        return;
+        return {};
       }
       
       if (data) {
@@ -255,11 +255,13 @@ export default function SuggestedProduction() {
     }
   };
 
-  const loadData = async () => {
+  const loadData = async (capacities?: Record<string, { min: number; max: number }>) => {
     setLoading(true);
+    // Use provided capacities or fall back to state
+    const capacitiesMap = capacities || productCapacities;
     try {
       console.log('🔍 PRODUCTION PAGE: Loading data...');
-      console.log('📊 Current productCapacities state:', Object.keys(productCapacities).length, 'entries');
+      console.log('📊 Using capacities:', Object.keys(capacitiesMap).length, 'entries');
       
       const { data: storesData } = await supabase
         .from('stores')
@@ -285,7 +287,7 @@ export default function SuggestedProduction() {
           storeProducts.forEach(product => {
             const baseQty = 15 + Math.floor(Math.random() * 15);
             const capacityKey = `${product.id}-${store.id}`;
-            const capacity = productCapacities[capacityKey];
+            const capacity = capacitiesMap[capacityKey];
             
             if (capacity) {
               console.log(`✅ Found capacity for ${product.id} at ${store.name}:`, capacity);
