@@ -108,7 +108,11 @@ export default function ManufacturingProduction() {
             };
           }
           acc[alloc.product_sku].plannedQuantity += alloc.quantity;
-          acc[alloc.product_sku].manufacturedQuantity += alloc.manufactured_quantity || 0;
+          // Initialize manufactured quantity to planned quantity if not set
+          const manufacturedQty = (alloc.manufactured_quantity !== null && alloc.manufactured_quantity !== 0) 
+            ? alloc.manufactured_quantity 
+            : alloc.quantity;
+          acc[alloc.product_sku].manufacturedQuantity += manufacturedQty;
           return acc;
         }, {});
 
