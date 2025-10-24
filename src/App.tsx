@@ -20,7 +20,7 @@ import StockTracker from "./pages/StockTracker";
 import Settings from "./pages/Settings";
 import Inventory from "./pages/Inventory";
 import Deliveries from "./pages/Deliveries";
-import Production from "./pages/Production";
+import ProductionRouter from "./pages/ProductionRouter";
 import DailyWaste from "./pages/DailyWaste";
 import DeliveryPlan from "./pages/DeliveryPlan";
 import Auth from "./pages/Auth";
@@ -54,7 +54,7 @@ const App = () => (
                       <Route path="/store-products" element={<StoreProductRange />} />
                       <Route path="/stores" element={<StoreManagement />} />
                       <Route path="/inventory" element={<Inventory />} />
-                      <Route path="/production" element={<Production />} />
+                      <Route path="/production" element={<ProductionRouter />} />
                       <Route path="/delivery-plan" element={<DeliveryPlan />} />
                       <Route path="/store-details" element={<StoreDetails />} />
                       <Route path="/ingredients" element={<Navigate to="/analytics" replace />} />
