@@ -76,31 +76,6 @@ const footfallForecastHQ = [
   { day: "Sun", footfall: 1525, morning: 500, afternoon: 640, evening: 385 },
 ];
 
-// Store alerts data
-const storeAlerts = [
-  {
-    id: "1",
-    type: "waste_variance",
-    store: "Liverpool Street Station",
-    metric: "Waste variance: 112% higher than reported",
-    severity: "high",
-  },
-  {
-    id: "2",
-    type: "delivery_variance",
-    store: "Bond Street",
-    metric: "Delivery shortfall: 8.4% under expected",
-    severity: "medium",
-  },
-  {
-    id: "3",
-    type: "reduced_sales",
-    store: "Camden Town",
-    metric: "Reduced price sales: 34% of total",
-    severity: "high",
-  },
-];
-
 // Top/Bottom store performance data
 const storePerformance = {
   sales: {
@@ -380,44 +355,44 @@ const weeklyTrendData = [
           {/* Production Confirmation Task */}
           <button
             onClick={() => navigate('/suggested-production')}
-            className="group w-full bg-gradient-to-r from-orange-50 to-amber-50 hover:from-orange-100 hover:to-amber-100 border border-orange-200 rounded-xl p-4 transition-all duration-200 hover:shadow-md"
+            className="group w-full bg-gradient-to-r from-orange-100 to-amber-100 hover:from-orange-200 hover:to-amber-200 border border-orange-300 rounded-xl p-4 transition-all duration-200 hover:shadow-lg shadow-md"
           >
             <div className="flex items-center gap-4">
-              <div className="flex-shrink-0 w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center group-hover:bg-orange-200 transition-colors">
-                <Bell className="h-6 w-6 text-orange-600" />
+              <div className="flex-shrink-0 w-12 h-12 bg-orange-200 rounded-full flex items-center justify-center group-hover:bg-orange-300 transition-colors">
+                <Bell className="h-6 w-6 text-orange-700" />
               </div>
               <div className="flex-1 text-left">
                 <h3 className="text-base font-semibold text-foreground mb-1">
                   Confirm Production for {tomorrowDate}
                 </h3>
                 <p className="text-sm">
-                  <span className="text-orange-600 font-medium">Deadline: 12pm tomorrow</span>
+                  <span className="text-orange-700 font-medium">Deadline: 12pm tomorrow</span>
                   <span className="text-muted-foreground"> - Review and confirm production quantities</span>
                 </p>
               </div>
-              <ArrowRight className="h-5 w-5 text-orange-600 flex-shrink-0 group-hover:translate-x-1 transition-transform" />
+              <ArrowRight className="h-5 w-5 text-orange-700 flex-shrink-0 group-hover:translate-x-1 transition-transform" />
             </div>
           </button>
 
           {/* Stock Alerts Task */}
           <button
             onClick={() => navigate('/live-data')}
-            className="group w-full bg-gradient-to-r from-red-50 to-orange-50 hover:from-red-100 hover:to-orange-100 border border-red-200 rounded-xl p-4 transition-all duration-200 hover:shadow-md"
+            className="group w-full bg-gradient-to-r from-orange-100 to-amber-100 hover:from-orange-200 hover:to-amber-200 border border-orange-300 rounded-xl p-4 transition-all duration-200 hover:shadow-lg shadow-md"
           >
             <div className="flex items-center gap-4">
-              <div className="flex-shrink-0 w-12 h-12 bg-red-100 rounded-full flex items-center justify-center group-hover:bg-red-200 transition-colors">
-                <AlertTriangle className="h-6 w-6 text-red-600" />
+              <div className="flex-shrink-0 w-12 h-12 bg-orange-200 rounded-full flex items-center justify-center group-hover:bg-orange-300 transition-colors">
+                <AlertTriangle className="h-6 w-6 text-orange-700" />
               </div>
               <div className="flex-1 text-left">
                 <h3 className="text-base font-semibold text-foreground mb-1">
                   4 New Stock Alerts
                 </h3>
                 <p className="text-sm">
-                  <span className="text-red-600 font-medium">Action required</span>
+                  <span className="text-orange-700 font-medium">Action required</span>
                   <span className="text-muted-foreground"> - Check discrepancies and unaccounted items</span>
                 </p>
               </div>
-              <ArrowRight className="h-5 w-5 text-red-600 flex-shrink-0 group-hover:translate-x-1 transition-transform" />
+              <ArrowRight className="h-5 w-5 text-orange-700 flex-shrink-0 group-hover:translate-x-1 transition-transform" />
             </div>
           </button>
         </div>
@@ -836,45 +811,6 @@ const weeklyTrendData = [
             </CardContent>
           </Card>
 
-          {/* Store Alerts */}
-          <div>
-            <div className="flex items-center gap-2 mb-4">
-              <Bell className="h-5 w-5 text-primary" />
-              <h2 className="text-xl font-semibold text-foreground">Store Alerts</h2>
-              <Badge variant="destructive">{storeAlerts.length}</Badge>
-            </div>
-            <div className="grid gap-3">
-              {storeAlerts.map((alert) => (
-                <Card 
-                  key={alert.id} 
-                  className={`border-l-4 ${
-                    alert.severity === "high" 
-                      ? "border-l-destructive bg-destructive/5" 
-                      : "border-l-amber-500 bg-amber-500/5"
-                  }`}
-                >
-                  <CardContent className="p-4">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <AlertTriangle 
-                          className={`h-5 w-5 ${
-                            alert.severity === "high" ? "text-destructive" : "text-amber-500"
-                          }`} 
-                        />
-                        <div>
-                          <div className="font-semibold">{alert.store}</div>
-                          <div className="text-sm text-muted-foreground">{alert.metric}</div>
-                        </div>
-                      </div>
-                      <Button size="sm" variant="outline">
-                        View Details
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </div>
         </>
       ) : (
         /* Store Manager View - Keep existing content */
