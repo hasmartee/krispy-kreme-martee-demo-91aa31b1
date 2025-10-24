@@ -821,9 +821,17 @@ export default function SuggestedProduction() {
                 <TableHead>Day Part</TableHead>
                 {viewMode === "hq" && <TableHead>Store</TableHead>}
                 <TableHead className="text-center">Current Stock</TableHead>
-                <TableHead className="text-center">Recommended Qty</TableHead>
-                <TableHead className="text-center">Adjust</TableHead>
-                <TableHead className="text-center">Final Qty</TableHead>
+                <TableHead className="text-center bg-gradient-to-r from-[#ff914d]/20 to-[#ff914d]/10 border-l-4 border-l-[#ff914d]">
+                  <div className="flex items-center justify-center gap-2 py-1">
+                    <Sparkles className="h-5 w-5 text-[#ff914d] animate-pulse" />
+                    <span className="font-bold text-[#ff914d] text-lg">AI Recommended</span>
+                  </div>
+                </TableHead>
+                <TableHead className="text-center bg-gradient-to-r from-primary/20 to-primary/10 border-l-4 border-l-primary">
+                  <div className="flex items-center justify-center gap-2 py-1">
+                    <span className="font-bold text-primary text-lg">Final Quantity</span>
+                  </div>
+                </TableHead>
                 <TableHead className="text-center">Actions</TableHead>
               </TableRow>
             </TableHeader>
@@ -835,35 +843,37 @@ export default function SuggestedProduction() {
                   <TableCell>{getDayPartBadge(product.dayPart)}</TableCell>
                   {viewMode === "hq" && <TableCell>{product.store}</TableCell>}
                   <TableCell className="text-center">{product.currentStock}</TableCell>
-                  <TableCell className="text-center">
+                  <TableCell className="text-center bg-gradient-to-r from-[#ff914d]/10 to-[#ff914d]/5 border-l-4 border-l-[#ff914d]/30">
                     <div className="flex items-center justify-center gap-2">
                       {product.trend === "up" && <TrendingUp className="h-4 w-4 text-green-600" />}
                       {product.trend === "down" && <TrendingDown className="h-4 w-4 text-red-600" />}
-                      <span className="text-lg font-semibold">{product.recommendedOrder}</span>
+                      <span className="text-2xl font-bold text-[#ff914d]">{product.recommendedOrder}</span>
                     </div>
                   </TableCell>
-                  <TableCell>
-                    <div className="flex items-center justify-center gap-1">
+                  <TableCell className="text-center bg-gradient-to-r from-primary/10 to-primary/5 border-l-4 border-l-primary/30">
+                    <div className="flex items-center justify-center gap-2">
                       <Button
-                        size="sm"
                         variant="outline"
+                        size="icon"
+                        className="h-10 w-10 rounded-full border-2 border-primary/40 hover:border-primary hover:bg-primary/10 transition-all duration-200 hover:scale-110"
                         onClick={() => updateFinalOrder(product.id, product.storeId, -1)}
                         disabled={product.storeId === 'aggregated'}
                       >
-                        <Minus className="h-3 w-3" />
+                        <Minus className="h-4 w-4 text-primary" />
                       </Button>
+                      
+                      <span className="text-2xl font-bold text-primary w-16">{product.finalOrder}</span>
+                      
                       <Button
-                        size="sm"
                         variant="outline"
+                        size="icon"
+                        className="h-10 w-10 rounded-full border-2 border-primary/40 hover:border-primary hover:bg-primary/10 transition-all duration-200 hover:scale-110"
                         onClick={() => updateFinalOrder(product.id, product.storeId, 1)}
                         disabled={product.storeId === 'aggregated'}
                       >
-                        <Plus className="h-3 w-3" />
+                        <Plus className="h-4 w-4 text-primary" />
                       </Button>
                     </div>
-                  </TableCell>
-                  <TableCell className="text-center">
-                    <span className="text-lg font-bold text-primary">{product.finalOrder}</span>
                   </TableCell>
                   <TableCell className="text-center">
                     <Button
