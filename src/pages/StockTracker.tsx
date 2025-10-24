@@ -102,6 +102,9 @@ const LiveData = () => {
           } else if (store.name.includes("Greenwich")) {
             scenarioType = 3; // High unaccounted for Greenwich
             isProblematicStore = true;
+          } else if (store.name.includes("Covent Garden")) {
+            scenarioType = 4; // Massive delivery discrepancy for Covent Garden
+            isProblematicStore = true;
           } else {
             scenarioType = storeIndex % 4;
           }
@@ -169,6 +172,13 @@ const LiveData = () => {
                   sold = Math.round(delivered * (0.78 + Math.random() * 0.06)); // Lower sell-through
                   wasted = Math.round(delivered * (0.03 + Math.random() * 0.03));
                   // This will naturally create high unaccounted (8-14%)
+                  break;
+                
+                case 4: // Massive delivery discrepancy (25-35% delivery loss) - COVENT GARDEN
+                  produced = Math.round(planned * (0.98 + Math.random() * 0.04));
+                  delivered = Math.round(produced * (0.65 + Math.random() * 0.10)); // 25-35% loss during delivery
+                  sold = Math.round(delivered * (0.85 + Math.random() * 0.08));
+                  wasted = Math.round(delivered * (0.04 + Math.random() * 0.03));
                   break;
               }
             }
