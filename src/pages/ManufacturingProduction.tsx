@@ -272,33 +272,52 @@ export default function ManufacturingProduction() {
         </div>
       </div>
 
-      {/* Date Picker and Summary */}
-      <div className="flex items-center justify-between gap-4">
-        <div className="flex items-center gap-2">
-          <span className="text-sm font-medium text-muted-foreground">Production Date:</span>
-          <Popover>
-            <PopoverTrigger asChild>
+      {/* 14-Day Production Forecast */}
+      <div className="space-y-4">
+        <div>
+          <h2 className="text-2xl font-bold">14-Day Production Forecast</h2>
+          <p className="text-muted-foreground">Manufacturing production plan</p>
+        </div>
+        
+        {/* Horizontal Date Selector */}
+        <div className="flex gap-2 overflow-x-auto pb-2">
+          {Array.from({ length: 14 }, (_, i) => {
+            const date = new Date();
+            date.setDate(date.getDate() + i);
+            const isSelected = format(date, 'yyyy-MM-dd') === format(selectedDate, 'yyyy-MM-dd');
+            const isPast = date < new Date(new Date().setHours(0, 0, 0, 0));
+            const isToday = format(date, 'yyyy-MM-dd') === format(new Date(), 'yyyy-MM-dd');
+            const dayOfWeek = format(date, 'EEE');
+            const dayOfMonth = format(date, 'dd');
+            
+            return (
               <Button
-                variant="outline"
+                key={i}
+                variant={isSelected ? "default" : "outline"}
+                onClick={() => setSelectedDate(date)}
                 className={cn(
-                  "w-[280px] justify-start text-left font-normal",
-                  !selectedDate && "text-muted-foreground"
+                  "flex-shrink-0 flex flex-col items-center gap-1 h-auto py-3 px-6 min-w-[100px]",
+                  isSelected 
+                    ? "bg-primary text-primary-foreground shadow-md border-2 border-primary" 
+                    : isPast
+                    ? "bg-background hover:bg-muted text-muted-foreground"
+                    : isToday
+                    ? "bg-background hover:bg-muted text-foreground"
+                    : "bg-muted/30 hover:bg-muted/50 text-muted-foreground"
                 )}
               >
-                <CalendarIcon className="mr-2 h-4 w-4" />
-                {selectedDate ? format(selectedDate, "EEEE, MMM d, yyyy") : <span>Pick a date</span>}
+                <span className="text-sm font-medium">{dayOfWeek}</span>
+                <span className="text-lg font-bold">{dayOfMonth}</span>
               </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-auto p-0" align="start">
-              <Calendar
-                mode="single"
-                selected={selectedDate}
-                onSelect={(date) => date && setSelectedDate(date)}
-                initialFocus
-                className={cn("p-3 pointer-events-auto")}
-              />
-            </PopoverContent>
-          </Popover>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Controls */}
+      <div className="flex items-center justify-between gap-4">
+        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+          <span>Selected: {format(selectedDate, "EEEE, MMMM d, yyyy")}</span>
         </div>
         <div className="flex items-center gap-4">
           <Button onClick={handleRefresh} variant="outline" disabled={isRefreshing}>
