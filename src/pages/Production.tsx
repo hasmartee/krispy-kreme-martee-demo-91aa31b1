@@ -9,7 +9,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
-import heroImage from "@/assets/hero-food.jpg";
+import heroImage from "@/assets/donut-production-1.jpg";
 import { useView } from "@/contexts/ViewContext";
 import { supabase } from "@/lib/supabase-helper";
 
@@ -425,7 +425,7 @@ export default function Production() {
         className="relative h-48 rounded-2xl overflow-hidden bg-cover bg-center shadow-2xl"
         style={{ backgroundImage: `url(${heroImage})` }}
       >
-        <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/60 to-black/40" />
+        <div className="absolute inset-0 bg-gradient-to-r from-green-900/80 via-green-800/60 to-green-700/40" />
         <div className="absolute inset-0 flex flex-col justify-center px-8">
           <div className="flex items-center gap-3 mb-3">
             <div className="flex items-center gap-2 bg-[#ff914d]/20 backdrop-blur-sm px-4 py-2 rounded-full border border-[#ff914d]/30">
@@ -433,8 +433,8 @@ export default function Production() {
               <span className="text-white font-semibold text-sm">AI-Powered Suggestions</span>
             </div>
           </div>
-          <h1 className="text-4xl font-bold text-white mb-2">Suggested Production Plan</h1>
-          <p className="text-xl text-white/90">
+          <h1 className="text-4xl font-bold text-primary mb-2">Suggested Production Plan</h1>
+          <p className="text-xl text-primary/90">
             {viewMode === "hq" ? "All Stores" : selectedStore} - {formattedDate}
           </p>
         </div>
