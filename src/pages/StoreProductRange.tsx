@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -173,6 +174,13 @@ export default function StoreProductRange() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedBrand, setSelectedBrand] = useState("Krispy Kreme");
   const [selectedCluster, setSelectedCluster] = useState<string>("all");
+  const [expandedStores, setExpandedStores] = useState<string[]>([]);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [productCapacities, setProductCapacities] = useState<Record<string, { min: number; max: number }>>({});
+  const [capacityDialogOpen, setCapacityDialogOpen] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState<{ productSku: string; productName: string; storeId: string; storeName: string } | null>(null);
+  const [tempMin, setTempMin] = useState(0);
+  const [tempMax, setTempMax] = useState(0);
   const [storeData, setStoreData] = useState<any[]>([]);
   const [allStores, setAllStores] = useState<StoreInfo[]>([]);
   const [isClusterDialogOpen, setIsClusterDialogOpen] = useState(false);
@@ -189,8 +197,14 @@ export default function StoreProductRange() {
 
   // Load all stores from database
   useEffect(() => {
-    loadStores();
-    loadProductCapacities();
+    const initialize = async () => {
+      await loadStores();
+      await loadProductCapacities();
+      if (viewMode === "hq") {
+        await initializeProductCapacities();
+      }
+    };
+    initialize();
   }, []);
 
   const loadProductCapacities = async () => {
@@ -218,20 +232,109 @@ export default function StoreProductRange() {
     }
   };
 
-  const updateProductCapacity = async (productSku: string, storeId: string, field: 'min' | 'max', value: number) => {
+  const generateDefaultCapacity = (productCategory: string): { min: number; max: number } => {
+    // Generate sensible defaults: min around 3, max in increments of 5
+    const min = 3;
+    let max = 15; // Base value
+    
+    // Adjust based on category
+    if (productCategory === 'Donuts') max = 25;
+    else if (productCategory === 'Croissants') max = 20;
+    else if (productCategory === 'Sandwiches') max = 15;
+    else if (productCategory === 'Salads') max = 10;
+    
+    return { min, max };
+  };
+
+  const initializeProductCapacities = async () => {
+    console.log('🔄 Initializing product capacities with defaults...');
+    const capacitiesToInsert: any[] = [];
+    
+  const initializeProductCapacities = async () => {
+    console.log('🔄 Initializing product capacities with defaults...');
+    const capacitiesToInsert: any[] = [];
+    
+    for (const store of allStores) {
+      const products = brandProductTemplates["Krispy Kreme"];
+      
+      for (const product of products) {
+        const key = `${product.id}-${store.id}`;
+        
+        // Check if capacity already exists
+        if (!productCapacities[key]) {
+          const defaults = generateDefaultCapacity(product.category);
+          capacitiesToInsert.push({
+            product_sku: product.id,
+            store_id: store.id,
+            capacity_min: defaults.min,
+            capacity_max: defaults.max,
+          });
+        }
+      }
+    }
+    
+    if (capacitiesToInsert.length > 0) {
+      try {
+        const { error } = await supabase
+          .from('product_capacities')
+          .insert(capacitiesToInsert);
+        
+        if (error) {
+          console.error('Error initializing capacities:', error);
+        } else {
+          console.log(`✅ Initialized ${capacitiesToInsert.length} product capacities`);
+          await loadProductCapacities();
+        }
+      } catch (error) {
+        console.error('Error inserting capacities:', error);
+      }
+    }
+  };
+      
+      for (const product of products) {
+        const key = `${product.id}-${store.id}`;
+        
+        // Check if capacity already exists
+        if (!productCapacities[key]) {
+          const defaults = generateDefaultCapacity(product.category);
+          capacitiesToInsert.push({
+            product_sku: product.id,
+            store_id: store.id,
+            capacity_min: defaults.min,
+            capacity_max: defaults.max,
+          });
+        }
+      }
+    }
+    
+    if (capacitiesToInsert.length > 0) {
+      try {
+        const { error } = await supabase
+          .from('product_capacities')
+          .insert(capacitiesToInsert);
+        
+        if (error) {
+          console.error('Error initializing capacities:', error);
+        } else {
+          console.log(`✅ Initialized ${capacitiesToInsert.length} product capacities`);
+          await loadProductCapacities();
+        }
+      } catch (error) {
+        console.error('Error inserting capacities:', error);
+      }
+    }
+  };
+
+  const updateProductCapacity = async (productSku: string, storeId: string, min: number, max: number) => {
     const key = `${productSku}-${storeId}`;
     const newCapacities = {
       ...productCapacities,
-      [key]: {
-        ...productCapacities[key],
-        [field]: value,
-      }
+      [key]: { min, max }
     };
     setProductCapacities(newCapacities);
     
     // Save to database
     try {
-      // First check if it exists
       const { data: existing } = await supabase
         .from('product_capacities')
         .select('id')
@@ -240,30 +343,34 @@ export default function StoreProductRange() {
         .maybeSingle();
       
       if (existing) {
-        // Update
         await supabase
           .from('product_capacities')
           .update({
-            [`capacity_${field}`]: value,
+            capacity_min: min,
+            capacity_max: max,
             updated_at: new Date().toISOString(),
           })
           .eq('id', existing.id);
       } else {
-        // Insert
         await supabase
           .from('product_capacities')
           .insert({
             product_sku: productSku,
             store_id: storeId,
-            capacity_min: field === 'min' ? value : (newCapacities[key]?.min || 0),
-            capacity_max: field === 'max' ? value : (newCapacities[key]?.max || 0),
+            capacity_min: min,
+            capacity_max: max,
           });
       }
+      
+      toast({
+        title: "Success",
+        description: "Capacity values updated",
+      });
     } catch (error) {
       console.error('Error saving capacity:', error);
       toast({
         title: "Error",
-        description: "Failed to save capacity value",
+        description: "Failed to save capacity values",
         variant: "destructive",
       });
     }
@@ -799,8 +906,7 @@ export default function StoreProductRange() {
                                 <TableRow>
                                   <TableHead>Product</TableHead>
                                   <TableHead>Category</TableHead>
-                                  {viewMode === "hq" && <TableHead className="text-center">Min Capacity</TableHead>}
-                                  {viewMode === "hq" && <TableHead className="text-center">Max Capacity</TableHead>}
+                                  {viewMode === "hq" && <TableHead className="text-center">Capacity</TableHead>}
                                   <TableHead>Status</TableHead>
                                   <TableHead>Action</TableHead>
                                 </TableRow>
@@ -824,34 +930,30 @@ export default function StoreProductRange() {
                                         </TableCell>
                                         {viewMode === "hq" && (
                                           <TableCell className="text-center">
-                                            <Input
-                                              type="number"
-                                              min="0"
-                                              value={capacity.min}
-                                              onChange={(e) => {
+                                            <Button
+                                              variant="ghost"
+                                              size="sm"
+                                              onClick={() => {
                                                 const storeDbId = allStores.find(s => s.storeId === store.storeId)?.id;
                                                 if (storeDbId) {
-                                                  updateProductCapacity(product.id, storeDbId, 'min', parseInt(e.target.value) || 0);
+                                                  setSelectedProduct({
+                                                    productSku: product.id,
+                                                    productName: product.name,
+                                                    storeId: storeDbId,
+                                                    storeName: store.storeName,
+                                                  });
+                                                  setTempMin(capacity.min);
+                                                  setTempMax(capacity.max);
+                                                  setCapacityDialogOpen(true);
                                                 }
                                               }}
-                                              className="w-20 text-center"
-                                            />
-                                          </TableCell>
-                                        )}
-                                        {viewMode === "hq" && (
-                                          <TableCell className="text-center">
-                                            <Input
-                                              type="number"
-                                              min="0"
-                                              value={capacity.max}
-                                              onChange={(e) => {
-                                                const storeDbId = allStores.find(s => s.storeId === store.storeId)?.id;
-                                                if (storeDbId) {
-                                                  updateProductCapacity(product.id, storeDbId, 'max', parseInt(e.target.value) || 0);
-                                                }
-                                              }}
-                                              className="w-20 text-center"
-                                            />
+                                              className="gap-2"
+                                            >
+                                              <Settings className="h-4 w-4" />
+                                              <span className="text-sm">
+                                                {capacity.min} / {capacity.max}
+                                              </span>
+                                            </Button>
                                           </TableCell>
                                         )}
                                         <TableCell>
@@ -1085,6 +1187,60 @@ export default function StoreProductRange() {
               Cancel
             </Button>
             <Button onClick={handleSaveClusterAssignments}>
+              Save Changes
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Capacity Edit Dialog */}
+      <Dialog open={capacityDialogOpen} onOpenChange={setCapacityDialogOpen}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Edit Capacity</DialogTitle>
+            <DialogDescription>
+              Set min and max capacity for {selectedProduct?.productName} at {selectedProduct?.storeName}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="min-capacity" className="text-right">
+                Min
+              </Label>
+              <Input
+                id="min-capacity"
+                type="number"
+                min="0"
+                value={tempMin}
+                onChange={(e) => setTempMin(parseInt(e.target.value) || 0)}
+                className="col-span-3"
+              />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="max-capacity" className="text-right">
+                Max
+              </Label>
+              <Input
+                id="max-capacity"
+                type="number"
+                min="0"
+                step="5"
+                value={tempMax}
+                onChange={(e) => setTempMax(parseInt(e.target.value) || 0)}
+                className="col-span-3"
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setCapacityDialogOpen(false)}>
+              Cancel
+            </Button>
+            <Button onClick={() => {
+              if (selectedProduct) {
+                updateProductCapacity(selectedProduct.productSku, selectedProduct.storeId, tempMin, tempMax);
+              }
+              setCapacityDialogOpen(false);
+            }}>
               Save Changes
             </Button>
           </DialogFooter>
