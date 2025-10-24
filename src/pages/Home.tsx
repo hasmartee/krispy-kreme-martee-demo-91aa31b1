@@ -448,87 +448,185 @@ const weeklyTrendData = [
         </p>
       </div>
 
-      {/* My Tasks Section */}
-      <div className="space-y-3">
-        <div className="flex items-center justify-between">
-          <h2 className="text-xl font-semibold text-foreground">My Tasks</h2>
-          <div className="text-right">
-            <div className="text-lg font-bold text-primary">
-              {completedCount}/{totalCount}
+      {/* My Tasks Section - Store Manager Only */}
+      {viewMode === "store_manager" && (
+        <div className="space-y-3">
+          <div className="flex items-center justify-between">
+            <h2 className="text-xl font-semibold text-foreground">My Tasks</h2>
+            <div className="text-right">
+              <div className="text-lg font-bold text-primary">
+                {completedCount}/{totalCount}
+              </div>
+              <div className="text-xs text-muted-foreground">Completed</div>
             </div>
-            <div className="text-xs text-muted-foreground">Completed</div>
+          </div>
+
+          {/* Progress Bar */}
+          <Card className="shadow-md bg-gradient-to-r from-background to-primary/5 border-orange-200">
+            <CardContent className="p-4">
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-medium">Daily Progress</span>
+                  <span className="text-sm font-medium text-primary">
+                    {Math.round(progressPercentage)}%
+                  </span>
+                </div>
+                <Progress value={progressPercentage} className="h-2" />
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Task Cards */}
+          <div className="grid gap-3">
+            {tasks.map((task) => (
+              <Card 
+                key={task.id}
+                className={`transition-all duration-200 border-orange-200 ${
+                  task.completed 
+                    ? "opacity-60 bg-gradient-to-r from-green-50 to-emerald-50" 
+                    : "bg-gradient-to-r from-orange-100 to-amber-100 hover:from-orange-200 hover:to-amber-200 hover:shadow-lg shadow-md"
+                }`}
+              >
+                <CardContent className="p-4">
+                  <div className="flex items-start gap-4">
+                    <div onClick={(e) => e.stopPropagation()}>
+                      <Checkbox
+                        checked={task.completed}
+                        onCheckedChange={() => toggleTask(task.id)}
+                        className="mt-1"
+                      />
+                    </div>
+                    <div className="flex-shrink-0 w-10 h-10 bg-orange-200 rounded-full flex items-center justify-center">
+                      <task.icon className="h-5 w-5 text-orange-700" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h3 className={`text-base font-semibold text-foreground mb-1 ${task.completed ? "line-through" : ""}`}>
+                        {task.title}
+                      </h3>
+                      <p className="text-sm text-muted-foreground">
+                        {task.description}
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-3 shrink-0">
+                      <div className="flex items-center gap-1 text-muted-foreground">
+                        <Clock className="h-4 w-4" />
+                        <span className="text-sm font-medium">{task.time}</span>
+                      </div>
+                      {task.path && !task.completed && (
+                        <Button 
+                          size="sm" 
+                          variant="outline"
+                          onClick={() => navigate(task.path)}
+                          className="border-orange-300 hover:bg-orange-300"
+                        >
+                          Go
+                          <ArrowRight className="h-4 w-4 ml-1" />
+                        </Button>
+                      )}
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
           </div>
         </div>
+      )}
 
-        {/* Progress Bar */}
-        <Card className="shadow-md bg-gradient-to-r from-background to-primary/5 border-orange-200">
-          <CardContent className="p-4">
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium">Daily Progress</span>
-                <span className="text-sm font-medium text-primary">
-                  {Math.round(progressPercentage)}%
-                </span>
-              </div>
-              <Progress value={progressPercentage} className="h-2" />
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Task Cards */}
-        <div className="grid gap-3">
-          {tasks.map((task) => (
+      {/* My Actions Section - HQ Only */}
+      {viewMode === "hq" && (
+        <div className="space-y-3">
+          <h2 className="text-xl font-semibold text-foreground">My Actions</h2>
+          <div className="grid gap-3 md:grid-cols-2">
             <Card 
-              key={task.id}
-              className={`transition-all duration-200 border-orange-200 ${
-                task.completed 
-                  ? "opacity-60 bg-gradient-to-r from-green-50 to-emerald-50" 
-                  : "bg-gradient-to-r from-orange-100 to-amber-100 hover:from-orange-200 hover:to-amber-200 hover:shadow-lg shadow-md"
-              }`}
+              className="bg-gradient-to-r from-orange-100 to-amber-100 hover:from-orange-200 hover:to-amber-200 hover:shadow-lg shadow-md transition-all duration-200 border-orange-200 cursor-pointer"
+              onClick={() => navigate("/analytics")}
             >
               <CardContent className="p-4">
-                <div className="flex items-start gap-4">
-                  <div onClick={(e) => e.stopPropagation()}>
-                    <Checkbox
-                      checked={task.completed}
-                      onCheckedChange={() => toggleTask(task.id)}
-                      className="mt-1"
-                    />
-                  </div>
+                <div className="flex items-center gap-4">
                   <div className="flex-shrink-0 w-10 h-10 bg-orange-200 rounded-full flex items-center justify-center">
-                    <task.icon className="h-5 w-5 text-orange-700" />
+                    <TrendingUp className="h-5 w-5 text-orange-700" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <h3 className={`text-base font-semibold text-foreground mb-1 ${task.completed ? "line-through" : ""}`}>
-                      {task.title}
+                    <h3 className="text-base font-semibold text-foreground mb-1">
+                      View Analytics
                     </h3>
                     <p className="text-sm text-muted-foreground">
-                      {task.description}
+                      Deep dive into performance metrics
                     </p>
                   </div>
-                  <div className="flex items-center gap-3 shrink-0">
-                    <div className="flex items-center gap-1 text-muted-foreground">
-                      <Clock className="h-4 w-4" />
-                      <span className="text-sm font-medium">{task.time}</span>
-                    </div>
-                    {task.path && !task.completed && (
-                      <Button 
-                        size="sm" 
-                        variant="outline"
-                        onClick={() => navigate(task.path)}
-                        className="border-orange-300 hover:bg-orange-300"
-                      >
-                        Go
-                        <ArrowRight className="h-4 w-4 ml-1" />
-                      </Button>
-                    )}
-                  </div>
+                  <ArrowRight className="h-5 w-5 text-orange-700 shrink-0" />
                 </div>
               </CardContent>
             </Card>
-          ))}
+
+            <Card 
+              className="bg-gradient-to-r from-orange-100 to-amber-100 hover:from-orange-200 hover:to-amber-200 hover:shadow-lg shadow-md transition-all duration-200 border-orange-200 cursor-pointer"
+              onClick={() => navigate("/store-management")}
+            >
+              <CardContent className="p-4">
+                <div className="flex items-center gap-4">
+                  <div className="flex-shrink-0 w-10 h-10 bg-orange-200 rounded-full flex items-center justify-center">
+                    <Users className="h-5 w-5 text-orange-700" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="text-base font-semibold text-foreground mb-1">
+                      Store Management
+                    </h3>
+                    <p className="text-sm text-muted-foreground">
+                      Monitor all stores and teams
+                    </p>
+                  </div>
+                  <ArrowRight className="h-5 w-5 text-orange-700 shrink-0" />
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card 
+              className="bg-gradient-to-r from-orange-100 to-amber-100 hover:from-orange-200 hover:to-amber-200 hover:shadow-lg shadow-md transition-all duration-200 border-orange-200 cursor-pointer"
+              onClick={() => navigate("/delivery-plan")}
+            >
+              <CardContent className="p-4">
+                <div className="flex items-center gap-4">
+                  <div className="flex-shrink-0 w-10 h-10 bg-orange-200 rounded-full flex items-center justify-center">
+                    <Truck className="h-5 w-5 text-orange-700" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="text-base font-semibold text-foreground mb-1">
+                      Delivery Planning
+                    </h3>
+                    <p className="text-sm text-muted-foreground">
+                      Review and optimize deliveries
+                    </p>
+                  </div>
+                  <ArrowRight className="h-5 w-5 text-orange-700 shrink-0" />
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card 
+              className="bg-gradient-to-r from-orange-100 to-amber-100 hover:from-orange-200 hover:to-amber-200 hover:shadow-lg shadow-md transition-all duration-200 border-orange-200 cursor-pointer"
+              onClick={() => navigate("/product-range")}
+            >
+              <CardContent className="p-4">
+                <div className="flex items-center gap-4">
+                  <div className="flex-shrink-0 w-10 h-10 bg-orange-200 rounded-full flex items-center justify-center">
+                    <Package className="h-5 w-5 text-orange-700" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="text-base font-semibold text-foreground mb-1">
+                      Product Range
+                    </h3>
+                    <p className="text-sm text-muted-foreground">
+                      Manage products and pricing
+                    </p>
+                  </div>
+                  <ArrowRight className="h-5 w-5 text-orange-700 shrink-0" />
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         </div>
-      </div>
+      )}
 
       {viewMode === "hq" ? (
         <>
