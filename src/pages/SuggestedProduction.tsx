@@ -400,26 +400,29 @@ export default function SuggestedProduction() {
       <div className="flex items-center justify-between gap-4">
         <div className="flex items-center gap-2">
           <span className="text-sm font-medium text-muted-foreground">Production Date:</span>
-          <Select
-            value={selectedDate.toISOString()}
-            onValueChange={(value) => setSelectedDate(new Date(value))}
-          >
-            <SelectTrigger className="w-[240px]">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {Array.from({ length: 14 }, (_, i) => {
-                const date = new Date();
-                date.setDate(date.getDate() + i);
-                return (
-                  <SelectItem key={i} value={date.toISOString()}>
-                    {format(date, "EEEE, MMM d, yyyy")}
-                    {i === 0 && " (Today)"}
-                  </SelectItem>
-                );
-              })}
-            </SelectContent>
-          </Select>
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button
+                variant="outline"
+                className={cn(
+                  "w-[280px] justify-start text-left font-normal",
+                  !selectedDate && "text-muted-foreground"
+                )}
+              >
+                <CalendarIcon className="mr-2 h-4 w-4" />
+                {selectedDate ? format(selectedDate, "EEEE, MMM d, yyyy") : <span>Pick a date</span>}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0" align="start">
+              <Calendar
+                mode="single"
+                selected={selectedDate}
+                onSelect={(date) => date && setSelectedDate(date)}
+                initialFocus
+                className={cn("p-3 pointer-events-auto")}
+              />
+            </PopoverContent>
+          </Popover>
         </div>
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2 text-sm text-muted-foreground">

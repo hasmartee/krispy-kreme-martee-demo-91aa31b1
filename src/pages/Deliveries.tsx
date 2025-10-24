@@ -27,9 +27,13 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Truck, Plus, CheckCircle, Upload, FileText, X } from "lucide-react";
+import { Truck, Plus, CheckCircle, Upload, FileText, X, CalendarIcon } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useView } from "@/contexts/ViewContext";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
+import { format } from "date-fns";
+import { cn } from "@/lib/utils";
 
 interface DeliveryItem {
   ingredient: string;
@@ -85,6 +89,7 @@ export default function Deliveries() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [uploadingReceipt, setUploadingReceipt] = useState<string | null>(null);
   const receiptInputRef = useRef<HTMLInputElement>(null);
+  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   
   const [deliveries, setDeliveries] = useState<DeliveryLog[]>([
     {
@@ -276,10 +281,35 @@ export default function Deliveries() {
             Track and manage supplier deliveries
           </p>
         </div>
-        <Button onClick={() => setIsDialogOpen(true)}>
-          <Plus className="h-4 w-4 mr-2" />
-          Record Delivery
-        </Button>
+        <div className="flex items-center gap-3">
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button
+                variant="outline"
+                className={cn(
+                  "w-[280px] justify-start text-left font-normal",
+                  !selectedDate && "text-muted-foreground"
+                )}
+              >
+                <CalendarIcon className="mr-2 h-4 w-4" />
+                {selectedDate ? format(selectedDate, "EEEE, MMM d, yyyy") : <span>Pick a date</span>}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0" align="start">
+              <Calendar
+                mode="single"
+                selected={selectedDate}
+                onSelect={(date) => date && setSelectedDate(date)}
+                initialFocus
+                className={cn("p-3 pointer-events-auto")}
+              />
+            </PopoverContent>
+          </Popover>
+          <Button onClick={() => setIsDialogOpen(true)}>
+            <Plus className="h-4 w-4 mr-2" />
+            Record Delivery
+          </Button>
+        </div>
       </div>
 
       <div className="grid gap-4">
