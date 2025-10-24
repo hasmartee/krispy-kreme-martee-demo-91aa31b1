@@ -545,8 +545,8 @@ const weeklyTrendData = [
       {viewMode === "hq" && (
         <div className="space-y-3">
           <h2 className="text-xl font-semibold text-foreground">My Actions</h2>
-          <div className="grid gap-3 md:grid-cols-2">
-            <Card 
+          <div className="grid gap-3">
+            <Card
               className="bg-gradient-to-r from-orange-100 to-amber-100 hover:from-orange-200 hover:to-amber-200 hover:shadow-lg shadow-md transition-all duration-200 border-orange-200 cursor-pointer"
               onClick={() => navigate("/suggested-production")}
             >

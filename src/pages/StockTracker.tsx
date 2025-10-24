@@ -389,11 +389,11 @@ const LiveData = () => {
               <div>
                 <CardTitle className="text-xl font-bold flex items-center gap-2">
                   <span className="bg-gradient-to-r from-orange-600 via-amber-600 to-orange-700 bg-clip-text text-transparent">
-                    AI Key Insights
+                    AI Stock Insights
                   </span>
                   <Sparkles className="h-4 w-4 text-orange-500 animate-pulse" />
                 </CardTitle>
-                <CardDescription className="text-sm">Powered by advanced analytics</CardDescription>
+                <CardDescription className="text-sm">Highlighting key discrepancies across planning, production, delivery & waste</CardDescription>
               </div>
             </div>
           </CardHeader>
