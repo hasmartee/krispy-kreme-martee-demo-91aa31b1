@@ -1005,10 +1005,6 @@ const weeklyTrendData = [
           <div>
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-xl font-semibold text-foreground">This Week's Performance</h2>
-              <Button onClick={() => navigate("/analytics")} variant="outline" className="gap-2">
-                View Full Performance
-                <ArrowRight className="h-4 w-4" />
-              </Button>
             </div>
             
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
