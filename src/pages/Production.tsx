@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
+import { cn } from "@/lib/utils";
 import heroImage from "@/assets/hero-food.jpg";
 import { useView } from "@/contexts/ViewContext";
 import { supabase } from "@/lib/supabase-helper";
@@ -452,50 +453,48 @@ export default function Production() {
         </div>
       </div>
 
-      {/* Date Picker and View Toggle */}
+      {/* 14-Day Production Forecast */}
+      <div className="space-y-4">
+        <div>
+          <h2 className="text-2xl font-bold">14-Day Production Forecast</h2>
+          <p className="text-muted-foreground">AI-recommended production quantities across all stores</p>
+        </div>
+        
+        {/* Horizontal Date Selector */}
+        <div className="flex gap-2 overflow-x-auto pb-2">
+          {Array.from({ length: 14 }, (_, i) => {
+            const date = new Date();
+            date.setDate(date.getDate() + i);
+            const isSelected = format(date, 'yyyy-MM-dd') === format(selectedDate, 'yyyy-MM-dd');
+            const dayOfWeek = format(date, 'EEE');
+            const dayOfMonth = format(date, 'dd');
+            
+            return (
+              <Button
+                key={i}
+                variant={isSelected ? "default" : "outline"}
+                onClick={() => setSelectedDate(date)}
+                className={cn(
+                  "flex-shrink-0 flex flex-col items-center gap-1 h-auto py-3 px-6 min-w-[100px]",
+                  isSelected 
+                    ? "bg-primary text-primary-foreground shadow-md border-2 border-primary" 
+                    : "bg-background hover:bg-muted text-muted-foreground"
+                )}
+              >
+                <span className="text-sm font-medium">{dayOfWeek}</span>
+                <span className="text-lg font-bold">{dayOfMonth}</span>
+              </Button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Controls */}
       <div className="flex items-center justify-between gap-4">
-        <Card className="border-2 border-primary bg-gradient-to-br from-primary/10 via-primary/5 to-transparent shadow-lg">
-          <CardContent className="p-4">
-            <div className="flex items-center gap-3">
-              <div className="flex items-center justify-center w-12 h-12 rounded-full bg-primary text-primary-foreground shadow-md">
-                <CalendarIcon className="h-6 w-6" />
-              </div>
-              <div className="flex-1">
-                <label className="text-sm font-semibold text-foreground block mb-1.5">Production Date</label>
-                <Select
-                  value={selectedDate.toISOString()}
-                  onValueChange={(value) => setSelectedDate(new Date(value))}
-                >
-                  <SelectTrigger className="w-[300px] h-12 border-2 border-primary/40 hover:border-primary bg-background font-medium transition-all hover:shadow-md">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {Array.from({ length: 14 }, (_, i) => {
-                      const date = new Date();
-                      date.setDate(date.getDate() + i);
-                      const isToday = i === 0;
-                      const isSelected = format(date, 'yyyy-MM-dd') === format(selectedDate, 'yyyy-MM-dd');
-                      return (
-                        <SelectItem 
-                          key={i} 
-                          value={date.toISOString()}
-                          className={isSelected ? "bg-primary text-primary-foreground font-semibold" : ""}
-                        >
-                          {format(date, "EEEE, MMM d, yyyy")}
-                          {isToday && " (Today)"}
-                        </SelectItem>
-                      );
-                    })}
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+          <span>Selected: {format(selectedDate, "EEEE, MMMM d, yyyy")}</span>
+        </div>
         <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <span>Last updated: {format(new Date(), "EEEE, MMMM d, yyyy 'at' h:mm a")}</span>
-          </div>
           <div className="flex items-center gap-2">
             {viewMode === "hq" && (
               <div className="flex items-center gap-2 bg-muted/50 rounded-lg p-1">
