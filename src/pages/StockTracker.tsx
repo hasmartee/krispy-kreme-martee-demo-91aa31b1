@@ -81,17 +81,59 @@ const LiveData = () => {
         .order('name') as any;
 
       if (storesData) {
-        // Generate product data matching each store's range plan
-        const storesWithProducts: StoreData[] = storesData.map((store: any) => {
+        // Generate product data with more varied scenarios
+        const storesWithProducts: StoreData[] = storesData.map((store: any, storeIndex: number) => {
           const baseMultiplier = store.name.includes("Station") ? 1.2 : store.name.includes("Street") ? 1.1 : 1.0;
           const storeProducts = getProductsForCluster(store.cluster || 'high_street');
           
-          const products: ProductData[] = storeProducts.map((productName: string) => {
+          // Create different scenario types for different stores
+          const scenarioType = storeIndex % 4;
+          
+          const products: ProductData[] = storeProducts.map((productName: string, idx: number) => {
             const planned = Math.round((50 + Math.floor(Math.random() * 100)) * baseMultiplier);
-            const produced = Math.round(planned * (0.95 + Math.random() * 0.1));
-            const delivered = Math.round(produced * (0.95 + Math.random() * 0.05));
-            const sold = Math.round(delivered * (0.8 + Math.random() * 0.15));
-            const wasted = Math.round(delivered * (0.03 + Math.random() * 0.07));
+            
+            let produced: number;
+            let delivered: number;
+            let sold: number;
+            let wasted: number;
+            
+            // Vary scenarios to create different types of issues
+            switch (scenarioType) {
+              case 0: // Production overrun scenario
+                produced = Math.round(planned * (1.12 + Math.random() * 0.08)); // 12-20% over
+                delivered = Math.round(produced * (0.96 + Math.random() * 0.04));
+                sold = Math.round(delivered * (0.82 + Math.random() * 0.13));
+                wasted = Math.round(delivered * (0.04 + Math.random() * 0.06));
+                break;
+              
+              case 1: // Production shortfall scenario
+                produced = Math.round(planned * (0.80 + Math.random() * 0.08)); // 12-20% under
+                delivered = Math.round(produced * (0.95 + Math.random() * 0.05));
+                sold = Math.round(delivered * (0.85 + Math.random() * 0.10));
+                wasted = Math.round(delivered * (0.03 + Math.random() * 0.05));
+                break;
+              
+              case 2: // Delivery variance scenario
+                produced = Math.round(planned * (0.98 + Math.random() * 0.04));
+                delivered = Math.round(produced * (0.85 + Math.random() * 0.05)); // 10-15% delivery loss
+                sold = Math.round(delivered * (0.80 + Math.random() * 0.15));
+                wasted = Math.round(delivered * (0.05 + Math.random() * 0.08));
+                break;
+              
+              case 3: // Excellent performance scenario
+                produced = Math.round(planned * (0.98 + Math.random() * 0.04));
+                delivered = Math.round(produced * (0.97 + Math.random() * 0.03));
+                sold = Math.round(delivered * (0.96 + Math.random() * 0.03)); // >95% sell-through
+                wasted = Math.round(delivered * (0.01 + Math.random() * 0.02)); // <3% waste
+                break;
+              
+              default:
+                produced = Math.round(planned * (0.95 + Math.random() * 0.1));
+                delivered = Math.round(produced * (0.95 + Math.random() * 0.05));
+                sold = Math.round(delivered * (0.8 + Math.random() * 0.15));
+                wasted = Math.round(delivered * (0.03 + Math.random() * 0.07));
+            }
+            
             const unaccountedFor = Math.max(0, delivered - sold - wasted);
 
             return {
