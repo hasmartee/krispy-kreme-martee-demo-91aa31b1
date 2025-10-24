@@ -129,9 +129,9 @@ export default function DailyWaste() {
         // Get stock adjustments for this product
         const stockAdjustments = adjustmentMap.get(alloc.product_sku) || 0;
         
-        // Expected waste = delivered - sold - stock adjustments
-        // If stock adjustment is negative (write-off), it reduces expected waste
-        const expectedWaste = Math.max(0, deliveredQty - soldQty - stockAdjustments);
+        // Expected waste = delivered - sold + stock adjustments
+        // If stock adjustment is negative (write-off), it subtracts from expected waste
+        const expectedWaste = Math.max(0, deliveredQty - soldQty + stockAdjustments);
         
         return {
           id: alloc.id,
