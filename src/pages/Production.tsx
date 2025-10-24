@@ -145,11 +145,7 @@ export default function Production() {
                 .find(p => p.id === alloc.product_sku);
               
               if (productTemplate) {
-                // Pre-populate manufactured_qty with planned quantity if not set or zero
-                const manufacturedQty = (alloc.manufactured_quantity && alloc.manufactured_quantity > 0) 
-                  ? alloc.manufactured_quantity 
-                  : alloc.quantity;
-                
+                // Always initialize manufactured_qty to match planned quantity
                 productsToDisplay.push({
                   id: alloc.product_sku,
                   productName: productTemplate.name,
@@ -159,7 +155,7 @@ export default function Production() {
                   currentStock: alloc.quantity,
                   recommendedOrder: alloc.quantity,
                   finalOrder: alloc.quantity,
-                  manufacturedQty: manufacturedQty,
+                  manufacturedQty: alloc.quantity,
                   trend: "stable" as const,
                   historicalSales: alloc.quantity * 0.9,
                   predictedSales: alloc.quantity * 1.05,
