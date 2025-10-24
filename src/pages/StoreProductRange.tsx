@@ -186,12 +186,10 @@ export default function StoreProductRange() {
   const [isClusterDialogOpen, setIsClusterDialogOpen] = useState(false);
   const [editingCluster, setEditingCluster] = useState<string | null>(null);
   const [selectedStores, setSelectedStores] = useState<string[]>([]);
-  const [expandedStores, setExpandedStores] = useState<string[]>([]);
   const [isEditTemplateOpen, setIsEditTemplateOpen] = useState(false);
   const [editingTemplateCluster, setEditingTemplateCluster] = useState<string | null>(null);
   const [templateProducts, setTemplateProducts] = useState<any[]>([]);
   const [changingStoreCluster, setChangingStoreCluster] = useState<string | null>(null);
-  const [productCapacities, setProductCapacities] = useState<Record<string, { min: number; max: number }>>({});
   const { toast } = useToast();
   const { viewMode, selectedStore } = useView();
 
@@ -250,46 +248,8 @@ export default function StoreProductRange() {
     console.log('🔄 Initializing product capacities with defaults...');
     const capacitiesToInsert: any[] = [];
     
-  const initializeProductCapacities = async () => {
-    console.log('🔄 Initializing product capacities with defaults...');
-    const capacitiesToInsert: any[] = [];
-    
     for (const store of allStores) {
       const products = brandProductTemplates["Krispy Kreme"];
-      
-      for (const product of products) {
-        const key = `${product.id}-${store.id}`;
-        
-        // Check if capacity already exists
-        if (!productCapacities[key]) {
-          const defaults = generateDefaultCapacity(product.category);
-          capacitiesToInsert.push({
-            product_sku: product.id,
-            store_id: store.id,
-            capacity_min: defaults.min,
-            capacity_max: defaults.max,
-          });
-        }
-      }
-    }
-    
-    if (capacitiesToInsert.length > 0) {
-      try {
-        const { error } = await supabase
-          .from('product_capacities')
-          .insert(capacitiesToInsert);
-        
-        if (error) {
-          console.error('Error initializing capacities:', error);
-        } else {
-          console.log(`✅ Initialized ${capacitiesToInsert.length} product capacities`);
-          await loadProductCapacities();
-        }
-      } catch (error) {
-        console.error('Error inserting capacities:', error);
-      }
-    }
-  };
       
       for (const product of products) {
         const key = `${product.id}-${store.id}`;
