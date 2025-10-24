@@ -98,41 +98,97 @@ export default function DeliveryPlan() {
 
   const loadData = async () => {
     try {
+      // Get today's date for the production plan
+      const today = new Date().toISOString().split('T')[0];
+      
+      // Fetch stores with their IDs
       const { data: storesData } = await supabase
         .from('stores')
-        .select('name')
+        .select('id, name')
         .order('name') as any;
 
-      if (storesData) {
-        const storeNames = storesData.map((s: any) => s.name);
-        setStores(storeNames);
+      if (!storesData) return;
 
-        // Initialize allocations with Krispy Kreme products
-        const initialAllocations = allKrispyKremeProducts.map((product, index) => {
-          const produced = 100 + Math.floor(Math.random() * 400);
-          const perStore = Math.floor(produced / storeNames.length);
-          const storeAllocations = storeNames.map(store => ({
+      const storeNames = storesData.map((s: any) => s.name);
+      const storeMap = new Map(storesData.map((s: any) => [s.id, s.name]));
+      setStores(storeNames);
+
+      // Fetch production plan for today
+      const { data: productionPlan } = await supabase
+        .from('production_plans')
+        .select('id, status')
+        .eq('production_date', today)
+        .single() as any;
+
+      if (!productionPlan) {
+        // No production plan yet, initialize with empty data
+        const initialAllocations = allKrispyKremeProducts.map((product, index) => ({
+          productId: index + 1,
+          productName: product.name,
+          sku: product.sku,
+          produced: 0,
+          dayPart: product.dayPart,
+          confirmed: false,
+          stores: storeNames.map(store => ({
             storeName: store,
-            allocated: perStore,
-          }));
-          const totalAllocated = perStore * storeNames.length;
+            allocated: 0,
+          })),
+          totalAllocated: 0,
+          remaining: 0,
+          overridden: false,
+        }));
+        setAllocations(initialAllocations);
+        setLoading(false);
+        return;
+      }
 
+      // Fetch allocations for this production plan
+      const { data: allocationsData } = await supabase
+        .from('production_allocations')
+        .select('store_id, product_id, quantity, day_part')
+        .eq('production_plan_id', productionPlan.id) as any;
+
+      // Group allocations by product
+      const productAllocations = new Map<string, any[]>();
+      if (allocationsData) {
+        allocationsData.forEach((alloc: any) => {
+          if (!productAllocations.has(alloc.product_id)) {
+            productAllocations.set(alloc.product_id, []);
+          }
+          productAllocations.get(alloc.product_id)!.push(alloc);
+        });
+      }
+
+      // Build allocations array
+      const loadedAllocations = allKrispyKremeProducts.map((product, index) => {
+        const productAllocs = productAllocations.get(product.id) || [];
+        const storeAllocations = storeNames.map(storeName => {
+          const storeId = storesData.find((s: any) => s.name === storeName)?.id;
+          const allocation = productAllocs.find(a => a.store_id === storeId);
           return {
-            productId: index + 1,
-            productName: product.name,
-            sku: product.sku,
-            produced,
-            dayPart: product.dayPart,
-            confirmed: Math.random() > 0.5,
-            stores: storeAllocations,
-            totalAllocated,
-            remaining: produced - totalAllocated,
-            overridden: false,
+            storeName,
+            allocated: allocation?.quantity || 0,
           };
         });
+        
+        const totalAllocated = storeAllocations.reduce((sum, s) => sum + s.allocated, 0);
+        const produced = totalAllocated; // For now, produced = total allocated
 
-        setAllocations(initialAllocations);
-      }
+        return {
+          productId: index + 1,
+          productName: product.name,
+          sku: product.sku,
+          produced,
+          dayPart: product.dayPart,
+          confirmed: productionPlan.status === 'confirmed',
+          stores: storeAllocations,
+          totalAllocated,
+          remaining: produced - totalAllocated,
+          overridden: false,
+        };
+      });
+
+      setAllocations(loadedAllocations);
     } catch (error) {
       console.error("Error loading data:", error);
       toast({
@@ -268,7 +324,7 @@ export default function DeliveryPlan() {
     }));
   };
 
-  const saveDeliveryPlan = () => {
+  const saveDeliveryPlan = async () => {
     // Check for over-allocations
     const overAllocated = allocations.filter(p => p.remaining < 0);
     
@@ -281,10 +337,32 @@ export default function DeliveryPlan() {
       return;
     }
 
-    toast({
-      title: "Delivery plan saved",
-      description: "All store allocations have been updated",
-    });
+    try {
+      const today = new Date().toISOString().split('T')[0];
+
+      // Update production plan status to confirmed
+      const { error: updateError } = await supabase
+        .from('production_plans')
+        .update({ status: 'confirmed' })
+        .eq('production_date', today) as any;
+
+      if (updateError) throw updateError;
+
+      // Update all allocations to confirmed
+      setAllocations(prev => prev.map(p => ({ ...p, confirmed: true })));
+
+      toast({
+        title: "Delivery plan confirmed",
+        description: "All store allocations have been confirmed",
+      });
+    } catch (error) {
+      console.error("Error saving delivery plan:", error);
+      toast({
+        title: "Error",
+        description: "Failed to confirm delivery plan",
+        variant: "destructive",
+      });
+    }
   };
 
   const filteredAllocations = allocations.filter(allocation => 

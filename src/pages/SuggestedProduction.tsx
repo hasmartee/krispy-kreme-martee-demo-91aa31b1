@@ -169,16 +169,62 @@ export default function SuggestedProduction() {
   const handleConfirmProduction = async (product: Product) => {
     setConfirmingProduction(`${product.id}-${product.storeId}`);
     
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    
-    toast({
-      title: viewMode === "hq" ? "✓ Production Confirmed" : "✓ Delivery Logged",
-      description: viewMode === "hq" 
-        ? `${product.productName} added to production queue for ${product.store}`
-        : `${product.productName} delivery logged - ${product.finalOrder} units received`,
-    });
-    
-    setConfirmingProduction(null);
+    try {
+      // Create or update production plan for the selected date
+      const { data: existingPlan } = await supabase
+        .from('production_plans')
+        .select('id, status')
+        .eq('production_date', format(selectedDate, 'yyyy-MM-dd'))
+        .single() as any;
+
+      let planId = existingPlan?.id;
+
+      if (!existingPlan) {
+        // Create new production plan
+        const { data: newPlan, error: planError } = await supabase
+          .from('production_plans')
+          .insert({
+            production_date: format(selectedDate, 'yyyy-MM-dd'),
+            status: 'pending',
+          })
+          .select()
+          .single() as any;
+
+        if (planError) throw planError;
+        planId = newPlan.id;
+      }
+
+      // Upsert production allocation
+      const { error: allocationError } = await supabase
+        .from('production_allocations')
+        .upsert({
+          production_plan_id: planId,
+          store_id: product.storeId,
+          product_id: product.id,
+          quantity: product.finalOrder,
+          day_part: product.dayPart || 'Morning',
+        }, {
+          onConflict: 'production_plan_id,store_id,product_id,day_part'
+        }) as any;
+
+      if (allocationError) throw allocationError;
+
+      toast({
+        title: viewMode === "hq" ? "✓ Production Confirmed" : "✓ Delivery Logged",
+        description: viewMode === "hq" 
+          ? `${product.productName} added to production queue for ${product.store}`
+          : `${product.productName} delivery logged - ${product.finalOrder} units received`,
+      });
+    } catch (error) {
+      console.error('Error confirming production:', error);
+      toast({
+        title: "Error",
+        description: "Failed to save production allocation",
+        variant: "destructive",
+      });
+    } finally {
+      setConfirmingProduction(null);
+    }
   };
 
   const handleExportCSV = () => {
