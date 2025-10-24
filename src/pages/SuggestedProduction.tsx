@@ -2,8 +2,9 @@ import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { TrendingUp, TrendingDown, RefreshCw, Plus, Minus, CloudRain, AlertTriangle, Sparkles, Download, Send, Loader2, CalendarIcon } from "lucide-react";
+import { TrendingUp, TrendingDown, RefreshCw, Plus, Minus, CloudRain, AlertTriangle, Sparkles, Download, Send, Loader2, CalendarIcon, Package, CheckCircle2 } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -36,10 +37,22 @@ interface Store {
   cluster: string;
 }
 
+interface DeliveryItem {
+  id: string;
+  productName: string;
+  productSku: string;
+  category: string;
+  expectedQuantity: number;
+  receivedQuantity: number;
+  dayPart: string;
+  allocationId: string;
+}
+
 export default function SuggestedProduction() {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const { viewMode, selectedStore } = useView();
   const [products, setProducts] = useState<Product[]>([]);
+  const [deliveryItems, setDeliveryItems] = useState<DeliveryItem[]>([]);
   const [stores, setStores] = useState<Store[]>([]);
   const [loading, setLoading] = useState(true);
   const [confirmingProduction, setConfirmingProduction] = useState<string | null>(null);
@@ -50,8 +63,89 @@ export default function SuggestedProduction() {
   const formattedDate = selectedDate.toLocaleDateString('en-GB', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
 
   useEffect(() => {
-    loadData();
-  }, [viewMode, selectedStore]);
+    if (viewMode === "store_manager") {
+      loadStoreDeliveries();
+    } else {
+      loadData();
+    }
+  }, [viewMode, selectedStore, selectedDate]);
+
+  // Load store deliveries from production_allocations
+  const loadStoreDeliveries = async () => {
+    setLoading(true);
+    try {
+      const productionDate = format(selectedDate, 'yyyy-MM-dd');
+      
+      // Get the store ID
+      const { data: storeData } = await supabase
+        .from('stores')
+        .select('id, name')
+        .eq('name', selectedStore)
+        .maybeSingle() as any;
+
+      if (!storeData) {
+        console.log('Store not found:', selectedStore);
+        setDeliveryItems([]);
+        setLoading(false);
+        return;
+      }
+
+      // Get production plan for the date
+      const { data: planData } = await supabase
+        .from('production_plans')
+        .select('id')
+        .eq('production_date', productionDate)
+        .maybeSingle() as any;
+
+      if (!planData) {
+        console.log('No production plan found for date:', productionDate);
+        setDeliveryItems([]);
+        setLoading(false);
+        return;
+      }
+
+      // Get allocations for this store
+      const { data: allocations } = await supabase
+        .from('production_allocations')
+        .select('*')
+        .eq('production_plan_id', planData.id)
+        .eq('store_id', storeData.id) as any;
+
+      console.log('Store deliveries loaded:', allocations);
+
+      // Get product details
+      const { data: productsData } = await supabase
+        .from('products')
+        .select('*') as any;
+
+      const productMap = new Map(productsData?.map((p: any) => [p.sku, p]) || []);
+
+      const items: DeliveryItem[] = (allocations || []).map((alloc: any) => {
+        const product: any = productMap.get(alloc.product_sku);
+        return {
+          id: alloc.id,
+          productName: product?.name || alloc.product_sku,
+          productSku: alloc.product_sku,
+          category: product?.category || 'Unknown',
+          expectedQuantity: alloc.quantity || 0,
+          receivedQuantity: alloc.received_quantity || 0,
+          dayPart: alloc.day_part || 'Morning',
+          allocationId: alloc.id,
+        };
+      });
+
+      setDeliveryItems(items);
+    } catch (error) {
+      console.error('Error loading store deliveries:', error);
+      toast({
+        title: "Error",
+        description: "Failed to load delivery data",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // Krispy Kreme product templates matching StoreProductRange
   const getProductsForCluster = (cluster: string) => {
@@ -159,7 +253,11 @@ export default function SuggestedProduction() {
 
   const handleRefresh = async () => {
     setIsRefreshing(true);
-    await loadData();
+    if (viewMode === "store_manager") {
+      await loadStoreDeliveries();
+    } else {
+      await loadData();
+    }
     setTimeout(() => setIsRefreshing(false), 1000);
   };
 
@@ -232,6 +330,38 @@ export default function SuggestedProduction() {
     } catch (error) {
       console.error('❌ Error saving pending allocations:', error);
       return { success: false, error };
+    }
+  };
+
+  const updateReceivedQuantity = async (allocationId: string, newQuantity: number) => {
+    try {
+      const { error } = await supabase
+        .from('production_allocations')
+        .update({ received_quantity: newQuantity })
+        .eq('id', allocationId) as any;
+
+      if (error) throw error;
+
+      // Update local state
+      setDeliveryItems(items =>
+        items.map(item =>
+          item.allocationId === allocationId
+            ? { ...item, receivedQuantity: newQuantity }
+            : item
+        )
+      );
+
+      toast({
+        title: "✓ Confirmed",
+        description: "Received quantity updated",
+      });
+    } catch (error) {
+      console.error('Error updating received quantity:', error);
+      toast({
+        title: "Error",
+        description: "Failed to update received quantity",
+        variant: "destructive",
+      });
     }
   };
 
@@ -370,6 +500,127 @@ export default function SuggestedProduction() {
     );
   }
 
+  // Store Manager View - Show Deliveries
+  if (viewMode === "store_manager") {
+    return (
+      <div className="flex-1 space-y-6 p-6">
+        {/* Hero Section */}
+        <div 
+          className="relative h-48 rounded-2xl overflow-hidden bg-cover bg-center shadow-2xl"
+          style={{ backgroundImage: `url(${heroImage})` }}
+        >
+          <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/60 to-black/40" />
+          <div className="absolute inset-0 flex flex-col justify-center px-8">
+            <h1 className="text-4xl font-bold text-white mb-2">Store Deliveries</h1>
+            <p className="text-xl text-white/90">{selectedStore} - {formattedDate}</p>
+          </div>
+        </div>
+
+        {/* Date Picker */}
+        <div className="flex items-center justify-between gap-4">
+          <div className="flex items-center gap-2">
+            <span className="text-sm font-medium text-muted-foreground">Delivery Date:</span>
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  className={cn(
+                    "w-[280px] justify-start text-left font-normal",
+                    !selectedDate && "text-muted-foreground"
+                  )}
+                >
+                  <CalendarIcon className="mr-2 h-4 w-4" />
+                  {selectedDate ? format(selectedDate, "EEEE, MMM d, yyyy") : <span>Pick a date</span>}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <Calendar
+                  mode="single"
+                  selected={selectedDate}
+                  onSelect={(date) => date && setSelectedDate(date)}
+                  initialFocus
+                  className={cn("p-3 pointer-events-auto")}
+                />
+              </PopoverContent>
+            </Popover>
+          </div>
+          <Button onClick={handleRefresh} variant="outline" size="sm">
+            <RefreshCw className={cn("h-4 w-4 mr-2", isRefreshing && "animate-spin")} />
+            Refresh
+          </Button>
+        </div>
+
+        {/* Deliveries Table */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Package className="h-5 w-5" />
+              Expected & Confirmed Deliveries
+            </CardTitle>
+            <CardDescription>
+              Review expected quantities and confirm what was actually received
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            {deliveryItems.length === 0 ? (
+              <div className="text-center py-12">
+                <Package className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+                <p className="text-muted-foreground">No deliveries scheduled for this date</p>
+              </div>
+            ) : (
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Product</TableHead>
+                    <TableHead>Category</TableHead>
+                    <TableHead>Day Part</TableHead>
+                    <TableHead className="text-center">Expected Delivery</TableHead>
+                    <TableHead className="text-center">
+                      <div className="flex items-center justify-center gap-2">
+                        <CheckCircle2 className="h-4 w-4 text-[#f8b29c]" />
+                        <span className="font-bold">Confirmed Delivery</span>
+                      </div>
+                    </TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {deliveryItems.map((item) => (
+                    <TableRow key={item.id}>
+                      <TableCell className="font-medium">{item.productName}</TableCell>
+                      <TableCell>{getCategoryBadge(item.category)}</TableCell>
+                      <TableCell>{getDayPartBadge(item.dayPart)}</TableCell>
+                      <TableCell className="text-center">
+                        <span className="text-lg font-semibold">{item.expectedQuantity}</span>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex justify-center">
+                          <Input
+                            type="number"
+                            value={item.receivedQuantity}
+                            onChange={(e) => {
+                              const newValue = parseInt(e.target.value) || 0;
+                              updateReceivedQuantity(item.allocationId, newValue);
+                            }}
+                            className={cn(
+                              "w-32 text-center font-bold text-lg",
+                              item.receivedQuantity > 0 ? "border-[#f8b29c] bg-[#f8b29c]/10" : ""
+                            )}
+                            min="0"
+                          />
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            )}
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  // HQ View - Existing Production Plan
   return (
     <div className="flex-1 space-y-6 p-6">
       {/* Hero Section */}
@@ -380,19 +631,13 @@ export default function SuggestedProduction() {
         <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/60 to-black/40" />
         <div className="absolute inset-0 flex flex-col justify-center px-8">
           <div className="flex items-center gap-3 mb-3">
-            {viewMode === "hq" && (
-              <div className="flex items-center gap-2 bg-[#ff914d]/20 backdrop-blur-sm px-4 py-2 rounded-full border border-[#ff914d]/30">
-                <Sparkles className="h-5 w-5 text-[#ff914d] animate-pulse" />
-                <span className="text-white font-semibold text-sm">AI-Powered Suggestions</span>
-              </div>
-            )}
+            <div className="flex items-center gap-2 bg-[#ff914d]/20 backdrop-blur-sm px-4 py-2 rounded-full border border-[#ff914d]/30">
+              <Sparkles className="h-5 w-5 text-[#ff914d] animate-pulse" />
+              <span className="text-white font-semibold text-sm">AI-Powered Suggestions</span>
+            </div>
           </div>
-          <h1 className="text-4xl font-bold text-white mb-2">
-            {viewMode === "hq" ? "Suggested Production Plan" : "Store Deliveries"}
-          </h1>
-          <p className="text-xl text-white/90">
-            {viewMode === "hq" ? "All Stores" : selectedStore} - {formattedDate}
-          </p>
+          <h1 className="text-4xl font-bold text-white mb-2">Suggested Production Plan</h1>
+          <p className="text-xl text-white/90">All Stores - {formattedDate}</p>
         </div>
       </div>
 
@@ -429,180 +674,109 @@ export default function SuggestedProduction() {
             <span>Last updated: {format(new Date(), "EEEE, MMMM d, yyyy 'at' h:mm a")}</span>
           </div>
           <div className="flex items-center gap-2">
-            {viewMode === "hq" && (
-              <div className="flex items-center gap-2 bg-muted/50 rounded-lg p-1">
-                <Button
-                  size="sm"
-                  variant={!groupByProduct ? "default" : "ghost"}
-                  onClick={() => setGroupByProduct(false)}
-                  className="h-8"
-                >
-                  By Store
-                </Button>
-                <Button
-                  size="sm"
-                  variant={groupByProduct ? "default" : "ghost"}
-                  onClick={() => setGroupByProduct(true)}
-                  className="h-8"
-                >
-                  By Total
-                </Button>
-              </div>
-            )}
-            <Button 
-              onClick={handleRefresh}
-              size="sm"
-              variant="outline"
-              disabled={isRefreshing}
-            >
-              <RefreshCw className={`h-4 w-4 mr-2 ${isRefreshing ? 'animate-spin' : ''}`} />
+            <div className="flex items-center gap-2 bg-muted/50 rounded-lg p-1">
+              <Button
+                size="sm"
+                variant={!groupByProduct ? "default" : "ghost"}
+                onClick={() => setGroupByProduct(false)}
+                className="h-8"
+              >
+                By Store
+              </Button>
+              <Button
+                size="sm"
+                variant={groupByProduct ? "default" : "ghost"}
+                onClick={() => setGroupByProduct(true)}
+                className="h-8"
+              >
+                By Product
+              </Button>
+            </div>
+            <Button onClick={handleRefresh} variant="outline" size="sm">
+              <RefreshCw className={cn("h-4 w-4 mr-2", isRefreshing && "animate-spin")} />
               Refresh
+            </Button>
+            <Button onClick={handleExportCSV} variant="outline" size="sm">
+              <Download className="h-4 w-4 mr-2" />
+              Export CSV
             </Button>
           </div>
         </div>
       </div>
 
-      {/* Production Table */}
-      <Card className="shadow-card">
+      {/* Products Table */}
+      <Card>
         <CardHeader>
-          <div className="flex items-center justify-between">
-            <div>
-              <CardTitle className="text-xl">
-                {viewMode === "hq" ? "Daily Production Plan" : "Expected Deliveries"}
-              </CardTitle>
-              <CardDescription>
-                {viewMode === "hq" 
-                  ? "AI-powered production quantities for tomorrow's service"
-                  : "Log received deliveries and track any variations from expected quantities"
-                }
-              </CardDescription>
-            </div>
-            <div className="flex items-center gap-2">
-              <Button 
-                onClick={handleExportCSV}
-                size="sm"
-                variant="outline"
-              >
-                <Download className="h-4 w-4 mr-2" />
-                Export CSV
-              </Button>
-            </div>
-          </div>
+          <CardTitle>Production Recommendations</CardTitle>
+          <CardDescription>
+            AI-powered production suggestions based on historical data and predicted demand
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
               <TableRow>
                 <TableHead>Product</TableHead>
-                {viewMode === "hq" && !groupByProduct && <TableHead>Store</TableHead>}
-                {viewMode === "hq" && (
-                  <TableHead className="bg-gradient-to-r from-[#ff914d]/20 to-[#ff914d]/10 relative text-center">
-                    <div className="flex items-center justify-center gap-2 relative">
-                      <div className="absolute inset-0 bg-[#ff914d]/5 blur-sm" />
-                      <Sparkles className="h-4 w-4 text-[#ff914d] relative z-10 animate-pulse" />
-                      <span className="relative z-10 font-semibold bg-gradient-to-r from-[#ff914d] to-[#ff914d]/70 bg-clip-text text-transparent">
-                        AI Recommended Qty
-                      </span>
-                    </div>
-                  </TableHead>
-                )}
-                <TableHead className="bg-brand-green/10 text-center">
-                  {viewMode === "hq" ? "Final Qty" : "Delivered"}
-                </TableHead>
-                <TableHead>Action</TableHead>
+                <TableHead>Category</TableHead>
+                <TableHead>Day Part</TableHead>
+                {viewMode === "hq" && <TableHead>Store</TableHead>}
+                <TableHead className="text-center">Current Stock</TableHead>
+                <TableHead className="text-center">Recommended Qty</TableHead>
+                <TableHead className="text-center">Adjust</TableHead>
+                <TableHead className="text-center">Final Qty</TableHead>
+                <TableHead className="text-center">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {displayProducts.map((product) => (
                 <TableRow key={`${product.id}-${product.storeId}`}>
-                  <TableCell>
-                    <div>
-                      <div className="font-medium">
-                        {product.productName}
-                      </div>
-                      <div className="text-sm text-muted-foreground">{product.id}</div>
-                    </div>
-                  </TableCell>
-                  {viewMode === "hq" && !groupByProduct && (
-                    <TableCell>
-                      <span className="font-medium">{product.store}</span>
-                    </TableCell>
-                  )}
-                  {viewMode === "hq" && (
-                    <TableCell className="bg-gradient-to-r from-[#ff914d]/10 to-transparent relative group">
-                      <div className="absolute inset-0 bg-gradient-to-r from-[#ff914d]/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                      <div className="flex items-center justify-center gap-2 relative z-10">
-                        <span className="font-mono font-semibold text-foreground">
-                          {product.recommendedOrder}
-                        </span>
-                        <Sparkles className="h-3 w-3 text-[#ff914d] opacity-0 group-hover:opacity-100 transition-opacity" />
-                      </div>
-                    </TableCell>
-                  )}
-                  <TableCell className="bg-brand-green/5">
-                    <div className="flex items-center gap-2 justify-center">
-                      {viewMode === "hq" ? (
-                        <>
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => updateFinalOrder(product.id, product.storeId, -1)}
-                            className="h-8 w-8 p-0 rounded-full border-brand-green hover:bg-brand-green hover:text-white transition-colors"
-                          >
-                            <Minus className="h-4 w-4" />
-                          </Button>
-                          <span className="font-mono font-bold text-brand-green min-w-[2.5rem] text-center text-lg">
-                            {product.finalOrder}
-                          </span>
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => updateFinalOrder(product.id, product.storeId, 1)}
-                            className="h-8 w-8 p-0 rounded-full border-brand-green hover:bg-brand-green hover:text-white transition-colors"
-                          >
-                            <Plus className="h-4 w-4" />
-                          </Button>
-                        </>
-                      ) : (
-                        <>
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => updateFinalOrder(product.id, product.storeId, -1)}
-                            className="h-8 w-8 p-0 rounded-full border-brand-green hover:bg-brand-green hover:text-white transition-colors"
-                          >
-                            <Minus className="h-4 w-4" />
-                          </Button>
-                          <span className="font-mono font-bold text-brand-green min-w-[2.5rem] text-center text-lg">
-                            {product.finalOrder}
-                          </span>
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => updateFinalOrder(product.id, product.storeId, 1)}
-                            className="h-8 w-8 p-0 rounded-full border-brand-green hover:bg-brand-green hover:text-white transition-colors"
-                          >
-                            <Plus className="h-4 w-4" />
-                          </Button>
-                        </>
-                      )}
+                  <TableCell className="font-medium">{product.productName}</TableCell>
+                  <TableCell>{getCategoryBadge(product.category)}</TableCell>
+                  <TableCell>{getDayPartBadge(product.dayPart)}</TableCell>
+                  {viewMode === "hq" && <TableCell>{product.store}</TableCell>}
+                  <TableCell className="text-center">{product.currentStock}</TableCell>
+                  <TableCell className="text-center">
+                    <div className="flex items-center justify-center gap-2">
+                      {product.trend === "up" && <TrendingUp className="h-4 w-4 text-green-600" />}
+                      {product.trend === "down" && <TrendingDown className="h-4 w-4 text-red-600" />}
+                      <span className="text-lg font-semibold">{product.recommendedOrder}</span>
                     </div>
                   </TableCell>
                   <TableCell>
+                    <div className="flex items-center justify-center gap-1">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => updateFinalOrder(product.id, product.storeId, -1)}
+                        disabled={product.storeId === 'aggregated'}
+                      >
+                        <Minus className="h-3 w-3" />
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => updateFinalOrder(product.id, product.storeId, 1)}
+                        disabled={product.storeId === 'aggregated'}
+                      >
+                        <Plus className="h-3 w-3" />
+                      </Button>
+                    </div>
+                  </TableCell>
+                  <TableCell className="text-center">
+                    <span className="text-lg font-bold text-primary">{product.finalOrder}</span>
+                  </TableCell>
+                  <TableCell className="text-center">
                     <Button
                       size="sm"
-                      className="bg-primary text-primary-foreground"
-                      disabled={!!confirmingProduction}
                       onClick={() => handleConfirmProduction(product)}
+                      disabled={confirmingProduction === `${product.id}-${product.storeId}` || product.storeId === 'aggregated'}
                     >
                       {confirmingProduction === `${product.id}-${product.storeId}` ? (
-                        <>
-                          <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                          {viewMode === "hq" ? "Confirming..." : "Logging..."}
-                        </>
+                        <Loader2 className="h-4 w-4 animate-spin" />
                       ) : (
-                        viewMode === "hq" ? "Confirm" : "Log Delivery"
+                        <Send className="h-4 w-4 mr-2" />
                       )}
+                      Confirm
                     </Button>
                   </TableCell>
                 </TableRow>

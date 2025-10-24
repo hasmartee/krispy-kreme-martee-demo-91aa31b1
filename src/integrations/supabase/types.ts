@@ -321,6 +321,7 @@ export type Database = {
           product_sku: string
           production_plan_id: string
           quantity: number
+          received_quantity: number | null
           store_id: string
           updated_at: string
         }
@@ -333,6 +334,7 @@ export type Database = {
           product_sku: string
           production_plan_id: string
           quantity?: number
+          received_quantity?: number | null
           store_id: string
           updated_at?: string
         }
@@ -345,6 +347,7 @@ export type Database = {
           product_sku?: string
           production_plan_id?: string
           quantity?: number
+          received_quantity?: number | null
           store_id?: string
           updated_at?: string
         }
