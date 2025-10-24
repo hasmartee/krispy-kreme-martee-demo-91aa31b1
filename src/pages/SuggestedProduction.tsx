@@ -149,13 +149,18 @@ export default function SuggestedProduction() {
           ? alloc.manufactured_quantity 
           : alloc.quantity;
         
+        // Pre-populate received quantity with expected quantity if not already set
+        const receivedQty = (alloc.received_quantity && alloc.received_quantity > 0) 
+          ? alloc.received_quantity 
+          : expectedQty;
+        
         return {
           id: alloc.id,
           productName: product?.name || alloc.product_sku,
           productSku: alloc.product_sku,
           category: product?.category || 'Unknown',
           expectedQuantity: expectedQty,
-          receivedQuantity: alloc.received_quantity || 0,
+          receivedQuantity: receivedQty,
           dayPart: alloc.day_part || 'Morning',
           allocationId: alloc.id,
         };
@@ -598,41 +603,73 @@ export default function SuggestedProduction() {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead className="w-[40%]">Product</TableHead>
-                    <TableHead className="text-center w-[30%]">Expected Delivery</TableHead>
-                    <TableHead className="text-center w-[30%] bg-[#f8b29c]/20">
-                      <div className="flex items-center justify-center gap-2">
-                        <CheckCircle2 className="h-5 w-5 text-[#f8b29c]" />
-                        <span className="font-bold text-[#f8b29c] text-base">Confirmed Delivery</span>
+                    <TableHead className="w-[35%]">Product</TableHead>
+                    <TableHead className="text-center w-[25%]">Expected Delivery</TableHead>
+                    <TableHead className="text-center w-[40%] bg-gradient-to-r from-[#ff914d]/20 to-[#ff914d]/10 border-l-4 border-l-[#ff914d]">
+                      <div className="flex items-center justify-center gap-2 py-1">
+                        <CheckCircle2 className="h-5 w-5 text-[#ff914d] animate-pulse" />
+                        <span className="font-bold text-[#ff914d] text-lg">Confirmed Delivery</span>
                       </div>
                     </TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {deliveryItems.map((item) => (
-                    <TableRow key={item.id}>
+                    <TableRow 
+                      key={item.id}
+                      className="hover:bg-muted/30 transition-colors"
+                    >
                       <TableCell className="font-medium text-base">{item.productName}</TableCell>
                       <TableCell className="text-center">
-                        <span className="text-lg font-semibold">{item.expectedQuantity}</span>
+                        <span className="text-lg font-semibold text-muted-foreground">{item.expectedQuantity}</span>
                       </TableCell>
-                      <TableCell className="bg-[#f8b29c]/10">
-                        <div className="flex justify-center">
-                          <Input
-                            type="number"
-                            value={item.receivedQuantity}
-                            onChange={(e) => {
-                              const newValue = parseInt(e.target.value) || 0;
+                      <TableCell className="bg-gradient-to-r from-[#ff914d]/10 to-[#ff914d]/5 border-l-4 border-l-[#ff914d]/30">
+                        <div className="flex items-center justify-center gap-2">
+                          <Button
+                            variant="outline"
+                            size="icon"
+                            className="h-10 w-10 rounded-full border-2 border-[#ff914d]/40 hover:border-[#ff914d] hover:bg-[#ff914d]/10 transition-all duration-200 hover:scale-110"
+                            onClick={() => {
+                              const newValue = Math.max(0, item.receivedQuantity - 1);
                               updateReceivedQuantity(item.allocationId, newValue);
                             }}
-                            className={cn(
-                              "w-32 text-center font-bold text-xl border-2",
-                              item.receivedQuantity > 0 
-                                ? "border-[#f8b29c] bg-white shadow-md" 
-                                : "border-muted-foreground/30 bg-muted/50"
+                          >
+                            <Minus className="h-4 w-4 text-[#ff914d]" />
+                          </Button>
+                          
+                          <div className="relative">
+                            <Input
+                              type="number"
+                              value={item.receivedQuantity}
+                              onChange={(e) => {
+                                const newValue = parseInt(e.target.value) || 0;
+                                updateReceivedQuantity(item.allocationId, newValue);
+                              }}
+                              className="w-24 text-center font-bold text-2xl border-3 border-[#ff914d] bg-white shadow-lg rounded-lg hover:shadow-xl transition-all duration-200 focus:ring-4 focus:ring-[#ff914d]/30 text-[#ff914d]"
+                              min="0"
+                            />
+                            {item.receivedQuantity !== item.expectedQuantity && (
+                              <Badge 
+                                variant="outline" 
+                                className="absolute -top-2 -right-2 bg-[#ff914d] text-white border-[#ff914d] text-xs px-1.5 py-0.5 animate-in fade-in zoom-in duration-200"
+                              >
+                                {item.receivedQuantity > item.expectedQuantity ? '+' : ''}
+                                {item.receivedQuantity - item.expectedQuantity}
+                              </Badge>
                             )}
-                            min="0"
-                            placeholder="0"
-                          />
+                          </div>
+                          
+                          <Button
+                            variant="outline"
+                            size="icon"
+                            className="h-10 w-10 rounded-full border-2 border-[#ff914d]/40 hover:border-[#ff914d] hover:bg-[#ff914d]/10 transition-all duration-200 hover:scale-110"
+                            onClick={() => {
+                              const newValue = item.receivedQuantity + 1;
+                              updateReceivedQuantity(item.allocationId, newValue);
+                            }}
+                          >
+                            <Plus className="h-4 w-4 text-[#ff914d]" />
+                          </Button>
                         </div>
                       </TableCell>
                     </TableRow>
