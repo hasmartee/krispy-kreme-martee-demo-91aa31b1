@@ -276,7 +276,7 @@ export default function ManufacturingProduction() {
       <div className="space-y-4">
         <div>
           <h2 className="text-2xl font-bold">14-Day Production Forecast</h2>
-          <p className="text-muted-foreground">Manufacturing production plan</p>
+          <p className="text-muted-foreground">Your rolling production plan, updated daily with additional data</p>
         </div>
         
         {/* Horizontal Date Selector */}
@@ -307,7 +307,12 @@ export default function ManufacturingProduction() {
                     : "bg-muted/30 hover:bg-muted/50 text-muted-foreground"
                 )}
               >
-                {isPending && (
+                {isToday && (
+                  <div className="absolute -top-2 -right-2 bg-[#7ea058] text-white text-[9px] font-semibold px-2 py-0.5 rounded-full border border-white shadow-sm">
+                    Live
+                  </div>
+                )}
+                {isPending && !isToday && (
                   <div className="absolute -top-2 -right-2 bg-muted text-muted-foreground text-[9px] font-semibold px-1.5 py-0.5 rounded-full border border-border shadow-sm">
                     P
                   </div>

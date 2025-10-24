@@ -444,7 +444,7 @@ export default function Production() {
       <div className="space-y-4">
         <div>
           <h2 className="text-2xl font-bold">14-Day Production Forecast</h2>
-          <p className="text-muted-foreground">AI-recommended production quantities across all stores</p>
+          <p className="text-muted-foreground">Your rolling production plan, updated daily with additional data</p>
         </div>
         
         {/* Horizontal Date Selector */}
@@ -453,9 +453,10 @@ export default function Production() {
             const date = new Date();
             date.setDate(date.getDate() + i);
             const isSelected = format(date, 'yyyy-MM-dd') === format(selectedDate, 'yyyy-MM-dd');
+            const isToday = format(date, 'yyyy-MM-dd') === format(new Date(), 'yyyy-MM-dd');
             const dayOfWeek = format(date, 'EEE');
             const dayOfMonth = format(date, 'dd');
-            const isPending = format(date, 'yyyy-MM-dd') !== format(new Date(), 'yyyy-MM-dd');
+            const isPending = !isToday;
             
             return (
               <Button
@@ -469,6 +470,11 @@ export default function Production() {
                     : "bg-background hover:bg-muted text-muted-foreground"
                 )}
               >
+                {isToday && (
+                  <div className="absolute -top-2 -right-2 bg-[#7ea058] text-white text-[9px] font-semibold px-2 py-0.5 rounded-full border border-white shadow-sm">
+                    Live
+                  </div>
+                )}
                 {isPending && (
                   <div className="absolute -top-2 -right-2 bg-muted text-muted-foreground text-[9px] font-semibold px-1.5 py-0.5 rounded-full border border-border shadow-sm">
                     P
