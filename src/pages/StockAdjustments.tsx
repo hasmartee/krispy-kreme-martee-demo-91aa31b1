@@ -69,7 +69,10 @@ export default function StockAdjustments() {
   }, [selectedStore]);
 
   const loadData = async () => {
-    if (!selectedStore) return;
+    if (!selectedStore) {
+      setLoading(false);
+      return;
+    }
 
     try {
       setLoading(true);
@@ -203,6 +206,18 @@ export default function StockAdjustments() {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+
+  if (!selectedStore) {
+    return (
+      <div className="min-h-screen bg-background p-6 flex items-center justify-center">
+        <div className="text-center">
+          <Package className="h-12 w-12 mx-auto mb-4 text-muted-foreground opacity-50" />
+          <h2 className="text-2xl font-semibold mb-2">No Store Selected</h2>
+          <p className="text-muted-foreground">Please select a store to view stock adjustments</p>
+        </div>
       </div>
     );
   }
