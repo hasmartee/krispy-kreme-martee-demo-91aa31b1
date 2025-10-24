@@ -839,8 +839,8 @@ const weeklyTrendData = [
                 <ComposedChart data={weeklyTrendData} margin={{ top: 5, right: 30, left: 0, bottom: 5 }}>
                   <defs>
                     <linearGradient id="deliveredGradient" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="hsl(var(--accent))" stopOpacity={0.8}/>
-                      <stop offset="95%" stopColor="hsl(var(--accent))" stopOpacity={0.3}/>
+                      <stop offset="5%" stopColor="hsl(var(--brand-peach))" stopOpacity={0.8}/>
+                      <stop offset="95%" stopColor="hsl(var(--brand-peach))" stopOpacity={0.3}/>
                     </linearGradient>
                   </defs>
                   <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.5} />
@@ -923,10 +923,10 @@ const weeklyTrendData = [
               
               {/* Summary Statistics */}
               <div className="mt-8 grid grid-cols-3 gap-4">
-                <div className="p-4 rounded-lg bg-accent/10 border border-accent/30 hover-scale">
+                <div className="p-4 rounded-lg border hover-scale" style={{ backgroundColor: 'hsl(var(--brand-peach) / 0.1)', borderColor: 'hsl(var(--brand-peach) / 0.3)' }}>
                   <div className="flex items-center gap-3">
-                    <div className="h-12 w-12 rounded-lg bg-accent/20 flex items-center justify-center">
-                      <Package className="h-6 w-6" style={{ color: 'hsl(var(--accent))' }} />
+                    <div className="h-12 w-12 rounded-lg flex items-center justify-center" style={{ backgroundColor: 'hsl(var(--brand-peach) / 0.2)' }}>
+                      <Package className="h-6 w-6" style={{ color: 'hsl(var(--brand-peach))' }} />
                     </div>
                     <div>
                       <div className="text-xs text-muted-foreground font-medium">Total Delivered</div>
@@ -1008,10 +1008,10 @@ const weeklyTrendData = [
             </div>
             
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-              <Card className="border-l-4 border-l-primary bg-gradient-to-br from-primary/5 to-transparent">
+              <Card className="border-l-4 border-l-[#7ea058] bg-gradient-to-br from-[#7ea058]/10 to-[#7ea058]/5">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">Revenue</CardTitle>
-                  <DollarSign className="h-4 w-4 text-primary" />
+                  <DollarSign className="h-4 w-4" style={{ color: '#7ea058' }} />
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">
@@ -1021,7 +1021,7 @@ const weeklyTrendData = [
                     <p className="text-xs text-muted-foreground">
                       Week to date
                     </p>
-                    <Badge variant="outline" className="text-xs text-green-600 border-green-600">
+                    <Badge variant="outline" className="text-xs border-[#7ea058]" style={{ color: '#7ea058' }}>
                       +8.2%
                     </Badge>
                   </div>
@@ -1110,13 +1110,20 @@ const weeklyTrendData = [
             </Card>
           </div>
 
-          {/* Weekly Trend - Store View */}
-          <Card className="shadow-lg">
-            <CardHeader>
+          {/* Week Overview Graph - Store View */}
+          <Card className="shadow-lg border-2 border-primary/20 animate-fade-in">
+            <CardHeader className="pb-4 bg-gradient-to-r from-primary/5 to-accent/5 rounded-t-lg">
               <div className="flex items-center justify-between">
                 <div>
-                  <CardTitle className="text-2xl font-bold">Weekly Performance</CardTitle>
-                  <p className="text-muted-foreground mt-1">Delivered, sold and wasted this week</p>
+                  <CardTitle className="text-2xl font-bold flex items-center gap-2">
+                    <div className="h-10 w-10 rounded-lg bg-primary/20 flex items-center justify-center">
+                      📊
+                    </div>
+                    Week Overview
+                  </CardTitle>
+                  <CardDescription className="text-base mt-1">
+                    Track delivered, sold, and wasted quantities across the week
+                  </CardDescription>
                 </div>
               </div>
             </CardHeader>
@@ -1124,9 +1131,9 @@ const weeklyTrendData = [
               <ResponsiveContainer width="100%" height={350}>
                 <ComposedChart data={weeklyTrendDataStore} margin={{ top: 5, right: 30, left: 0, bottom: 5 }}>
                   <defs>
-                    <linearGradient id="deliveredGradient" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="hsl(var(--accent))" stopOpacity={0.8}/>
-                      <stop offset="95%" stopColor="hsl(var(--accent))" stopOpacity={0.3}/>
+                    <linearGradient id="deliveredGradientStore" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="hsl(var(--brand-peach))" stopOpacity={0.8}/>
+                      <stop offset="95%" stopColor="hsl(var(--brand-peach))" stopOpacity={0.3}/>
                     </linearGradient>
                   </defs>
                   <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.5} />
@@ -1170,7 +1177,7 @@ const weeklyTrendData = [
                   />
                   <Bar 
                     dataKey="delivered" 
-                    fill="url(#deliveredGradient)" 
+                    fill="url(#deliveredGradientStore)" 
                     name="Delivered"
                     radius={[8, 8, 0, 0]}
                     maxBarSize={60}
@@ -1209,10 +1216,10 @@ const weeklyTrendData = [
               
               {/* Summary Statistics */}
               <div className="mt-8 grid grid-cols-3 gap-4">
-                <div className="p-4 rounded-lg bg-accent/10 border border-accent/30 hover-scale">
+                <div className="p-4 rounded-lg border hover-scale" style={{ backgroundColor: 'hsl(var(--brand-peach) / 0.1)', borderColor: 'hsl(var(--brand-peach) / 0.3)' }}>
                   <div className="flex items-center gap-3">
-                    <div className="h-12 w-12 rounded-lg bg-accent/20 flex items-center justify-center">
-                      <Package className="h-6 w-6" style={{ color: 'hsl(var(--accent))' }} />
+                    <div className="h-12 w-12 rounded-lg flex items-center justify-center" style={{ backgroundColor: 'hsl(var(--brand-peach) / 0.2)' }}>
+                      <Package className="h-6 w-6" style={{ color: 'hsl(var(--brand-peach))' }} />
                     </div>
                     <div>
                       <div className="text-xs text-muted-foreground font-medium">Total Delivered</div>
