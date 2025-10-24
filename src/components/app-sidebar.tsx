@@ -31,7 +31,7 @@ const mainNavigationHQ: Array<{ title: string; url: string; icon: any; sparkles?
   { title: "Performance", url: "/analytics", icon: BarChart3 },
   { title: "Suggested Production", url: "/production", icon: ChefHat, sparkles: true },
   { title: "Delivery Plan", url: "/delivery-plan", icon: ClipboardList },
-  { title: "Live Data", url: "/live-data", icon: Database },
+  { title: "Stock Tracker", url: "/live-data", icon: Database },
 ];
 
 const settingsNavigationHQ = [

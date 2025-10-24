@@ -16,7 +16,7 @@ import StoreManagement from "./pages/StoreManagement";
 import StoreDetails from "./pages/StoreDetails";
 import Analytics from "./pages/Analytics";
 import LiveSales from "./pages/LiveSales";
-import LiveData from "./pages/LiveData";
+import StockTracker from "./pages/StockTracker";
 import Settings from "./pages/Settings";
 import Inventory from "./pages/Inventory";
 import MyTasks from "./pages/MyTasks";
@@ -48,7 +48,7 @@ const App = () => (
                       <Route path="/" element={<Home />} />
                       <Route path="/analytics" element={<Analytics />} />
                       <Route path="/live-sales" element={<LiveSales />} />
-                      <Route path="/live-data" element={<LiveData />} />
+                      <Route path="/live-data" element={<StockTracker />} />
                       <Route path="/suggested-production" element={<SuggestedProduction />} />
                       <Route path="/daily-waste" element={<DailyWaste />} />
                       <Route path="/products" element={<ProductRange />} />

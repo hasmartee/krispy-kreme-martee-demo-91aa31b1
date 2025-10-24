@@ -339,12 +339,23 @@ export default function Home() {
     availability: viewMode === "store_manager" ? 96.5 : avgAvailability,
   };
 
-  // Mock next task data
-  const nextTask = {
-    title: "Complete Morning Production",
-    time: "08:00 AM",
-    type: "production" as const,
-  };
+// Mock next task data
+const nextTask = {
+  title: "Complete Morning Production",
+  time: "08:00 AM",
+  type: "production" as const,
+};
+
+// Weekly trend data for HQ view
+const weeklyTrendData = [
+  { day: "Mon", delivered: 8750, sold: 8100, wasted: 420 },
+  { day: "Tue", delivered: 8950, sold: 8300, wasted: 385 },
+  { day: "Wed", delivered: 9200, sold: 8650, wasted: 360 },
+  { day: "Thu", delivered: 8880, sold: 8250, wasted: 410 },
+  { day: "Fri", delivered: 9500, sold: 9100, wasted: 380 },
+  { day: "Sat", delivered: 9800, sold: 9450, wasted: 340 },
+  { day: "Sun", delivered: 9100, sold: 8520, wasted: 395 },
+];
 
   return (
     <div className="flex-1 space-y-6 p-6">
@@ -591,6 +602,60 @@ export default function Home() {
             </HoverCard>
           </div>
 
+          {/* Weekly Trend Graph */}
+          <Card className="shadow-lg">
+            <CardHeader>
+              <CardTitle className="text-xl">Week Overview</CardTitle>
+              <CardDescription>Delivered, Sold, and Wasted quantities over the week</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <ResponsiveContainer width="100%" height={300}>
+                <ComposedChart data={weeklyTrendData}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--muted))" />
+                  <XAxis 
+                    dataKey="day" 
+                    stroke="hsl(var(--muted-foreground))"
+                    fontSize={12}
+                  />
+                  <YAxis 
+                    stroke="hsl(var(--muted-foreground))"
+                    fontSize={12}
+                  />
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: "hsl(var(--background))",
+                      border: "1px solid hsl(var(--border))",
+                      borderRadius: "8px",
+                    }}
+                  />
+                  <Legend />
+                  <Bar 
+                    dataKey="delivered" 
+                    fill="hsl(var(--chart-1))" 
+                    name="Delivered"
+                    radius={[4, 4, 0, 0]}
+                  />
+                  <Line 
+                    type="monotone" 
+                    dataKey="sold" 
+                    stroke="hsl(var(--success-green))" 
+                    strokeWidth={3}
+                    name="Sold"
+                    dot={{ fill: "hsl(var(--success-green))", r: 4 }}
+                  />
+                  <Line 
+                    type="monotone" 
+                    dataKey="wasted" 
+                    stroke="hsl(var(--destructive))" 
+                    strokeWidth={3}
+                    name="Wasted"
+                    dot={{ fill: "hsl(var(--destructive))", r: 4 }}
+                  />
+                </ComposedChart>
+              </ResponsiveContainer>
+            </CardContent>
+          </Card>
+
           {/* Store Alerts */}
           <div>
             <div className="flex items-center gap-2 mb-4">
@@ -629,33 +694,6 @@ export default function Home() {
                 </Card>
               ))}
             </div>
-          </div>
-
-          {/* New Launches This Week */}
-          <div>
-            <div className="flex items-center gap-2 mb-4">
-              <Package className="h-5 w-5 text-primary" />
-              <h2 className="text-xl font-semibold text-foreground">New Launches This Week</h2>
-            </div>
-            <Card className="border-l-4 border-l-blue-500 bg-blue-500/5">
-              <CardContent className="p-4">
-                <div className="flex items-start gap-3">
-                  <Sparkles className="h-5 w-5 text-blue-600 mt-0.5" />
-                  <div>
-                    <div className="font-semibold text-foreground mb-1">
-                      2 New Products Launching Next Monday
-                    </div>
-                    <div className="text-sm text-muted-foreground mb-2">
-                      Get ready to introduce these exciting new items:
-                    </div>
-                    <ul className="text-sm space-y-1 ml-4">
-                      <li className="text-foreground">• Spicy Chicken & Avocado Wrap</li>
-                      <li className="text-foreground">• Mediterranean Quinoa Bowl</li>
-                    </ul>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
           </div>
         </>
       ) : (
