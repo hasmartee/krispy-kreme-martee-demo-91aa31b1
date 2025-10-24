@@ -336,12 +336,23 @@ const weeklyTrendData = [
   tomorrow.setDate(tomorrow.getDate() + 1);
   const tomorrowDate = tomorrow.toLocaleDateString('en-US', { day: 'numeric', month: 'short' });
 
+  // Weekly trend data for single store (Camden Town) 
+  const weeklyTrendDataStore = [
+    { day: "Mon", delivered: 320, sold: 298, wasted: 18 },
+    { day: "Tue", delivered: 305, sold: 282, wasted: 16 },
+    { day: "Wed", delivered: 335, sold: 315, wasted: 14 },
+    { day: "Thu", delivered: 310, sold: 289, wasted: 15 },
+    { day: "Fri", delivered: 360, sold: 345, wasted: 12 },
+    { day: "Sat", delivered: 385, sold: 370, wasted: 13 },
+    { day: "Sun", delivered: 340, sold: 318, wasted: 16 },
+  ];
+
   return (
     <div className="flex-1 space-y-6 p-6">
       {/* Header */}
       <div>
         <h1 className="text-3xl font-bold text-foreground">
-          Welcome Back {viewMode === "store_manager" ? `- ${selectedStore}` : ""}
+          Welcome Back{viewMode === "store_manager" ? ` - ${selectedStore}` : ""}
         </h1>
         <p className="text-muted-foreground">
           Here's what's happening this week
@@ -837,6 +848,183 @@ const weeklyTrendData = [
             </CardContent>
           </Card>
 
+          {/* Weekly Trend - Store View */}
+          <Card className="shadow-lg">
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle className="text-2xl font-bold">Weekly Performance</CardTitle>
+                  <p className="text-muted-foreground mt-1">Delivered, sold and wasted this week</p>
+                </div>
+                <Button onClick={() => navigate("/analytics")} variant="outline" className="gap-2">
+                  View Analytics
+                  <ArrowRight className="h-4 w-4" />
+                </Button>
+              </div>
+            </CardHeader>
+            <CardContent className="pt-6">
+              <ResponsiveContainer width="100%" height={350}>
+                <ComposedChart data={weeklyTrendDataStore} margin={{ top: 5, right: 30, left: 0, bottom: 5 }}>
+                  <defs>
+                    <linearGradient id="deliveredGradient" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="hsl(var(--accent))" stopOpacity={0.8}/>
+                      <stop offset="95%" stopColor="hsl(var(--accent))" stopOpacity={0.3}/>
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.5} />
+                  <XAxis 
+                    dataKey="day" 
+                    stroke="hsl(var(--foreground))"
+                    fontSize={13}
+                    fontWeight={500}
+                    tick={{ fill: 'hsl(var(--foreground))' }}
+                  />
+                  <YAxis 
+                    stroke="hsl(var(--foreground))"
+                    fontSize={13}
+                    fontWeight={500}
+                    tick={{ fill: 'hsl(var(--foreground))' }}
+                    tickFormatter={(value) => value.toLocaleString()}
+                  />
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: "hsl(var(--card))",
+                      border: "2px solid hsl(var(--border))",
+                      borderRadius: "12px",
+                      padding: "12px",
+                      boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)"
+                    }}
+                    labelStyle={{
+                      color: "hsl(var(--foreground))",
+                      fontWeight: "bold",
+                      marginBottom: "8px"
+                    }}
+                    formatter={(value: number, name: string) => [
+                      value.toLocaleString() + " units",
+                      name
+                    ]}
+                  />
+                  <Legend 
+                    wrapperStyle={{
+                      paddingTop: "20px"
+                    }}
+                    iconType="circle"
+                  />
+                  <Bar 
+                    dataKey="delivered" 
+                    fill="url(#deliveredGradient)" 
+                    name="Delivered"
+                    radius={[8, 8, 0, 0]}
+                    maxBarSize={60}
+                  />
+                  <Line 
+                    type="monotone" 
+                    dataKey="sold" 
+                    stroke="hsl(var(--success-green))" 
+                    strokeWidth={4}
+                    name="Sold"
+                    dot={{ 
+                      fill: "hsl(var(--success-green))", 
+                      r: 6,
+                      strokeWidth: 2,
+                      stroke: "hsl(var(--background))"
+                    }}
+                    activeDot={{ r: 8 }}
+                  />
+                  <Line 
+                    type="monotone" 
+                    dataKey="wasted" 
+                    stroke="hsl(var(--warning-orange))" 
+                    strokeWidth={4}
+                    name="Wasted"
+                    dot={{ 
+                      fill: "hsl(var(--warning-orange))", 
+                      r: 6,
+                      strokeWidth: 2,
+                      stroke: "hsl(var(--background))"
+                    }}
+                    activeDot={{ r: 8 }}
+                    strokeDasharray="5 5"
+                  />
+                </ComposedChart>
+              </ResponsiveContainer>
+              
+              {/* Summary Statistics */}
+              <div className="mt-8 grid grid-cols-3 gap-4">
+                <div className="p-4 rounded-lg bg-accent/10 border border-accent/30 hover-scale">
+                  <div className="flex items-center gap-3">
+                    <div className="h-12 w-12 rounded-lg bg-accent/20 flex items-center justify-center">
+                      <Package className="h-6 w-6" style={{ color: 'hsl(var(--accent))' }} />
+                    </div>
+                    <div>
+                      <div className="text-xs text-muted-foreground font-medium">Total Delivered</div>
+                      <div className="text-2xl font-bold text-foreground">
+                        {weeklyTrendDataStore.reduce((sum, d) => sum + d.delivered, 0).toLocaleString()}
+                      </div>
+                      <div className="text-xs text-muted-foreground">units this week</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="p-4 rounded-lg bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-800 hover-scale">
+                  <div className="flex items-center gap-3">
+                    <div className="h-12 w-12 rounded-lg" style={{ backgroundColor: 'hsl(var(--success-green) / 0.2)' }}>
+                      <div className="h-full w-full flex items-center justify-center">
+                        <CheckCircle className="h-6 w-6" style={{ color: 'hsl(var(--success-green))' }} />
+                      </div>
+                    </div>
+                    <div>
+                      <div className="text-xs text-muted-foreground font-medium">Total Sold</div>
+                      <div className="text-2xl font-bold" style={{ color: 'hsl(var(--success-green))' }}>
+                        {weeklyTrendDataStore.reduce((sum, d) => sum + d.sold, 0).toLocaleString()}
+                      </div>
+                      <div className="text-xs text-muted-foreground">
+                        {((weeklyTrendDataStore.reduce((sum, d) => sum + d.sold, 0) / 
+                          weeklyTrendDataStore.reduce((sum, d) => sum + d.delivered, 0)) * 100).toFixed(1)}% of delivered
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="p-4 rounded-lg bg-orange-50 dark:bg-orange-950/20 border border-orange-200 dark:border-orange-800 hover-scale">
+                  <div className="flex items-center gap-3">
+                    <div className="h-12 w-12 rounded-lg" style={{ backgroundColor: 'hsl(var(--warning-orange) / 0.2)' }}>
+                      <div className="h-full w-full flex items-center justify-center">
+                        <Trash2 className="h-6 w-6" style={{ color: 'hsl(var(--warning-orange))' }} />
+                      </div>
+                    </div>
+                    <div>
+                      <div className="text-xs text-muted-foreground font-medium">Total Wasted</div>
+                      <div className="text-2xl font-bold" style={{ color: 'hsl(var(--warning-orange))' }}>
+                        {weeklyTrendDataStore.reduce((sum, d) => sum + d.wasted, 0).toLocaleString()}
+                      </div>
+                      <div className="text-xs text-muted-foreground">
+                        {((weeklyTrendDataStore.reduce((sum, d) => sum + d.wasted, 0) / 
+                          weeklyTrendDataStore.reduce((sum, d) => sum + d.delivered, 0)) * 100).toFixed(1)}% of delivered
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Best Day Badge */}
+              <div className="mt-4 p-3 rounded-lg bg-primary/10 border border-primary/30 flex items-center gap-2">
+                <TrendingUp className="h-5 w-5 text-primary" />
+                <span className="text-sm text-foreground">
+                  <strong>Best performing day:</strong> {
+                    weeklyTrendDataStore.reduce((prev, current) => 
+                      current.sold > prev.sold ? current : prev
+                    ).day
+                  } with {
+                    weeklyTrendDataStore.reduce((prev, current) => 
+                      current.sold > prev.sold ? current : prev
+                    ).sold.toLocaleString()
+                  } units sold
+                </span>
+              </div>
+            </CardContent>
+          </Card>
+
           {/* This Week's Metrics */}
           <div>
             <div className="flex items-center justify-between mb-4">
@@ -973,11 +1161,6 @@ const weeklyTrendData = [
             </div>
           </CardContent>
         </Card>
-      )}
-
-      {/* Share Comments with HQ - Store Manager Only - PROMINENT */}
-      {viewMode === "store_manager" && (
-        <ShareWithHQCard />
       )}
     </div>
   );
