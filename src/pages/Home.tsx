@@ -401,7 +401,7 @@ const weeklyTrendData = [
 
           {/* Stock Alerts Task */}
           <button
-            onClick={() => navigate('/stock-tracker')}
+            onClick={() => navigate('/live-data')}
             className="group w-full bg-gradient-to-r from-red-50 to-orange-50 hover:from-red-100 hover:to-orange-100 border border-red-200 rounded-xl p-4 transition-all duration-200 hover:shadow-md"
           >
             <div className="flex items-center gap-4">
