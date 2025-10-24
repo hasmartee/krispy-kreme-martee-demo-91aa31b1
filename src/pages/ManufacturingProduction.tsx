@@ -367,10 +367,10 @@ export default function ManufacturingProduction() {
                     <TableHead>Category</TableHead>
                     <TableHead className="text-right">Planned Qty</TableHead>
                     <TableHead className="text-center">Status</TableHead>
-                    <TableHead className="text-right bg-[#f8b29c]/20 border-l-4 border-[#f8b29c]">
-                      <div className="flex items-center justify-end gap-2">
-                        <span className="font-bold text-[#f8b29c]">Manufactured Qty</span>
+                    <TableHead className="bg-[#f8b29c]/20 border-l-4 border-[#f8b29c]">
+                      <div className="flex items-center justify-center gap-2">
                         <Package className="h-4 w-4 text-[#f8b29c]" />
+                        <span className="font-bold text-[#f8b29c]">Manufactured Qty</span>
                       </div>
                     </TableHead>
                     <TableHead className="text-right">Variance</TableHead>
@@ -405,19 +405,21 @@ export default function ManufacturingProduction() {
                           {getStatusBadge(product.status, product.isLocked)}
                         </TableCell>
                         <TableCell className="bg-[#f8b29c]/20 border-l-4 border-[#f8b29c]">
-                          <Input
-                            type="number"
-                            min="0"
-                            value={product.manufacturedQuantity}
-                            onChange={(e) => updateManufacturedQuantity(product.productSku, parseInt(e.target.value) || 0)}
-                            disabled={product.isLocked}
-                            className={cn(
-                              "w-32 ml-auto text-right font-bold text-lg",
-                              product.isLocked 
-                                ? "bg-muted cursor-not-allowed" 
-                                : "border-2 border-[#f8b29c] focus:border-[#f6a389] shadow-lg bg-white focus:ring-2 focus:ring-[#f8b29c]/30"
-                            )}
-                          />
+                          <div className="flex justify-center">
+                            <Input
+                              type="number"
+                              min="0"
+                              value={product.manufacturedQuantity}
+                              onChange={(e) => updateManufacturedQuantity(product.productSku, parseInt(e.target.value) || 0)}
+                              disabled={product.isLocked}
+                              className={cn(
+                                "w-32 text-center font-bold text-lg",
+                                product.isLocked 
+                                  ? "bg-muted cursor-not-allowed" 
+                                  : "border-2 border-[#f8b29c] focus:border-[#f6a389] shadow-lg bg-white focus:ring-2 focus:ring-[#f8b29c]/30"
+                              )}
+                            />
+                          </div>
                         </TableCell>
                         <TableCell className="text-right">
                           <div className={`font-semibold ${variance >= 0 ? 'text-[#7ea058]' : 'text-red-600'}`}>

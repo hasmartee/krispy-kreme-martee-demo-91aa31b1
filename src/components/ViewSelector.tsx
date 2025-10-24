@@ -14,20 +14,20 @@ export function ViewSelector() {
   };
 
   return (
-    <div className="flex items-center gap-4">
+    <div className="flex items-center">
       <Tabs value={viewMode} onValueChange={handleViewChange}>
-        <TabsList className="grid w-[360px] grid-cols-3">
-          <TabsTrigger value="store_manager" className="gap-2">
+        <TabsList className="grid w-[420px] grid-cols-3">
+          <TabsTrigger value="store_manager" className="flex items-center justify-center gap-2">
             <Store className="h-4 w-4" />
-            Store View
+            <span>Store View</span>
           </TabsTrigger>
-          <TabsTrigger value="hq" className="gap-2">
+          <TabsTrigger value="hq" className="flex items-center justify-center gap-2">
             <Building2 className="h-4 w-4" />
-            Demand Planner
+            <span>Demand Planner</span>
           </TabsTrigger>
-          <TabsTrigger value="manufacturing" className="gap-2">
+          <TabsTrigger value="manufacturing" className="flex items-center justify-center gap-2">
             <Factory className="h-4 w-4" />
-            Manufacturer
+            <span>Manufacturer</span>
           </TabsTrigger>
         </TabsList>
       </Tabs>
