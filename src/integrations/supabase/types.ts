@@ -316,7 +316,8 @@ export type Database = {
           created_at: string
           day_part: string
           id: string
-          product_id: string
+          product_id: string | null
+          product_sku: string
           production_plan_id: string
           quantity: number
           store_id: string
@@ -326,7 +327,8 @@ export type Database = {
           created_at?: string
           day_part: string
           id?: string
-          product_id: string
+          product_id?: string | null
+          product_sku: string
           production_plan_id: string
           quantity?: number
           store_id: string
@@ -336,7 +338,8 @@ export type Database = {
           created_at?: string
           day_part?: string
           id?: string
-          product_id?: string
+          product_id?: string | null
+          product_sku?: string
           production_plan_id?: string
           quantity?: number
           store_id?: string

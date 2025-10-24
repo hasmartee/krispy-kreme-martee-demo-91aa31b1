@@ -200,11 +200,11 @@ export default function SuggestedProduction() {
         .upsert({
           production_plan_id: planId,
           store_id: product.storeId,
-          product_id: product.id,
+          product_sku: product.id,
           quantity: product.finalOrder,
           day_part: product.dayPart || 'Morning',
         }, {
-          onConflict: 'production_plan_id,store_id,product_id,day_part'
+          onConflict: 'production_plan_id,store_id,product_sku,day_part'
         }) as any;
 
       if (allocationError) throw allocationError;

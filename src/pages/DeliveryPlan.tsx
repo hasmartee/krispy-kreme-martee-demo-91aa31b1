@@ -145,23 +145,23 @@ export default function DeliveryPlan() {
       // Fetch allocations for this production plan
       const { data: allocationsData } = await supabase
         .from('production_allocations')
-        .select('store_id, product_id, quantity, day_part')
+        .select('store_id, product_sku, quantity, day_part')
         .eq('production_plan_id', productionPlan.id) as any;
 
-      // Group allocations by product
+      // Group allocations by product SKU
       const productAllocations = new Map<string, any[]>();
       if (allocationsData) {
         allocationsData.forEach((alloc: any) => {
-          if (!productAllocations.has(alloc.product_id)) {
-            productAllocations.set(alloc.product_id, []);
+          if (!productAllocations.has(alloc.product_sku)) {
+            productAllocations.set(alloc.product_sku, []);
           }
-          productAllocations.get(alloc.product_id)!.push(alloc);
+          productAllocations.get(alloc.product_sku)!.push(alloc);
         });
       }
 
       // Build allocations array
       const loadedAllocations = allKrispyKremeProducts.map((product, index) => {
-        const productAllocs = productAllocations.get(product.id) || [];
+        const productAllocs = productAllocations.get(product.sku) || [];
         const storeAllocations = storeNames.map(storeName => {
           const storeId = storesData.find((s: any) => s.name === storeName)?.id;
           const allocation = productAllocs.find(a => a.store_id === storeId);
