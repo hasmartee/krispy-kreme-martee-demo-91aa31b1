@@ -390,7 +390,7 @@ export default function DeliveryPlan() {
                   Confirmed
                 </Badge>
               ) : (
-                <Badge className="bg-gradient-to-r from-[#ff914d] to-[#ff7a2f] text-white border-0 shadow-md font-semibold px-3 py-1.5">
+                <Badge className="bg-gradient-to-r from-[#f8b29c] to-[#f6a389] text-white border-0 shadow-md font-semibold px-3 py-1.5">
                   <Clock className="h-3.5 w-3.5 mr-1.5" />
                   Pending
                 </Badge>

@@ -231,7 +231,7 @@ export default function ManufacturingProduction() {
       );
     }
     return (
-      <Badge className="bg-gradient-to-r from-[#ff914d] to-[#ff7a2f] text-white border-0 shadow-md font-semibold px-3 py-1">
+      <Badge className="bg-gradient-to-r from-[#f8b29c] to-[#f6a389] text-white border-0 shadow-md font-semibold px-3 py-1">
         <Clock className="h-3.5 w-3.5 mr-1.5" />
         Pending
       </Badge>
@@ -367,10 +367,10 @@ export default function ManufacturingProduction() {
                     <TableHead>Category</TableHead>
                     <TableHead className="text-right">Planned Qty</TableHead>
                     <TableHead className="text-center">Status</TableHead>
-                    <TableHead className="text-right bg-[#ff914d]/20 border-l-4 border-[#ff914d]">
+                    <TableHead className="text-right bg-[#f8b29c]/20 border-l-4 border-[#f8b29c]">
                       <div className="flex items-center justify-end gap-2">
-                        <span className="font-bold text-[#ff914d]">Manufactured Qty</span>
-                        <Package className="h-4 w-4 text-[#ff914d]" />
+                        <span className="font-bold text-[#f8b29c]">Manufactured Qty</span>
+                        <Package className="h-4 w-4 text-[#f8b29c]" />
                       </div>
                     </TableHead>
                     <TableHead className="text-right">Variance</TableHead>
@@ -404,7 +404,7 @@ export default function ManufacturingProduction() {
                         <TableCell className="text-center">
                           {getStatusBadge(product.status, product.isLocked)}
                         </TableCell>
-                        <TableCell className="bg-[#ff914d]/20 border-l-4 border-[#ff914d]">
+                        <TableCell className="bg-[#f8b29c]/20 border-l-4 border-[#f8b29c]">
                           <Input
                             type="number"
                             min="0"
@@ -415,7 +415,7 @@ export default function ManufacturingProduction() {
                               "w-32 ml-auto text-right font-bold text-lg",
                               product.isLocked 
                                 ? "bg-muted cursor-not-allowed" 
-                                : "border-2 border-[#ff914d] focus:border-[#ff7a2f] shadow-lg bg-white focus:ring-2 focus:ring-[#ff914d]/30"
+                                : "border-2 border-[#f8b29c] focus:border-[#f6a389] shadow-lg bg-white focus:ring-2 focus:ring-[#f8b29c]/30"
                             )}
                           />
                         </TableCell>
