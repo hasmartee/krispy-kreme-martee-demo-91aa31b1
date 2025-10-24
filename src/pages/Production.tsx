@@ -468,7 +468,7 @@ export default function Production() {
                   onClick={() => setGroupByProduct(false)}
                   className="h-8"
                 >
-                  By Line
+                  By Store
                 </Button>
                 <Button
                   size="sm"
@@ -476,7 +476,7 @@ export default function Production() {
                   onClick={() => setGroupByProduct(true)}
                   className="h-8"
                 >
-                  By Product
+                  By Total
                 </Button>
               </div>
             )}
