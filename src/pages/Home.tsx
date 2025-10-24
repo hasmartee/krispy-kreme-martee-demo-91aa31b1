@@ -532,6 +532,36 @@ const weeklyTrendData = [
         </div>
       )}
 
+      {/* My Actions Section - Store Manager */}
+      {viewMode === "store_manager" && (
+        <div className="space-y-3">
+          <h2 className="text-xl font-semibold text-foreground">My Actions</h2>
+          <div className="grid gap-3">
+            <Card 
+              className="bg-gradient-to-r from-orange-100 to-amber-100 hover:from-orange-200 hover:to-amber-200 hover:shadow-lg shadow-md transition-all duration-200 border-orange-200 cursor-pointer"
+              onClick={() => navigate("/store-products")}
+            >
+              <CardContent className="p-4">
+                <div className="flex items-center gap-4">
+                  <div className="flex-shrink-0 w-10 h-10 bg-orange-200 rounded-full flex items-center justify-center">
+                    <Sparkles className="h-5 w-5 text-orange-700" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="text-base font-semibold text-foreground mb-1">
+                      Review Range Insights
+                    </h3>
+                    <p className="text-sm text-muted-foreground">
+                      Check AI product range recommendations
+                    </p>
+                  </div>
+                  <ArrowRight className="h-5 w-5 text-orange-700 shrink-0" />
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      )}
+
       {/* My Actions Section - HQ Only */}
       {viewMode === "hq" && (
         <div className="space-y-3">
@@ -574,6 +604,28 @@ const weeklyTrendData = [
                     </h3>
                     <p className="text-sm text-muted-foreground">
                       Check AI-powered inventory recommendations
+                    </p>
+                  </div>
+                  <ArrowRight className="h-5 w-5 text-orange-700 shrink-0" />
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card 
+              className="bg-gradient-to-r from-orange-100 to-amber-100 hover:from-orange-200 hover:to-amber-200 hover:shadow-lg shadow-md transition-all duration-200 border-orange-200 cursor-pointer"
+              onClick={() => navigate("/store-products")}
+            >
+              <CardContent className="p-4">
+                <div className="flex items-center gap-4">
+                  <div className="flex-shrink-0 w-10 h-10 bg-orange-200 rounded-full flex items-center justify-center">
+                    <Sparkles className="h-5 w-5 text-orange-700" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="text-base font-semibold text-foreground mb-1">
+                      Review Range Insights
+                    </h3>
+                    <p className="text-sm text-muted-foreground">
+                      Check AI product range recommendations
                     </p>
                   </div>
                   <ArrowRight className="h-5 w-5 text-orange-700 shrink-0" />

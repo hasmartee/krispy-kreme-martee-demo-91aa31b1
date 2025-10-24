@@ -343,25 +343,49 @@ const LiveData = () => {
         </Card>
       </div>
 
-      {/* AI Insights Section */}
+      {/* AI Key Insights Section */}
       {insights.length > 0 && (
-        <div className="space-y-4">
-          <div className="flex items-center gap-2">
-            <Sparkles className="h-5 w-5 text-primary" />
-            <h2 className="text-xl font-semibold">AI Insights</h2>
-          </div>
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <Card className="shadow-lg border-2 border-purple-200 bg-gradient-to-r from-purple-50 via-pink-50 to-purple-50">
+          <CardHeader className="pb-3">
+            <div className="flex items-center gap-3">
+              <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-purple-400 to-pink-400 flex items-center justify-center shadow-lg">
+                <Sparkles className="h-6 w-6 text-white" />
+              </div>
+              <div>
+                <CardTitle className="text-xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent flex items-center gap-2">
+                  AI Key Insights
+                  <Sparkles className="h-4 w-4 text-orange-400" />
+                </CardTitle>
+                <CardDescription className="text-sm">Data-driven discoveries from your business operations</CardDescription>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent className="space-y-3">
             {insights.map((insight, index) => (
-              <Alert key={index} variant={insight.type === "warning" ? "destructive" : "default"}>
-                {insight.type === "warning" && <AlertCircle className="h-4 w-4" />}
-                {insight.type === "success" && <CheckCircle2 className="h-4 w-4" />}
-                {insight.type === "info" && <TrendingUp className="h-4 w-4" />}
-                <AlertTitle>{insight.title}</AlertTitle>
-                <AlertDescription>{insight.description}</AlertDescription>
-              </Alert>
+              <div 
+                key={index} 
+                className={`p-4 rounded-xl border ${
+                  insight.type === "warning" 
+                    ? "bg-gradient-to-r from-orange-50 to-amber-50 border-orange-200" 
+                    : "bg-gradient-to-r from-green-50 to-emerald-50 border-green-200"
+                }`}
+              >
+                <div className="flex items-start gap-3">
+                  {insight.type === "warning" && <AlertCircle className="h-5 w-5 text-orange-500 mt-0.5 flex-shrink-0" />}
+                  {insight.type === "success" && <CheckCircle2 className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />}
+                  {insight.type === "info" && <TrendingUp className="h-5 w-5 text-blue-500 mt-0.5 flex-shrink-0" />}
+                  <p className="text-sm text-foreground leading-relaxed">
+                    <span className={`font-semibold ${insight.type === "warning" ? "text-orange-600" : "text-green-600"}`}>
+                      {insight.title}
+                    </span>
+                    {" — "}
+                    {insight.description}
+                  </p>
+                </div>
+              </div>
             ))}
-          </div>
-        </div>
+          </CardContent>
+        </Card>
       )}
 
       <div className="space-y-8">

@@ -445,54 +445,46 @@ export default function StoreProductRange() {
       </div>
 
       {/* AI Range Insights Section */}
-      <Card className="shadow-lg border-2 border-primary/20 bg-gradient-to-r from-primary/5 to-accent/5">
-        <CardHeader>
+      <Card className="shadow-lg border-2 border-purple-200 bg-gradient-to-r from-purple-50 via-pink-50 to-purple-50">
+        <CardHeader className="pb-3">
           <div className="flex items-center gap-3">
-            <div className="h-10 w-10 rounded-lg bg-primary/20 flex items-center justify-center">
-              <Sparkles className="h-5 w-5 text-primary" />
+            <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-purple-400 to-pink-400 flex items-center justify-center shadow-lg">
+              <Sparkles className="h-6 w-6 text-white" />
             </div>
             <div>
-              <CardTitle className="text-xl font-bold">AI Range Insights</CardTitle>
-              <CardDescription>Automated recommendations based on sales patterns and stockout analysis</CardDescription>
+              <CardTitle className="text-xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent flex items-center gap-2">
+                AI Key Insights
+                <Sparkles className="h-4 w-4 text-orange-400" />
+              </CardTitle>
+              <CardDescription className="text-sm">Data-driven discoveries from your business operations</CardDescription>
             </div>
           </div>
         </CardHeader>
         <CardContent className="space-y-3">
-          <div className="p-4 rounded-lg bg-destructive/10 border border-destructive/30">
+          <div className="p-4 rounded-xl bg-gradient-to-r from-orange-50 to-amber-50 border border-orange-200">
             <div className="flex items-start gap-3">
-              <AlertCircle className="h-5 w-5 text-destructive mt-0.5 flex-shrink-0" />
-              <div className="flex-1">
-                <p className="text-sm font-semibold text-foreground mb-1">Frequent Stockouts Detected</p>
-                <p className="text-sm text-muted-foreground">
-                  <span className="font-medium">Biscoff Donuts</span> experiencing stockouts in the following stores: Kings Cross Station, Liverpool Street, St Pancras International. 
-                  Consider increasing capacity limits for this SKU.
-                </p>
-              </div>
+              <TrendingUp className="h-5 w-5 text-orange-500 mt-0.5 flex-shrink-0" />
+              <p className="text-sm text-foreground leading-relaxed">
+                <span className="font-semibold text-orange-600">Sales grew across London stores</span> last week by about <span className="font-semibold text-green-600">5% on average</span> — this correlated with an average <span className="font-semibold text-orange-500">8 degree rise</span> in daytime temperatures.
+              </p>
             </div>
           </div>
 
-          <div className="p-4 rounded-lg bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800">
+          <div className="p-4 rounded-xl bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200">
             <div className="flex items-start gap-3">
-              <TrendingUp className="h-5 w-5 text-amber-600 mt-0.5 flex-shrink-0" />
-              <div className="flex-1">
-                <p className="text-sm font-semibold text-foreground mb-1">Underperforming SKU</p>
-                <p className="text-sm text-muted-foreground">
-                  <span className="font-medium">Lemon Filled</span> showing consistently low sales velocity across all locations. 
-                  Consider delisting to make room for higher-performing items.
-                </p>
-              </div>
+              <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
+              <p className="text-sm text-foreground leading-relaxed">
+                <span className="font-semibold text-green-600">Waste reduction initiatives</span> in Business District stores showed <span className="font-semibold text-green-700">22% improvement</span> when paired with in-store promotions during peak hours.
+              </p>
             </div>
           </div>
 
-          <div className="p-4 rounded-lg border" style={{ backgroundColor: 'hsl(var(--success-green) / 0.1)', borderColor: 'hsl(var(--success-green) / 0.3)' }}>
+          <div className="p-4 rounded-xl bg-gradient-to-r from-red-50 to-rose-50 border border-red-200">
             <div className="flex items-start gap-3">
-              <CheckCircle className="h-5 w-5 mt-0.5 flex-shrink-0" style={{ color: 'hsl(var(--success-green))' }} />
-              <div className="flex-1">
-                <p className="text-sm font-semibold text-foreground mb-1">Optimization Opportunity</p>
-                <p className="text-sm text-muted-foreground">
-                  Morning slot capacity at 95% utilization. Consider shifting some <span className="font-medium">Afternoon items</span> to evening slots to balance demand.
-                </p>
-              </div>
+              <AlertCircle className="h-5 w-5 text-red-500 mt-0.5 flex-shrink-0" />
+              <p className="text-sm text-foreground leading-relaxed">
+                <span className="font-semibold text-red-600">Frequent stockouts</span> of <span className="font-medium">Biscoff Donuts</span> detected in Kings Cross Station, Liverpool Street, St Pancras International. Consider increasing capacity limits for this SKU, or delisting slow sellers like the <span className="font-medium">Lemon Filled</span>.
+              </p>
             </div>
           </div>
         </CardContent>
