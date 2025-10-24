@@ -539,19 +539,19 @@ const weeklyTrendData = [
           <div className="grid gap-3 md:grid-cols-2">
             <Card 
               className="bg-gradient-to-r from-orange-100 to-amber-100 hover:from-orange-200 hover:to-amber-200 hover:shadow-lg shadow-md transition-all duration-200 border-orange-200 cursor-pointer"
-              onClick={() => navigate("/analytics")}
+              onClick={() => navigate("/suggested-production")}
             >
               <CardContent className="p-4">
                 <div className="flex items-center gap-4">
                   <div className="flex-shrink-0 w-10 h-10 bg-orange-200 rounded-full flex items-center justify-center">
-                    <TrendingUp className="h-5 w-5 text-orange-700" />
+                    <ClipboardCheck className="h-5 w-5 text-orange-700" />
                   </div>
                   <div className="flex-1 min-w-0">
                     <h3 className="text-base font-semibold text-foreground mb-1">
-                      View Analytics
+                      Confirm Production Volumes
                     </h3>
                     <p className="text-sm text-muted-foreground">
-                      Deep dive into performance metrics
+                      Review and approve tomorrow's production
                     </p>
                   </div>
                   <ArrowRight className="h-5 w-5 text-orange-700 shrink-0" />
@@ -561,63 +561,19 @@ const weeklyTrendData = [
 
             <Card 
               className="bg-gradient-to-r from-orange-100 to-amber-100 hover:from-orange-200 hover:to-amber-200 hover:shadow-lg shadow-md transition-all duration-200 border-orange-200 cursor-pointer"
-              onClick={() => navigate("/store-management")}
+              onClick={() => navigate("/inventory")}
             >
               <CardContent className="p-4">
                 <div className="flex items-center gap-4">
                   <div className="flex-shrink-0 w-10 h-10 bg-orange-200 rounded-full flex items-center justify-center">
-                    <Users className="h-5 w-5 text-orange-700" />
+                    <BrainCircuit className="h-5 w-5 text-orange-700" />
                   </div>
                   <div className="flex-1 min-w-0">
                     <h3 className="text-base font-semibold text-foreground mb-1">
-                      Store Management
+                      Review Stock Insights
                     </h3>
                     <p className="text-sm text-muted-foreground">
-                      Monitor all stores and teams
-                    </p>
-                  </div>
-                  <ArrowRight className="h-5 w-5 text-orange-700 shrink-0" />
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card 
-              className="bg-gradient-to-r from-orange-100 to-amber-100 hover:from-orange-200 hover:to-amber-200 hover:shadow-lg shadow-md transition-all duration-200 border-orange-200 cursor-pointer"
-              onClick={() => navigate("/delivery-plan")}
-            >
-              <CardContent className="p-4">
-                <div className="flex items-center gap-4">
-                  <div className="flex-shrink-0 w-10 h-10 bg-orange-200 rounded-full flex items-center justify-center">
-                    <Truck className="h-5 w-5 text-orange-700" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <h3 className="text-base font-semibold text-foreground mb-1">
-                      Delivery Planning
-                    </h3>
-                    <p className="text-sm text-muted-foreground">
-                      Review and optimize deliveries
-                    </p>
-                  </div>
-                  <ArrowRight className="h-5 w-5 text-orange-700 shrink-0" />
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card 
-              className="bg-gradient-to-r from-orange-100 to-amber-100 hover:from-orange-200 hover:to-amber-200 hover:shadow-lg shadow-md transition-all duration-200 border-orange-200 cursor-pointer"
-              onClick={() => navigate("/product-range")}
-            >
-              <CardContent className="p-4">
-                <div className="flex items-center gap-4">
-                  <div className="flex-shrink-0 w-10 h-10 bg-orange-200 rounded-full flex items-center justify-center">
-                    <Package className="h-5 w-5 text-orange-700" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <h3 className="text-base font-semibold text-foreground mb-1">
-                      Product Range
-                    </h3>
-                    <p className="text-sm text-muted-foreground">
-                      Manage products and pricing
+                      Check AI-powered inventory recommendations
                     </p>
                   </div>
                   <ArrowRight className="h-5 w-5 text-orange-700 shrink-0" />
