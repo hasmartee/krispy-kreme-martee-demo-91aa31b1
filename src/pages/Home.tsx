@@ -848,6 +848,97 @@ const weeklyTrendData = [
             </CardContent>
           </Card>
 
+          {/* This Week's Metrics */}
+          <div>
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xl font-semibold text-foreground">This Week's Performance</h2>
+              <Button onClick={() => navigate("/analytics")} variant="outline" className="gap-2">
+                View Full Performance
+                <ArrowRight className="h-4 w-4" />
+              </Button>
+            </div>
+            
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+              <Card className="border-l-4 border-l-primary bg-gradient-to-br from-primary/5 to-transparent">
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Revenue</CardTitle>
+                  <DollarSign className="h-4 w-4 text-primary" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">
+                    £{weeklyMetrics.revenue.toLocaleString()}
+                  </div>
+                  <div className="flex items-center gap-2 mt-1">
+                    <p className="text-xs text-muted-foreground">
+                      Week to date
+                    </p>
+                    <Badge variant="outline" className="text-xs text-green-600 border-green-600">
+                      +8.2%
+                    </Badge>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="border-l-4 border-l-green-500 bg-gradient-to-br from-green-500/5 to-transparent">
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Gross Profit</CardTitle>
+                  <TrendingUp className="h-4 w-4 text-green-600" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">
+                    £{weeklyMetrics.grossProfit.toLocaleString()}
+                  </div>
+                  <div className="flex items-center gap-2 mt-1">
+                    <p className="text-xs text-muted-foreground">
+                      {((weeklyMetrics.grossProfit / weeklyMetrics.revenue) * 100).toFixed(1)}% margin
+                    </p>
+                    <Badge variant="outline" className="text-xs text-green-600 border-green-600">
+                      +6.5%
+                    </Badge>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="border-l-4 border-l-destructive bg-gradient-to-br from-destructive/5 to-transparent">
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Waste</CardTitle>
+                  <Trash2 className="h-4 w-4 text-destructive" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">
+                    £{weeklyMetrics.waste.toLocaleString()}
+                  </div>
+                  <div className="flex items-center gap-2 mt-1">
+                    <p className="text-xs text-muted-foreground">
+                      {((weeklyMetrics.waste / weeklyMetrics.revenue) * 100).toFixed(1)}% of revenue
+                    </p>
+                    <Badge variant="outline" className="text-xs text-destructive border-destructive">
+                      +2.1%
+                    </Badge>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="border-l-4 border-l-blue-500 bg-gradient-to-br from-blue-500/5 to-transparent">
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Availability</CardTitle>
+                  <CheckCircle className="h-4 w-4 text-blue-600" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{weeklyMetrics.availability.toFixed(1)}%</div>
+                  <div className="flex items-center gap-2 mt-1">
+                    <p className="text-xs text-muted-foreground">
+                      Products in stock
+                    </p>
+                    <Badge variant="outline" className="text-xs text-green-600 border-green-600">
+                      +1.2%
+                    </Badge>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+
           {/* Weekly Trend - Store View */}
           <Card className="shadow-lg">
             <CardHeader>
@@ -856,10 +947,6 @@ const weeklyTrendData = [
                   <CardTitle className="text-2xl font-bold">Weekly Performance</CardTitle>
                   <p className="text-muted-foreground mt-1">Delivered, sold and wasted this week</p>
                 </div>
-                <Button onClick={() => navigate("/analytics")} variant="outline" className="gap-2">
-                  View Analytics
-                  <ArrowRight className="h-4 w-4" />
-                </Button>
               </div>
             </CardHeader>
             <CardContent className="pt-6">
@@ -1025,96 +1112,6 @@ const weeklyTrendData = [
             </CardContent>
           </Card>
 
-          {/* This Week's Metrics */}
-          <div>
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-semibold text-foreground">This Week's Performance</h2>
-              <Button onClick={() => navigate("/analytics")} variant="outline" className="gap-2">
-                View Full Performance
-                <ArrowRight className="h-4 w-4" />
-              </Button>
-            </div>
-            
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-              <Card className="border-l-4 border-l-primary bg-gradient-to-br from-primary/5 to-transparent">
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Revenue</CardTitle>
-                  <DollarSign className="h-4 w-4 text-primary" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">
-                    £{weeklyMetrics.revenue.toLocaleString()}
-                  </div>
-                  <div className="flex items-center gap-2 mt-1">
-                    <p className="text-xs text-muted-foreground">
-                      Week to date
-                    </p>
-                    <Badge variant="outline" className="text-xs text-green-600 border-green-600">
-                      +8.2%
-                    </Badge>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card className="border-l-4 border-l-green-500 bg-gradient-to-br from-green-500/5 to-transparent">
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Gross Profit</CardTitle>
-                  <TrendingUp className="h-4 w-4 text-green-600" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">
-                    £{weeklyMetrics.grossProfit.toLocaleString()}
-                  </div>
-                  <div className="flex items-center gap-2 mt-1">
-                    <p className="text-xs text-muted-foreground">
-                      {((weeklyMetrics.grossProfit / weeklyMetrics.revenue) * 100).toFixed(1)}% margin
-                    </p>
-                    <Badge variant="outline" className="text-xs text-green-600 border-green-600">
-                      +6.5%
-                    </Badge>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card className="border-l-4 border-l-destructive bg-gradient-to-br from-destructive/5 to-transparent">
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Waste</CardTitle>
-                  <Trash2 className="h-4 w-4 text-destructive" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">
-                    £{weeklyMetrics.waste.toLocaleString()}
-                  </div>
-                  <div className="flex items-center gap-2 mt-1">
-                    <p className="text-xs text-muted-foreground">
-                      {((weeklyMetrics.waste / weeklyMetrics.revenue) * 100).toFixed(1)}% of revenue
-                    </p>
-                    <Badge variant="outline" className="text-xs text-destructive border-destructive">
-                      +2.1%
-                    </Badge>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card className="border-l-4 border-l-blue-500 bg-gradient-to-br from-blue-500/5 to-transparent">
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Availability</CardTitle>
-                  <CheckCircle className="h-4 w-4 text-blue-600" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">{weeklyMetrics.availability.toFixed(1)}%</div>
-                  <div className="flex items-center gap-2 mt-1">
-                    <p className="text-xs text-muted-foreground">
-                      Products in stock
-                    </p>
-                    <Badge variant="outline" className="text-xs text-green-600 border-green-600">
-                      +1.2%
-                    </Badge>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          </div>
         </>
       )}
 
