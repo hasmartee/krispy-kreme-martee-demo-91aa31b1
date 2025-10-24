@@ -530,11 +530,19 @@ export default function Production() {
       </div>
 
       {/* Production Table */}
-      <Card className="shadow-card">
+      <Card className={cn(
+        "shadow-card",
+        format(selectedDate, 'yyyy-MM-dd') !== format(new Date(), 'yyyy-MM-dd') && "bg-muted/30"
+      )}>
         <CardHeader>
           <div className="flex items-center justify-between">
             <div>
-              <CardTitle className="text-xl">Daily Production Plan</CardTitle>
+              <CardTitle className="text-xl flex items-center gap-2">
+                Daily Production Plan
+                {format(selectedDate, 'yyyy-MM-dd') !== format(new Date(), 'yyyy-MM-dd') && (
+                  <Badge variant="outline" className="text-xs bg-muted">Pending</Badge>
+                )}
+              </CardTitle>
               <CardDescription>
                 AI-powered production quantities for tomorrow's service
               </CardDescription>

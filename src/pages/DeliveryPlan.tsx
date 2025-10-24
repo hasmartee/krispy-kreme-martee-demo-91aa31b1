@@ -420,10 +420,16 @@ export default function DeliveryPlan() {
       </div>
 
       {/* Delivery Plan Table */}
-      <Card className="shadow-lg">
+      <Card className={cn(
+        "shadow-lg",
+        format(selectedDate, 'yyyy-MM-dd') !== format(new Date(), 'yyyy-MM-dd') && "bg-muted/30"
+      )}>
         <CardHeader>
-          <CardTitle className="text-2xl">
+          <CardTitle className="text-2xl flex items-center gap-2">
             {viewMode === 'store' ? 'Delivery Allocations by Store' : 'Delivery Allocations by Product'}
+            {format(selectedDate, 'yyyy-MM-dd') !== format(new Date(), 'yyyy-MM-dd') && (
+              <Badge variant="outline" className="text-xs bg-muted">Pending</Badge>
+            )}
           </CardTitle>
           <CardDescription>
             {products.length > 0 

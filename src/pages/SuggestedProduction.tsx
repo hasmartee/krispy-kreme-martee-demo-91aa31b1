@@ -805,9 +805,16 @@ export default function SuggestedProduction() {
       </div>
 
       {/* Products Table */}
-      <Card>
+      <Card className={cn(
+        format(selectedDate, 'yyyy-MM-dd') !== format(new Date(), 'yyyy-MM-dd') && "bg-muted/30"
+      )}>
         <CardHeader>
-          <CardTitle>Production Recommendations</CardTitle>
+          <CardTitle className="flex items-center gap-2">
+            Production Recommendations
+            {format(selectedDate, 'yyyy-MM-dd') !== format(new Date(), 'yyyy-MM-dd') && (
+              <Badge variant="outline" className="text-xs bg-muted">Pending</Badge>
+            )}
+          </CardTitle>
           <CardDescription>
             AI-powered production suggestions based on historical data and predicted demand
           </CardDescription>

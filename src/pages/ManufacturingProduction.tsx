@@ -370,9 +370,17 @@ export default function ManufacturingProduction() {
       </div>
 
       {/* Products Table */}
-      <Card className="shadow-lg">
+      <Card className={cn(
+        "shadow-lg",
+        format(selectedDate, 'yyyy-MM-dd') !== format(new Date(), 'yyyy-MM-dd') && "bg-muted/30"
+      )}>
         <CardHeader>
-          <CardTitle className="text-2xl">Production Items</CardTitle>
+          <CardTitle className="text-2xl flex items-center gap-2">
+            Production Items
+            {format(selectedDate, 'yyyy-MM-dd') !== format(new Date(), 'yyyy-MM-dd') && (
+              <Badge variant="outline" className="text-xs bg-muted">Pending</Badge>
+            )}
+          </CardTitle>
           <CardDescription>
             {products.length > 0 
               ? `${products.length} products in production plan`
