@@ -6,7 +6,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Package, Store, TrendingUp, AlertTriangle, Download, Lock, Unlock, Edit } from "lucide-react";
+import { Package, Store, TrendingUp, AlertTriangle, Download, Lock, Unlock, Edit, CalendarIcon } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/lib/supabase-helper";
 import { format } from "date-fns";
@@ -419,36 +419,45 @@ export default function DeliveryPlan() {
 
   return (
     <div className="flex-1 space-y-6 p-6">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold text-foreground">Delivery Plan</h1>
           <p className="text-muted-foreground">
             Allocate produced quantities to stores
           </p>
         </div>
-        <div className="flex items-center gap-2">
-          <span className="text-sm font-medium text-muted-foreground">Delivery Date:</span>
-          <Select
-            value={selectedDate.toISOString()}
-            onValueChange={(value) => setSelectedDate(new Date(value))}
-          >
-            <SelectTrigger className="w-[240px]">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {Array.from({ length: 14 }, (_, i) => {
-                const date = new Date();
-                date.setDate(date.getDate() + i);
-                return (
-                  <SelectItem key={i} value={date.toISOString()}>
-                    {format(date, "EEEE, MMM d, yyyy")}
-                    {i === 0 && " (Today)"}
-                  </SelectItem>
-                );
-              })}
-            </SelectContent>
-          </Select>
-        </div>
+        <Card className="border-primary/20 bg-gradient-to-r from-primary/5 to-transparent">
+          <CardContent className="p-4">
+            <div className="flex items-center gap-3">
+              <div className="flex items-center justify-center w-10 h-10 rounded-full bg-primary/10">
+                <CalendarIcon className="h-5 w-5 text-primary" />
+              </div>
+              <div className="flex-1">
+                <label className="text-sm font-medium text-muted-foreground block mb-1">Delivery Date</label>
+                <Select
+                  value={selectedDate.toISOString()}
+                  onValueChange={(value) => setSelectedDate(new Date(value))}
+                >
+                  <SelectTrigger className="w-[280px] h-11 border-primary/30 hover:border-primary/50 transition-colors">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {Array.from({ length: 14 }, (_, i) => {
+                      const date = new Date();
+                      date.setDate(date.getDate() + i);
+                      return (
+                        <SelectItem key={i} value={date.toISOString()}>
+                          {format(date, "EEEE, MMM d, yyyy")}
+                          {i === 0 && " (Today)"}
+                        </SelectItem>
+                      );
+                    })}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
       </div>
 
       {/* Summary Cards */}

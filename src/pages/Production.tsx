@@ -3,7 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { TrendingUp, TrendingDown, RefreshCw, Plus, Minus, CloudRain, AlertTriangle, Sparkles, Download, Send, Loader2 } from "lucide-react";
+import { TrendingUp, TrendingDown, RefreshCw, Plus, Minus, CloudRain, AlertTriangle, Sparkles, Download, Send, Loader2, CalendarIcon } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
@@ -48,7 +48,7 @@ export default function Production() {
 
   useEffect(() => {
     loadData();
-  }, [viewMode, selectedStore]);
+  }, [viewMode, selectedStore, selectedDate]);
 
   // Krispy Kreme product templates matching StoreProductRange
   const getProductsForCluster = (cluster: string) => {
@@ -92,10 +92,13 @@ export default function Production() {
   const loadData = async () => {
     setLoading(true);
     try {
+      console.log('🔍 PRODUCTION PAGE: Loading data...');
       const { data: storesData } = await supabase
         .from('stores')
         .select('*')
         .order('name') as any;
+
+      console.log('🏪 PRODUCTION PAGE: Stores loaded:', storesData?.length);
 
       if (storesData) {
         setStores(storesData);
@@ -104,6 +107,8 @@ export default function Production() {
         const targetStores = viewMode === "store_manager" 
           ? storesData.filter((s: any) => s.name === selectedStore)
           : storesData;
+
+        console.log('🎯 PRODUCTION PAGE: Target stores:', targetStores.length);
 
         targetStores.forEach((store: any) => {
           const storeProducts = getProductsForCluster(store.cluster || 'high_street');
@@ -127,10 +132,16 @@ export default function Production() {
           });
         });
 
+        console.log('✅ PRODUCTION PAGE: Total products generated:', mockProducts.length);
         setProducts(mockProducts);
+
+        // Automatically save to database as pending allocations
+        console.log('💾 PRODUCTION PAGE: About to save pending allocations...');
+        const saveResult = await savePendingAllocations(mockProducts);
+        console.log('💾 PRODUCTION PAGE: Save result:', saveResult);
       }
     } catch (error) {
-      console.error("Error loading data:", error);
+      console.error("❌ PRODUCTION PAGE: Error loading data:", error);
       toast({
         title: "Error",
         description: "Failed to load production data",
@@ -147,12 +158,89 @@ export default function Production() {
     setTimeout(() => setIsRefreshing(false), 1000);
   };
 
-  const updateFinalOrder = (productId: string, storeId: string, delta: number) => {
-    setProducts(prev => prev.map(p => 
+  const savePendingAllocations = async (productsToSave: Product[]) => {
+    try {
+      const productionDate = format(selectedDate, 'yyyy-MM-dd');
+      console.log('🔄 SAVING ALLOCATIONS for date:', productionDate);
+      console.log('🔄 Products to save:', productsToSave.length);
+      
+      // Get or create production plan
+      const { data: existingPlans } = await supabase
+        .from('production_plans')
+        .select('id, status')
+        .eq('production_date', productionDate) as any;
+
+      let planId = existingPlans?.[0]?.id;
+      console.log('🔄 Existing plan ID:', planId);
+
+      if (!planId) {
+        console.log('🔄 Creating new production plan...');
+        const { data: newPlan, error: planError } = await supabase
+          .from('production_plans')
+          .insert({
+            production_date: productionDate,
+            status: 'pending',
+          })
+          .select()
+          .single() as any;
+
+        if (planError) {
+          console.error('❌ Error creating plan:', planError);
+          throw planError;
+        }
+        planId = newPlan?.id;
+        console.log('✅ Created new plan ID:', planId);
+      }
+
+      if (!planId) {
+        console.error('❌ No plan ID available');
+        return { success: false, error: 'No plan ID' };
+      }
+
+      // Save all allocations
+      const allocations = productsToSave.map(p => ({
+        production_plan_id: planId,
+        store_id: p.storeId,
+        product_sku: p.id,
+        quantity: p.finalOrder,
+        day_part: p.dayPart || 'Morning',
+      }));
+
+      console.log('🔄 Upserting', allocations.length, 'allocations');
+
+      const { data: upsertResult, error } = await supabase
+        .from('production_allocations')
+        .upsert(allocations, {
+          onConflict: 'production_plan_id,store_id,product_sku,day_part'
+        })
+        .select() as any;
+
+      if (error) {
+        console.error('❌ Upsert error:', error);
+        return { success: false, error };
+      } else {
+        console.log('✅ Upserted successfully:', upsertResult?.length, 'records');
+        return { success: true, count: upsertResult?.length };
+      }
+    } catch (error) {
+      console.error('❌ Error saving pending allocations:', error);
+      return { success: false, error };
+    }
+  };
+
+  const updateFinalOrder = async (productId: string, storeId: string, delta: number) => {
+    const updatedProducts = products.map(p => 
       p.id === productId && p.storeId === storeId
         ? { ...p, finalOrder: Math.max(0, p.finalOrder + delta) }
         : p
-    ));
+    );
+    setProducts(updatedProducts);
+
+    // Find the updated product and save to database
+    const updatedProduct = updatedProducts.find(p => p.id === productId && p.storeId === storeId);
+    if (updatedProduct) {
+      await savePendingAllocations([updatedProduct]);
+    }
   };
 
   const handleConfirmProduction = async (product: Product) => {
@@ -273,29 +361,38 @@ export default function Production() {
 
       {/* Date Picker and View Toggle */}
       <div className="flex items-center justify-between gap-4">
-        <div className="flex items-center gap-2">
-          <span className="text-sm font-medium text-muted-foreground">Production Date:</span>
-          <Select
-            value={selectedDate.toISOString()}
-            onValueChange={(value) => setSelectedDate(new Date(value))}
-          >
-            <SelectTrigger className="w-[240px]">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {Array.from({ length: 14 }, (_, i) => {
-                const date = new Date();
-                date.setDate(date.getDate() + i);
-                return (
-                  <SelectItem key={i} value={date.toISOString()}>
-                    {format(date, "EEEE, MMM d, yyyy")}
-                    {i === 0 && " (Today)"}
-                  </SelectItem>
-                );
-              })}
-            </SelectContent>
-          </Select>
-        </div>
+        <Card className="border-primary/20 bg-gradient-to-r from-primary/5 to-transparent">
+          <CardContent className="p-4">
+            <div className="flex items-center gap-3">
+              <div className="flex items-center justify-center w-10 h-10 rounded-full bg-primary/10">
+                <CalendarIcon className="h-5 w-5 text-primary" />
+              </div>
+              <div className="flex-1">
+                <label className="text-sm font-medium text-muted-foreground block mb-1">Production Date</label>
+                <Select
+                  value={selectedDate.toISOString()}
+                  onValueChange={(value) => setSelectedDate(new Date(value))}
+                >
+                  <SelectTrigger className="w-[280px] h-11 border-primary/30 hover:border-primary/50 transition-colors">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {Array.from({ length: 14 }, (_, i) => {
+                      const date = new Date();
+                      date.setDate(date.getDate() + i);
+                      return (
+                        <SelectItem key={i} value={date.toISOString()}>
+                          {format(date, "EEEE, MMM d, yyyy")}
+                          {i === 0 && " (Today)"}
+                        </SelectItem>
+                      );
+                    })}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <span>Last updated: {format(new Date(), "EEEE, MMMM d, yyyy 'at' h:mm a")}</span>
