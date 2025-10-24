@@ -149,7 +149,7 @@ export default function SuggestedProduction() {
           productName: product?.name || alloc.product_sku,
           productSku: alloc.product_sku,
           category: product?.category || 'Unknown',
-          expectedQuantity: alloc.quantity || 0,
+          expectedQuantity: alloc.manufactured_quantity || 0,
           receivedQuantity: alloc.received_quantity || 0,
           dayPart: alloc.day_part || 'Morning',
           allocationId: alloc.id,
