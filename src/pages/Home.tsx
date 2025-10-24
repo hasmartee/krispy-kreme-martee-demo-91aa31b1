@@ -357,6 +357,10 @@ const weeklyTrendData = [
   { day: "Sun", delivered: 9100, sold: 8520, wasted: 395 },
 ];
 
+  const tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  const tomorrowDate = tomorrow.toLocaleDateString('en-US', { day: 'numeric', month: 'short' });
+
   return (
     <div className="flex-1 space-y-6 p-6">
       {/* Header */}
@@ -367,6 +371,56 @@ const weeklyTrendData = [
         <p className="text-muted-foreground">
           Here's what's happening this week
         </p>
+      </div>
+
+      {/* My Actions Section */}
+      <div className="space-y-3">
+        <h2 className="text-xl font-semibold text-foreground">My Actions</h2>
+        <div className="grid gap-3">
+          {/* Production Confirmation Task */}
+          <button
+            onClick={() => navigate('/suggested-production')}
+            className="group w-full bg-gradient-to-r from-orange-50 to-amber-50 hover:from-orange-100 hover:to-amber-100 border border-orange-200 rounded-xl p-4 transition-all duration-200 hover:shadow-md"
+          >
+            <div className="flex items-center gap-4">
+              <div className="flex-shrink-0 w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center group-hover:bg-orange-200 transition-colors">
+                <Bell className="h-6 w-6 text-orange-600" />
+              </div>
+              <div className="flex-1 text-left">
+                <h3 className="text-base font-semibold text-foreground mb-1">
+                  Confirm Production for {tomorrowDate}
+                </h3>
+                <p className="text-sm">
+                  <span className="text-orange-600 font-medium">Deadline: 12pm tomorrow</span>
+                  <span className="text-muted-foreground"> - Review and confirm production quantities</span>
+                </p>
+              </div>
+              <ArrowRight className="h-5 w-5 text-orange-600 flex-shrink-0 group-hover:translate-x-1 transition-transform" />
+            </div>
+          </button>
+
+          {/* Stock Alerts Task */}
+          <button
+            onClick={() => navigate('/stock-tracker')}
+            className="group w-full bg-gradient-to-r from-red-50 to-orange-50 hover:from-red-100 hover:to-orange-100 border border-red-200 rounded-xl p-4 transition-all duration-200 hover:shadow-md"
+          >
+            <div className="flex items-center gap-4">
+              <div className="flex-shrink-0 w-12 h-12 bg-red-100 rounded-full flex items-center justify-center group-hover:bg-red-200 transition-colors">
+                <AlertTriangle className="h-6 w-6 text-red-600" />
+              </div>
+              <div className="flex-1 text-left">
+                <h3 className="text-base font-semibold text-foreground mb-1">
+                  4 New Stock Alerts
+                </h3>
+                <p className="text-sm">
+                  <span className="text-red-600 font-medium">Action required</span>
+                  <span className="text-muted-foreground"> - Check discrepancies and unaccounted items</span>
+                </p>
+              </div>
+              <ArrowRight className="h-5 w-5 text-red-600 flex-shrink-0 group-hover:translate-x-1 transition-transform" />
+            </div>
+          </button>
+        </div>
       </div>
 
       {viewMode === "hq" ? (
