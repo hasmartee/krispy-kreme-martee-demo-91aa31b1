@@ -430,51 +430,51 @@ export default function StoreProductRange() {
         </div>
       </div>
 
-      {/* AI Range Insights Section */}
-      <Card className="shadow-lg border-2 border-purple-200 bg-gradient-to-r from-purple-50 via-pink-50 to-purple-50">
-        <CardHeader className="pb-3">
-          <div className="flex items-center gap-3">
-            <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-purple-400 to-pink-400 flex items-center justify-center shadow-lg">
-              <Sparkles className="h-6 w-6 text-white" />
+      {/* AI Range Insights Section - Only for HQ/Demand Planners */}
+      {viewMode === "hq" && (
+        <Card className="shadow-lg border-2 border-purple-200 bg-gradient-to-r from-purple-50 via-pink-50 to-purple-50">
+          <CardHeader className="pb-3">
+            <div className="flex items-center gap-3">
+              <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-purple-400 to-pink-400 flex items-center justify-center shadow-lg">
+                <Sparkles className="h-6 w-6 text-white" />
+              </div>
+              <div>
+                <CardTitle className="text-xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent flex items-center gap-2">
+                  AI Key Insights
+                  <Sparkles className="h-4 w-4 text-orange-400" />
+                </CardTitle>
+                <CardDescription className="text-sm">Data-driven discoveries from your business operations</CardDescription>
+              </div>
             </div>
-            <div>
-              <CardTitle className="text-xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent flex items-center gap-2">
-                AI Key Insights
-                <Sparkles className="h-4 w-4 text-orange-400" />
-              </CardTitle>
-              <CardDescription className="text-sm">Data-driven discoveries from your business operations</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <div className="p-4 rounded-xl bg-gradient-to-r from-orange-50 to-amber-50 border border-orange-200">
+              <div className="flex items-start gap-3">
+                <TrendingUp className="h-5 w-5 text-orange-500 mt-0.5 flex-shrink-0" />
+                <p className="text-sm text-foreground leading-relaxed">
+                  <span className="font-semibold text-orange-600">Capacity Utilization</span> — 3 high street stores show room to expand range complexity without production bottlenecks.
+                </p>
+              </div>
             </div>
-          </div>
-        </CardHeader>
-        <CardContent className="space-y-3">
-          <div className="p-4 rounded-xl bg-gradient-to-r from-orange-50 to-amber-50 border border-orange-200">
-            <div className="flex items-start gap-3">
-              <TrendingUp className="h-5 w-5 text-orange-500 mt-0.5 flex-shrink-0" />
-              <p className="text-sm text-foreground leading-relaxed">
-                <span className="font-semibold text-orange-600">Sales grew across London stores</span> last week by about <span className="font-semibold text-green-600">5% on average</span> — this correlated with an average <span className="font-semibold text-orange-500">8 degree rise</span> in daytime temperatures.
-              </p>
+            <div className="p-4 rounded-xl bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200">
+              <div className="flex items-start gap-3">
+                <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
+                <p className="text-sm text-foreground leading-relaxed">
+                  <span className="font-semibold text-green-600">Product Alignment</span> — 87% of current range aligns with customer preferences based on sales data.
+                </p>
+              </div>
             </div>
-          </div>
-
-          <div className="p-4 rounded-xl bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200">
-            <div className="flex items-start gap-3">
-              <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
-              <p className="text-sm text-foreground leading-relaxed">
-                <span className="font-semibold text-green-600">Waste reduction initiatives</span> in Business District stores showed <span className="font-semibold text-green-700">22% improvement</span> when paired with in-store promotions during peak hours.
-              </p>
+            <div className="p-4 rounded-xl bg-gradient-to-r from-red-50 to-orange-50 border border-red-200">
+              <div className="flex items-start gap-3">
+                <AlertCircle className="h-5 w-5 text-red-500 mt-0.5 flex-shrink-0" />
+                <p className="text-sm text-foreground leading-relaxed">
+                  <span className="font-semibold text-red-600">Range Gap Detected</span> — Transport hub stores missing quick-grab breakfast options that are trending in similar locations.
+                </p>
+              </div>
             </div>
-          </div>
-
-          <div className="p-4 rounded-xl bg-gradient-to-r from-red-50 to-rose-50 border border-red-200">
-            <div className="flex items-start gap-3">
-              <AlertCircle className="h-5 w-5 text-red-500 mt-0.5 flex-shrink-0" />
-              <p className="text-sm text-foreground leading-relaxed">
-                <span className="font-semibold text-red-600">Frequent stockouts</span> of <span className="font-medium">Biscoff Donuts</span> detected in Kings Cross Station, Liverpool Street, St Pancras International. Consider increasing capacity limits for this SKU, or delisting slow sellers like the <span className="font-medium">Lemon Filled</span>.
-              </p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Search and Cluster Filters - Only show in HQ view */}
       {viewMode === "hq" && (

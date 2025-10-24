@@ -12,6 +12,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { supabase } from "@/lib/supabase-helper";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
+import { useView } from "@/contexts/ViewContext";
 
 interface ProductData {
   productName: string;
@@ -37,6 +38,7 @@ interface AIInsight {
 }
 
 const LiveData = () => {
+  const { viewMode } = useView();
   const [stores, setStores] = useState<StoreData[]>([]);
   const [loading, setLoading] = useState(true);
   const [dateRange, setDateRange] = useState<{ from: Date; to: Date }>({
@@ -343,8 +345,8 @@ const LiveData = () => {
         </Card>
       </div>
 
-      {/* AI Key Insights Section */}
-      {insights.length > 0 && (
+      {/* AI Key Insights Section - Only for HQ/Demand Planners */}
+      {viewMode === "hq" && insights.length > 0 && (
         <Card className="shadow-lg border-2 border-purple-200 bg-gradient-to-r from-purple-50 via-pink-50 to-purple-50">
           <CardHeader className="pb-3">
             <div className="flex items-center gap-3">
