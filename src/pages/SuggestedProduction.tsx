@@ -806,13 +806,15 @@ export default function SuggestedProduction() {
 
       {/* Products Table */}
       <Card className={cn(
-        format(selectedDate, 'yyyy-MM-dd') !== format(new Date(), 'yyyy-MM-dd') && "bg-muted/30"
+        format(selectedDate, 'yyyy-MM-dd') !== format(new Date(), 'yyyy-MM-dd') && "bg-muted/50 border-muted"
       )}>
-        <CardHeader>
+        <CardHeader className={cn(
+          format(selectedDate, 'yyyy-MM-dd') !== format(new Date(), 'yyyy-MM-dd') && "bg-muted/30"
+        )}>
           <CardTitle className="flex items-center gap-2">
             Production Recommendations
             {format(selectedDate, 'yyyy-MM-dd') !== format(new Date(), 'yyyy-MM-dd') && (
-              <Badge variant="outline" className="text-xs bg-muted">Pending</Badge>
+              <Badge variant="secondary" className="text-xs">Pending</Badge>
             )}
           </CardTitle>
           <CardDescription>

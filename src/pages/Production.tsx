@@ -468,6 +468,7 @@ export default function Production() {
             const isSelected = format(date, 'yyyy-MM-dd') === format(selectedDate, 'yyyy-MM-dd');
             const dayOfWeek = format(date, 'EEE');
             const dayOfMonth = format(date, 'dd');
+            const isPending = format(date, 'yyyy-MM-dd') !== format(new Date(), 'yyyy-MM-dd');
             
             return (
               <Button
@@ -475,12 +476,17 @@ export default function Production() {
                 variant={isSelected ? "default" : "outline"}
                 onClick={() => setSelectedDate(date)}
                 className={cn(
-                  "flex-shrink-0 flex flex-col items-center gap-1 h-auto py-3 px-6 min-w-[100px]",
+                  "flex-shrink-0 flex flex-col items-center gap-1 h-auto py-3 px-6 min-w-[100px] relative",
                   isSelected 
                     ? "bg-primary text-primary-foreground shadow-md border-2 border-primary" 
                     : "bg-background hover:bg-muted text-muted-foreground"
                 )}
               >
+                {isPending && (
+                  <Badge variant="secondary" className="absolute -top-1 -right-1 text-[8px] px-1 py-0 h-4">
+                    Pending
+                  </Badge>
+                )}
                 <span className="text-sm font-medium">{dayOfWeek}</span>
                 <span className="text-lg font-bold">{dayOfMonth}</span>
               </Button>
@@ -532,15 +538,17 @@ export default function Production() {
       {/* Production Table */}
       <Card className={cn(
         "shadow-card",
-        format(selectedDate, 'yyyy-MM-dd') !== format(new Date(), 'yyyy-MM-dd') && "bg-muted/30"
+        format(selectedDate, 'yyyy-MM-dd') !== format(new Date(), 'yyyy-MM-dd') && "bg-muted/50 border-muted"
       )}>
-        <CardHeader>
+        <CardHeader className={cn(
+          format(selectedDate, 'yyyy-MM-dd') !== format(new Date(), 'yyyy-MM-dd') && "bg-muted/30"
+        )}>
           <div className="flex items-center justify-between">
             <div>
               <CardTitle className="text-xl flex items-center gap-2">
                 Daily Production Plan
                 {format(selectedDate, 'yyyy-MM-dd') !== format(new Date(), 'yyyy-MM-dd') && (
-                  <Badge variant="outline" className="text-xs bg-muted">Pending</Badge>
+                  <Badge variant="secondary" className="text-xs">Pending</Badge>
                 )}
               </CardTitle>
               <CardDescription>

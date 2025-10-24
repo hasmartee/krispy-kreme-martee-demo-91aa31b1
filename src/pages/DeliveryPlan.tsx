@@ -319,6 +319,7 @@ export default function DeliveryPlan() {
             const isSelected = format(date, 'yyyy-MM-dd') === format(selectedDate, 'yyyy-MM-dd');
             const isPast = date < new Date(new Date().setHours(0, 0, 0, 0));
             const isToday = format(date, 'yyyy-MM-dd') === format(new Date(), 'yyyy-MM-dd');
+            const isPending = !isToday && !isPast;
             const dayOfWeek = format(date, 'EEE');
             const dayOfMonth = format(date, 'dd');
             
@@ -328,7 +329,7 @@ export default function DeliveryPlan() {
                 variant={isSelected ? "default" : "outline"}
                 onClick={() => setSelectedDate(date)}
                 className={cn(
-                  "flex-shrink-0 flex flex-col items-center gap-1 h-auto py-3 px-6 min-w-[100px]",
+                  "flex-shrink-0 flex flex-col items-center gap-1 h-auto py-3 px-6 min-w-[100px] relative",
                   isSelected 
                     ? "bg-primary text-primary-foreground shadow-md border-2 border-primary" 
                     : isPast
@@ -338,6 +339,11 @@ export default function DeliveryPlan() {
                     : "bg-muted/30 hover:bg-muted/50 text-muted-foreground"
                 )}
               >
+                {isPending && (
+                  <Badge variant="secondary" className="absolute -top-1 -right-1 text-[8px] px-1 py-0 h-4">
+                    Pending
+                  </Badge>
+                )}
                 <span className="text-sm font-medium">{dayOfWeek}</span>
                 <span className="text-lg font-bold">{dayOfMonth}</span>
               </Button>
@@ -422,13 +428,15 @@ export default function DeliveryPlan() {
       {/* Delivery Plan Table */}
       <Card className={cn(
         "shadow-lg",
-        format(selectedDate, 'yyyy-MM-dd') !== format(new Date(), 'yyyy-MM-dd') && "bg-muted/30"
+        format(selectedDate, 'yyyy-MM-dd') !== format(new Date(), 'yyyy-MM-dd') && "bg-muted/50 border-muted"
       )}>
-        <CardHeader>
+        <CardHeader className={cn(
+          format(selectedDate, 'yyyy-MM-dd') !== format(new Date(), 'yyyy-MM-dd') && "bg-muted/30"
+        )}>
           <CardTitle className="text-2xl flex items-center gap-2">
             {viewMode === 'store' ? 'Delivery Allocations by Store' : 'Delivery Allocations by Product'}
             {format(selectedDate, 'yyyy-MM-dd') !== format(new Date(), 'yyyy-MM-dd') && (
-              <Badge variant="outline" className="text-xs bg-muted">Pending</Badge>
+              <Badge variant="secondary" className="text-xs">Pending</Badge>
             )}
           </CardTitle>
           <CardDescription>
