@@ -19,7 +19,6 @@ import LiveSales from "./pages/LiveSales";
 import StockTracker from "./pages/StockTracker";
 import Settings from "./pages/Settings";
 import Inventory from "./pages/Inventory";
-import MyTasks from "./pages/MyTasks";
 import Deliveries from "./pages/Deliveries";
 import Production from "./pages/Production";
 import DailyWaste from "./pages/DailyWaste";
@@ -55,7 +54,6 @@ const App = () => (
                       <Route path="/store-products" element={<StoreProductRange />} />
                       <Route path="/stores" element={<StoreManagement />} />
                       <Route path="/inventory" element={<Inventory />} />
-                      <Route path="/tasks" element={<MyTasks />} />
                       <Route path="/production" element={<Production />} />
                       <Route path="/delivery-plan" element={<DeliveryPlan />} />
                       <Route path="/store-details" element={<StoreDetails />} />

@@ -6,7 +6,9 @@ import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/h
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
-import { DollarSign, TrendingUp, Trash2, CheckCircle, ArrowRight, ClipboardCheck, BrainCircuit, Sparkles, Users, CloudRain, AlertTriangle, Bell, TrendingDown, MessageSquare, Package } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Progress } from "@/components/ui/progress";
+import { DollarSign, TrendingUp, Trash2, CheckCircle, ArrowRight, ClipboardCheck, BrainCircuit, Sparkles, Users, CloudRain, AlertTriangle, Bell, TrendingDown, MessageSquare, Package, Truck, Clock } from "lucide-react";
 import { useView } from "@/contexts/ViewContext";
 import { useNavigate } from "react-router-dom";
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Area, AreaChart, ComposedChart } from "recharts";
@@ -115,6 +117,16 @@ const storePerformance = {
     ],
   },
 };
+
+interface Task {
+  id: string;
+  title: string;
+  description: string;
+  time: string;
+  icon: any;
+  path: string;
+  completed: boolean;
+}
 
 function ShareWithHQCard() {
   const [messageType, setMessageType] = useState<string>('comment');
@@ -266,6 +278,50 @@ function ShareWithHQCard() {
 export default function Home() {
   const { viewMode, selectedStore } = useView();
   const navigate = useNavigate();
+  const { toast } = useToast();
+
+  const [tasks, setTasks] = useState<Task[]>([
+    {
+      id: "1",
+      title: "Confirm Deliveries",
+      description: "Log and confirm today's product deliveries",
+      time: "Morning",
+      icon: Truck,
+      path: "/suggested-production",
+      completed: false,
+    },
+    {
+      id: "2",
+      title: "Log Waste",
+      description: "Record end of day waste for all products",
+      time: "End of Day",
+      icon: Trash2,
+      path: "/daily-waste",
+      completed: false,
+    },
+  ]);
+
+  const toggleTask = (taskId: string) => {
+    setTasks(prevTasks => prevTasks.map(task => {
+      if (task.id === taskId) {
+        const newCompleted = !task.completed;
+        
+        if (newCompleted) {
+          toast({
+            title: "✓ Task Completed!",
+            description: "Great work!",
+          });
+        }
+        
+        return { ...task, completed: newCompleted };
+      }
+      return task;
+    }));
+  };
+
+  const completedCount = tasks.filter(t => t.completed).length;
+  const totalCount = tasks.length;
+  const progressPercentage = totalCount > 0 ? (completedCount / totalCount) * 100 : 0;
 
   const isSingleStoreView = viewMode === "store_manager";
   const revenueForecast = isSingleStoreView ? revenueForecastStore : revenueForecastHQ;
@@ -314,11 +370,44 @@ export default function Home() {
     availability: viewMode === "store_manager" ? 96.5 : avgAvailability,
   };
 
-// Mock next task data
-const nextTask = {
-  title: "Complete Morning Production",
-  time: "08:00 AM",
-  type: "production" as const,
+// Top/Bottom store performance data
+const storePerformance = {
+  sales: {
+    top: [
+      { store: "St Pancras International", value: "892", change: "+12%" },
+      { store: "Liverpool Street Station", value: "845", change: "+8%" },
+      { store: "Kings Cross Station", value: "780", change: "+5%" },
+    ],
+    bottom: [
+      { store: "Wimbledon Village", value: "342", change: "-3%" },
+      { store: "Greenwich Village", value: "368", change: "-1%" },
+      { store: "Notting Hill Gate", value: "395", change: "+2%" },
+    ],
+  },
+  waste: {
+    top: [
+      { store: "Canary Wharf Plaza", value: "18", change: "2.1%" },
+      { store: "The City - Leadenhall", value: "22", change: "2.5%" },
+      { store: "Bank Station", value: "25", change: "2.8%" },
+    ],
+    bottom: [
+      { store: "Liverpool Street Station", value: "78", change: "8.2%" },
+      { store: "Camden Town", value: "65", change: "7.1%" },
+      { store: "Bond Street", value: "58", change: "6.4%" },
+    ],
+  },
+  deliveries: {
+    top: [
+      { store: "St Pancras International", value: "99.8%", change: "+0.2%" },
+      { store: "Kings Cross Station", value: "99.2%", change: "0%" },
+      { store: "Shoreditch High Street", value: "98.9%", change: "+0.1%" },
+    ],
+    bottom: [
+      { store: "Bond Street", value: "91.6%", change: "-8.4%" },
+      { store: "Camden Town", value: "94.2%", change: "-5.8%" },
+      { store: "Notting Hill Gate", value: "95.5%", change: "-4.5%" },
+    ],
+  },
 };
 
 // Weekly trend data for HQ view
@@ -359,53 +448,85 @@ const weeklyTrendData = [
         </p>
       </div>
 
-      {/* My Actions Section */}
+      {/* My Tasks Section */}
       <div className="space-y-3">
-        <h2 className="text-xl font-semibold text-foreground">My Actions</h2>
-        <div className="grid gap-3">
-          {/* Production Confirmation Task */}
-          <button
-            onClick={() => navigate('/suggested-production')}
-            className="group w-full bg-gradient-to-r from-orange-100 to-amber-100 hover:from-orange-200 hover:to-amber-200 border border-orange-300 rounded-xl p-4 transition-all duration-200 hover:shadow-lg shadow-md"
-          >
-            <div className="flex items-center gap-4">
-              <div className="flex-shrink-0 w-12 h-12 bg-orange-200 rounded-full flex items-center justify-center group-hover:bg-orange-300 transition-colors">
-                <Bell className="h-6 w-6 text-orange-700" />
-              </div>
-              <div className="flex-1 text-left">
-                <h3 className="text-base font-semibold text-foreground mb-1">
-                  Confirm Production for {tomorrowDate}
-                </h3>
-                <p className="text-sm">
-                  <span className="text-orange-700 font-medium">Deadline: 12pm tomorrow</span>
-                  <span className="text-muted-foreground"> - Review and confirm production quantities</span>
-                </p>
-              </div>
-              <ArrowRight className="h-5 w-5 text-orange-700 flex-shrink-0 group-hover:translate-x-1 transition-transform" />
+        <div className="flex items-center justify-between">
+          <h2 className="text-xl font-semibold text-foreground">My Tasks</h2>
+          <div className="text-right">
+            <div className="text-lg font-bold text-primary">
+              {completedCount}/{totalCount}
             </div>
-          </button>
+            <div className="text-xs text-muted-foreground">Completed</div>
+          </div>
+        </div>
 
-          {/* Stock Alerts Task */}
-          <button
-            onClick={() => navigate('/live-data')}
-            className="group w-full bg-gradient-to-r from-orange-100 to-amber-100 hover:from-orange-200 hover:to-amber-200 border border-orange-300 rounded-xl p-4 transition-all duration-200 hover:shadow-lg shadow-md"
-          >
-            <div className="flex items-center gap-4">
-              <div className="flex-shrink-0 w-12 h-12 bg-orange-200 rounded-full flex items-center justify-center group-hover:bg-orange-300 transition-colors">
-                <AlertTriangle className="h-6 w-6 text-orange-700" />
+        {/* Progress Bar */}
+        <Card className="shadow-md bg-gradient-to-r from-background to-primary/5 border-orange-200">
+          <CardContent className="p-4">
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium">Daily Progress</span>
+                <span className="text-sm font-medium text-primary">
+                  {Math.round(progressPercentage)}%
+                </span>
               </div>
-              <div className="flex-1 text-left">
-                <h3 className="text-base font-semibold text-foreground mb-1">
-                  4 New Stock Alerts
-                </h3>
-                <p className="text-sm">
-                  <span className="text-orange-700 font-medium">Action required</span>
-                  <span className="text-muted-foreground"> - Check discrepancies and unaccounted items</span>
-                </p>
-              </div>
-              <ArrowRight className="h-5 w-5 text-orange-700 flex-shrink-0 group-hover:translate-x-1 transition-transform" />
+              <Progress value={progressPercentage} className="h-2" />
             </div>
-          </button>
+          </CardContent>
+        </Card>
+
+        {/* Task Cards */}
+        <div className="grid gap-3">
+          {tasks.map((task) => (
+            <Card 
+              key={task.id}
+              className={`transition-all duration-200 border-orange-200 ${
+                task.completed 
+                  ? "opacity-60 bg-gradient-to-r from-green-50 to-emerald-50" 
+                  : "bg-gradient-to-r from-orange-100 to-amber-100 hover:from-orange-200 hover:to-amber-200 hover:shadow-lg shadow-md"
+              }`}
+            >
+              <CardContent className="p-4">
+                <div className="flex items-start gap-4">
+                  <div onClick={(e) => e.stopPropagation()}>
+                    <Checkbox
+                      checked={task.completed}
+                      onCheckedChange={() => toggleTask(task.id)}
+                      className="mt-1"
+                    />
+                  </div>
+                  <div className="flex-shrink-0 w-10 h-10 bg-orange-200 rounded-full flex items-center justify-center">
+                    <task.icon className="h-5 w-5 text-orange-700" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h3 className={`text-base font-semibold text-foreground mb-1 ${task.completed ? "line-through" : ""}`}>
+                      {task.title}
+                    </h3>
+                    <p className="text-sm text-muted-foreground">
+                      {task.description}
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-3 shrink-0">
+                    <div className="flex items-center gap-1 text-muted-foreground">
+                      <Clock className="h-4 w-4" />
+                      <span className="text-sm font-medium">{task.time}</span>
+                    </div>
+                    {task.path && !task.completed && (
+                      <Button 
+                        size="sm" 
+                        variant="outline"
+                        onClick={() => navigate(task.path)}
+                        className="border-orange-300 hover:bg-orange-300"
+                      >
+                        Go
+                        <ArrowRight className="h-4 w-4 ml-1" />
+                      </Button>
+                    )}
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
         </div>
       </div>
 
@@ -1137,27 +1258,6 @@ const weeklyTrendData = [
             </CardContent>
           </Card>
         </div>
-      )}
-
-      {/* Next Task - Store Manager Only - Compact */}
-      {viewMode === "store_manager" && (
-        <Card className="cursor-pointer hover:shadow-md transition-shadow bg-muted/30" onClick={() => navigate("/tasks")}>
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <ClipboardCheck className="h-5 w-5 text-primary" />
-                <div>
-                  <p className="text-xs text-muted-foreground">Next Task</p>
-                  <p className="font-semibold text-foreground">{nextTask.title} - {nextTask.time}</p>
-                </div>
-              </div>
-              <Button size="sm" variant="ghost" className="gap-1">
-                View All
-                <ArrowRight className="h-4 w-4" />
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
       )}
     </div>
   );
