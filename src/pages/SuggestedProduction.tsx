@@ -262,6 +262,7 @@ export default function SuggestedProduction() {
     try {
       console.log('🔍 PRODUCTION PAGE: Loading data...');
       console.log('📊 Using capacities:', Object.keys(capacitiesMap).length, 'entries');
+      console.log('📊 Sample capacity keys:', Object.keys(capacitiesMap).slice(0, 5));
       
       const { data: storesData } = await supabase
         .from('stores')
@@ -790,7 +791,7 @@ export default function SuggestedProduction() {
               </Badge>
             )}
           </div>
-          <h1 className="text-4xl font-bold text-white mb-2">Suggested Production Plan</h1>
+          <h1 className="text-4xl font-bold text-white mb-2">Production Plan</h1>
           <p className="text-xl text-white/90">All Stores - {formattedDate}</p>
         </div>
       </div>

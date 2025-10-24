@@ -29,7 +29,8 @@ const mainNavigationStoreManager: Array<{ title: string; url: string; icon: any;
 const mainNavigationHQ: Array<{ title: string; url: string; icon: any; sparkles?: boolean }> = [
   { title: "Home", url: "/", icon: Home },
   { title: "Performance", url: "/analytics", icon: BarChart3 },
-  { title: "Suggested Production", url: "/production", icon: ChefHat, sparkles: true },
+  { title: "Production Plan", url: "/production", icon: ChefHat, sparkles: true },
+  { title: "Range Plan", url: "/store-products", icon: ShoppingCart },
   { title: "Stock Tracker", url: "/live-data", icon: Database },
 ];
 
@@ -42,7 +43,6 @@ const mainNavigationManufacturing: Array<{ title: string; url: string; icon: any
 const settingsNavigationHQ = [
   { title: "My Products", url: "/products", icon: Package },
   { title: "My Stores", url: "/stores", icon: Store },
-  { title: "My Range Plans", url: "/store-products", icon: ShoppingCart },
 ];
 
 const settingsNavigationStoreManager = [
@@ -78,7 +78,7 @@ export function AppSidebar() {
           </div>
           <div>
             <h2 className="text-lg font-bold text-foreground">Martee AI</h2>
-            <p className="text-xs text-muted-foreground">Ole and Steen</p>
+            <p className="text-xs text-muted-foreground">Krispy Kreme Retail</p>
           </div>
         </div>
       </SidebarHeader>
