@@ -269,19 +269,9 @@ const LiveData = () => {
           store: store.storeName,
         });
       }
-      
-      // Excellent Performance
-      if (sellThroughRate > 95 && wasteRate < 5) {
-        insights.push({
-          type: "success",
-          title: "Outstanding Performance",
-          description: `${store.storeName} achieved ${sellThroughRate.toFixed(1)}% sell-through with minimal waste. Consider increasing allocation.`,
-          store: store.storeName,
-        });
-      }
     });
     
-    // Sort by priority (warnings first, then success) and limit to top 4 most significant
+    // Sort by priority (warnings only) and limit to top 4 most significant
     const sortedInsights = insights.sort((a, b) => {
       if (a.type === "warning" && b.type !== "warning") return -1;
       if (a.type !== "warning" && b.type === "warning") return 1;
