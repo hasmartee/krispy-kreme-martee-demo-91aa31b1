@@ -99,41 +99,65 @@ const LiveData = () => {
             let sold: number;
             let wasted: number;
             
-            // Vary scenarios to create different types of issues
-            switch (scenarioType) {
-              case 0: // Production overrun scenario
-                produced = Math.round(planned * (1.12 + Math.random() * 0.08)); // 12-20% over
-                delivered = Math.round(produced * (0.96 + Math.random() * 0.04));
-                sold = Math.round(delivered * (0.82 + Math.random() * 0.13));
-                wasted = Math.round(delivered * (0.04 + Math.random() * 0.06));
-                break;
+            // Most products (85%) should have consistent numbers with good performance
+            // Only 15% should have notable discrepancies
+            const hasDiscrepancy = Math.random() < 0.15;
+            
+            if (!hasDiscrepancy) {
+              // Normal scenario: planned ≈ produced ≈ delivered, with good sell-through
+              produced = Math.round(planned * (0.98 + Math.random() * 0.04)); // 98-102% of planned
+              delivered = Math.round(produced * (0.98 + Math.random() * 0.04)); // 98-102% of produced
               
-              case 1: // Production shortfall scenario
-                produced = Math.round(planned * (0.80 + Math.random() * 0.08)); // 12-20% under
-                delivered = Math.round(produced * (0.95 + Math.random() * 0.05));
-                sold = Math.round(delivered * (0.85 + Math.random() * 0.10));
-                wasted = Math.round(delivered * (0.03 + Math.random() * 0.05));
-                break;
+              // Good performance: 92-97% sell-through rate
+              const sellThroughRate = 0.92 + Math.random() * 0.05;
+              sold = Math.round(delivered * sellThroughRate);
               
-              case 2: // Delivery variance scenario
-                produced = Math.round(planned * (0.98 + Math.random() * 0.04));
-                delivered = Math.round(produced * (0.85 + Math.random() * 0.05)); // 10-15% delivery loss
-                sold = Math.round(delivered * (0.80 + Math.random() * 0.15));
-                wasted = Math.round(delivered * (0.05 + Math.random() * 0.08));
-                break;
+              // Low waste: 2-5% of delivered
+              wasted = Math.round(delivered * (0.02 + Math.random() * 0.03));
               
-              case 3: // Excellent performance scenario
-                produced = Math.round(planned * (0.98 + Math.random() * 0.04));
-                delivered = Math.round(produced * (0.97 + Math.random() * 0.03));
-                sold = Math.round(delivered * (0.96 + Math.random() * 0.03)); // >95% sell-through
-                wasted = Math.round(delivered * (0.01 + Math.random() * 0.02)); // <3% waste
-                break;
+              // Small unaccounted: 1-3% of delivered
+              const unaccountedTarget = Math.round(delivered * (0.01 + Math.random() * 0.02));
               
-              default:
-                produced = Math.round(planned * (0.95 + Math.random() * 0.1));
-                delivered = Math.round(produced * (0.95 + Math.random() * 0.05));
-                sold = Math.round(delivered * (0.8 + Math.random() * 0.15));
-                wasted = Math.round(delivered * (0.03 + Math.random() * 0.07));
+              // Ensure the math adds up correctly
+              const accountedFor = sold + wasted;
+              if (accountedFor > delivered) {
+                // If we're over, reduce waste
+                wasted = delivered - sold;
+              }
+            } else {
+              // Outlier scenarios - various types of discrepancies
+              const outlierType = Math.floor(Math.random() * 4);
+              
+              switch (outlierType) {
+                case 0: // Production overrun (10-15% over planned)
+                  produced = Math.round(planned * (1.10 + Math.random() * 0.05));
+                  delivered = Math.round(produced * (0.97 + Math.random() * 0.03));
+                  sold = Math.round(delivered * (0.85 + Math.random() * 0.08));
+                  wasted = Math.round(delivered * (0.06 + Math.random() * 0.04)); // Higher waste
+                  break;
+                
+                case 1: // Production shortfall (10-15% under planned)
+                  produced = Math.round(planned * (0.85 + Math.random() * 0.05));
+                  delivered = Math.round(produced * (0.97 + Math.random() * 0.03));
+                  sold = Math.round(delivered * (0.88 + Math.random() * 0.07));
+                  wasted = Math.round(delivered * (0.03 + Math.random() * 0.03));
+                  break;
+                
+                case 2: // Delivery discrepancy (8-12% delivery loss)
+                  produced = Math.round(planned * (0.98 + Math.random() * 0.04));
+                  delivered = Math.round(produced * (0.88 + Math.random() * 0.04)); // 8-12% loss
+                  sold = Math.round(delivered * (0.86 + Math.random() * 0.08));
+                  wasted = Math.round(delivered * (0.04 + Math.random() * 0.04));
+                  break;
+                
+                case 3: // High unaccounted (6-10% unaccounted)
+                  produced = Math.round(planned * (0.98 + Math.random() * 0.04));
+                  delivered = Math.round(produced * (0.98 + Math.random() * 0.02));
+                  sold = Math.round(delivered * (0.82 + Math.random() * 0.06));
+                  wasted = Math.round(delivered * (0.03 + Math.random() * 0.03));
+                  // This will naturally create high unaccounted
+                  break;
+              }
             }
             
             const unaccountedFor = Math.max(0, delivered - sold - wasted);
@@ -347,16 +371,16 @@ const LiveData = () => {
 
       {/* AI Key Insights Section - Only for HQ/Demand Planners */}
       {viewMode === "hq" && insights.length > 0 && (
-        <Card className="shadow-lg border-2 border-purple-200 bg-gradient-to-r from-purple-50 via-pink-50 to-purple-50">
+        <Card className="shadow-lg border-2 border-orange-200 bg-gradient-to-r from-orange-50 via-amber-50 to-orange-50">
           <CardHeader className="pb-3">
             <div className="flex items-center gap-3">
-              <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-purple-400 to-pink-400 flex items-center justify-center shadow-lg">
+              <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-orange-400 to-amber-500 flex items-center justify-center shadow-lg">
                 <Sparkles className="h-6 w-6 text-white" />
               </div>
               <div>
-                <CardTitle className="text-xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent flex items-center gap-2">
+                <CardTitle className="text-xl font-bold bg-gradient-to-r from-orange-600 to-amber-600 bg-clip-text text-transparent flex items-center gap-2">
                   AI Key Insights
-                  <Sparkles className="h-4 w-4 text-orange-400" />
+                  <Sparkles className="h-4 w-4 text-orange-500" />
                 </CardTitle>
                 <CardDescription className="text-sm">Data-driven discoveries from your business operations</CardDescription>
               </div>

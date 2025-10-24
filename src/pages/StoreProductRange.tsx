@@ -432,16 +432,16 @@ export default function StoreProductRange() {
 
       {/* AI Range Insights Section - Only for HQ/Demand Planners */}
       {viewMode === "hq" && (
-        <Card className="shadow-lg border-2 border-purple-200 bg-gradient-to-r from-purple-50 via-pink-50 to-purple-50">
+        <Card className="shadow-lg border-2 border-orange-200 bg-gradient-to-r from-orange-50 via-amber-50 to-orange-50">
           <CardHeader className="pb-3">
             <div className="flex items-center gap-3">
-              <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-purple-400 to-pink-400 flex items-center justify-center shadow-lg">
+              <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-orange-400 to-amber-500 flex items-center justify-center shadow-lg">
                 <Sparkles className="h-6 w-6 text-white" />
               </div>
               <div>
-                <CardTitle className="text-xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent flex items-center gap-2">
+                <CardTitle className="text-xl font-bold bg-gradient-to-r from-orange-600 to-amber-600 bg-clip-text text-transparent flex items-center gap-2">
                   AI Key Insights
-                  <Sparkles className="h-4 w-4 text-orange-400" />
+                  <Sparkles className="h-4 w-4 text-orange-500" />
                 </CardTitle>
                 <CardDescription className="text-sm">Data-driven discoveries from your business operations</CardDescription>
               </div>
