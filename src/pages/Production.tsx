@@ -558,16 +558,17 @@ export default function Production() {
               <TableRow>
                 <TableHead>Product</TableHead>
                 {viewMode === "hq" && !groupByProduct && <TableHead>Store</TableHead>}
-                <TableHead className="bg-gradient-to-r from-[#ff914d]/20 to-[#ff914d]/10 relative text-center">
-                  <div className="flex items-center justify-center gap-2 relative">
-                    <div className="absolute inset-0 bg-[#ff914d]/5 blur-sm" />
-                    <Sparkles className="h-4 w-4 text-[#ff914d] relative z-10 animate-pulse" />
-                    <span className="relative z-10 font-semibold bg-gradient-to-r from-[#ff914d] to-[#ff914d]/70 bg-clip-text text-transparent">
-                      Planned Qty
-                    </span>
+                <TableHead className="bg-gradient-to-r from-[#ff914d]/20 to-[#ff914d]/10 border-l-4 border-l-[#ff914d] text-center">
+                  <div className="flex items-center justify-center gap-2 py-1">
+                    <Sparkles className="h-5 w-5 text-[#ff914d] animate-pulse" />
+                    <span className="font-bold text-[#ff914d] text-lg">AI Recommended</span>
                   </div>
                 </TableHead>
-                <TableHead className="bg-blue-500/10 text-center">Manufactured Qty</TableHead>
+                <TableHead className="bg-gradient-to-r from-primary/20 to-primary/10 border-l-4 border-l-primary text-center">
+                  <div className="flex items-center justify-center gap-2 py-1">
+                    <span className="font-bold text-primary text-lg">Final Quantity</span>
+                  </div>
+                </TableHead>
                 <TableHead>Action</TableHead>
               </TableRow>
             </TableHeader>
@@ -587,35 +588,33 @@ export default function Production() {
                       <span className="font-medium">{product.store}</span>
                     </TableCell>
                   )}
-                  <TableCell className="bg-gradient-to-r from-[#ff914d]/10 to-transparent relative group">
-                    <div className="absolute inset-0 bg-gradient-to-r from-[#ff914d]/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                    <div className="flex items-center justify-center gap-2 relative z-10">
-                      <span className="font-mono font-semibold text-foreground">
+                  <TableCell className="bg-gradient-to-r from-[#ff914d]/10 to-[#ff914d]/5 border-l-4 border-l-[#ff914d]/30">
+                    <div className="flex items-center justify-center gap-2">
+                      <span className="text-2xl font-bold text-[#ff914d]">
                         {product.recommendedOrder}
                       </span>
-                      <Sparkles className="h-3 w-3 text-[#ff914d] opacity-0 group-hover:opacity-100 transition-opacity" />
                     </div>
                   </TableCell>
-                  <TableCell className="bg-blue-500/5">
+                  <TableCell className="bg-gradient-to-r from-primary/10 to-primary/5 border-l-4 border-l-primary/30">
                     <div className="flex items-center gap-2 justify-center">
                       <Button
-                        size="sm"
                         variant="outline"
-                        onClick={() => updateManufacturedQty(product.id, product.storeId, -1)}
-                        className="h-8 w-8 p-0 rounded-full border-blue-500 hover:bg-blue-500 hover:text-white transition-colors"
+                        size="icon"
+                        onClick={() => updateFinalOrder(product.id, product.storeId, -1)}
+                        className="h-10 w-10 rounded-full border-2 border-primary/40 hover:border-primary hover:bg-primary/10 transition-all duration-200 hover:scale-110"
                       >
-                        <Minus className="h-4 w-4" />
+                        <Minus className="h-4 w-4 text-primary" />
                       </Button>
-                      <span className="font-mono font-bold text-blue-600 min-w-[2.5rem] text-center text-lg">
-                        {product.manufacturedQty}
+                      <span className="text-2xl font-bold text-primary w-16 text-center">
+                        {product.finalOrder}
                       </span>
                       <Button
-                        size="sm"
                         variant="outline"
-                        onClick={() => updateManufacturedQty(product.id, product.storeId, 1)}
-                        className="h-8 w-8 p-0 rounded-full border-blue-500 hover:bg-blue-500 hover:text-white transition-colors"
+                        size="icon"
+                        onClick={() => updateFinalOrder(product.id, product.storeId, 1)}
+                        className="h-10 w-10 rounded-full border-2 border-primary/40 hover:border-primary hover:bg-primary/10 transition-all duration-200 hover:scale-110"
                       >
-                        <Plus className="h-4 w-4" />
+                        <Plus className="h-4 w-4 text-primary" />
                       </Button>
                     </div>
                   </TableCell>
