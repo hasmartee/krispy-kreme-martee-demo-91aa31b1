@@ -281,7 +281,7 @@ export default function ManufacturingProduction() {
           <h1 className="text-4xl font-bold text-primary mb-2">
             Manufacturing Production Log
           </h1>
-          <p className="text-xl text-primary/90">
+          <p className="text-xl text-cream-foreground">
             {formattedDate}
           </p>
         </div>

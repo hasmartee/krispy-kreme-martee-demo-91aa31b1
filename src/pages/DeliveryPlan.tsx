@@ -10,7 +10,7 @@ import { Calendar } from "@/components/ui/calendar";
 import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
-import heroImage from "@/assets/hero-food.jpg";
+import heroImage from "@/assets/donut-production-1.jpg";
 import { supabase } from "@/lib/supabase-helper";
 
 interface StoreAllocation {
@@ -301,7 +301,7 @@ export default function DeliveryPlan() {
           <h1 className="text-4xl font-bold text-white mb-2">
             Delivery Plan
           </h1>
-          <p className="text-xl text-white/90">
+          <p className="text-xl text-cream-foreground">
             {formattedDate}
           </p>
         </div>
