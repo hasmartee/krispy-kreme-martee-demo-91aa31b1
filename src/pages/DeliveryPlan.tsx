@@ -145,19 +145,22 @@ export default function DeliveryPlan() {
           product.storeAllocations.push({
             storeName: alloc.stores.name,
             plannedQuantity: alloc.quantity,
-            deliveryQuantity: 0, // Will be calculated below
+            deliveryQuantity: alloc.quantity, // Default to planned quantity
           });
         });
 
         // Calculate adjustment ratios and delivery quantities
         Object.values(productMap).forEach(product => {
-          if (product.totalPlanned > 0) {
+          if (product.totalPlanned > 0 && product.totalManufactured > 0) {
             product.adjustmentRatio = product.totalManufactured / product.totalPlanned;
             
-            // Calculate proportional delivery quantities
+            // Calculate proportional delivery quantities only if manufactured
             product.storeAllocations.forEach(store => {
               store.deliveryQuantity = Math.floor(store.plannedQuantity * product.adjustmentRatio);
             });
+          } else {
+            // Use planned quantities when no manufacturing data
+            product.adjustmentRatio = 1;
           }
         });
 
@@ -222,12 +225,12 @@ export default function DeliveryPlan() {
   const exportToCSV = () => {
     if (viewMode === 'store') {
       const storeViews = getStoreView();
-      let csvContent = "Store,Product,SKU,Category,Planned Quantity,Delivery Quantity,Adjustment\n";
+      let csvContent = "Store,Product,SKU,Planned Quantity,Delivery Quantity,Adjustment\n";
       
       storeViews.forEach(store => {
         store.products.forEach(product => {
           const diff = product.deliveryQuantity - product.plannedQuantity;
-          csvContent += `"${store.storeName}","${product.productName}","${product.productSku}","${product.category}",${product.plannedQuantity},${product.deliveryQuantity},${diff}\n`;
+          csvContent += `"${store.storeName}","${product.productName}","${product.productSku}",${product.plannedQuantity},${product.deliveryQuantity},${diff}\n`;
         });
       });
 
@@ -239,12 +242,12 @@ export default function DeliveryPlan() {
       a.click();
       window.URL.revokeObjectURL(url);
     } else {
-      let csvContent = "Product,SKU,Category,Store,Planned Quantity,Delivery Quantity,Adjustment\n";
+      let csvContent = "Product,SKU,Store,Planned Quantity,Delivery Quantity,Adjustment\n";
       
       products.forEach(product => {
         product.storeAllocations.forEach(store => {
           const diff = store.deliveryQuantity - store.plannedQuantity;
-          csvContent += `"${product.productName}","${product.productSku}","${product.category}","${store.storeName}",${store.plannedQuantity},${store.deliveryQuantity},${diff}\n`;
+          csvContent += `"${product.productName}","${product.productSku}","${store.storeName}",${store.plannedQuantity},${store.deliveryQuantity},${diff}\n`;
         });
       });
 
@@ -473,7 +476,6 @@ export default function DeliveryPlan() {
                         <TableHeader>
                           <TableRow>
                             <TableHead>Product</TableHead>
-                            <TableHead>Category</TableHead>
                             <TableHead className="text-right">Planned</TableHead>
                             <TableHead className="text-right">Delivery</TableHead>
                             <TableHead className="text-right">Adjustment</TableHead>
@@ -485,7 +487,6 @@ export default function DeliveryPlan() {
                             return (
                               <TableRow key={product.productSku}>
                                 <TableCell className="font-medium">{product.productName}</TableCell>
-                                <TableCell>{getCategoryBadge(product.category)}</TableCell>
                                 <TableCell className="text-right">{product.plannedQuantity}</TableCell>
                                 <TableCell className="text-right font-semibold text-primary">
                                   {product.deliveryQuantity}
@@ -499,7 +500,7 @@ export default function DeliveryPlan() {
                             );
                           })}
                           <TableRow className="bg-muted/50 font-semibold">
-                            <TableCell colSpan={2}>Total</TableCell>
+                            <TableCell>Total</TableCell>
                             <TableCell className="text-right">{store.totalPlanned}</TableCell>
                             <TableCell className="text-right text-primary">{store.totalDelivery}</TableCell>
                             <TableCell className="text-right">
