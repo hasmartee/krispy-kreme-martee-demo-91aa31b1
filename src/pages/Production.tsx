@@ -453,8 +453,8 @@ export default function Production() {
           if (!acc[product.id]) {
             acc[product.id] = {
               ...product,
-              storeId: 'aggregated', // Unique ID for aggregated view
-              store: `${products.filter(p => p.id === product.id).length} stores`,
+              storeId: `aggregated-${product.id}`, // Unique ID for each aggregated product
+              store: '', // Will be set after reduce
               currentStock: 0,
               recommendedOrder: 0,
               finalOrder: 0,
@@ -472,7 +472,10 @@ export default function Production() {
           acc[product.id].capacityMax! += product.capacityMax || 0;
           return acc;
         }, {} as Record<string, Product>)
-      )
+      ).map(product => ({
+        ...product,
+        store: `${products.filter(p => p.id === product.id).length} stores`
+      }))
     : products;
 
   if (loading) {
