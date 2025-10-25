@@ -306,6 +306,7 @@ export default function Production() {
         store_id: p.storeId,
         product_sku: p.id,
         quantity: p.finalOrder,
+        day_part: 'morning', // Default day_part
       }));
 
       console.log('🔄 Upserting', allocations.length, 'allocations');
@@ -313,7 +314,7 @@ export default function Production() {
       const { data: upsertResult, error } = await supabase
         .from('production_allocations')
         .upsert(allocations, {
-          onConflict: 'production_plan_id,store_id,product_sku'
+          onConflict: 'production_plan_id,store_id,product_sku,day_part'
         })
         .select() as any;
 
