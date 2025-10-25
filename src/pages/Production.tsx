@@ -455,7 +455,7 @@ export default function Production() {
               id: product.id,
               productName: product.productName,
               category: product.category,
-              storeId: product.id, // Use product ID as unique key
+              storeId: 'aggregated', // Use 'aggregated' for proper handling in updateFinalOrder
               store: '', // No store name in aggregated view
               currentStock: 0,
               recommendedOrder: 0,
