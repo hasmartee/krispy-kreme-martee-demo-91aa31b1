@@ -377,7 +377,7 @@ export default function Home() {
             <div className="grid gap-3">
               <Card
                 className="bg-gradient-to-r from-orange-100 to-amber-100 hover:from-orange-200 hover:to-amber-200 hover:shadow-lg shadow-md transition-all duration-200 border-orange-200 cursor-pointer"
-                onClick={() => navigate("/manufacturing-production")}
+                onClick={() => navigate("/production")}
               >
                 <CardContent className="p-4">
                   <div className="flex items-center gap-4">
