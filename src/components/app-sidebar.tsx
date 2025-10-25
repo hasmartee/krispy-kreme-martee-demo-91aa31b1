@@ -28,7 +28,7 @@ const mainNavigationStoreManager: Array<{ title: string; url: string; icon: any;
 
 const mainNavigationHQ: Array<{ title: string; url: string; icon: any; sparkles?: boolean }> = [
   { title: "Home", url: "/", icon: Home },
-  { title: "Performance", url: "/analytics", icon: BarChart3 },
+  { title: "Analytics", url: "/analytics", icon: BarChart3 },
   { title: "Production Plan", url: "/production", icon: ChefHat, sparkles: true },
   { title: "Range Plan", url: "/store-products", icon: ShoppingCart },
   { title: "Stock Tracker", url: "/live-data", icon: Database },
