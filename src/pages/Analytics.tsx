@@ -259,12 +259,12 @@ export default function Analytics() {
         </div>
       </div>
 
-      {/* Big Metrics Box */}
-      <Card className="shadow-xl border-0 bg-gradient-to-br from-[#7ea058] via-[#6d9148] to-[#5c8038] animate-fade-in">
+      {/* Main Metrics Card */}
+      <Card className="shadow-xl border-2 animate-fade-in">
         <CardContent className="p-6">
           {/* Heading */}
           <div className="mb-6">
-            <h2 className="text-3xl font-bold text-white drop-shadow-sm">
+            <h2 className="text-3xl font-bold text-foreground">
               {selectedStore === "all" ? "All Stores" : selectedStore}
             </h2>
           </div>
