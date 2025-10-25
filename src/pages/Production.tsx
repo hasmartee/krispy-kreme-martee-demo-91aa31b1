@@ -3,7 +3,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { TrendingUp, TrendingDown, RefreshCw, Plus, Minus, CloudRain, AlertTriangle, Sparkles, Download, Send, Loader2, CalendarIcon } from "lucide-react";
+import { TrendingUp, TrendingDown, RefreshCw, Plus, Minus, CloudRain, AlertTriangle, Sparkles, Download, Send, Loader2, CalendarIcon, Percent } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
@@ -49,6 +51,8 @@ export default function Production() {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [productCapacities, setProductCapacities] = useState<Record<string, { min: number; max: number }>>({});
   const [editingCategory, setEditingCategory] = useState<string | null>(null);
+  const [selectedProducts, setSelectedProducts] = useState<Set<string>>(new Set());
+  const [bulkAdjustmentPercent, setBulkAdjustmentPercent] = useState<number>(10);
   const { toast } = useToast();
   
   const formattedDate = selectedDate.toLocaleDateString('en-GB', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
@@ -393,6 +397,58 @@ export default function Production() {
     }
   };
 
+  const toggleProductSelection = (productKey: string) => {
+    setSelectedProducts(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(productKey)) {
+        newSet.delete(productKey);
+      } else {
+        newSet.add(productKey);
+      }
+      return newSet;
+    });
+  };
+
+  const toggleAllProducts = () => {
+    if (selectedProducts.size === displayProducts.length) {
+      setSelectedProducts(new Set());
+    } else {
+      setSelectedProducts(new Set(
+        displayProducts.map(p => groupByProduct ? p.id : `${p.id}-${p.storeId}`)
+      ));
+    }
+  };
+
+  const applyBulkAdjustment = async (increase: boolean) => {
+    const adjustmentFactor = increase ? (1 + bulkAdjustmentPercent / 100) : (1 - bulkAdjustmentPercent / 100);
+    
+    const updatedProducts = products.map(p => {
+      const productKey = groupByProduct ? p.id : `${p.id}-${p.storeId}`;
+      if (selectedProducts.has(productKey)) {
+        const newQty = Math.max(0, Math.round(p.finalOrder * adjustmentFactor));
+        return { ...p, finalOrder: newQty };
+      }
+      return p;
+    });
+    
+    setProducts(updatedProducts);
+    
+    // Save to database
+    const productsToSave = updatedProducts.filter(p => {
+      const productKey = groupByProduct ? p.id : `${p.id}-${p.storeId}`;
+      return selectedProducts.has(productKey);
+    });
+    
+    await savePendingAllocations(productsToSave);
+    
+    toast({
+      title: "Bulk Adjustment Applied",
+      description: `Updated ${selectedProducts.size} products by ${increase ? '+' : '-'}${bulkAdjustmentPercent}%`,
+    });
+    
+    setSelectedProducts(new Set());
+  };
+
   const handleConfirmProduction = async (product: Product) => {
     setConfirmingProduction(`${product.id}-${product.storeId}`);
     
@@ -602,6 +658,60 @@ export default function Production() {
         </div>
       </div>
 
+      {/* Bulk Edit Toolbar */}
+      {viewMode === "hq" && selectedProducts.size > 0 && (
+        <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20 border-2 border-blue-200 dark:border-blue-800 shadow-lg">
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between gap-4">
+              <div className="flex items-center gap-3">
+                <Badge variant="default" className="text-lg px-4 py-2">
+                  {selectedProducts.size} Selected
+                </Badge>
+                <span className="text-sm text-muted-foreground">
+                  Bulk adjust final quantities by percentage
+                </span>
+              </div>
+              <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2">
+                  <Percent className="h-4 w-4 text-muted-foreground" />
+                  <Input
+                    type="number"
+                    min="1"
+                    max="100"
+                    value={bulkAdjustmentPercent}
+                    onChange={(e) => setBulkAdjustmentPercent(Number(e.target.value))}
+                    className="w-20 text-center"
+                  />
+                </div>
+                <Button
+                  onClick={() => applyBulkAdjustment(false)}
+                  variant="outline"
+                  className="gap-2"
+                >
+                  <Minus className="h-4 w-4" />
+                  Decrease
+                </Button>
+                <Button
+                  onClick={() => applyBulkAdjustment(true)}
+                  variant="default"
+                  className="gap-2"
+                >
+                  <Plus className="h-4 w-4" />
+                  Increase
+                </Button>
+                <Button
+                  onClick={() => setSelectedProducts(new Set())}
+                  variant="ghost"
+                  size="sm"
+                >
+                  Clear
+                </Button>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       {/* Production Table */}
       <Card className={cn(
         "shadow-card",
@@ -638,6 +748,14 @@ export default function Production() {
           <Table key={groupByProduct ? 'total' : 'store'}>
             <TableHeader>
               <TableRow>
+                {viewMode === "hq" && (
+                  <TableHead className="w-12">
+                    <Checkbox
+                      checked={selectedProducts.size === displayProducts.length && displayProducts.length > 0}
+                      onCheckedChange={toggleAllProducts}
+                    />
+                  </TableHead>
+                )}
                 <TableHead>Product</TableHead>
                 {!groupByProduct && viewMode === "hq" && <TableHead>Store</TableHead>}
                 {!groupByProduct && viewMode === "hq" && <TableHead className="text-center">Capacity</TableHead>}
@@ -656,14 +774,24 @@ export default function Production() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {displayProducts.map((product) => (
-                <TableRow key={groupByProduct ? product.id : `${product.id}-${product.storeId}`}>
-                  <TableCell>
-                    <div className="space-y-1">
-                      <div className="flex items-center gap-2">
-                        <div className="font-medium">
-                          {product.productName}
-                        </div>
+              {displayProducts.map((product) => {
+                const productKey = groupByProduct ? product.id : `${product.id}-${product.storeId}`;
+                return (
+                  <TableRow key={productKey}>
+                    {viewMode === "hq" && (
+                      <TableCell>
+                        <Checkbox
+                          checked={selectedProducts.has(productKey)}
+                          onCheckedChange={() => toggleProductSelection(productKey)}
+                        />
+                      </TableCell>
+                    )}
+                    <TableCell>
+                      <div className="space-y-1">
+                        <div className="flex items-center gap-2">
+                          <div className="font-medium">
+                            {product.productName}
+                          </div>
                         {editingCategory === `${product.id}-${product.storeId}` && viewMode === "hq" ? (
                           <Select
                             value={product.category}
@@ -759,7 +887,8 @@ export default function Production() {
                     </Button>
                   </TableCell>
                 </TableRow>
-              ))}
+              );
+              })}
             </TableBody>
           </Table>
         </CardContent>
