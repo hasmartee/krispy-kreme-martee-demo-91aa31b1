@@ -652,7 +652,7 @@ export default function Production() {
             </TableHeader>
             <TableBody>
               {displayProducts.map((product) => (
-                <TableRow key={`${product.id}-${product.storeId}`}>
+                <TableRow key={groupByProduct ? product.id : `${product.id}-${product.storeId}`}>
                   <TableCell>
                     <div>
                       <div className="font-medium">
