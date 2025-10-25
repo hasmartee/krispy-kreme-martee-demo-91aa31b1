@@ -74,14 +74,14 @@ const mockStorePerformance = [
 
 // Mock product performance data
 const mockProductPerformance = [
-  { id: "OS101", name: "Almond Croissant", soldUnits: 28500, revenue: 114000, margin: 89.5, waste: 12200, wastePercentage: 30.0, trend: "up" },
-  { id: "OS102", name: "Pain au Chocolat", soldUnits: 26200, revenue: 104800, margin: 91.2, waste: 11200, wastePercentage: 30.0, trend: "up" },
-  { id: "OS103", name: "BLT Sandwich", soldUnits: 19400, revenue: 106700, margin: 88.2, waste: 8300, wastePercentage: 30.0, trend: "up" },
-  { id: "OS104", name: "Chicken Caesar Wrap", soldUnits: 16800, revenue: 100800, margin: 90.8, waste: 7200, wastePercentage: 30.0, trend: "up" },
-  { id: "OS105", name: "Mediterranean Salad Bowl", soldUnits: 14200, revenue: 92200, margin: 91.8, waste: 6100, wastePercentage: 30.0, trend: "down" },
-  { id: "OS106", name: "Salmon Cream Bagel", soldUnits: 12800, revenue: 96000, margin: 92.2, waste: 5500, wastePercentage: 30.0, trend: "up" },
-  { id: "OS107", name: "Ham & Cheese Croissant", soldUnits: 21800, revenue: 98100, margin: 88.8, waste: 9400, wastePercentage: 30.0, trend: "up" },
-  { id: "OS108", name: "Avocado Hummus Wrap", soldUnits: 15200, revenue: 91200, margin: 90.5, waste: 6500, wastePercentage: 30.0, trend: "down" },
+  { id: "KK-G001", name: "Original Glazed", soldUnits: 28500, revenue: 42465, margin: 89.5, waste: 12200, wastePercentage: 30.0, trend: "up" },
+  { id: "KK-G002", name: "Chocolate Iced Glazed", soldUnits: 26200, revenue: 44278, margin: 91.2, waste: 11200, wastePercentage: 30.0, trend: "up" },
+  { id: "KK-I001", name: "Strawberry Iced with Sprinkles", soldUnits: 19400, revenue: 34726, margin: 88.2, waste: 8300, wastePercentage: 30.0, trend: "up" },
+  { id: "KK-I002", name: "Chocolate Iced with Sprinkles", soldUnits: 16800, revenue: 30072, margin: 90.8, waste: 7200, wastePercentage: 30.0, trend: "up" },
+  { id: "KK-F003", name: "Boston Kreme", soldUnits: 14200, revenue: 28258, margin: 91.8, waste: 6100, wastePercentage: 30.0, trend: "down" },
+  { id: "KK-S001", name: "Cookies and Kreme", soldUnits: 12800, revenue: 25472, margin: 92.2, waste: 5500, wastePercentage: 30.0, trend: "up" },
+  { id: "KK-F001", name: "Raspberry Filled", soldUnits: 21800, revenue: 41202, margin: 88.8, waste: 9400, wastePercentage: 30.0, trend: "up" },
+  { id: "KK-C001", name: "Powdered Sugar", soldUnits: 15200, revenue: 24168, margin: 90.5, waste: 6500, wastePercentage: 30.0, trend: "down" },
 ];
 
 // Weekly trend data for Week Overview graph
