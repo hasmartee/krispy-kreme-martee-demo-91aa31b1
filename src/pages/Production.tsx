@@ -660,41 +660,46 @@ export default function Production() {
 
       {/* Bulk Edit Toolbar */}
       {viewMode === "hq" && selectedProducts.size > 0 && (
-        <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20 border-2 border-blue-200 dark:border-blue-800 shadow-lg">
+        <Card className="bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-950/20 dark:to-emerald-950/20 rounded-lg border-2 border-[#7ea058]/30 dark:border-[#7ea058]/50 shadow-lg">
           <CardContent className="pt-6">
             <div className="flex items-center justify-between gap-4">
               <div className="flex items-center gap-3">
-                <Badge variant="default" className="text-lg px-4 py-2">
-                  {selectedProducts.size} Selected
-                </Badge>
-                <span className="text-sm text-muted-foreground">
-                  Bulk adjust final quantities by percentage
-                </span>
+                <div className="h-10 w-10 rounded-lg bg-[#7ea058]/20 dark:bg-[#7ea058]/30 flex items-center justify-center">
+                  <Percent className="h-5 w-5 text-[#7ea058]" />
+                </div>
+                <div>
+                  <Badge className="bg-[#7ea058] text-white text-base px-3 py-1 mb-1">
+                    {selectedProducts.size} Selected
+                  </Badge>
+                  <p className="text-sm text-muted-foreground">
+                    Bulk adjust final quantities by percentage
+                  </p>
+                </div>
               </div>
               <div className="flex items-center gap-3">
-                <div className="flex items-center gap-2">
-                  <Percent className="h-4 w-4 text-muted-foreground" />
+                <div className="flex items-center gap-2 bg-white dark:bg-background rounded-lg px-3 py-2 border border-[#7ea058]/20">
+                  <Percent className="h-4 w-4 text-[#7ea058]" />
                   <Input
                     type="number"
                     min="1"
                     max="100"
                     value={bulkAdjustmentPercent}
                     onChange={(e) => setBulkAdjustmentPercent(Number(e.target.value))}
-                    className="w-20 text-center"
+                    className="w-20 text-center border-0 focus-visible:ring-0 font-semibold"
                   />
+                  <span className="text-sm text-muted-foreground">%</span>
                 </div>
                 <Button
                   onClick={() => applyBulkAdjustment(false)}
                   variant="outline"
-                  className="gap-2"
+                  className="gap-2 border-[#7ea058]/30 hover:bg-[#7ea058]/10 hover:border-[#7ea058]"
                 >
                   <Minus className="h-4 w-4" />
                   Decrease
                 </Button>
                 <Button
                   onClick={() => applyBulkAdjustment(true)}
-                  variant="default"
-                  className="gap-2"
+                  className="gap-2 bg-[#7ea058] hover:bg-[#7ea058]/90 text-white shadow-md font-semibold"
                 >
                   <Plus className="h-4 w-4" />
                   Increase
@@ -703,6 +708,7 @@ export default function Production() {
                   onClick={() => setSelectedProducts(new Set())}
                   variant="ghost"
                   size="sm"
+                  className="hover:bg-[#7ea058]/10"
                 >
                   Clear
                 </Button>
