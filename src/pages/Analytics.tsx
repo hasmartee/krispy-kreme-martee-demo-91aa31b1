@@ -196,6 +196,52 @@ export default function Analytics() {
   // Calculate average variance
   const avgVariance = currentData.revenueComparisonData.reduce((sum, d) => sum + d.variance, 0) / currentData.revenueComparisonData.length;
   
+  // Calculate comparison metrics based on compareRange
+  const getComparisonValue = (metric: 'sold' | 'wasted' | 'delivered' | 'revenue') => {
+    if (!compareRange?.from || !compareRange?.to) return null;
+    
+    // Simulate comparison - in real scenario, this would fetch data for compareRange
+    // For demo purposes, we'll generate realistic comparison values
+    const baseValues = {
+      sold: Math.random() * 10 - 2, // -2% to +8%
+      wasted: Math.random() * -5, // 0% to -5% (negative is good for waste)
+      delivered: Math.random() * 4 - 1, // -1% to +3%
+      revenue: Math.random() * 12 - 2 // -2% to +10%
+    };
+    
+    return baseValues[metric];
+  };
+  
+  const soldComparison = getComparisonValue('sold');
+  const wastedComparison = getComparisonValue('wasted');
+  const deliveredComparison = getComparisonValue('delivered');
+  const revenueComparison = getComparisonValue('revenue');
+  
+  const getComparisonBadge = (value: number | null, metric: 'sold' | 'wasted' | 'delivered' | 'revenue') => {
+    if (value === null) return null;
+    
+    const isPositive = value > 0;
+    const isWaste = metric === 'wasted';
+    const isGood = isWaste ? value < 0 : value > 0;
+    
+    const badgeClass = isGood 
+      ? "text-xs bg-success/10 text-success border-success/30"
+      : "text-xs bg-destructive/10 text-destructive border-destructive/30";
+    
+    const Icon = isPositive ? TrendingUp : TrendingDown;
+    
+    const periodText = compareRange?.from && compareRange?.to 
+      ? `vs ${format(compareRange.from, "MMM dd")}-${format(compareRange.to, "dd")}`
+      : "vs comparison";
+    
+    return (
+      <Badge className={badgeClass}>
+        <Icon className="h-3 w-3 mr-1" />
+        {isPositive ? '+' : ''}{value.toFixed(1)}% {periodText}
+      </Badge>
+    );
+  };
+  
   return (
     <div className="flex-1 space-y-6 p-6">
       {/* Header */}
@@ -216,7 +262,7 @@ export default function Analytics() {
           {/* Heading */}
           <div className="mb-6">
             <h2 className="text-3xl font-bold text-primary-foreground drop-shadow-sm">
-              {selectedStore === "all" ? "All Stores" : selectedStore} • This Week's Performance
+              {selectedStore === "all" ? "All Stores" : selectedStore}
             </h2>
           </div>
 
@@ -380,10 +426,7 @@ export default function Analytics() {
                   </div>
                   <div className="flex items-center gap-2 mt-2">
                     <div className="text-sm text-muted-foreground">94.2% of total</div>
-                    <Badge className="text-xs bg-success/10 text-success border-success/30">
-                      <TrendingUp className="h-3 w-3 mr-1" />
-                      +5.3% vs last week
-                    </Badge>
+                    {getComparisonBadge(soldComparison, 'sold')}
                   </div>
                 </div>
                 <div className="grid grid-cols-2 gap-3">
@@ -420,10 +463,7 @@ export default function Analytics() {
                   </div>
                   <div className="flex items-center gap-2 mt-2">
                     <div className="text-sm text-muted-foreground">4.4% of total</div>
-                    <Badge className="text-xs bg-success/10 text-success border-success/30">
-                      <TrendingDown className="h-3 w-3 mr-1" />
-                      -2.1% vs last week
-                    </Badge>
+                    {getComparisonBadge(wastedComparison, 'wasted')}
                   </div>
                 </div>
                 <div className="grid grid-cols-2 gap-3">
@@ -460,10 +500,7 @@ export default function Analytics() {
                   </div>
                   <div className="flex items-center gap-2 mt-2">
                     <div className="text-sm text-muted-foreground">Target delivery</div>
-                    <Badge className="text-xs bg-primary/10 text-primary border-primary/30">
-                      <TrendingUp className="h-3 w-3 mr-1" />
-                      +1.2% vs target
-                    </Badge>
+                    {getComparisonBadge(deliveredComparison, 'delivered')}
                   </div>
                 </div>
                 <div className="grid grid-cols-2 gap-3">
@@ -808,8 +845,14 @@ export default function Analytics() {
                     £{filteredStorePerformance.reduce((acc, s) => acc + s.revenue, 0).toLocaleString()}
                   </div>
                   <p className="text-xs text-muted-foreground flex items-center gap-1 mt-1">
-                    <TrendingUp className="h-3 w-3 text-success" />
-                    {viewMode === "store_manager" ? "+5.2%" : "+8.1%"} from last period
+                    {revenueComparison !== null ? (
+                      <>
+                        {revenueComparison > 0 ? <TrendingUp className="h-3 w-3 text-success" /> : <TrendingDown className="h-3 w-3 text-destructive" />}
+                        {revenueComparison > 0 ? '+' : ''}{revenueComparison.toFixed(1)}% vs {format(compareRange?.from || new Date(), "MMM dd")}-{format(compareRange?.to || new Date(), "dd")}
+                      </>
+                    ) : (
+                      "Select comparison period"
+                    )}
                   </p>
                 </CardContent>
               </Card>
