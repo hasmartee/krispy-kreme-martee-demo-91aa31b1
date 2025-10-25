@@ -105,6 +105,9 @@ const LiveData = () => {
           } else if (store.name.includes("Covent Garden")) {
             scenarioType = 4; // Massive delivery discrepancy for Covent Garden
             isProblematicStore = true;
+          } else if (store.name.includes("Canary Wharf")) {
+            scenarioType = 5; // Critical delivery loss for Canary Wharf
+            isProblematicStore = true;
           } else {
             scenarioType = storeIndex % 4;
           }
@@ -180,6 +183,16 @@ const LiveData = () => {
                   sold = Math.round(delivered * (0.85 + Math.random() * 0.08));
                   wasted = Math.round(delivered * (0.04 + Math.random() * 0.03));
                   break;
+                
+                case 5: // Critical delivery loss - CANARY WHARF (target total delivered = 1604)
+                  // We'll set a very low ratio that results in approximately 1604 total delivered
+                  // across all products in this store
+                  produced = Math.round(planned * (0.98 + Math.random() * 0.04));
+                  // Extremely low delivery ratio to simulate major delivery incident
+                  delivered = Math.round(produced * (0.25 + Math.random() * 0.05)); // 70-75% loss during delivery!
+                  sold = Math.round(delivered * (0.80 + Math.random() * 0.10));
+                  wasted = Math.round(delivered * (0.05 + Math.random() * 0.04));
+                  break;
               }
             }
             
@@ -226,6 +239,12 @@ const LiveData = () => {
     );
   };
 
+  // Check if store has critical delivery issue
+  const hasCriticalDeliveryIssue = (storeName: string, totals: any) => {
+    const deliveryVariance = ((totals.delivered - totals.produced) / totals.produced) * 100;
+    return storeName.includes("Canary Wharf") || Math.abs(deliveryVariance) > 50;
+  };
+
   // Generate AI insights - prioritize most significant issues
   const generateInsights = (): AIInsight[] => {
     const insights: AIInsight[] = [];
@@ -254,8 +273,8 @@ const LiveData = () => {
       if (Math.abs(deliveryVariance) > 8) {
         insights.push({
           type: "warning",
-          title: "Delivery Variance Alert",
-          description: `${store.storeName} delivery ${deliveryVariance > 0 ? 'exceeded' : 'fell short of'} production by ${Math.abs(deliveryVariance).toFixed(1)}%. Check logistics and delivery processes.`,
+          title: deliveryVariance < -40 ? "Critical Delivery Loss" : "Delivery Variance Alert",
+          description: `${store.storeName} delivery ${deliveryVariance > 0 ? 'exceeded' : 'fell short of'} production by ${Math.abs(deliveryVariance).toFixed(1)}%. ${deliveryVariance < -40 ? 'URGENT: Major delivery incident - immediate investigation required!' : 'Check logistics and delivery processes.'}`,
           store: store.storeName,
         });
       }
@@ -527,7 +546,26 @@ const LiveData = () => {
                           </TableCell>
                           <TableCell className="text-right">{totals.planned}</TableCell>
                           <TableCell className="text-right">{totals.produced}</TableCell>
-                          <TableCell className="text-right">{totals.delivered}</TableCell>
+                          <TableCell className={cn(
+                            "text-right font-bold",
+                            hasCriticalDeliveryIssue(store.storeName, totals) && 
+                            "bg-red-100 border-2 border-red-500 relative"
+                          )}>
+                            {hasCriticalDeliveryIssue(store.storeName, totals) && (
+                              <div className="absolute inset-0 flex items-center justify-center">
+                                <div className="absolute inset-0 bg-red-500 opacity-20 animate-pulse" />
+                              </div>
+                            )}
+                            <span className={cn(
+                              "relative z-10 flex items-center justify-end gap-2",
+                              hasCriticalDeliveryIssue(store.storeName, totals) && "text-red-700"
+                            )}>
+                              {totals.delivered}
+                              {hasCriticalDeliveryIssue(store.storeName, totals) && (
+                                <AlertCircle className="h-5 w-5 text-red-600 animate-pulse" />
+                              )}
+                            </span>
+                          </TableCell>
                           <TableCell className="text-right">
                             <span className="text-green-700 flex items-center justify-end gap-1">
                               {totals.sold}
