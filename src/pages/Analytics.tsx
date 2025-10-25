@@ -24,7 +24,7 @@ const clusterPerformanceData = [
     grossProfit: 471600,
     target: 500000,
     waste: 157200,
-    topProduct: "Classic BLT",
+    topProduct: "Original Glazed",
     avgRevenue: 43667,
   },
   {
@@ -35,7 +35,7 @@ const clusterPerformanceData = [
     grossProfit: 343800,
     target: 360000,
     waste: 114600,
-    topProduct: "Coffee & Pastry Combo",
+    topProduct: "Chocolate Iced Glazed",
     avgRevenue: 47750,
   },
   {
@@ -46,7 +46,7 @@ const clusterPerformanceData = [
     grossProfit: 616500,
     target: 650000,
     waste: 205500,
-    topProduct: "Mediterranean Salad",
+    topProduct: "Boston Kreme",
     avgRevenue: 45667,
   },
   {
@@ -57,19 +57,19 @@ const clusterPerformanceData = [
     grossProfit: 412200,
     target: 480000,
     waste: 137400,
-    topProduct: "Avocado Toast",
+    topProduct: "Cookies and Kreme",
     avgRevenue: 30533,
   },
 ];
 
 // Mock store performance data
 const mockStorePerformance = [
-  { id: "OS001", name: "Kings Cross Station", revenue: 412000, target: 400000, variance: 3.0, grossProfit: 370800, grossProfitMargin: 90.0, waste: 123600, wastePercentage: 30.0, topProduct: "Almond Croissant" },
-  { id: "OS002", name: "Liverpool Street Station", revenue: 385000, target: 370000, variance: 4.1, grossProfit: 346500, grossProfitMargin: 90.0, waste: 115500, wastePercentage: 30.0, topProduct: "BLT Sandwich" },
-  { id: "OS003", name: "St Pancras International", revenue: 428000, target: 410000, variance: 4.4, grossProfit: 385200, grossProfitMargin: 90.0, waste: 128400, wastePercentage: 30.0, topProduct: "Pain au Chocolat" },
-  { id: "OS004", name: "Canary Wharf Plaza", revenue: 352000, target: 340000, variance: 3.5, grossProfit: 316800, grossProfitMargin: 90.0, waste: 105600, wastePercentage: 30.0, topProduct: "Caesar Wrap" },
-  { id: "OS005", name: "Bond Street", revenue: 326000, target: 310000, variance: 5.2, grossProfit: 293400, grossProfitMargin: 90.0, waste: 97800, wastePercentage: 30.0, topProduct: "Ham & Cheese Croissant" },
-  { id: "OS006", name: "Bank Station", revenue: 368000, target: 355000, variance: 3.7, grossProfit: 331200, grossProfitMargin: 90.0, waste: 110400, wastePercentage: 30.0, topProduct: "Salmon Bagel" },
+  { id: "OS001", name: "Kings Cross Station", revenue: 412000, target: 400000, variance: 3.0, grossProfit: 370800, grossProfitMargin: 90.0, waste: 123600, wastePercentage: 30.0, topProduct: "Original Glazed" },
+  { id: "OS002", name: "Liverpool Street Station", revenue: 385000, target: 370000, variance: 4.1, grossProfit: 346500, grossProfitMargin: 90.0, waste: 115500, wastePercentage: 30.0, topProduct: "Chocolate Iced Glazed" },
+  { id: "OS003", name: "St Pancras International", revenue: 428000, target: 410000, variance: 4.4, grossProfit: 385200, grossProfitMargin: 90.0, waste: 128400, wastePercentage: 30.0, topProduct: "Strawberry Iced with Sprinkles" },
+  { id: "OS004", name: "Canary Wharf Plaza", revenue: 352000, target: 340000, variance: 3.5, grossProfit: 316800, grossProfitMargin: 90.0, waste: 105600, wastePercentage: 30.0, topProduct: "Boston Kreme" },
+  { id: "OS005", name: "Bond Street", revenue: 326000, target: 310000, variance: 5.2, grossProfit: 293400, grossProfitMargin: 90.0, waste: 97800, wastePercentage: 30.0, topProduct: "Raspberry Filled" },
+  { id: "OS006", name: "Bank Station", revenue: 368000, target: 355000, variance: 3.7, grossProfit: 331200, grossProfitMargin: 90.0, waste: 110400, wastePercentage: 30.0, topProduct: "Cookies and Kreme" },
 ];
 
 // Mock product performance data
@@ -832,7 +832,7 @@ export default function Analytics() {
           {/* Store Performance Tab */}
           <TabsContent value="store" className="space-y-6">
             {/* Summary Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               <Card className="shadow-xl hover:shadow-2xl transition-all duration-300 hover-scale border-2 border-success/20">
                 <CardHeader className="pb-2">
                   <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
@@ -875,22 +875,6 @@ export default function Analytics() {
                 </CardContent>
               </Card>
 
-              <Card className="shadow-xl hover:shadow-2xl transition-all duration-300 hover-scale border-2 border-accent/20">
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
-                    <TrendingUp className="h-4 w-4 text-accent" />
-                    Avg Variance
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold bg-gradient-to-r from-accent to-accent/70 bg-clip-text text-transparent">
-                    +{(filteredStorePerformance.reduce((acc, s) => acc + s.variance, 0) / filteredStorePerformance.length).toFixed(1)}%
-                  </div>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    Above target
-                  </p>
-                </CardContent>
-              </Card>
 
               <Card className="shadow-xl hover:shadow-2xl transition-all duration-300 hover-scale border-2 border-destructive/20">
                 <CardHeader className="pb-2">
@@ -943,7 +927,6 @@ export default function Analytics() {
                       <TableHead>Revenue</TableHead>
                       <TableHead>Gross Profit</TableHead>
                       <TableHead>Target</TableHead>
-                      <TableHead>Variance</TableHead>
                       <TableHead>Waste</TableHead>
                       <TableHead>Waste %</TableHead>
                       <TableHead>Top Product</TableHead>
@@ -973,9 +956,6 @@ export default function Analytics() {
                         </TableCell>
                         <TableCell className="font-mono">
                           £{store.target.toLocaleString()}
-                        </TableCell>
-                        <TableCell>
-                          {getVarianceBadge(store.variance)}
                         </TableCell>
                         <TableCell className="font-mono text-destructive">
                           £{store.waste.toLocaleString()}
@@ -1281,7 +1261,6 @@ export default function Analytics() {
                       <TableHead>Avg/Store</TableHead>
                       <TableHead>Gross Profit</TableHead>
                       <TableHead>Target</TableHead>
-                      <TableHead>Variance</TableHead>
                       <TableHead>Waste</TableHead>
                       <TableHead>Top Product</TableHead>
                     </TableRow>
@@ -1316,18 +1295,6 @@ export default function Analytics() {
                           </TableCell>
                           <TableCell className="font-mono text-muted-foreground">
                             £{cluster.target.toLocaleString()}
-                          </TableCell>
-                          <TableCell>
-                            <div className="flex items-center gap-2">
-                              {variance > 0 ? (
-                                <TrendingUp className="h-4 w-4 text-success" />
-                              ) : (
-                                <TrendingDown className="h-4 w-4 text-destructive" />
-                              )}
-                              <span className={variance > 0 ? "text-success font-medium" : "text-destructive font-medium"}>
-                                {variancePercent > 0 ? '+' : ''}{variancePercent.toFixed(1)}%
-                              </span>
-                            </div>
                           </TableCell>
                           <TableCell>
                             <div className="flex items-center gap-2">
