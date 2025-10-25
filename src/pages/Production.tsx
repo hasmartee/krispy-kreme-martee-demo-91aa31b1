@@ -564,7 +564,7 @@ export default function Production() {
             </div>
           </div>
           <h1 className="text-4xl font-bold text-primary mb-2">Production Plan</h1>
-          <p className="text-xl text-primary/90">
+          <p className="text-xl text-cream-foreground">
             {viewMode === "hq" ? "All Stores" : selectedStore} - {formattedDate}
           </p>
         </div>
