@@ -12,6 +12,7 @@ import { cn } from "@/lib/utils";
 import heroImage from "@/assets/donut-production-1.jpg";
 import { useView } from "@/contexts/ViewContext";
 import { supabase } from "@/lib/supabase-helper";
+import { getCategoryBadgeClass } from "@/lib/category-utils";
 
 interface Product {
   id: string;
@@ -47,6 +48,7 @@ export default function Production() {
   const [groupByProduct, setGroupByProduct] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [productCapacities, setProductCapacities] = useState<Record<string, { min: number; max: number }>>({});
+  const [editingCategory, setEditingCategory] = useState<string | null>(null);
   const { toast } = useToast();
   
   const formattedDate = selectedDate.toLocaleDateString('en-GB', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
@@ -657,9 +659,42 @@ export default function Production() {
               {displayProducts.map((product) => (
                 <TableRow key={groupByProduct ? product.id : `${product.id}-${product.storeId}`}>
                   <TableCell>
-                    <div>
-                      <div className="font-medium">
-                        {product.productName}
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-2">
+                        <div className="font-medium">
+                          {product.productName}
+                        </div>
+                        {editingCategory === `${product.id}-${product.storeId}` && viewMode === "hq" ? (
+                          <Select
+                            value={product.category}
+                            onValueChange={(newCategory) => {
+                              setProducts(products.map(p => 
+                                (p.id === product.id && p.storeId === product.storeId)
+                                  ? { ...p, category: newCategory }
+                                  : p
+                              ));
+                              setEditingCategory(null);
+                            }}
+                          >
+                            <SelectTrigger className="w-[130px] h-7">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="Glazed">Glazed</SelectItem>
+                              <SelectItem value="Iced">Iced</SelectItem>
+                              <SelectItem value="Filled">Filled</SelectItem>
+                              <SelectItem value="Cake">Cake</SelectItem>
+                              <SelectItem value="Specialty">Specialty</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        ) : (
+                          <Badge 
+                            className={`${getCategoryBadgeClass(product.category)} ${viewMode === "hq" ? "cursor-pointer hover:opacity-80" : ""}`}
+                            onClick={() => viewMode === "hq" && setEditingCategory(`${product.id}-${product.storeId}`)}
+                          >
+                            {product.category}
+                          </Badge>
+                        )}
                       </div>
                       <div className="text-sm text-muted-foreground">{product.id}</div>
                     </div>

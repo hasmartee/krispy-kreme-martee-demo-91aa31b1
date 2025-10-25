@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Edit, Save, X } from "lucide-react";
+import { getCategoryBadgeClass } from "@/lib/category-utils";
 
 interface Product {
   skuId: string;
@@ -54,7 +55,7 @@ export default function ProductListItem({ product, onUpdate }: ProductListItemPr
             <div className="md:col-span-2">
               <p className="font-semibold text-foreground">{product.name}</p>
               <p className="text-sm text-muted-foreground font-mono">{product.skuId}</p>
-              <Badge variant="outline" className="mt-1">
+              <Badge className={`${getCategoryBadgeClass(product.category)} mt-1`}>
                 {product.category}
               </Badge>
             </div>

@@ -3,6 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { getCategoryBadgeClass } from "@/lib/category-utils";
 import { Input } from "@/components/ui/input";
 import { RefreshCw, Loader2, CalendarIcon, Package, CheckCircle, Clock, Lock } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -215,14 +216,7 @@ export default function ManufacturingProduction() {
   };
 
   const getCategoryBadge = (category: string) => {
-    const colors: Record<string, string> = {
-      "Glazed": "bg-gradient-to-r from-amber-400 to-amber-500 text-white shadow-sm",
-      "Iced": "bg-gradient-to-r from-pink-400 to-pink-500 text-white shadow-sm",
-      "Filled": "bg-gradient-to-r from-purple-400 to-purple-500 text-white shadow-sm",
-      "Cake": "bg-gradient-to-r from-orange-400 to-orange-500 text-white shadow-sm",
-      "Specialty": "bg-gradient-to-r from-[#7ea058] to-[#6d9148] text-white shadow-sm",
-    };
-    return <Badge className={colors[category] || "bg-gradient-to-r from-gray-400 to-gray-500 text-white shadow-sm"}>{category}</Badge>;
+    return <Badge className={getCategoryBadgeClass(category)}>{category}</Badge>;
   };
 
   const getStatusBadge = (status: 'pending' | 'confirmed', isLocked: boolean = false) => {

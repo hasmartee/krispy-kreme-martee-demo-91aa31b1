@@ -12,6 +12,7 @@ import { Search, Store, Package, Filter, TrendingUp, AlertCircle, CheckCircle, S
 import { supabase } from "@/lib/supabase-helper";
 import { useToast } from "@/hooks/use-toast";
 import { useView } from "@/contexts/ViewContext";
+import { getCategoryBadgeClass } from "@/lib/category-utils";
 
 // Store clusters matching database schema
 const storeClusters = [
@@ -542,16 +543,8 @@ export default function StoreProductRange() {
   };
 
   const getCategoryBadge = (category: string) => {
-    const categoryColors = {
-      'Sandwich': 'bg-brand-peach text-white',
-      'Wrap': 'bg-brand-green-medium text-white',
-      'Hot Food': 'bg-primary text-primary-foreground',
-      'Salad': 'bg-success text-white',
-      'Breakfast': 'bg-warning text-white',
-    };
-    
     return (
-      <Badge variant="outline" className={categoryColors[category as keyof typeof categoryColors] || 'bg-muted'}>
+      <Badge className={getCategoryBadgeClass(category)}>
         {category}
       </Badge>
     );

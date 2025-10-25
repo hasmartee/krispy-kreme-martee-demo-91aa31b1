@@ -1,6 +1,7 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { getCategoryBadgeClass } from "@/lib/category-utils";
 
 interface ProductCardProps {
   product: {
@@ -41,10 +42,10 @@ export default function ProductCard({ product, onEdit }: ProductCardProps) {
       <CardContent className="pt-0 space-y-3">
         <div className="flex items-center justify-between">
           <div>
-            <Badge variant="outline" className="mb-2">
+            <Badge className={getCategoryBadgeClass(product.category)}>
               {product.category}
             </Badge>
-            <p className="text-2xl font-bold text-primary">
+            <p className="text-2xl font-bold text-primary mt-2">
               £{product.price.toFixed(2)}
             </p>
           </div>
