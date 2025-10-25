@@ -7,7 +7,7 @@ import { TrendingUp, TrendingDown, RefreshCw, Plus, Minus, CloudRain, AlertTrian
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
@@ -626,24 +626,78 @@ export default function Production() {
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2">
             {viewMode === "hq" && (
-              <div className="flex items-center gap-2 bg-muted/50 rounded-lg p-1">
-                <Button
-                  size="sm"
-                  variant={!groupByProduct ? "default" : "ghost"}
-                  onClick={() => setGroupByProduct(false)}
-                  className="h-8"
-                >
-                  By Store
-                </Button>
-                <Button
-                  size="sm"
-                  variant={groupByProduct ? "default" : "ghost"}
-                  onClick={() => setGroupByProduct(true)}
-                  className="h-8"
-                >
-                  By Total
-                </Button>
-              </div>
+              <>
+                {selectedProducts.size > 0 && (
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Button 
+                        size="sm"
+                        className="gap-2 bg-[#7ea058] hover:bg-[#7ea058]/90 text-white"
+                      >
+                        <Percent className="h-4 w-4" />
+                        Bulk Edit ({selectedProducts.size})
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-md">
+                      <DialogHeader>
+                        <DialogTitle>Bulk Adjust Quantities</DialogTitle>
+                        <DialogDescription>
+                          Adjust {selectedProducts.size} selected products by a percentage
+                        </DialogDescription>
+                      </DialogHeader>
+                      <div className="space-y-4 py-4">
+                        <div className="flex items-center justify-center gap-2">
+                          <Percent className="h-5 w-5 text-[#7ea058]" />
+                          <Input
+                            type="number"
+                            min="1"
+                            max="100"
+                            value={bulkAdjustmentPercent}
+                            onChange={(e) => setBulkAdjustmentPercent(Number(e.target.value))}
+                            className="w-24 text-center text-lg font-semibold"
+                          />
+                          <span className="text-muted-foreground">%</span>
+                        </div>
+                      </div>
+                      <DialogFooter className="flex-row gap-2 sm:justify-center">
+                        <Button
+                          onClick={() => applyBulkAdjustment(false)}
+                          variant="outline"
+                          className="gap-2 flex-1 border-[#7ea058]/30 hover:bg-[#7ea058]/10"
+                        >
+                          <Minus className="h-4 w-4" />
+                          Decrease
+                        </Button>
+                        <Button
+                          onClick={() => applyBulkAdjustment(true)}
+                          className="gap-2 flex-1 bg-[#7ea058] hover:bg-[#7ea058]/90 text-white"
+                        >
+                          <Plus className="h-4 w-4" />
+                          Increase
+                        </Button>
+                      </DialogFooter>
+                    </DialogContent>
+                  </Dialog>
+                )}
+                <div className="flex items-center gap-2 bg-muted/50 rounded-lg p-1">
+                  <Button
+                    size="sm"
+                    variant={!groupByProduct ? "default" : "ghost"}
+                    onClick={() => setGroupByProduct(false)}
+                    className="h-8"
+                  >
+                    By Store
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant={groupByProduct ? "default" : "ghost"}
+                    onClick={() => setGroupByProduct(true)}
+                    className="h-8"
+                  >
+                    By Total
+                  </Button>
+                </div>
+              </>
             )}
             <Button 
               onClick={handleRefresh}
@@ -657,66 +711,6 @@ export default function Production() {
           </div>
         </div>
       </div>
-
-      {/* Bulk Edit Toolbar */}
-      {viewMode === "hq" && selectedProducts.size > 0 && (
-        <Card className="bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-950/20 dark:to-emerald-950/20 rounded-lg border-2 border-[#7ea058]/30 dark:border-[#7ea058]/50 shadow-lg">
-          <CardContent className="pt-6">
-            <div className="flex items-center justify-between gap-4">
-              <div className="flex items-center gap-3">
-                <div className="h-10 w-10 rounded-lg bg-[#7ea058]/20 dark:bg-[#7ea058]/30 flex items-center justify-center">
-                  <Percent className="h-5 w-5 text-[#7ea058]" />
-                </div>
-                <div>
-                  <Badge className="bg-[#7ea058] text-white text-base px-3 py-1 mb-1">
-                    {selectedProducts.size} Selected
-                  </Badge>
-                  <p className="text-sm text-muted-foreground">
-                    Bulk adjust final quantities by percentage
-                  </p>
-                </div>
-              </div>
-              <div className="flex items-center gap-3">
-                <div className="flex items-center gap-2 bg-white dark:bg-background rounded-lg px-3 py-2 border border-[#7ea058]/20">
-                  <Percent className="h-4 w-4 text-[#7ea058]" />
-                  <Input
-                    type="number"
-                    min="1"
-                    max="100"
-                    value={bulkAdjustmentPercent}
-                    onChange={(e) => setBulkAdjustmentPercent(Number(e.target.value))}
-                    className="w-20 text-center border-0 focus-visible:ring-0 font-semibold"
-                  />
-                  <span className="text-sm text-muted-foreground">%</span>
-                </div>
-                <Button
-                  onClick={() => applyBulkAdjustment(false)}
-                  variant="outline"
-                  className="gap-2 border-[#7ea058]/30 hover:bg-[#7ea058]/10 hover:border-[#7ea058]"
-                >
-                  <Minus className="h-4 w-4" />
-                  Decrease
-                </Button>
-                <Button
-                  onClick={() => applyBulkAdjustment(true)}
-                  className="gap-2 bg-[#7ea058] hover:bg-[#7ea058]/90 text-white shadow-md font-semibold"
-                >
-                  <Plus className="h-4 w-4" />
-                  Increase
-                </Button>
-                <Button
-                  onClick={() => setSelectedProducts(new Set())}
-                  variant="ghost"
-                  size="sm"
-                  className="hover:bg-[#7ea058]/10"
-                >
-                  Clear
-                </Button>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      )}
 
       {/* Production Table */}
       <Card className={cn(
