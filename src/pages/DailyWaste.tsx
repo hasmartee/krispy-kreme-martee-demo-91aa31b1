@@ -8,7 +8,7 @@ import { Trash2, RefreshCw, Plus, Minus, Loader2, CheckCircle2 } from "lucide-re
 import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
-import heroImage from "@/assets/hero-food.jpg";
+import heroImage from "@/assets/donut-production-1.jpg";
 import { useView } from "@/contexts/ViewContext";
 import { supabase } from "@/lib/supabase-helper";
 
@@ -21,7 +21,8 @@ interface WasteProduct {
   soldQty: number;
   stockAdjustments: number;
   expectedWaste: number;
-  recordedWaste: number;
+  recordedEndOfDayWaste: number;
+  recordedTgtgWaste: number;
   hasUnsavedChanges?: boolean;
 }
 
@@ -142,7 +143,8 @@ export default function DailyWaste() {
           soldQty,
           stockAdjustments,
           expectedWaste,
-          recordedWaste: expectedWaste, // Pre-populate with expected
+          recordedEndOfDayWaste: expectedWaste, // Pre-populate with expected
+          recordedTgtgWaste: 0,
           hasUnsavedChanges: false,
         };
       });
@@ -166,10 +168,14 @@ export default function DailyWaste() {
     setTimeout(() => setIsRefreshing(false), 1000);
   };
 
-  const updateRecordedWaste = (productId: string, newQuantity: number) => {
+  const updateRecordedWaste = (productId: string, wasteType: 'endOfDay' | 'tgtg', newQuantity: number) => {
     setProducts(prev => prev.map(p => 
       p.id === productId
-        ? { ...p, recordedWaste: Math.max(0, newQuantity), hasUnsavedChanges: true }
+        ? { 
+            ...p, 
+            [wasteType === 'endOfDay' ? 'recordedEndOfDayWaste' : 'recordedTgtgWaste']: Math.max(0, newQuantity),
+            hasUnsavedChanges: true 
+          }
         : p
     ));
   };
@@ -188,9 +194,10 @@ export default function DailyWaste() {
           : p
       ));
 
+      const totalWaste = product.recordedEndOfDayWaste + product.recordedTgtgWaste;
       toast({
         title: "✓ Waste Recorded",
-        description: `${product.productName} waste logged - ${product.recordedWaste} units`,
+        description: `${product.productName} waste logged - ${totalWaste} units (${product.recordedEndOfDayWaste} EOD + ${product.recordedTgtgWaste} TGTG)`,
       });
     } catch (error) {
       console.error('Error confirming waste:', error);
@@ -270,18 +277,24 @@ export default function DailyWaste() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead className="w-[20%]">Product</TableHead>
-                  <TableHead className="text-center w-[12%]">Delivered</TableHead>
-                  <TableHead className="text-center w-[13%]">Stock Adjustments</TableHead>
-                  <TableHead className="text-center w-[12%]">Sold</TableHead>
-                  <TableHead className="text-center w-[13%]">Expected Waste</TableHead>
-                  <TableHead className="text-center w-[20%] bg-gradient-to-r from-[#ff914d]/20 to-[#ff914d]/10 border-l-4 border-l-[#ff914d]">
+                  <TableHead className="w-[15%]">Product</TableHead>
+                  <TableHead className="text-center w-[10%]">Delivered</TableHead>
+                  <TableHead className="text-center w-[11%]">Stock Adj.</TableHead>
+                  <TableHead className="text-center w-[10%]">Sold</TableHead>
+                  <TableHead className="text-center w-[11%]">Expected Waste</TableHead>
+                  <TableHead className="text-center w-[18%] bg-gradient-to-r from-[#ff914d]/20 to-[#ff914d]/10 border-l-4 border-l-[#ff914d]">
                     <div className="flex items-center justify-center gap-2 py-1">
-                      <Trash2 className="h-5 w-5 text-[#ff914d]" />
-                      <span className="font-bold text-[#ff914d] text-lg">Recorded Waste</span>
+                      <Trash2 className="h-4 w-4 text-[#ff914d]" />
+                      <span className="font-bold text-[#ff914d]">End of Day Waste</span>
                     </div>
                   </TableHead>
-                  <TableHead className="w-[10%]"></TableHead>
+                  <TableHead className="text-center w-[18%] bg-gradient-to-r from-[#7ea058]/20 to-[#7ea058]/10 border-l-4 border-l-[#7ea058]">
+                    <div className="flex items-center justify-center gap-2 py-1">
+                      <Trash2 className="h-4 w-4 text-[#7ea058]" />
+                      <span className="font-bold text-[#7ea058]">TGTG Waste</span>
+                    </div>
+                  </TableHead>
+                  <TableHead className="w-[7%]"></TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -313,46 +326,75 @@ export default function DailyWaste() {
                     <TableCell className="text-center bg-muted/30">
                       <span className="font-mono font-bold text-lg">{product.expectedWaste}</span>
                     </TableCell>
+                    
+                    {/* End of Day Waste Column */}
                     <TableCell className="bg-gradient-to-r from-[#ff914d]/10 to-[#ff914d]/5 border-l-4 border-l-[#ff914d]/30">
-                      <div className="flex items-center justify-center gap-2">
+                      <div className="flex items-center justify-center gap-1.5">
                         <Button
                           variant="outline"
                           size="icon"
-                          className="h-10 w-10 rounded-full border-2 border-[#ff914d]/40 hover:border-[#ff914d] hover:bg-[#ff914d]/10 transition-all duration-200 hover:scale-110"
-                          onClick={() => updateRecordedWaste(product.id, product.recordedWaste - 1)}
+                          className="h-8 w-8 rounded-full border-2 border-[#ff914d]/40 hover:border-[#ff914d] hover:bg-[#ff914d]/10 transition-all duration-200 hover:scale-110"
+                          onClick={() => updateRecordedWaste(product.id, 'endOfDay', product.recordedEndOfDayWaste - 1)}
                         >
-                          <Minus className="h-4 w-4 text-[#ff914d]" />
+                          <Minus className="h-3 w-3 text-[#ff914d]" />
                         </Button>
                         
                         <div className="relative">
                           <Input
                             type="number"
-                            value={product.recordedWaste}
-                            onChange={(e) => updateRecordedWaste(product.id, parseInt(e.target.value) || 0)}
+                            value={product.recordedEndOfDayWaste}
+                            onChange={(e) => updateRecordedWaste(product.id, 'endOfDay', parseInt(e.target.value) || 0)}
                             className={cn(
-                              "w-24 text-center font-bold text-2xl border-3 bg-white shadow-lg rounded-lg hover:shadow-xl transition-all duration-200 focus:ring-4 focus:ring-[#ff914d]/30 text-[#ff914d]",
-                              product.hasUnsavedChanges ? "border-amber-400 animate-pulse" : "border-[#ff914d]"
+                              "w-16 text-center font-bold text-xl border-3 bg-white shadow-lg rounded-lg hover:shadow-xl transition-all duration-200 focus:ring-4 focus:ring-[#ff914d]/30 text-[#ff914d]",
+                              product.hasUnsavedChanges ? "border-amber-400" : "border-[#ff914d]"
                             )}
                             min="0"
                           />
-                          {product.recordedWaste !== product.expectedWaste && (
-                            <Badge 
-                              variant="outline" 
-                              className="absolute -top-2 -right-2 bg-amber-500 text-white border-amber-500 text-xs px-1.5 py-0.5 animate-in fade-in zoom-in duration-200"
-                            >
-                              {product.recordedWaste > product.expectedWaste ? '+' : ''}
-                              {product.recordedWaste - product.expectedWaste}
-                            </Badge>
-                          )}
                         </div>
                         
                         <Button
                           variant="outline"
                           size="icon"
-                          className="h-10 w-10 rounded-full border-2 border-[#ff914d]/40 hover:border-[#ff914d] hover:bg-[#ff914d]/10 transition-all duration-200 hover:scale-110"
-                          onClick={() => updateRecordedWaste(product.id, product.recordedWaste + 1)}
+                          className="h-8 w-8 rounded-full border-2 border-[#ff914d]/40 hover:border-[#ff914d] hover:bg-[#ff914d]/10 transition-all duration-200 hover:scale-110"
+                          onClick={() => updateRecordedWaste(product.id, 'endOfDay', product.recordedEndOfDayWaste + 1)}
                         >
-                          <Plus className="h-4 w-4 text-[#ff914d]" />
+                          <Plus className="h-3 w-3 text-[#ff914d]" />
+                        </Button>
+                      </div>
+                    </TableCell>
+
+                    {/* TGTG Waste Column */}
+                    <TableCell className="bg-gradient-to-r from-[#7ea058]/10 to-[#7ea058]/5 border-l-4 border-l-[#7ea058]/30">
+                      <div className="flex items-center justify-center gap-1.5">
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          className="h-8 w-8 rounded-full border-2 border-[#7ea058]/40 hover:border-[#7ea058] hover:bg-[#7ea058]/10 transition-all duration-200 hover:scale-110"
+                          onClick={() => updateRecordedWaste(product.id, 'tgtg', product.recordedTgtgWaste - 1)}
+                        >
+                          <Minus className="h-3 w-3 text-[#7ea058]" />
+                        </Button>
+                        
+                        <div className="relative">
+                          <Input
+                            type="number"
+                            value={product.recordedTgtgWaste}
+                            onChange={(e) => updateRecordedWaste(product.id, 'tgtg', parseInt(e.target.value) || 0)}
+                            className={cn(
+                              "w-16 text-center font-bold text-xl border-3 bg-white shadow-lg rounded-lg hover:shadow-xl transition-all duration-200 focus:ring-4 focus:ring-[#7ea058]/30 text-[#7ea058]",
+                              product.hasUnsavedChanges ? "border-amber-400" : "border-[#7ea058]"
+                            )}
+                            min="0"
+                          />
+                        </div>
+                        
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          className="h-8 w-8 rounded-full border-2 border-[#7ea058]/40 hover:border-[#7ea058] hover:bg-[#7ea058]/10 transition-all duration-200 hover:scale-110"
+                          onClick={() => updateRecordedWaste(product.id, 'tgtg', product.recordedTgtgWaste + 1)}
+                        >
+                          <Plus className="h-3 w-3 text-[#7ea058]" />
                         </Button>
                       </div>
                     </TableCell>
