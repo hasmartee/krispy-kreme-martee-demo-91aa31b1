@@ -1045,9 +1045,6 @@ export default function Home() {
               </div>
             </CardContent>
           </Card>
-
-          {/* Share with HQ */}
-          <ShareWithHQCard />
         </>
       )}
 
