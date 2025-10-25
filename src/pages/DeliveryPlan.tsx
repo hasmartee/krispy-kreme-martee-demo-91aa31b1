@@ -298,10 +298,10 @@ export default function DeliveryPlan() {
       >
         <div className="absolute inset-0 bg-gradient-to-r from-green-900/80 via-green-800/60 to-green-700/40" />
         <div className="absolute inset-0 flex flex-col justify-center px-8">
-          <h1 className="text-4xl font-bold text-cream-foreground mb-2">
+          <h1 className="text-4xl font-bold text-white mb-2">
             Delivery Plan
           </h1>
-          <p className="text-xl text-cream-foreground">
+          <p className="text-xl text-white/90">
             {formattedDate}
           </p>
         </div>

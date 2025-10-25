@@ -563,8 +563,8 @@ export default function Production() {
               <span className="text-white font-semibold text-sm">AI-Powered Suggestions</span>
             </div>
           </div>
-          <h1 className="text-4xl font-bold text-cream-foreground mb-2">Production Plan</h1>
-          <p className="text-xl text-cream-foreground">
+          <h1 className="text-4xl font-bold text-white mb-2">Production Plan</h1>
+          <p className="text-xl text-white/90">
             {viewMode === "hq" ? "All Stores" : selectedStore} - {formattedDate}
           </p>
         </div>
