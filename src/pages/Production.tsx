@@ -563,10 +563,12 @@ export default function Production() {
               <span className="text-white font-semibold text-sm">AI-Powered Suggestions</span>
             </div>
           </div>
-          <h1 className="text-4xl font-bold text-primary mb-2">Production Plan</h1>
-          <p className="text-xl text-cream-foreground">
-            {viewMode === "hq" ? "All Stores" : selectedStore} - {formattedDate}
-          </p>
+          <div className="inline-block bg-cream/95 backdrop-blur-sm px-6 py-3 rounded-lg max-w-fit">
+            <h1 className="text-4xl font-bold text-primary mb-2">Production Plan</h1>
+            <p className="text-xl text-foreground">
+              {viewMode === "hq" ? "All Stores" : selectedStore} - {formattedDate}
+            </p>
+          </div>
         </div>
       </div>
 
