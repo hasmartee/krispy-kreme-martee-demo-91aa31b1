@@ -12,7 +12,7 @@ import { Calendar } from "@/components/ui/calendar";
 import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
-import heroImage from "@/assets/hero-food.jpg";
+import heroImage from "@/assets/donut-production-1.jpg";
 import { useView } from "@/contexts/ViewContext";
 import { supabase } from "@/lib/supabase-helper";
 
