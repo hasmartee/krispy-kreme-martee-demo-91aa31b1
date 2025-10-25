@@ -39,18 +39,6 @@ export default function ProductCard({ product, onEdit }: ProductCardProps) {
         </div>
       </CardHeader>
       <CardContent className="pt-0 space-y-3">
-        {product.ingredients.length > 0 && (
-          <div>
-            <p className="text-xs text-muted-foreground mb-1">Ingredients:</p>
-            <div className="flex flex-wrap gap-1">
-              {product.ingredients.map((ingredient) => (
-                <Badge key={ingredient} variant="outline" className="text-xs">
-                  {ingredient}
-                </Badge>
-              ))}
-            </div>
-          </div>
-        )}
         <div className="flex items-center justify-between">
           <div>
             <Badge variant="outline" className="mb-2">

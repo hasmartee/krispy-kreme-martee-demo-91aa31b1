@@ -50,28 +50,13 @@ export default function ProductListItem({ product, onUpdate }: ProductListItemPr
             }}
           />
           
-          <div className="flex-1 grid grid-cols-1 md:grid-cols-8 gap-4 items-center">
+          <div className="flex-1 grid grid-cols-1 md:grid-cols-7 gap-4 items-center">
             <div className="md:col-span-2">
               <p className="font-semibold text-foreground">{product.name}</p>
               <p className="text-sm text-muted-foreground font-mono">{product.skuId}</p>
               <Badge variant="outline" className="mt-1">
                 {product.category}
               </Badge>
-            </div>
-
-            <div>
-              <p className="text-sm text-muted-foreground">Ingredients</p>
-              <div className="flex flex-wrap gap-1 mt-1">
-                {product.ingredients.length > 0 ? (
-                  product.ingredients.map((ingredient) => (
-                    <Badge key={ingredient} variant="outline" className="text-xs">
-                      {ingredient}
-                    </Badge>
-                  ))
-                ) : (
-                  <span className="text-sm text-muted-foreground">None</span>
-                )}
-              </div>
             </div>
 
             <div>
