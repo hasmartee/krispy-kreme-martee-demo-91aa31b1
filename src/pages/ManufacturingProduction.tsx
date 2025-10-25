@@ -30,6 +30,7 @@ export default function ManufacturingProduction() {
   const [loading, setLoading] = useState(true);
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [planStatus, setPlanStatus] = useState<'pending' | 'confirmed'>('pending');
+  const [viewMode, setViewMode] = useState<'byProduct' | 'byCategory'>('byProduct');
   const { toast } = useToast();
   
   const formattedDate = selectedDate.toLocaleDateString('en-GB', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
@@ -248,6 +249,26 @@ export default function ManufacturingProduction() {
   const totalManufactured = products.reduce((sum, p) => sum + p.manufacturedQuantity, 0);
   const completionRate = totalPlanned > 0 ? ((totalManufactured / totalPlanned) * 100).toFixed(1) : '0';
 
+  // Aggregate by category when in byCategory view
+  const displayData = viewMode === 'byCategory' 
+    ? Object.values(products.reduce((acc, product) => {
+        if (!acc[product.category]) {
+          acc[product.category] = {
+            productSku: product.category,
+            productName: product.category,
+            category: product.category,
+            plannedQuantity: 0,
+            manufacturedQuantity: 0,
+            status: product.status,
+            isLocked: false,
+          };
+        }
+        acc[product.category].plannedQuantity += product.plannedQuantity;
+        acc[product.category].manufacturedQuantity += product.manufacturedQuantity;
+        return acc;
+      }, {} as Record<string, AggregatedProduct>))
+    : products;
+
   return (
     <div className="flex-1 space-y-6 p-6">
       {/* Hero Section */}
@@ -325,6 +346,24 @@ export default function ManufacturingProduction() {
           <span>Selected: {format(selectedDate, "EEEE, MMMM d, yyyy")}</span>
         </div>
         <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 bg-muted rounded-lg p-1">
+            <Button
+              variant={viewMode === 'byProduct' ? 'default' : 'ghost'}
+              size="sm"
+              onClick={() => setViewMode('byProduct')}
+              className="text-xs"
+            >
+              By Product
+            </Button>
+            <Button
+              variant={viewMode === 'byCategory' ? 'default' : 'ghost'}
+              size="sm"
+              onClick={() => setViewMode('byCategory')}
+              className="text-xs"
+            >
+              By Category
+            </Button>
+          </div>
           <Button onClick={handleRefresh} variant="outline" disabled={isRefreshing}>
             <RefreshCw className={`h-4 w-4 mr-2 ${isRefreshing ? 'animate-spin' : ''}`} />
             Refresh
@@ -390,7 +429,9 @@ export default function ManufacturingProduction() {
           </CardTitle>
           <CardDescription>
             {products.length > 0 
-              ? `${products.length} products in production plan`
+              ? viewMode === 'byCategory'
+                ? `${displayData.length} categories in production plan`
+                : `${products.length} products in production plan`
               : 'No production plan for this date'}
           </CardDescription>
         </CardHeader>
@@ -401,8 +442,8 @@ export default function ManufacturingProduction() {
                 <TableHeader>
                   <TableRow>
                     <TableHead className="w-[50px]">#</TableHead>
-                    <TableHead>Product</TableHead>
-                    <TableHead>Category</TableHead>
+                    <TableHead>{viewMode === 'byCategory' ? 'Category' : 'Product'}</TableHead>
+                    {viewMode === 'byProduct' && <TableHead>Category</TableHead>}
                     <TableHead className="text-right">Planned Qty</TableHead>
                     <TableHead className="text-center">Status</TableHead>
                     <TableHead className="bg-[#f8b29c]/20 border-l-4 border-[#f8b29c]">
@@ -412,11 +453,11 @@ export default function ManufacturingProduction() {
                       </div>
                     </TableHead>
                     <TableHead className="text-right">Variance</TableHead>
-                    <TableHead className="text-center">Action</TableHead>
+                    {viewMode === 'byProduct' && <TableHead className="text-center">Action</TableHead>}
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {products.map((product, index) => {
+                  {displayData.map((product, index) => {
                     const variance = product.manufacturedQuantity - product.plannedQuantity;
                     const variancePercent = product.plannedQuantity > 0 
                       ? ((variance / product.plannedQuantity) * 100).toFixed(1)
@@ -429,13 +470,15 @@ export default function ManufacturingProduction() {
                         </TableCell>
                         <TableCell className="font-medium">
                           <div className="flex items-center gap-2">
-                            {product.productName}
+                            {viewMode === 'byCategory' ? getCategoryBadge(product.category) : product.productName}
                             {product.isLocked && <Lock className="h-3.5 w-3.5 text-green-600" />}
                           </div>
                         </TableCell>
-                        <TableCell>
-                          {getCategoryBadge(product.category)}
-                        </TableCell>
+                        {viewMode === 'byProduct' && (
+                          <TableCell>
+                            {getCategoryBadge(product.category)}
+                          </TableCell>
+                        )}
                         <TableCell className="text-right font-semibold">
                           {product.plannedQuantity.toLocaleString()}
                         </TableCell>
@@ -465,23 +508,25 @@ export default function ManufacturingProduction() {
                             <span className="text-xs ml-1">({variancePercent}%)</span>
                           </div>
                         </TableCell>
-                        <TableCell className="text-center">
-                          {!product.isLocked ? (
-                            <Button
-                              size="sm"
-                              onClick={() => confirmProduct(product.productSku)}
-                              className="bg-gradient-to-r from-[#7ea058] to-[#6d9148] hover:from-[#6d9148] hover:to-[#5c8038] text-white shadow-md"
-                            >
-                              <CheckCircle className="h-4 w-4 mr-1" />
-                              Confirm
-                            </Button>
-                          ) : (
-                            <Badge className="bg-[#7ea058]/20 text-[#7ea058] border border-[#7ea058]/30">
-                              <Lock className="h-3 w-3 mr-1" />
-                              Locked
-                            </Badge>
-                          )}
-                        </TableCell>
+                        {viewMode === 'byProduct' && (
+                          <TableCell className="text-center">
+                            {!product.isLocked ? (
+                              <Button
+                                size="sm"
+                                onClick={() => confirmProduct(product.productSku)}
+                                className="bg-gradient-to-r from-[#7ea058] to-[#6d9148] hover:from-[#6d9148] hover:to-[#5c8038] text-white shadow-md"
+                              >
+                                <CheckCircle className="h-4 w-4 mr-1" />
+                                Confirm
+                              </Button>
+                            ) : (
+                              <Badge className="bg-[#7ea058]/20 text-[#7ea058] border border-[#7ea058]/30">
+                                <Lock className="h-3 w-3 mr-1" />
+                                Locked
+                              </Badge>
+                            )}
+                          </TableCell>
+                        )}
                       </TableRow>
                     );
                   })}
