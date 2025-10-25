@@ -27,6 +27,8 @@ interface Product {
   historicalSales: number;
   predictedSales: number;
   allocationId?: string;
+  capacityMin?: number;
+  capacityMax?: number;
 }
 
 interface Store {
@@ -44,13 +46,42 @@ export default function Production() {
   const [confirmingProduction, setConfirmingProduction] = useState<string | null>(null);
   const [groupByProduct, setGroupByProduct] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+  const [productCapacities, setProductCapacities] = useState<Record<string, { min: number; max: number }>>({});
   const { toast } = useToast();
   
   const formattedDate = selectedDate.toLocaleDateString('en-GB', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
 
   useEffect(() => {
     loadData();
+    loadProductCapacities();
   }, [viewMode, selectedStore, selectedDate]);
+
+  const loadProductCapacities = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('product_capacities')
+        .select('*');
+      
+      if (error) {
+        console.error('Error loading capacities:', error);
+        return;
+      }
+      
+      if (data) {
+        const capacitiesMap: Record<string, { min: number; max: number }> = {};
+        data.forEach((cap: any) => {
+          const key = `${cap.product_sku}-${cap.store_id}`;
+          capacitiesMap[key] = {
+            min: cap.capacity_min || 0,
+            max: cap.capacity_max || 0,
+          };
+        });
+        setProductCapacities(capacitiesMap);
+      }
+    } catch (error) {
+      console.error('Error loading product capacities:', error);
+    }
+  };
 
   // Krispy Kreme product templates matching StoreProductRange
   const getProductsForCluster = (cluster: string) => {
@@ -147,6 +178,9 @@ export default function Production() {
               if (productTemplate) {
                 // Always initialize manufactured_qty to match planned quantity
                 console.log('Loading product:', alloc.product_sku, 'quantity:', alloc.quantity, 'manufactured:', alloc.manufactured_quantity);
+                const capacityKey = `${alloc.product_sku}-${alloc.store_id}`;
+                const capacity = productCapacities[capacityKey] || { min: 0, max: 0 };
+                
                 productsToDisplay.push({
                   id: alloc.product_sku,
                   productName: productTemplate.name,
@@ -161,6 +195,8 @@ export default function Production() {
                   historicalSales: alloc.quantity * 0.9,
                   predictedSales: alloc.quantity * 1.05,
                   allocationId: alloc.id,
+                  capacityMin: capacity.min,
+                  capacityMax: capacity.max,
                 });
                 console.log('Added product with manufacturedQty:', alloc.quantity);
               }
@@ -177,6 +213,9 @@ export default function Production() {
             
             storeProducts.forEach(product => {
               const baseQty = 15 + Math.floor(Math.random() * 15);
+              const capacityKey = `${product.id}-${store.id}`;
+              const capacity = productCapacities[capacityKey] || { min: 0, max: 0 };
+              
               productsToDisplay.push({
                 id: product.id,
                 productName: product.name,
@@ -190,6 +229,8 @@ export default function Production() {
                 trend: Math.random() > 0.3 ? "up" : "down",
                 historicalSales: baseQty * 0.9,
                 predictedSales: baseQty * 1.05,
+                capacityMin: capacity.min,
+                capacityMax: capacity.max,
               });
             });
           });
@@ -399,12 +440,17 @@ export default function Production() {
               recommendedOrder: 0,
               finalOrder: 0,
               manufacturedQty: 0,
+              capacityMin: 0,
+              capacityMax: 0,
             };
           }
           acc[product.id].currentStock += product.currentStock;
           acc[product.id].recommendedOrder += product.recommendedOrder;
           acc[product.id].finalOrder += product.finalOrder;
           acc[product.id].manufacturedQty += product.manufacturedQty;
+          // Sum up capacities across all stores
+          acc[product.id].capacityMin! += product.capacityMin || 0;
+          acc[product.id].capacityMax! += product.capacityMax || 0;
           return acc;
         }, {} as Record<string, Product>)
       )
@@ -566,6 +612,7 @@ export default function Production() {
               <TableRow>
                 <TableHead>Product</TableHead>
                 {viewMode === "hq" && !groupByProduct && <TableHead>Store</TableHead>}
+                {viewMode === "hq" && <TableHead className="text-center">Capacity</TableHead>}
                 <TableHead className="bg-gradient-to-r from-[#ff914d]/20 to-[#ff914d]/10 border-l-4 border-l-[#ff914d] text-center">
                   <div className="flex items-center justify-center gap-2 py-1">
                     <Sparkles className="h-5 w-5 text-[#ff914d] animate-pulse" />
@@ -594,6 +641,13 @@ export default function Production() {
                   {viewMode === "hq" && !groupByProduct && (
                     <TableCell>
                       <span className="font-medium">{product.store}</span>
+                    </TableCell>
+                  )}
+                  {viewMode === "hq" && (
+                    <TableCell className="text-center">
+                      <Badge variant="outline" className="font-mono text-sm">
+                        {product.capacityMin || 0} / {product.capacityMax || 0}
+                      </Badge>
                     </TableCell>
                   )}
                   <TableCell className="bg-gradient-to-r from-[#ff914d]/10 to-[#ff914d]/5 border-l-4 border-l-[#ff914d]/30">
