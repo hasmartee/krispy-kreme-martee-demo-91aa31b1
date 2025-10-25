@@ -425,7 +425,7 @@ export default function Analytics() {
                     {currentData.soldQty.toLocaleString()}
                   </div>
                   <div className="flex items-center gap-2 mt-2">
-                    <div className="text-sm text-muted-foreground">94.2% of total</div>
+                    <div className="text-sm text-muted-foreground">70.0% of total</div>
                     {getComparisonBadge(soldComparison, 'sold')}
                   </div>
                 </div>
@@ -459,10 +459,10 @@ export default function Analytics() {
               <CardContent className="space-y-4">
                 <div>
                   <div className="text-5xl font-bold bg-gradient-to-r from-destructive to-destructive/70 bg-clip-text text-transparent">
-                    {currentData.wastedQty}
+                    {currentData.wastedQty.toLocaleString()}
                   </div>
                   <div className="flex items-center gap-2 mt-2">
-                    <div className="text-sm text-muted-foreground">4.4% of total</div>
+                    <div className="text-sm text-muted-foreground">30.0% of total</div>
                     {getComparisonBadge(wastedComparison, 'wasted')}
                   </div>
                 </div>
