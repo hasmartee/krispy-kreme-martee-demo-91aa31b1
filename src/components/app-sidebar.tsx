@@ -52,9 +52,17 @@ const settingsNavigationStoreManager = [
 ];
 
 
-export function AppSidebar() {
+interface AppSidebarProps {
+  onNavigate?: () => void;
+}
+
+export function AppSidebar({ onNavigate }: AppSidebarProps = {}) {
   const { viewMode } = useView();
   const [settingsOpen, setSettingsOpen] = useState(false);
+
+  const handleNavClick = () => {
+    onNavigate?.();
+  };
   
   const mainNavigation = viewMode === "store_manager" 
     ? mainNavigationStoreManager 
@@ -92,9 +100,10 @@ export function AppSidebar() {
             <SidebarMenu>
               {mainNavigation.map((item) => {
                 return (
-                  <SidebarMenuItem key={item.title}>
+                <SidebarMenuItem key={item.title}>
                     <NavLink 
-                      to={item.url} 
+                      to={item.url}
+                      onClick={handleNavClick}
                       className={({ isActive }) => `
                         flex items-center gap-3 px-3 py-2 rounded-lg transition-all
                         ${isActive 
@@ -137,9 +146,10 @@ export function AppSidebar() {
                   <SidebarMenu>
                     {settingsNavigation.map((item) => {
                       return (
-                        <SidebarMenuItem key={item.title}>
+                      <SidebarMenuItem key={item.title}>
                           <NavLink 
-                            to={item.url} 
+                            to={item.url}
+                            onClick={handleNavClick}
                             className={({ isActive }) => `
                               flex items-center gap-3 px-3 py-2 rounded-lg transition-all
                               ${isActive 

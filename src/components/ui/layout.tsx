@@ -2,9 +2,11 @@ import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
 import { ViewProvider } from "@/contexts/ViewContext";
 import { ViewSelector } from "@/components/ViewSelector";
-import { User, LogOut, Settings } from "lucide-react";
+import { User, LogOut, Settings, Menu } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { useState } from "react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,6 +16,11 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
+import {
+  Sheet,
+  SheetContent,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -22,6 +29,8 @@ interface LayoutProps {
 export function Layout({ children }: LayoutProps) {
   const { signOut, user } = useAuth();
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const handleSettingsClick = () => {
     navigate("/settings");
@@ -35,10 +44,32 @@ export function Layout({ children }: LayoutProps) {
     <ViewProvider>
       <SidebarProvider>
         <div className="flex min-h-screen w-full bg-gradient-subtle">
-          <AppSidebar />
-          <div className="flex-1 flex flex-col transition-smooth">
-            <header className="h-16 border-b bg-card/50 backdrop-blur-sm flex items-center justify-between px-6 sticky top-0 z-10">
-              <ViewSelector />
+          {/* Desktop Sidebar - hidden on tablet/mobile */}
+          <div className="hidden lg:block">
+            <AppSidebar />
+          </div>
+
+          {/* Mobile/Tablet Sidebar - shown as drawer */}
+          <Sheet open={sidebarOpen} onOpenChange={setSidebarOpen}>
+            <SheetContent side="left" className="p-0 w-64 lg:hidden">
+              <AppSidebar onNavigate={() => setSidebarOpen(false)} />
+            </SheetContent>
+          </Sheet>
+
+          <div className="flex-1 flex flex-col transition-smooth w-full">
+            <header className="h-16 border-b bg-card/50 backdrop-blur-sm flex items-center justify-between px-4 md:px-6 sticky top-0 z-10">
+              <div className="flex items-center gap-2">
+                {/* Hamburger menu for tablet/mobile */}
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  className="lg:hidden"
+                  onClick={() => setSidebarOpen(true)}
+                >
+                  <Menu className="h-5 w-5" />
+                </Button>
+                <ViewSelector />
+              </div>
               
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -62,7 +93,7 @@ export function Layout({ children }: LayoutProps) {
                 </DropdownMenuContent>
               </DropdownMenu>
             </header>
-            <main className="flex-1">
+            <main className="flex-1 overflow-x-hidden">
               {children}
             </main>
           </div>
