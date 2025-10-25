@@ -17,10 +17,6 @@ export function ViewSelector() {
     <div className="flex items-center">
       <Tabs value={viewMode} onValueChange={handleViewChange}>
         <TabsList className="grid w-[420px] grid-cols-3">
-          <TabsTrigger value="store_manager" className="flex items-center justify-center gap-2">
-            <Store className="h-4 w-4" />
-            <span>Store View</span>
-          </TabsTrigger>
           <TabsTrigger value="hq" className="flex items-center justify-center gap-2">
             <Building2 className="h-4 w-4" />
             <span>Demand Planner</span>
@@ -28,6 +24,10 @@ export function ViewSelector() {
           <TabsTrigger value="manufacturing" className="flex items-center justify-center gap-2">
             <Factory className="h-4 w-4" />
             <span>Manufacturer</span>
+          </TabsTrigger>
+          <TabsTrigger value="store_manager" className="flex items-center justify-center gap-2">
+            <Store className="h-4 w-4" />
+            <span>Store</span>
           </TabsTrigger>
         </TabsList>
       </Tabs>
