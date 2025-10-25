@@ -245,6 +245,12 @@ const LiveData = () => {
     return (storeName.includes("Canary Wharf") || storeName.includes("Covent Garden")) || Math.abs(deliveryVariance) > 50;
   };
 
+  // Check if store has high unaccounted stock issue
+  const hasHighUnaccountedIssue = (storeName: string, totals: any) => {
+    const unaccountedRate = (totals.unaccountedFor / totals.delivered) * 100;
+    return storeName.includes("Greenwich") || unaccountedRate > 12;
+  };
+
   // Generate AI insights - prioritize most significant issues
   const generateInsights = (): AIInsight[] => {
     const insights: AIInsight[] = [];
@@ -294,10 +300,12 @@ const LiveData = () => {
       
       // Critical Unaccounted Items
       if (unaccountedRate > 7) {
+        const isCritical = unaccountedRate > 10;
+        
         insights.push({
           type: "warning",
-          title: "Critical Inventory Gap",
-          description: `${store.storeName} has ${unaccountedRate.toFixed(1)}% unaccounted items. Urgent stock reconciliation required.`,
+          title: isCritical ? "🔍 Critical Inventory Gap" : "High Unaccounted Stock",
+          description: `${store.storeName} has ${unaccountedRate.toFixed(1)}% unaccounted items. ${isCritical ? 'URGENT: Major stock discrepancy detected - immediate reconciliation and audit required!' : 'Stock reconciliation needed.'}`,
           store: store.storeName,
         });
       }
@@ -582,10 +590,26 @@ const LiveData = () => {
                               <TrendingDown className="h-4 w-4" />
                             </span>
                           </TableCell>
-                          <TableCell className="text-right">
-                            <span className="text-orange-700 flex items-center justify-end gap-1">
+                          <TableCell className={cn(
+                            "text-right font-bold",
+                            hasHighUnaccountedIssue(store.storeName, totals) && 
+                            "relative"
+                          )}>
+                            {hasHighUnaccountedIssue(store.storeName, totals) && (
+                              <>
+                                <div className="absolute inset-0 bg-gradient-to-r from-orange-100 via-orange-200 to-orange-100 rounded-lg animate-pulse" />
+                                <div className="absolute inset-0 border-2 border-orange-400 rounded-lg" />
+                              </>
+                            )}
+                            <span className={cn(
+                              "flex items-center justify-end gap-1 relative z-10",
+                              hasHighUnaccountedIssue(store.storeName, totals) && "text-orange-700 font-bold"
+                            )}>
                               {totals.unaccountedFor}
-                              <AlertCircle className="h-4 w-4" />
+                              <AlertCircle className={cn(
+                                "h-4 w-4",
+                                hasHighUnaccountedIssue(store.storeName, totals) && "text-orange-600 animate-pulse"
+                              )} />
                             </span>
                           </TableCell>
                         </TableRow>
