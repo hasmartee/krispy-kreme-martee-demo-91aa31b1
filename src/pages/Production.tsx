@@ -452,13 +452,18 @@ export default function Production() {
         products.reduce((acc, product) => {
           if (!acc[product.id]) {
             acc[product.id] = {
-              ...product,
-              storeId: product.id,
-              store: product.productName,
+              id: product.id,
+              productName: product.productName,
+              category: product.category,
+              storeId: product.id, // Use product ID as unique key
+              store: '', // No store name in aggregated view
               currentStock: 0,
               recommendedOrder: 0,
               finalOrder: 0,
               manufacturedQty: 0,
+              trend: product.trend,
+              historicalSales: 0,
+              predictedSales: 0,
               capacityMin: 0,
               capacityMax: 0,
             };
@@ -467,8 +472,8 @@ export default function Production() {
           acc[product.id].recommendedOrder += product.recommendedOrder;
           acc[product.id].finalOrder += product.finalOrder;
           acc[product.id].manufacturedQty += product.manufacturedQty;
-          acc[product.id].capacityMin! += product.capacityMin || 0;
-          acc[product.id].capacityMax! += product.capacityMax || 0;
+          acc[product.id].historicalSales += product.historicalSales;
+          acc[product.id].predictedSales += product.predictedSales;
           return acc;
         }, {} as Record<string, Product>)
       )
