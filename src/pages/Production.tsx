@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -446,37 +446,53 @@ export default function Production() {
   };
 
 
-  // Aggregate products by product ID when groupByProduct is true
-  const displayProducts = viewMode === "hq" && groupByProduct
-    ? Object.values(
-        products.reduce((acc, product) => {
-          if (!acc[product.id]) {
-            acc[product.id] = {
-              ...product,
-              storeId: `aggregated-${product.id}`, // Unique ID for each aggregated product
-              store: '', // Will be set after reduce
-              currentStock: 0,
-              recommendedOrder: 0,
-              finalOrder: 0,
-              manufacturedQty: 0,
-              capacityMin: 0,
-              capacityMax: 0,
-            };
-          }
-          acc[product.id].currentStock += product.currentStock;
-          acc[product.id].recommendedOrder += product.recommendedOrder;
-          acc[product.id].finalOrder += product.finalOrder;
-          acc[product.id].manufacturedQty += product.manufacturedQty;
-          // Sum up capacities across all stores
-          acc[product.id].capacityMin! += product.capacityMin || 0;
-          acc[product.id].capacityMax! += product.capacityMax || 0;
-          return acc;
-        }, {} as Record<string, Product>)
-      ).map(product => ({
+  // Aggregate products by product ID when groupByProduct is true  
+  const displayProducts = useMemo(() => {
+    if (viewMode === "hq" && groupByProduct) {
+      console.log('🔄 AGGREGATING products, total products:', products.length);
+      const aggregatedMap = new Map<string, Product>();
+      
+      products.forEach(product => {
+        const existing = aggregatedMap.get(product.id);
+        if (!existing) {
+          aggregatedMap.set(product.id, {
+            id: product.id,
+            productName: product.productName,
+            category: product.category,
+            storeId: `aggregated-${product.id}`,
+            store: '',
+            currentStock: product.currentStock,
+            recommendedOrder: product.recommendedOrder,
+            finalOrder: product.finalOrder,
+            manufacturedQty: product.manufacturedQty,
+            trend: product.trend,
+            historicalSales: product.historicalSales,
+            predictedSales: product.predictedSales,
+            capacityMin: product.capacityMin || 0,
+            capacityMax: product.capacityMax || 0,
+          });
+        } else {
+          existing.currentStock += product.currentStock;
+          existing.recommendedOrder += product.recommendedOrder;
+          existing.finalOrder += product.finalOrder;
+          existing.manufacturedQty += product.manufacturedQty;
+          existing.capacityMin! += product.capacityMin || 0;
+          existing.capacityMax! += product.capacityMax || 0;
+        }
+      });
+      
+      const aggregated = Array.from(aggregatedMap.values()).map(product => ({
         ...product,
         store: `${products.filter(p => p.id === product.id).length} stores`
-      }))
-    : products;
+      }));
+      
+      console.log('✅ AGGREGATED result:', aggregated.length, 'products');
+      return aggregated;
+    }
+    
+    console.log('📋 SHOWING store-level products:', products.length);
+    return products;
+  }, [viewMode, groupByProduct, products]);
 
   if (loading) {
     return (
