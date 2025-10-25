@@ -279,7 +279,7 @@ export default function ManufacturingProduction() {
         <div className="absolute inset-0 bg-gradient-to-r from-green-900/80 via-green-800/60 to-green-700/40" />
         <div className="absolute inset-0 flex flex-col justify-center px-8">
           <h1 className="text-4xl font-bold text-primary mb-2">
-            Manufacturing Production Plan
+            Manufacturing Production Log
           </h1>
           <p className="text-xl text-primary/90">
             {formattedDate}
@@ -291,7 +291,7 @@ export default function ManufacturingProduction() {
       <div className="space-y-4">
         <div>
           <h2 className="text-2xl font-bold">14-Day Production Forecast</h2>
-          <p className="text-muted-foreground">Your rolling production plan, updated daily with additional data</p>
+          <p className="text-muted-foreground">Your rolling production log, updated daily with additional data</p>
         </div>
         
         {/* Horizontal Date Selector */}
@@ -430,9 +430,9 @@ export default function ManufacturingProduction() {
           <CardDescription>
             {products.length > 0 
               ? viewMode === 'byCategory'
-                ? `${displayData.length} categories in production plan`
-                : `${products.length} products in production plan`
-              : 'No production plan for this date'}
+                ? `${displayData.length} categories in production log`
+                : `${products.length} products in production log`
+              : 'No production log for this date'}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -537,10 +537,10 @@ export default function ManufacturingProduction() {
             <div className="flex flex-col items-center justify-center py-12 text-center">
               <Package className="h-16 w-16 text-muted-foreground/50 mb-4" />
               <h3 className="text-lg font-semibold text-muted-foreground mb-2">
-                No Production Plan Available
+                No Production Log Available
               </h3>
               <p className="text-sm text-muted-foreground max-w-md">
-                There is no production plan for the selected date. Production plans are created by HQ.
+                There is no production log for the selected date. Production logs are created by HQ.
               </p>
             </div>
           )}
