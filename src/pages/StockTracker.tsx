@@ -242,7 +242,7 @@ const LiveData = () => {
   // Check if store has critical delivery issue
   const hasCriticalDeliveryIssue = (storeName: string, totals: any) => {
     const deliveryVariance = ((totals.delivered - totals.produced) / totals.produced) * 100;
-    return storeName.includes("Canary Wharf") || Math.abs(deliveryVariance) > 50;
+    return (storeName.includes("Canary Wharf") || storeName.includes("Covent Garden")) || Math.abs(deliveryVariance) > 50;
   };
 
   // Generate AI insights - prioritize most significant issues
@@ -271,10 +271,13 @@ const LiveData = () => {
       
       // Delivery Discrepancy - Produced vs Delivered
       if (Math.abs(deliveryVariance) > 8) {
+        const severity = deliveryVariance < -40 ? "critical" : deliveryVariance < -20 ? "major" : "moderate";
+        const isCritical = deliveryVariance < -40;
+        
         insights.push({
           type: "warning",
-          title: deliveryVariance < -40 ? "Critical Delivery Loss" : "Delivery Variance Alert",
-          description: `${store.storeName} delivery ${deliveryVariance > 0 ? 'exceeded' : 'fell short of'} production by ${Math.abs(deliveryVariance).toFixed(1)}%. ${deliveryVariance < -40 ? 'URGENT: Major delivery incident - immediate investigation required!' : 'Check logistics and delivery processes.'}`,
+          title: isCritical ? "🚨 Critical Delivery Loss" : deliveryVariance < -20 ? "⚠️ Major Delivery Variance" : "Delivery Variance Alert",
+          description: `${store.storeName} delivery ${deliveryVariance > 0 ? 'exceeded' : 'fell short of'} production by ${Math.abs(deliveryVariance).toFixed(1)}%. ${isCritical ? 'URGENT: Major delivery incident detected - immediate investigation and supplier review required!' : deliveryVariance < -20 ? 'Significant delivery shortfall - review logistics immediately.' : 'Check logistics and delivery processes.'}`,
           store: store.storeName,
         });
       }
@@ -549,20 +552,21 @@ const LiveData = () => {
                           <TableCell className={cn(
                             "text-right font-bold",
                             hasCriticalDeliveryIssue(store.storeName, totals) && 
-                            "bg-red-100 border-2 border-red-500 relative"
+                            "relative"
                           )}>
                             {hasCriticalDeliveryIssue(store.storeName, totals) && (
-                              <div className="absolute inset-0 flex items-center justify-center">
-                                <div className="absolute inset-0 bg-red-500 opacity-20 animate-pulse" />
-                              </div>
+                              <>
+                                <div className="absolute inset-0 bg-gradient-to-r from-orange-100 via-orange-200 to-orange-100 rounded-lg animate-pulse" />
+                                <div className="absolute inset-0 border-2 border-orange-400 rounded-lg" />
+                              </>
                             )}
                             <span className={cn(
                               "relative z-10 flex items-center justify-end gap-2",
-                              hasCriticalDeliveryIssue(store.storeName, totals) && "text-red-700"
+                              hasCriticalDeliveryIssue(store.storeName, totals) && "text-orange-700 font-bold"
                             )}>
                               {totals.delivered}
                               {hasCriticalDeliveryIssue(store.storeName, totals) && (
-                                <AlertCircle className="h-5 w-5 text-red-600 animate-pulse" />
+                                <AlertCircle className="h-5 w-5 text-orange-600 animate-pulse" />
                               )}
                             </span>
                           </TableCell>
