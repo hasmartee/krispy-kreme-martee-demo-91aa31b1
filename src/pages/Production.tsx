@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -447,16 +447,17 @@ export default function Production() {
 
 
   // Aggregate products by product ID when groupByProduct is true
-  const displayProducts = viewMode === "hq" && groupByProduct
-    ? Object.values(
+  const displayProducts = useMemo(() => {
+    if (viewMode === "hq" && groupByProduct) {
+      return Object.values(
         products.reduce((acc, product) => {
           if (!acc[product.id]) {
             acc[product.id] = {
               id: product.id,
               productName: product.productName,
               category: product.category,
-              storeId: 'aggregated', // Use 'aggregated' for proper handling in updateFinalOrder
-              store: '', // No store name in aggregated view
+              storeId: 'aggregated',
+              store: '',
               currentStock: 0,
               recommendedOrder: 0,
               finalOrder: 0,
@@ -476,8 +477,10 @@ export default function Production() {
           acc[product.id].predictedSales += product.predictedSales;
           return acc;
         }, {} as Record<string, Product>)
-      )
-    : products;
+      );
+    }
+    return products;
+  }, [viewMode, groupByProduct, products]);
 
   if (loading) {
     return (
