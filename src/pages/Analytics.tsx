@@ -139,6 +139,9 @@ export default function Analytics() {
 
   const isSingleStoreView = viewMode === "store_manager" || (viewMode === "hq" && selectedStore !== "all");
   
+  // Compute weekly trend data based on selected store
+  const currentWeeklyTrendData = isSingleStoreView ? weeklyTrendDataStore : weeklyTrendData;
+  
   // Store-specific data
   const storeData = {
     revenue: 12860,
@@ -544,7 +547,7 @@ export default function Analytics() {
         </CardHeader>
         <CardContent className="pt-6">
           <ResponsiveContainer width="100%" height={350}>
-            <ComposedChart data={viewMode === "hq" ? weeklyTrendData : weeklyTrendDataStore} margin={{ top: 5, right: 30, left: 0, bottom: 5 }}>
+            <ComposedChart data={currentWeeklyTrendData} margin={{ top: 5, right: 30, left: 0, bottom: 5 }}>
               <defs>
                 <linearGradient id="deliveredGradientAnalytics" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="5%" stopColor="hsl(var(--brand-peach))" stopOpacity={0.8}/>
@@ -639,7 +642,7 @@ export default function Analytics() {
                 <div>
                   <div className="text-xs text-muted-foreground font-medium">Total Delivered</div>
                   <div className="text-2xl font-bold text-foreground">
-                    {(viewMode === "hq" ? weeklyTrendData : weeklyTrendDataStore).reduce((sum, d) => sum + d.delivered, 0).toLocaleString()}
+                    {currentWeeklyTrendData.reduce((sum, d) => sum + d.delivered, 0).toLocaleString()}
                   </div>
                   <div className="text-xs text-muted-foreground">units this week</div>
                 </div>
@@ -656,11 +659,11 @@ export default function Analytics() {
                 <div>
                   <div className="text-xs text-muted-foreground font-medium">Total Sold</div>
                   <div className="text-2xl font-bold" style={{ color: 'hsl(var(--success-green))' }}>
-                    {(viewMode === "hq" ? weeklyTrendData : weeklyTrendDataStore).reduce((sum, d) => sum + d.sold, 0).toLocaleString()}
+                    {currentWeeklyTrendData.reduce((sum, d) => sum + d.sold, 0).toLocaleString()}
                   </div>
                   <div className="text-xs text-muted-foreground">
-                    {(((viewMode === "hq" ? weeklyTrendData : weeklyTrendDataStore).reduce((sum, d) => sum + d.sold, 0) / 
-                      (viewMode === "hq" ? weeklyTrendData : weeklyTrendDataStore).reduce((sum, d) => sum + d.delivered, 0)) * 100).toFixed(1)}% of delivered
+                    {((currentWeeklyTrendData.reduce((sum, d) => sum + d.sold, 0) / 
+                      currentWeeklyTrendData.reduce((sum, d) => sum + d.delivered, 0)) * 100).toFixed(1)}% of delivered
                   </div>
                 </div>
               </div>
@@ -676,11 +679,11 @@ export default function Analytics() {
                 <div>
                   <div className="text-xs text-muted-foreground font-medium">Total Wasted</div>
                   <div className="text-2xl font-bold" style={{ color: 'hsl(var(--warning-orange))' }}>
-                    {(viewMode === "hq" ? weeklyTrendData : weeklyTrendDataStore).reduce((sum, d) => sum + d.wasted, 0).toLocaleString()}
+                    {currentWeeklyTrendData.reduce((sum, d) => sum + d.wasted, 0).toLocaleString()}
                   </div>
                   <div className="text-xs text-muted-foreground">
-                    {(((viewMode === "hq" ? weeklyTrendData : weeklyTrendDataStore).reduce((sum, d) => sum + d.wasted, 0) / 
-                      (viewMode === "hq" ? weeklyTrendData : weeklyTrendDataStore).reduce((sum, d) => sum + d.delivered, 0)) * 100).toFixed(1)}% of delivered
+                    {((currentWeeklyTrendData.reduce((sum, d) => sum + d.wasted, 0) / 
+                      currentWeeklyTrendData.reduce((sum, d) => sum + d.delivered, 0)) * 100).toFixed(1)}% of delivered
                   </div>
                 </div>
               </div>
@@ -692,11 +695,11 @@ export default function Analytics() {
             <TrendingUp className="h-5 w-5 text-primary" />
             <span className="text-sm text-foreground">
               <strong>Best performing day:</strong> {
-                (viewMode === "hq" ? weeklyTrendData : weeklyTrendDataStore).reduce((prev, current) => 
+                currentWeeklyTrendData.reduce((prev, current) => 
                   current.sold > prev.sold ? current : prev
                 ).day
               } with {
-                (viewMode === "hq" ? weeklyTrendData : weeklyTrendDataStore).reduce((prev, current) => 
+                currentWeeklyTrendData.reduce((prev, current) => 
                   current.sold > prev.sold ? current : prev
                 ).sold.toLocaleString()
               } units sold
