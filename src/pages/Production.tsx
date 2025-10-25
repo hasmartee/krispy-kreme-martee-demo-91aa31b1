@@ -320,10 +320,22 @@ export default function Production() {
       if (error) {
         console.error('❌ Upsert error:', error);
         return { success: false, error };
-      } else {
-        console.log('✅ Upserted successfully:', upsertResult?.length, 'records');
-        return { success: true, count: upsertResult?.length };
       }
+      
+      // Update production plan status to 'confirmed' when quantities are adjusted
+      const { error: statusError } = await supabase
+        .from('production_plans')
+        .update({ status: 'confirmed' })
+        .eq('id', planId) as any;
+
+      if (statusError) {
+        console.error('❌ Error updating plan status:', statusError);
+      } else {
+        console.log('✅ Updated plan status to confirmed');
+      }
+
+      console.log('✅ Upserted successfully:', upsertResult?.length, 'records');
+      return { success: true, count: upsertResult?.length };
     } catch (error) {
       console.error('❌ Error saving pending allocations:', error);
       return { success: false, error };
