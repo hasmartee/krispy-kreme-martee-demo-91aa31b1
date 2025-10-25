@@ -766,6 +766,288 @@ export default function Home() {
               <h2 className="text-xl font-semibold text-foreground">This Week's Performance</h2>
             </div>
           </div>
+
+          {/* Store KPIs */}
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+            <Card className="shadow-md border-2 border-primary/20">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between mb-2">
+                  <div className="text-sm text-muted-foreground font-medium">Revenue</div>
+                  <DollarSign className="h-5 w-5 text-primary" />
+                </div>
+                <div className="text-3xl font-bold text-foreground">£8,945</div>
+                <div className="flex items-center gap-1 mt-2">
+                  <TrendingUp className="h-4 w-4 text-green-600" />
+                  <span className="text-xs text-green-600 font-medium">+12.3% vs last week</span>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="shadow-md border-2 border-primary/20">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between mb-2">
+                  <div className="text-sm text-muted-foreground font-medium">Gross Profit</div>
+                  <DollarSign className="h-5 w-5 text-green-600" />
+                </div>
+                <div className="text-3xl font-bold text-foreground">£5,425</div>
+                <div className="flex items-center gap-1 mt-2">
+                  <span className="text-xs text-muted-foreground">60.6% margin</span>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="shadow-md border-2 border-red-200 bg-red-50/50 dark:bg-red-950/20">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between mb-2">
+                  <div className="text-sm text-muted-foreground font-medium">Waste</div>
+                  <Trash2 className="h-5 w-5 text-red-600" />
+                </div>
+                <div className="text-3xl font-bold text-red-600">£385</div>
+                <div className="flex items-center gap-1 mt-2">
+                  <TrendingDown className="h-4 w-4 text-red-600" />
+                  <span className="text-xs text-red-600 font-medium">4.3% of total</span>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="shadow-md border-2 border-amber-200 bg-amber-50/50 dark:bg-amber-950/20">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between mb-2">
+                  <div className="text-sm text-muted-foreground font-medium">Unaccounted Items</div>
+                  <AlertTriangle className="h-5 w-5 text-amber-600" />
+                </div>
+                <div className="text-3xl font-bold text-amber-600">42</div>
+                <div className="flex items-center gap-1 mt-2">
+                  <span className="text-xs text-muted-foreground">0.5% variance</span>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Store Leaderboard Ranking */}
+          <Card className="shadow-lg border-2 border-primary/20">
+            <CardHeader className="pb-4 bg-gradient-to-r from-primary/5 to-accent/5 rounded-t-lg">
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle className="text-2xl font-bold flex items-center gap-2">
+                    <Users className="h-6 w-6 text-primary" />
+                    Camden Town Store Ranking
+                  </CardTitle>
+                  <CardDescription className="text-base mt-1">
+                    Your position in the network this week
+                  </CardDescription>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent className="pt-6">
+              <div className="grid gap-4 md:grid-cols-3">
+                <div className="p-4 rounded-lg bg-gradient-to-br from-amber-100 to-amber-50 border-2 border-amber-200">
+                  <div className="text-sm text-muted-foreground font-medium mb-2">Revenue Rank</div>
+                  <div className="flex items-baseline gap-2">
+                    <div className="text-4xl font-bold text-foreground">#12</div>
+                    <div className="text-sm text-muted-foreground">of 25 stores</div>
+                  </div>
+                  <div className="mt-2 text-xs text-green-600 font-medium">↑ 2 positions</div>
+                </div>
+
+                <div className="p-4 rounded-lg bg-gradient-to-br from-green-100 to-green-50 border-2 border-green-200">
+                  <div className="text-sm text-muted-foreground font-medium mb-2">Waste Rank</div>
+                  <div className="flex items-baseline gap-2">
+                    <div className="text-4xl font-bold text-foreground">#8</div>
+                    <div className="text-sm text-muted-foreground">of 25 stores</div>
+                  </div>
+                  <div className="mt-2 text-xs text-green-600 font-medium">↑ 3 positions (Lower is better)</div>
+                </div>
+
+                <div className="p-4 rounded-lg bg-gradient-to-br from-blue-100 to-blue-50 border-2 border-blue-200">
+                  <div className="text-sm text-muted-foreground font-medium mb-2">Efficiency Rank</div>
+                  <div className="flex items-baseline gap-2">
+                    <div className="text-4xl font-bold text-foreground">#15</div>
+                    <div className="text-sm text-muted-foreground">of 25 stores</div>
+                  </div>
+                  <div className="mt-2 text-xs text-amber-600 font-medium">→ No change</div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Weekly Volumes Chart */}
+          <Card className="shadow-lg border-2 border-primary/20 animate-fade-in">
+            <CardHeader className="pb-4 bg-gradient-to-r from-primary/5 to-accent/5 rounded-t-lg">
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle className="text-2xl font-bold flex items-center gap-2">
+                    <div className="h-10 w-10 rounded-lg bg-primary/20 flex items-center justify-center">
+                      📊
+                    </div>
+                    Weekly Volumes
+                  </CardTitle>
+                  <CardDescription className="text-base mt-1">
+                    Delivered, sold, and wasted quantities this week
+                  </CardDescription>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent className="pt-6">
+              <ResponsiveContainer width="100%" height={350}>
+                <ComposedChart data={[
+                  { day: "Mon", delivered: 850, sold: 790, wasted: 45 },
+                  { day: "Tue", delivered: 820, sold: 765, wasted: 38 },
+                  { day: "Wed", delivered: 890, sold: 835, wasted: 42 },
+                  { day: "Thu", delivered: 870, sold: 810, wasted: 48 },
+                  { day: "Fri", delivered: 920, sold: 880, wasted: 35 },
+                  { day: "Sat", delivered: 980, sold: 945, wasted: 32 },
+                  { day: "Sun", delivered: 900, sold: 845, wasted: 40 },
+                ]} margin={{ top: 5, right: 30, left: 0, bottom: 5 }}>
+                  <defs>
+                    <linearGradient id="storeDeliveredGradient" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="hsl(var(--brand-peach))" stopOpacity={0.8}/>
+                      <stop offset="95%" stopColor="hsl(var(--brand-peach))" stopOpacity={0.3}/>
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.5} />
+                  <XAxis 
+                    dataKey="day" 
+                    stroke="hsl(var(--foreground))"
+                    fontSize={13}
+                    fontWeight={500}
+                    tick={{ fill: 'hsl(var(--foreground))' }}
+                  />
+                  <YAxis 
+                    stroke="hsl(var(--foreground))"
+                    fontSize={13}
+                    fontWeight={500}
+                    tick={{ fill: 'hsl(var(--foreground))' }}
+                    tickFormatter={(value) => value.toLocaleString()}
+                  />
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: "hsl(var(--card))",
+                      border: "2px solid hsl(var(--border))",
+                      borderRadius: "12px",
+                      padding: "12px",
+                      boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)"
+                    }}
+                    labelStyle={{
+                      color: "hsl(var(--foreground))",
+                      fontWeight: "bold",
+                      marginBottom: "8px"
+                    }}
+                    formatter={(value: number, name: string) => [
+                      value.toLocaleString() + " units",
+                      name
+                    ]}
+                  />
+                  <Legend 
+                    wrapperStyle={{
+                      paddingTop: "20px"
+                    }}
+                    iconType="circle"
+                  />
+                  <Bar 
+                    dataKey="delivered" 
+                    fill="url(#storeDeliveredGradient)" 
+                    name="Delivered"
+                    radius={[8, 8, 0, 0]}
+                    maxBarSize={60}
+                  />
+                  <Line 
+                    type="monotone" 
+                    dataKey="sold" 
+                    stroke="hsl(var(--success-green))" 
+                    strokeWidth={4}
+                    name="Sold"
+                    dot={{ 
+                      fill: "hsl(var(--success-green))", 
+                      r: 6,
+                      strokeWidth: 2,
+                      stroke: "hsl(var(--background))"
+                    }}
+                    activeDot={{ r: 8 }}
+                  />
+                  <Line 
+                    type="monotone" 
+                    dataKey="wasted" 
+                    stroke="hsl(var(--warning-orange))" 
+                    strokeWidth={4}
+                    name="Wasted"
+                    dot={{ 
+                      fill: "hsl(var(--warning-orange))", 
+                      r: 6,
+                      strokeWidth: 2,
+                      stroke: "hsl(var(--background))"
+                    }}
+                    activeDot={{ r: 8 }}
+                    strokeDasharray="5 5"
+                  />
+                </ComposedChart>
+              </ResponsiveContainer>
+            </CardContent>
+          </Card>
+
+          {/* Top 5 Products Leaderboard */}
+          <Card className="shadow-lg border-2 border-primary/20">
+            <CardHeader className="pb-4 bg-gradient-to-r from-primary/5 to-accent/5 rounded-t-lg">
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle className="text-2xl font-bold flex items-center gap-2">
+                    <TrendingUp className="h-6 w-6 text-primary" />
+                    Top 5 Products This Week
+                  </CardTitle>
+                  <CardDescription className="text-base mt-1">
+                    Best selling products at Camden Town
+                  </CardDescription>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent className="pt-6">
+              <div className="space-y-4">
+                {[
+                  { rank: 1, name: "Original Glazed", sold: 1245, revenue: "£1,869", change: "+8%" },
+                  { rank: 2, name: "Chocolate Iced Glazed", sold: 1128, revenue: "£1,692", change: "+12%" },
+                  { rank: 3, name: "Strawberry Iced with Sprinkles", sold: 985, revenue: "£1,478", change: "+5%" },
+                  { rank: 4, name: "Boston Kreme", sold: 892, revenue: "£1,338", change: "+15%" },
+                  { rank: 5, name: "Raspberry Filled", sold: 845, revenue: "£1,268", change: "+3%" },
+                ].map((product) => (
+                  <div 
+                    key={product.rank} 
+                    className={`flex items-center gap-4 p-4 rounded-lg border-2 transition-all hover-scale ${
+                      product.rank === 1 
+                        ? 'bg-gradient-to-r from-amber-100 to-yellow-100 border-amber-300' 
+                        : product.rank === 2
+                        ? 'bg-gradient-to-r from-gray-100 to-slate-100 border-gray-300'
+                        : product.rank === 3
+                        ? 'bg-gradient-to-r from-orange-100 to-amber-100 border-orange-300'
+                        : 'bg-muted/50 border-muted'
+                    }`}
+                  >
+                    <div className={`flex-shrink-0 w-12 h-12 rounded-full flex items-center justify-center font-bold text-xl ${
+                      product.rank === 1 
+                        ? 'bg-amber-500 text-white' 
+                        : product.rank === 2
+                        ? 'bg-gray-400 text-white'
+                        : product.rank === 3
+                        ? 'bg-orange-500 text-white'
+                        : 'bg-muted text-foreground'
+                    }`}>
+                      {product.rank}
+                    </div>
+                    <div className="flex-1">
+                      <div className="font-semibold text-lg text-foreground">{product.name}</div>
+                      <div className="text-sm text-muted-foreground">{product.sold.toLocaleString()} units sold</div>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-xl font-bold text-foreground">{product.revenue}</div>
+                      <div className="text-sm text-green-600 font-medium">{product.change}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Share with HQ */}
+          <ShareWithHQCard />
         </>
       )}
 
