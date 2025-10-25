@@ -296,9 +296,9 @@ export default function DeliveryPlan() {
         className="relative h-48 rounded-2xl overflow-hidden bg-cover bg-center shadow-2xl"
         style={{ backgroundImage: `url(${heroImage})` }}
       >
-        <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/60 to-black/40" />
+        <div className="absolute inset-0 bg-gradient-to-r from-green-900/80 via-green-800/60 to-green-700/40" />
         <div className="absolute inset-0 flex flex-col justify-center px-8">
-          <h1 className="text-4xl font-bold text-white mb-2">
+          <h1 className="text-4xl font-bold text-primary mb-2">
             Delivery Plan
           </h1>
           <p className="text-xl text-cream-foreground">
