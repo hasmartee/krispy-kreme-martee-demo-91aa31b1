@@ -743,33 +743,33 @@ export default function Production() {
           </div>
         </CardHeader>
         <CardContent className="overflow-x-auto -mx-4 sm:mx-0">
-          <div className="min-w-[800px] px-4 sm:px-0">
+          <div className="min-w-full sm:min-w-[800px] px-4 sm:px-0">
             <Table key={groupByProduct ? 'total' : 'store'}>
             <TableHeader>
               <TableRow>
                 {viewMode === "hq" && (
-                  <TableHead className="w-12 hidden sm:table-cell">
+                  <TableHead className="w-12 hidden lg:table-cell">
                     <Checkbox
                       checked={selectedProducts.size === displayProducts.length && displayProducts.length > 0}
                       onCheckedChange={toggleAllProducts}
                     />
                   </TableHead>
                 )}
-                <TableHead>Product</TableHead>
-                {!groupByProduct && viewMode === "hq" && <TableHead className="hidden lg:table-cell">Store</TableHead>}
-                {!groupByProduct && viewMode === "hq" && <TableHead className="text-center hidden md:table-cell">Capacity</TableHead>}
-                <TableHead className="bg-gradient-to-r from-[#ff914d]/20 to-[#ff914d]/10 border-l-4 border-l-[#ff914d] text-center">
-                  <div className="flex items-center justify-center gap-2 py-1">
+                <TableHead className="min-w-[180px]">Product</TableHead>
+                {!groupByProduct && viewMode === "hq" && <TableHead className="hidden xl:table-cell min-w-[120px]">Store</TableHead>}
+                {!groupByProduct && viewMode === "hq" && <TableHead className="text-center hidden xl:table-cell min-w-[100px]">Capacity</TableHead>}
+                <TableHead className="bg-gradient-to-r from-[#ff914d]/20 to-[#ff914d]/10 border-l-4 border-l-[#ff914d] text-center min-w-[120px]">
+                  <div className="flex items-center justify-center gap-1 sm:gap-2 py-1">
                     <Sparkles className="h-4 w-4 sm:h-5 sm:w-5 text-[#ff914d] animate-pulse" />
-                    <span className="font-bold text-[#ff914d] text-sm sm:text-lg">AI Rec.</span>
+                    <span className="font-bold text-[#ff914d] text-xs sm:text-sm md:text-base lg:text-lg">AI Rec.</span>
                   </div>
                 </TableHead>
-                <TableHead className="bg-gradient-to-r from-[#7ea058]/20 to-[#7ea058]/10 border-l-4 border-l-[#7ea058] text-center">
-                  <div className="flex items-center justify-center gap-2 py-1">
-                    <span className="font-bold text-[#7ea058] text-sm sm:text-lg">Final Qty</span>
+                <TableHead className="bg-gradient-to-r from-[#7ea058]/20 to-[#7ea058]/10 border-l-4 border-l-[#7ea058] text-center min-w-[150px]">
+                  <div className="flex items-center justify-center gap-1 sm:gap-2 py-1">
+                    <span className="font-bold text-[#7ea058] text-xs sm:text-sm md:text-base lg:text-lg">Final Qty</span>
                   </div>
                 </TableHead>
-                <TableHead className="hidden sm:table-cell">Action</TableHead>
+                <TableHead className="hidden lg:table-cell min-w-[100px]">Action</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -778,17 +778,17 @@ export default function Production() {
                 return (
                   <TableRow key={productKey}>
                     {viewMode === "hq" && (
-                      <TableCell className="hidden sm:table-cell">
+                      <TableCell className="hidden lg:table-cell">
                         <Checkbox
                           checked={selectedProducts.has(productKey)}
                           onCheckedChange={() => toggleProductSelection(productKey)}
                         />
                       </TableCell>
                     )}
-                    <TableCell>
+                    <TableCell className="min-w-[180px]">
                       <div className="space-y-1">
-                        <div className="flex items-center gap-2">
-                          <div className="font-medium text-sm sm:text-base">
+                        <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+                          <div className="font-medium text-xs sm:text-sm md:text-base">
                             {product.productName}
                           </div>
                         {editingCategory === `${product.id}-${product.storeId}` && viewMode === "hq" ? (
@@ -803,7 +803,7 @@ export default function Production() {
                               setEditingCategory(null);
                             }}
                           >
-                            <SelectTrigger className="w-[130px] h-7">
+                            <SelectTrigger className="w-[120px] h-7 text-xs">
                               <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
@@ -816,68 +816,68 @@ export default function Production() {
                           </Select>
                         ) : (
                           <Badge 
-                            className={`${getCategoryBadgeClass(product.category)} ${viewMode === "hq" ? "cursor-pointer hover:opacity-80" : ""} text-xs`}
+                            className={`${getCategoryBadgeClass(product.category)} ${viewMode === "hq" ? "cursor-pointer hover:opacity-80" : ""} text-[10px] sm:text-xs`}
                             onClick={() => viewMode === "hq" && setEditingCategory(`${product.id}-${product.storeId}`)}
                           >
                             {product.category}
                           </Badge>
                         )}
                       </div>
-                      <div className="text-xs sm:text-sm text-muted-foreground">{product.id}</div>
+                      <div className="text-[10px] sm:text-xs text-muted-foreground">{product.id}</div>
                     </div>
                   </TableCell>
                   {!groupByProduct && viewMode === "hq" && (
-                    <TableCell className="hidden lg:table-cell">
-                      <span className="font-medium text-sm">{product.store}</span>
+                    <TableCell className="hidden xl:table-cell">
+                      <span className="font-medium text-xs sm:text-sm">{product.store}</span>
                     </TableCell>
                   )}
                   {!groupByProduct && viewMode === "hq" && (
-                    <TableCell className="text-center hidden md:table-cell">
-                      <Badge variant="outline" className="font-mono text-xs sm:text-sm">
+                    <TableCell className="text-center hidden xl:table-cell">
+                      <Badge variant="outline" className="font-mono text-[10px] sm:text-xs">
                         {product.capacityMin || 0} / {product.capacityMax || 0}
                       </Badge>
                     </TableCell>
                   )}
                   <TableCell className="bg-gradient-to-r from-[#ff914d]/10 to-[#ff914d]/5 border-l-4 border-l-[#ff914d]/30">
                     <div className="flex items-center justify-center gap-2">
-                      <span className="text-xl sm:text-2xl font-bold text-[#ff914d]">
+                      <span className="text-lg sm:text-xl md:text-2xl font-bold text-[#ff914d]">
                         {product.recommendedOrder}
                       </span>
                     </div>
                   </TableCell>
                   <TableCell className="bg-gradient-to-r from-[#7ea058]/10 to-[#7ea058]/5 border-l-4 border-l-[#7ea058]/30">
-                    <div className="flex items-center gap-1 sm:gap-2 justify-center">
+                    <div className="flex items-center gap-1 justify-center">
                       <Button
                         variant="outline"
                         size="icon"
                         onClick={() => updateFinalOrder(product.id, product.storeId, -1)}
-                        className="h-8 w-8 sm:h-10 sm:w-10 rounded-full border-2 border-[#7ea058]/40 hover:border-[#7ea058] hover:bg-[#7ea058]/10 transition-all duration-200 hover:scale-110"
+                        className="h-7 w-7 sm:h-8 sm:w-8 md:h-10 md:w-10 rounded-full border-2 border-[#7ea058]/40 hover:border-[#7ea058] hover:bg-[#7ea058]/10 transition-all duration-200 hover:scale-110"
                       >
-                        <Minus className="h-3 w-3 sm:h-4 sm:w-4 text-[#7ea058]" />
+                        <Minus className="h-3 w-3 sm:h-3.5 sm:w-3.5 md:h-4 md:w-4 text-[#7ea058]" />
                       </Button>
-                      <span className="text-xl sm:text-2xl font-bold text-[#7ea058] w-12 sm:w-16 text-center">
+                      <span className="text-lg sm:text-xl md:text-2xl font-bold text-[#7ea058] w-10 sm:w-12 md:w-16 text-center">
                         {product.finalOrder}
                       </span>
                       <Button
                         variant="outline"
                         size="icon"
                         onClick={() => updateFinalOrder(product.id, product.storeId, 1)}
-                        className="h-8 w-8 sm:h-10 sm:w-10 rounded-full border-2 border-[#7ea058]/40 hover:border-[#7ea058] hover:bg-[#7ea058]/10 transition-all duration-200 hover:scale-110"
+                        className="h-7 w-7 sm:h-8 sm:w-8 md:h-10 md:w-10 rounded-full border-2 border-[#7ea058]/40 hover:border-[#7ea058] hover:bg-[#7ea058]/10 transition-all duration-200 hover:scale-110"
                       >
-                        <Plus className="h-3 w-3 sm:h-4 sm:w-4 text-[#7ea058]" />
+                        <Plus className="h-3 w-3 sm:h-3.5 sm:w-3.5 md:h-4 md:w-4 text-[#7ea058]" />
                       </Button>
                     </div>
                   </TableCell>
-                  <TableCell className="hidden sm:table-cell">
+                  <TableCell className="hidden lg:table-cell">
                     <Button
                       size="sm"
-                      className="bg-primary text-primary-foreground text-xs sm:text-sm"
+                      className="bg-primary text-primary-foreground text-xs"
                       disabled={!!confirmingProduction}
                       onClick={() => handleConfirmProduction(product)}
                     >
                       {confirmingProduction === `${product.id}-${product.storeId}` ? (
                         <>
-                          <Loader2 className="h-3 w-3 sm:h-4 sm:w-4 mr-2 animate-spin" />
+                          <Loader2 className="h-3 w-3 mr-1 animate-spin" />
                           Confirming...
                         </>
                       ) : (
