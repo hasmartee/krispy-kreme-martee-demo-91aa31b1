@@ -564,7 +564,7 @@ export default function StoreProductRange() {
       <div className="flex flex-col gap-4">
         <div>
           <h1 className="text-3xl font-bold text-foreground">
-            {viewMode === "store_manager" ? `My Store - ${selectedStore}` : "My Range Manager"}
+            {viewMode === "store_manager" ? `My Store - ${selectedStore}` : "Range Plan"}
           </h1>
           <p className="text-muted-foreground">
             {viewMode === "store_manager"
@@ -625,7 +625,7 @@ export default function StoreProductRange() {
                   <AlertCircle className="h-4 w-4 text-white" />
                 </div>
                 <p className="text-sm text-foreground leading-relaxed">
-                  <span className="font-semibold text-red-700">Range Gap Detected</span> — Consider delisting Maple Iced in the business district cluster. Waste is regularly over 60%.
+                  <span className="font-semibold text-red-700">Range Suggestion</span> — Consider delisting Maple Iced in the Business District cluster. Waste is regularly over 60%.
                 </p>
               </div>
             </div>
