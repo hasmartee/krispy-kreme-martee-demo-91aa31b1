@@ -323,299 +323,385 @@ export default function Home() {
   const totalCount = tasks.length;
   const progressPercentage = totalCount > 0 ? (completedCount / totalCount) * 100 : 0;
 
-  const isSingleStoreView = viewMode === "store_manager";
-  const revenueForecast = isSingleStoreView ? revenueForecastStore : revenueForecastHQ;
-  const volumeForecast = isSingleStoreView ? volumeForecastStore : volumeForecastHQ;
-  const footfallForecast = isSingleStoreView ? footfallForecastStore : footfallForecastHQ;
-
-  // Multi-brand data for HQ view
-  const brandData = [
-    { 
-      name: "Pret a Manger", 
-      stores: 156, 
-      revenue: 4250000, 
-      grossProfit: 1785000,
-      waste: 3.2, 
-      availability: 96.8 
-    },
-    { 
-      name: "Brioche Dorée", 
-      stores: 118, 
-      revenue: 2890000, 
-      grossProfit: 1215600,
-      waste: 4.1, 
-      availability: 94.5 
-    },
-    { 
-      name: "Starbucks", 
-      stores: 112, 
-      revenue: 5120000, 
-      grossProfit: 2150400,
-      waste: 2.8, 
-      availability: 97.2 
-    },
-  ];
-
-  const totalStores = brandData.reduce((sum, brand) => sum + brand.stores, 0);
-  const totalRevenue = brandData.reduce((sum, brand) => sum + brand.revenue, 0);
-  const totalGrossProfit = brandData.reduce((sum, brand) => sum + brand.grossProfit, 0);
-  const avgWaste = brandData.reduce((sum, brand) => sum + brand.waste, 0) / brandData.length;
-  const avgAvailability = brandData.reduce((sum, brand) => sum + brand.availability, 0) / brandData.length;
-
-  // Mock data for this week's metrics
-  const weeklyMetrics = {
-    revenue: viewMode === "store_manager" ? 1286 : totalRevenue,
-    grossProfit: viewMode === "store_manager" ? 772 : totalGrossProfit,
-    waste: viewMode === "store_manager" ? 45 : Math.round(avgWaste * totalRevenue / 100),
-    availability: viewMode === "store_manager" ? 96.5 : avgAvailability,
-  };
-
-// Top/Bottom store performance data
-const storePerformance = {
-  sales: {
-    top: [
-      { store: "St Pancras International", value: "892", change: "+12%" },
-      { store: "Liverpool Street Station", value: "845", change: "+8%" },
-      { store: "Kings Cross Station", value: "780", change: "+5%" },
-    ],
-    bottom: [
-      { store: "Wimbledon Village", value: "342", change: "-3%" },
-      { store: "Greenwich Village", value: "368", change: "-1%" },
-      { store: "Notting Hill Gate", value: "395", change: "+2%" },
-    ],
-  },
-  waste: {
-    top: [
-      { store: "Canary Wharf Plaza", value: "18", change: "2.1%" },
-      { store: "The City - Leadenhall", value: "22", change: "2.5%" },
-      { store: "Bank Station", value: "25", change: "2.8%" },
-    ],
-    bottom: [
-      { store: "Liverpool Street Station", value: "78", change: "8.2%" },
-      { store: "Camden Town", value: "65", change: "7.1%" },
-      { store: "Bond Street", value: "58", change: "6.4%" },
-    ],
-  },
-  deliveries: {
-    top: [
-      { store: "St Pancras International", value: "99.8%", change: "+0.2%" },
-      { store: "Kings Cross Station", value: "99.2%", change: "0%" },
-      { store: "Shoreditch High Street", value: "98.9%", change: "+0.1%" },
-    ],
-    bottom: [
-      { store: "Bond Street", value: "91.6%", change: "-8.4%" },
-      { store: "Camden Town", value: "94.2%", change: "-5.8%" },
-      { store: "Notting Hill Gate", value: "95.5%", change: "-4.5%" },
-    ],
-  },
-};
-
-// Weekly trend data for HQ view
-const weeklyTrendData = [
-  { day: "Mon", delivered: 8750, sold: 8100, wasted: 420 },
-  { day: "Tue", delivered: 8950, sold: 8300, wasted: 385 },
-  { day: "Wed", delivered: 9200, sold: 8650, wasted: 360 },
-  { day: "Thu", delivered: 8880, sold: 8250, wasted: 410 },
-  { day: "Fri", delivered: 9500, sold: 9100, wasted: 380 },
-  { day: "Sat", delivered: 9800, sold: 9450, wasted: 340 },
-  { day: "Sun", delivered: 9100, sold: 8520, wasted: 395 },
-];
-
-  const tomorrow = new Date();
-  tomorrow.setDate(tomorrow.getDate() + 1);
-  const tomorrowDate = tomorrow.toLocaleDateString('en-US', { day: 'numeric', month: 'short' });
-
-  // Weekly trend data for single store (Camden Town) 
-  const weeklyTrendDataStore = [
-    { day: "Mon", delivered: 320, sold: 298, wasted: 18 },
-    { day: "Tue", delivered: 305, sold: 282, wasted: 16 },
-    { day: "Wed", delivered: 335, sold: 315, wasted: 14 },
-    { day: "Thu", delivered: 310, sold: 289, wasted: 15 },
-    { day: "Fri", delivered: 360, sold: 345, wasted: 12 },
-    { day: "Sat", delivered: 385, sold: 370, wasted: 13 },
-    { day: "Sun", delivered: 340, sold: 318, wasted: 16 },
-  ];
+  // 14-day production forecast data for manufacturing view
+  const productionForecastData = Array.from({ length: 14 }, (_, i) => {
+    const date = new Date();
+    date.setDate(date.getDate() + i);
+    const dayName = date.toLocaleDateString('en-US', { weekday: 'short' });
+    const dateStr = date.toLocaleDateString('en-US', { day: 'numeric', month: 'short' });
+    
+    return {
+      day: `${dayName} ${dateStr}`,
+      Glazed: Math.floor(2500 + Math.random() * 500),
+      Iced: Math.floor(1800 + Math.random() * 400),
+      Filled: Math.floor(1500 + Math.random() * 300),
+      Cake: Math.floor(1200 + Math.random() * 300),
+      Specialty: Math.floor(1000 + Math.random() * 200),
+    };
+  });
 
   return (
     <div className="flex-1 space-y-6 p-6">
       {/* Header */}
       <div>
         <h1 className="text-3xl font-bold text-foreground">
-          {viewMode === "store_manager" ? "Welcome Back Camden Town" : "Welcome Back"}
+          {viewMode === "store_manager" ? "Welcome Back Camden Town" : viewMode === "manufacturing" ? "Manufacturing Dashboard" : "Welcome Back"}
         </h1>
         <p className="text-muted-foreground">
-          Here's what's happening this week
+          {viewMode === "manufacturing" ? "Production planning and overview" : "Here's what's happening this week"}
         </p>
       </div>
 
-      {/* My Tasks Section - Store Manager Only */}
-      {viewMode === "store_manager" && (
-        <div className="space-y-3">
-          <div className="flex items-center justify-between">
-            <h2 className="text-xl font-semibold text-foreground">My Tasks</h2>
-            <div className="text-right">
-              <div className="text-lg font-bold text-primary">
-                {completedCount}/{totalCount}
-              </div>
-              <div className="text-xs text-muted-foreground">Completed</div>
-            </div>
-          </div>
-
-          {/* Progress Bar */}
-          <Card className="shadow-md bg-gradient-to-r from-background to-primary/5 border-orange-200">
-            <CardContent className="p-4">
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium">Daily Progress</span>
-                  <span className="text-sm font-medium text-primary">
-                    {Math.round(progressPercentage)}%
-                  </span>
-                </div>
-                <Progress value={progressPercentage} className="h-2" />
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Task Cards */}
-          <div className="grid gap-3">
-            {tasks.map((task) => (
+      {/* Manufacturing View */}
+      {viewMode === "manufacturing" && (
+        <>
+          {/* Actions Section */}
+          <div>
+            <h2 className="text-xl font-semibold text-foreground mb-4">Quick Actions</h2>
+            <div className="grid gap-4 md:grid-cols-2">
               <Card 
-                key={task.id}
-                className={`transition-all duration-200 border-orange-200 ${
-                  task.completed 
-                    ? "opacity-60 bg-gradient-to-r from-green-50 to-emerald-50" 
-                    : "bg-gradient-to-r from-orange-100 to-amber-100 hover:from-orange-200 hover:to-amber-200 hover:shadow-lg shadow-md"
-                }`}
+                className="border-2 border-primary/20 hover:border-primary/40 transition-all cursor-pointer hover-scale bg-gradient-to-br from-primary/5 to-transparent"
+                onClick={() => navigate("/manufacturing-production")}
               >
-                <CardContent className="p-4">
-                  <div className="flex items-start gap-4">
-                    <div onClick={(e) => e.stopPropagation()}>
-                      <Checkbox
-                        checked={task.completed}
-                        onCheckedChange={() => toggleTask(task.id)}
-                        className="mt-1"
-                      />
+                <CardContent className="p-6">
+                  <div className="flex items-center gap-4">
+                    <div className="h-14 w-14 rounded-lg bg-primary/20 flex items-center justify-center">
+                      <ClipboardCheck className="h-7 w-7 text-primary" />
                     </div>
-                    <div className="flex-shrink-0 w-10 h-10 bg-orange-200 rounded-full flex items-center justify-center">
-                      <task.icon className="h-5 w-5 text-orange-700" />
+                    <div className="flex-1">
+                      <h3 className="font-semibold text-lg text-foreground mb-1">Log Today's Production</h3>
+                      <p className="text-sm text-muted-foreground">Record daily production quantities</p>
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <h3 className={`text-base font-semibold text-foreground mb-1 ${task.completed ? "line-through" : ""}`}>
-                        {task.title}
-                      </h3>
-                      <p className="text-sm text-muted-foreground">
-                        {task.description}
-                      </p>
-                    </div>
-                    <div className="flex items-center gap-3 shrink-0">
-                      <div className="flex items-center gap-1 text-muted-foreground">
-                        <Clock className="h-4 w-4" />
-                        <span className="text-sm font-medium">{task.time}</span>
-                      </div>
-                      {task.path && !task.completed && (
-                        <Button 
-                          size="sm" 
-                          variant="outline"
-                          onClick={() => navigate(task.path)}
-                          className="border-orange-300 hover:bg-orange-300"
-                        >
-                          Go
-                          <ArrowRight className="h-4 w-4 ml-1" />
-                        </Button>
-                      )}
-                    </div>
+                    <ArrowRight className="h-5 w-5 text-primary" />
                   </div>
                 </CardContent>
               </Card>
-            ))}
+
+              <Card 
+                className="border-2 border-primary/20 hover:border-primary/40 transition-all cursor-pointer hover-scale bg-gradient-to-br from-accent/5 to-transparent"
+                onClick={() => navigate("/production")}
+              >
+                <CardContent className="p-6">
+                  <div className="flex items-center gap-4">
+                    <div className="h-14 w-14 rounded-lg bg-accent/20 flex items-center justify-center">
+                      <BrainCircuit className="h-7 w-7 text-accent-foreground" />
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="font-semibold text-lg text-foreground mb-1">Review Production Plans</h3>
+                      <p className="text-sm text-muted-foreground">View 14-day production forecast</p>
+                    </div>
+                    <ArrowRight className="h-5 w-5 text-accent-foreground" />
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
           </div>
-        </div>
+
+          {/* 14-Day Production Forecast Chart */}
+          <Card className="shadow-lg border-2 border-primary/20 animate-fade-in">
+            <CardHeader className="pb-4 bg-gradient-to-r from-primary/5 to-accent/5 rounded-t-lg">
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle className="text-2xl font-bold flex items-center gap-2">
+                    <div className="h-10 w-10 rounded-lg bg-primary/20 flex items-center justify-center">
+                      📊
+                    </div>
+                    14-Day Production Forecast
+                  </CardTitle>
+                  <CardDescription className="text-base mt-1">
+                    Expected production volumes by product category
+                  </CardDescription>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent className="pt-6">
+              <ResponsiveContainer width="100%" height={450}>
+                <BarChart data={productionForecastData} margin={{ top: 5, right: 30, left: 0, bottom: 60 }}>
+                  <defs>
+                    <linearGradient id="glazedGradient" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#f8b29c" stopOpacity={0.9}/>
+                      <stop offset="95%" stopColor="#f8b29c" stopOpacity={0.7}/>
+                    </linearGradient>
+                    <linearGradient id="icedGradient" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#7ea058" stopOpacity={0.9}/>
+                      <stop offset="95%" stopColor="#7ea058" stopOpacity={0.7}/>
+                    </linearGradient>
+                    <linearGradient id="filledGradient" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#3e5c39" stopOpacity={0.9}/>
+                      <stop offset="95%" stopColor="#3e5c39" stopOpacity={0.7}/>
+                    </linearGradient>
+                    <linearGradient id="cakeGradient" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#ffd580" stopOpacity={0.9}/>
+                      <stop offset="95%" stopColor="#ffd580" stopOpacity={0.7}/>
+                    </linearGradient>
+                    <linearGradient id="specialtyGradient" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#ff914d" stopOpacity={0.9}/>
+                      <stop offset="95%" stopColor="#ff914d" stopOpacity={0.7}/>
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.5} />
+                  <XAxis 
+                    dataKey="day" 
+                    stroke="hsl(var(--foreground))"
+                    fontSize={11}
+                    fontWeight={500}
+                    angle={-45}
+                    textAnchor="end"
+                    height={80}
+                    tick={{ fill: 'hsl(var(--foreground))' }}
+                  />
+                  <YAxis 
+                    stroke="hsl(var(--foreground))"
+                    fontSize={13}
+                    fontWeight={500}
+                    tick={{ fill: 'hsl(var(--foreground))' }}
+                    tickFormatter={(value) => value.toLocaleString()}
+                  />
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: "hsl(var(--card))",
+                      border: "2px solid hsl(var(--border))",
+                      borderRadius: "12px",
+                      padding: "12px",
+                      boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)"
+                    }}
+                    labelStyle={{
+                      color: "hsl(var(--foreground))",
+                      fontWeight: "bold",
+                      marginBottom: "8px"
+                    }}
+                    formatter={(value: number, name: string) => [
+                      value.toLocaleString() + " units",
+                      name
+                    ]}
+                  />
+                  <Legend 
+                    wrapperStyle={{
+                      paddingTop: "20px"
+                    }}
+                    iconType="square"
+                  />
+                  <Bar dataKey="Glazed" stackId="a" fill="url(#glazedGradient)" radius={[0, 0, 0, 0]} />
+                  <Bar dataKey="Iced" stackId="a" fill="url(#icedGradient)" radius={[0, 0, 0, 0]} />
+                  <Bar dataKey="Filled" stackId="a" fill="url(#filledGradient)" radius={[0, 0, 0, 0]} />
+                  <Bar dataKey="Cake" stackId="a" fill="url(#cakeGradient)" radius={[0, 0, 0, 0]} />
+                  <Bar dataKey="Specialty" stackId="a" fill="url(#specialtyGradient)" radius={[8, 8, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+              
+              {/* Summary Statistics */}
+              <div className="mt-8 grid grid-cols-2 md:grid-cols-5 gap-4">
+                {[
+                  { label: "Glazed", color: "#f8b29c", total: productionForecastData.reduce((sum, d) => sum + d.Glazed, 0) },
+                  { label: "Iced", color: "#7ea058", total: productionForecastData.reduce((sum, d) => sum + d.Iced, 0) },
+                  { label: "Filled", color: "#3e5c39", total: productionForecastData.reduce((sum, d) => sum + d.Filled, 0) },
+                  { label: "Cake", color: "#ffd580", total: productionForecastData.reduce((sum, d) => sum + d.Cake, 0) },
+                  { label: "Specialty", color: "#ff914d", total: productionForecastData.reduce((sum, d) => sum + d.Specialty, 0) },
+                ].map((category) => (
+                  <div key={category.label} className="p-4 rounded-lg border hover-scale" style={{ 
+                    backgroundColor: `${category.color}15`,
+                    borderColor: `${category.color}30`
+                  }}>
+                    <div className="flex items-center gap-2 mb-2">
+                      <div className="h-3 w-3 rounded" style={{ backgroundColor: category.color }} />
+                      <div className="text-xs text-muted-foreground font-medium">{category.label}</div>
+                    </div>
+                    <div className="text-xl font-bold text-foreground">
+                      {category.total.toLocaleString()}
+                    </div>
+                    <div className="text-xs text-muted-foreground">Total 14 days</div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Overall Total */}
+              <div className="mt-4 p-4 rounded-lg bg-primary/10 border border-primary/30 flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Package className="h-5 w-5 text-primary" />
+                  <span className="text-sm font-semibold text-foreground">Total Production Forecast (14 days)</span>
+                </div>
+                <span className="text-2xl font-bold text-primary">
+                  {productionForecastData.reduce((sum, d) => sum + d.Glazed + d.Iced + d.Filled + d.Cake + d.Specialty, 0).toLocaleString()} units
+                </span>
+              </div>
+            </CardContent>
+          </Card>
+        </>
       )}
 
-      {/* My Actions Section - Store Manager */}
+      {/* Store Manager View */}
       {viewMode === "store_manager" && (
-        <div className="space-y-3">
-          <h2 className="text-xl font-semibold text-foreground">My Actions</h2>
-          <div className="grid gap-3">
+        <>
+          {/* My Tasks Section - Store Manager Only */}
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <h2 className="text-xl font-semibold text-foreground">My Tasks</h2>
+              <div className="text-right">
+                <div className="text-lg font-bold text-primary">
+                  {completedCount}/{totalCount}
+                </div>
+                <div className="text-xs text-muted-foreground">Completed</div>
+              </div>
+            </div>
+
+            {/* Progress Bar */}
+            <Card className="shadow-md bg-gradient-to-r from-background to-primary/5 border-orange-200">
+              <CardContent className="p-4">
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium">Daily Progress</span>
+                    <span className="text-sm font-medium text-primary">
+                      {Math.round(progressPercentage)}%
+                    </span>
+                  </div>
+                  <Progress value={progressPercentage} className="h-2" />
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Task Cards */}
+            <div className="grid gap-3">
+              {tasks.map((task) => (
+                <Card 
+                  key={task.id}
+                  className={`transition-all duration-200 border-orange-200 ${
+                    task.completed 
+                      ? "opacity-60 bg-gradient-to-r from-green-50 to-emerald-50" 
+                      : "bg-gradient-to-r from-orange-100 to-amber-100 hover:from-orange-200 hover:to-amber-200 hover:shadow-lg shadow-md"
+                  }`}
+                >
+                  <CardContent className="p-4">
+                    <div className="flex items-start gap-4">
+                      <div onClick={(e) => e.stopPropagation()}>
+                        <Checkbox
+                          checked={task.completed}
+                          onCheckedChange={() => toggleTask(task.id)}
+                          className="mt-1"
+                        />
+                      </div>
+                      <div className="flex-shrink-0 w-10 h-10 bg-orange-200 rounded-full flex items-center justify-center">
+                        <task.icon className="h-5 w-5 text-orange-700" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <h3 className={`text-base font-semibold text-foreground mb-1 ${task.completed ? "line-through" : ""}`}>
+                          {task.title}
+                        </h3>
+                        <p className="text-sm text-muted-foreground">
+                          {task.description}
+                        </p>
+                      </div>
+                      <div className="flex items-center gap-3 shrink-0">
+                        <div className="flex items-center gap-1 text-muted-foreground">
+                          <Clock className="h-4 w-4" />
+                          <span className="text-sm font-medium">{task.time}</span>
+                        </div>
+                        {task.path && !task.completed && (
+                          <Button 
+                            size="sm" 
+                            variant="outline"
+                            onClick={() => navigate(task.path)}
+                            className="border-orange-300 hover:bg-orange-300"
+                          >
+                            Go
+                            <ArrowRight className="h-4 w-4 ml-1" />
+                          </Button>
+                        )}
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
           </div>
-        </div>
+
+          {/* My Actions Section - Store Manager */}
+          <div className="space-y-3">
+            <h2 className="text-xl font-semibold text-foreground">My Actions</h2>
+            <div className="grid gap-3">
+            </div>
+          </div>
+
+          {/* This Week's Performance - Store Manager */}
+          <div>
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xl font-semibold text-foreground">This Week's Performance</h2>
+            </div>
+            <div className="space-y-3">
+              <h2 className="text-xl font-semibold text-foreground">My Actions</h2>
+              <div className="grid gap-3">
+                <Card
+                  className="bg-gradient-to-r from-orange-100 to-amber-100 hover:from-orange-200 hover:to-amber-200 hover:shadow-lg shadow-md transition-all duration-200 border-orange-200 cursor-pointer"
+                  onClick={() => navigate("/production")}
+                >
+                  <CardContent className="p-4">
+                    <div className="flex items-center gap-4">
+                      <div className="flex-shrink-0 w-10 h-10 bg-orange-200 rounded-full flex items-center justify-center">
+                        <ClipboardCheck className="h-5 w-5 text-orange-700" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <h3 className="text-base font-semibold text-foreground mb-1">
+                          Confirm Production Volumes
+                        </h3>
+                        <p className="text-sm text-muted-foreground">
+                          Review and approve tomorrow's production
+                        </p>
+                      </div>
+                      <ArrowRight className="h-5 w-5 text-orange-700 shrink-0" />
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card 
+                  className="bg-gradient-to-r from-orange-100 to-amber-100 hover:from-orange-200 hover:to-amber-200 hover:shadow-lg shadow-md transition-all duration-200 border-orange-200 cursor-pointer"
+                  onClick={() => navigate("/live-data")}
+                >
+                  <CardContent className="p-4">
+                    <div className="flex items-center gap-4">
+                      <div className="flex-shrink-0 w-10 h-10 bg-orange-200 rounded-full flex items-center justify-center">
+                        <BrainCircuit className="h-5 w-5 text-orange-700" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <h3 className="text-base font-semibold text-foreground mb-1">
+                          Review Stock Insights
+                        </h3>
+                        <p className="text-sm text-muted-foreground">
+                          Check AI-powered inventory recommendations
+                        </p>
+                      </div>
+                      <ArrowRight className="h-5 w-5 text-orange-700 shrink-0" />
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card 
+                  className="bg-gradient-to-r from-orange-100 to-amber-100 hover:from-orange-200 hover:to-amber-200 hover:shadow-lg shadow-md transition-all duration-200 border-orange-200 cursor-pointer"
+                  onClick={() => navigate("/store-products")}
+                >
+                  <CardContent className="p-4">
+                    <div className="flex items-center gap-4">
+                      <div className="flex-shrink-0 w-10 h-10 bg-orange-200 rounded-full flex items-center justify-center">
+                        <Sparkles className="h-5 w-5 text-orange-700" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <h3 className="text-base font-semibold text-foreground mb-1">
+                          Review Range Insights
+                        </h3>
+                        <p className="text-sm text-muted-foreground">
+                          Check AI product range recommendations
+                        </p>
+                      </div>
+                      <ArrowRight className="h-5 w-5 text-orange-700 shrink-0" />
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            </div>
+          </div>
+        </>
       )}
 
-      {/* My Actions Section - HQ Only */}
+      {/* HQ View */}
       {viewMode === "hq" && (
-        <div className="space-y-3">
-          <h2 className="text-xl font-semibold text-foreground">My Actions</h2>
-          <div className="grid gap-3">
-            <Card
-              className="bg-gradient-to-r from-orange-100 to-amber-100 hover:from-orange-200 hover:to-amber-200 hover:shadow-lg shadow-md transition-all duration-200 border-orange-200 cursor-pointer"
-              onClick={() => navigate("/production")}
-            >
-              <CardContent className="p-4">
-                <div className="flex items-center gap-4">
-                  <div className="flex-shrink-0 w-10 h-10 bg-orange-200 rounded-full flex items-center justify-center">
-                    <ClipboardCheck className="h-5 w-5 text-orange-700" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <h3 className="text-base font-semibold text-foreground mb-1">
-                      Confirm Production Volumes
-                    </h3>
-                    <p className="text-sm text-muted-foreground">
-                      Review and approve tomorrow's production
-                    </p>
-                  </div>
-                  <ArrowRight className="h-5 w-5 text-orange-700 shrink-0" />
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card 
-              className="bg-gradient-to-r from-orange-100 to-amber-100 hover:from-orange-200 hover:to-amber-200 hover:shadow-lg shadow-md transition-all duration-200 border-orange-200 cursor-pointer"
-              onClick={() => navigate("/live-data")}
-            >
-              <CardContent className="p-4">
-                <div className="flex items-center gap-4">
-                  <div className="flex-shrink-0 w-10 h-10 bg-orange-200 rounded-full flex items-center justify-center">
-                    <BrainCircuit className="h-5 w-5 text-orange-700" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <h3 className="text-base font-semibold text-foreground mb-1">
-                      Review Stock Insights
-                    </h3>
-                    <p className="text-sm text-muted-foreground">
-                      Check AI-powered inventory recommendations
-                    </p>
-                  </div>
-                  <ArrowRight className="h-5 w-5 text-orange-700 shrink-0" />
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card 
-              className="bg-gradient-to-r from-orange-100 to-amber-100 hover:from-orange-200 hover:to-amber-200 hover:shadow-lg shadow-md transition-all duration-200 border-orange-200 cursor-pointer"
-              onClick={() => navigate("/store-products")}
-            >
-              <CardContent className="p-4">
-                <div className="flex items-center gap-4">
-                  <div className="flex-shrink-0 w-10 h-10 bg-orange-200 rounded-full flex items-center justify-center">
-                    <Sparkles className="h-5 w-5 text-orange-700" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <h3 className="text-base font-semibold text-foreground mb-1">
-                      Review Range Insights
-                    </h3>
-                    <p className="text-sm text-muted-foreground">
-                      Check AI product range recommendations
-                    </p>
-                  </div>
-                  <ArrowRight className="h-5 w-5 text-orange-700 shrink-0" />
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      )}
-
-      {viewMode === "hq" ? (
         <>
           {/* Three Main Metrics with Hover Details */}
           <div className="grid gap-6 md:grid-cols-3">
@@ -867,7 +953,15 @@ const weeklyTrendData = [
             </CardHeader>
             <CardContent className="pt-6">
               <ResponsiveContainer width="100%" height={350}>
-                <ComposedChart data={weeklyTrendData} margin={{ top: 5, right: 30, left: 0, bottom: 5 }}>
+                <ComposedChart data={[
+                  { day: "Mon", delivered: 8750, sold: 8100, wasted: 420 },
+                  { day: "Tue", delivered: 8950, sold: 8300, wasted: 385 },
+                  { day: "Wed", delivered: 9200, sold: 8650, wasted: 360 },
+                  { day: "Thu", delivered: 8880, sold: 8250, wasted: 410 },
+                  { day: "Fri", delivered: 9500, sold: 9100, wasted: 380 },
+                  { day: "Sat", delivered: 9800, sold: 9450, wasted: 340 },
+                  { day: "Sun", delivered: 9100, sold: 8520, wasted: 395 },
+                ]} margin={{ top: 5, right: 30, left: 0, bottom: 5 }}>
                   <defs>
                     <linearGradient id="deliveredGradient" x1="0" y1="0" x2="0" y2="1">
                       <stop offset="5%" stopColor="hsl(var(--brand-peach))" stopOpacity={0.8}/>
@@ -962,7 +1056,15 @@ const weeklyTrendData = [
                     <div>
                       <div className="text-xs text-muted-foreground font-medium">Total Delivered</div>
                       <div className="text-2xl font-bold text-foreground">
-                        {weeklyTrendData.reduce((sum, d) => sum + d.delivered, 0).toLocaleString()}
+                        {[
+                          { day: "Mon", delivered: 8750 },
+                          { day: "Tue", delivered: 8950 },
+                          { day: "Wed", delivered: 9200 },
+                          { day: "Thu", delivered: 8880 },
+                          { day: "Fri", delivered: 9500 },
+                          { day: "Sat", delivered: 9800 },
+                          { day: "Sun", delivered: 9100 },
+                        ].reduce((sum, d) => sum + d.delivered, 0).toLocaleString()}
                       </div>
                       <div className="text-xs text-muted-foreground">units this week</div>
                     </div>
@@ -979,11 +1081,35 @@ const weeklyTrendData = [
                     <div>
                       <div className="text-xs text-muted-foreground font-medium">Total Sold</div>
                       <div className="text-2xl font-bold" style={{ color: 'hsl(var(--success-green))' }}>
-                        {weeklyTrendData.reduce((sum, d) => sum + d.sold, 0).toLocaleString()}
+                        {[
+                          { day: "Mon", sold: 8100 },
+                          { day: "Tue", sold: 8300 },
+                          { day: "Wed", sold: 8650 },
+                          { day: "Thu", sold: 8250 },
+                          { day: "Fri", sold: 9100 },
+                          { day: "Sat", sold: 9450 },
+                          { day: "Sun", sold: 8520 },
+                        ].reduce((sum, d) => sum + d.sold, 0).toLocaleString()}
                       </div>
                       <div className="text-xs text-muted-foreground">
-                        {((weeklyTrendData.reduce((sum, d) => sum + d.sold, 0) / 
-                          weeklyTrendData.reduce((sum, d) => sum + d.delivered, 0)) * 100).toFixed(1)}% of delivered
+                        {(([
+                          { day: "Mon", sold: 8100, delivered: 8750 },
+                          { day: "Tue", sold: 8300, delivered: 8950 },
+                          { day: "Wed", sold: 8650, delivered: 9200 },
+                          { day: "Thu", sold: 8250, delivered: 8880 },
+                          { day: "Fri", sold: 9100, delivered: 9500 },
+                          { day: "Sat", sold: 9450, delivered: 9800 },
+                          { day: "Sun", sold: 8520, delivered: 9100 },
+                        ].reduce((sum, d) => sum + d.sold, 0) / 
+                          [
+                            { day: "Mon", sold: 8100, delivered: 8750 },
+                            { day: "Tue", sold: 8300, delivered: 8950 },
+                            { day: "Wed", sold: 8650, delivered: 9200 },
+                            { day: "Thu", sold: 8250, delivered: 8880 },
+                            { day: "Fri", sold: 9100, delivered: 9500 },
+                            { day: "Sat", sold: 9450, delivered: 9800 },
+                            { day: "Sun", sold: 8520, delivered: 9100 },
+                          ].reduce((sum, d) => sum + d.delivered, 0)) * 100).toFixed(1)}% of delivered
                       </div>
                     </div>
                   </div>
@@ -999,11 +1125,35 @@ const weeklyTrendData = [
                     <div>
                       <div className="text-xs text-muted-foreground font-medium">Total Wasted</div>
                       <div className="text-2xl font-bold" style={{ color: 'hsl(var(--warning-orange))' }}>
-                        {weeklyTrendData.reduce((sum, d) => sum + d.wasted, 0).toLocaleString()}
+                        {[
+                          { day: "Mon", wasted: 420 },
+                          { day: "Tue", wasted: 385 },
+                          { day: "Wed", wasted: 360 },
+                          { day: "Thu", wasted: 410 },
+                          { day: "Fri", wasted: 380 },
+                          { day: "Sat", wasted: 340 },
+                          { day: "Sun", wasted: 395 },
+                        ].reduce((sum, d) => sum + d.wasted, 0).toLocaleString()}
                       </div>
                       <div className="text-xs text-muted-foreground">
-                        {((weeklyTrendData.reduce((sum, d) => sum + d.wasted, 0) / 
-                          weeklyTrendData.reduce((sum, d) => sum + d.delivered, 0)) * 100).toFixed(1)}% of delivered
+                        {(([
+                          { day: "Mon", wasted: 420, delivered: 8750 },
+                          { day: "Tue", wasted: 385, delivered: 8950 },
+                          { day: "Wed", wasted: 360, delivered: 9200 },
+                          { day: "Thu", wasted: 410, delivered: 8880 },
+                          { day: "Fri", wasted: 380, delivered: 9500 },
+                          { day: "Sat", wasted: 340, delivered: 9800 },
+                          { day: "Sun", wasted: 395, delivered: 9100 },
+                        ].reduce((sum, d) => sum + d.wasted, 0) / 
+                          [
+                            { day: "Mon", wasted: 420, delivered: 8750 },
+                            { day: "Tue", wasted: 385, delivered: 8950 },
+                            { day: "Wed", wasted: 360, delivered: 9200 },
+                            { day: "Thu", wasted: 410, delivered: 8880 },
+                            { day: "Fri", wasted: 380, delivered: 9500 },
+                            { day: "Sat", wasted: 340, delivered: 9800 },
+                            { day: "Sun", wasted: 395, delivered: 9100 },
+                          ].reduce((sum, d) => sum + d.delivered, 0)) * 100).toFixed(1)}% of delivered
                       </div>
                     </div>
                   </div>
@@ -1015,11 +1165,27 @@ const weeklyTrendData = [
                 <TrendingUp className="h-5 w-5 text-primary" />
                 <span className="text-sm text-foreground">
                   <strong>Best performing day:</strong> {
-                    weeklyTrendData.reduce((prev, current) => 
+                    [
+                      { day: "Mon", sold: 8100 },
+                      { day: "Tue", sold: 8300 },
+                      { day: "Wed", sold: 8650 },
+                      { day: "Thu", sold: 8250 },
+                      { day: "Fri", sold: 9100 },
+                      { day: "Sat", sold: 9450 },
+                      { day: "Sun", sold: 8520 },
+                    ].reduce((prev, current) => 
                       current.sold > prev.sold ? current : prev
                     ).day
                   } with {
-                    weeklyTrendData.reduce((prev, current) => 
+                    [
+                      { day: "Mon", sold: 8100 },
+                      { day: "Tue", sold: 8300 },
+                      { day: "Wed", sold: 8650 },
+                      { day: "Thu", sold: 8250 },
+                      { day: "Fri", sold: 9100 },
+                      { day: "Sat", sold: 9450 },
+                      { day: "Sun", sold: 8520 },
+                    ].reduce((prev, current) => 
                       current.sold > prev.sold ? current : prev
                     ).sold.toLocaleString()
                   } units sold
@@ -1027,300 +1193,6 @@ const weeklyTrendData = [
               </div>
             </CardContent>
           </Card>
-
-        </>
-      ) : (
-        /* Store Manager View - Keep existing content */
-        <>
-          {/* This Week's Metrics */}
-          <div>
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-semibold text-foreground">This Week's Performance</h2>
-            </div>
-            
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-              <Card className="border-l-4 border-l-[#7ea058] bg-gradient-to-br from-[#7ea058]/10 to-[#7ea058]/5">
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Revenue</CardTitle>
-                  <DollarSign className="h-4 w-4" style={{ color: '#7ea058' }} />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">
-                    £{weeklyMetrics.revenue.toLocaleString()}
-                  </div>
-                  <div className="flex items-center gap-2 mt-1">
-                    <p className="text-xs text-muted-foreground">
-                      Week to date
-                    </p>
-                    <Badge variant="outline" className="text-xs border-[#7ea058]" style={{ color: '#7ea058' }}>
-                      +8.2%
-                    </Badge>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card className="border-l-4 border-l-green-500 bg-gradient-to-br from-green-500/5 to-transparent">
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Gross Profit</CardTitle>
-                  <TrendingUp className="h-4 w-4 text-green-600" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">
-                    £{weeklyMetrics.grossProfit.toLocaleString()}
-                  </div>
-                  <div className="flex items-center gap-2 mt-1">
-                    <p className="text-xs text-muted-foreground">
-                      {((weeklyMetrics.grossProfit / weeklyMetrics.revenue) * 100).toFixed(1)}% margin
-                    </p>
-                    <Badge variant="outline" className="text-xs text-green-600 border-green-600">
-                      +6.5%
-                    </Badge>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card className="border-l-4 border-l-destructive bg-gradient-to-br from-destructive/5 to-transparent">
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Waste</CardTitle>
-                  <Trash2 className="h-4 w-4 text-destructive" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">
-                    £{weeklyMetrics.waste.toLocaleString()}
-                  </div>
-                  <div className="flex items-center gap-2 mt-1">
-                    <p className="text-xs text-muted-foreground">
-                      {((weeklyMetrics.waste / weeklyMetrics.revenue) * 100).toFixed(1)}% of revenue
-                    </p>
-                    <Badge variant="outline" className="text-xs text-destructive border-destructive">
-                      +2.1%
-                    </Badge>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card className="border-l-4 border-l-blue-500 bg-gradient-to-br from-blue-500/5 to-transparent">
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Availability</CardTitle>
-                  <CheckCircle className="h-4 w-4 text-blue-600" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">{weeklyMetrics.availability.toFixed(1)}%</div>
-                  <div className="flex items-center gap-2 mt-1">
-                    <p className="text-xs text-muted-foreground">
-                      Products in stock
-                    </p>
-                    <Badge variant="outline" className="text-xs text-green-600 border-green-600">
-                      +1.2%
-                    </Badge>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          </div>
-
-          {/* Today's Context - Weather and Alerts */}
-          <div className="grid gap-3 md:grid-cols-2">
-            <Card className="bg-muted/30">
-              <CardContent className="p-4 flex items-center gap-3">
-                <CloudRain className="h-5 w-5 text-primary" />
-                <div>
-                  <p className="text-xs text-muted-foreground">Weather</p>
-                  <p className="text-sm font-semibold">Rainy, 12°C</p>
-                </div>
-              </CardContent>
-            </Card>
-            <Card className="bg-muted/30">
-              <CardContent className="p-4 flex items-center gap-3">
-                <AlertTriangle className="h-5 w-5 text-destructive" />
-                <div>
-                  <p className="text-xs text-muted-foreground">Alert</p>
-                  <p className="text-sm font-semibold">Train strike - Lower footfall</p>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Week Overview Graph - Store View */}
-          <Card className="shadow-lg border-2 border-primary/20 animate-fade-in">
-            <CardHeader className="pb-4 bg-gradient-to-r from-primary/5 to-accent/5 rounded-t-lg">
-              <div className="flex items-center justify-between">
-                <div>
-                  <CardTitle className="text-2xl font-bold flex items-center gap-2">
-                    <div className="h-10 w-10 rounded-lg bg-primary/20 flex items-center justify-center">
-                      📊
-                    </div>
-                    Week Overview
-                  </CardTitle>
-                  <CardDescription className="text-base mt-1">
-                    Track delivered, sold, and wasted quantities across the week
-                  </CardDescription>
-                </div>
-              </div>
-            </CardHeader>
-            <CardContent className="pt-6">
-              <ResponsiveContainer width="100%" height={350}>
-                <ComposedChart data={weeklyTrendDataStore} margin={{ top: 5, right: 30, left: 0, bottom: 5 }}>
-                  <defs>
-                    <linearGradient id="deliveredGradientStore" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="hsl(var(--brand-peach))" stopOpacity={0.8}/>
-                      <stop offset="95%" stopColor="hsl(var(--brand-peach))" stopOpacity={0.3}/>
-                    </linearGradient>
-                  </defs>
-                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.5} />
-                  <XAxis 
-                    dataKey="day" 
-                    stroke="hsl(var(--foreground))"
-                    fontSize={13}
-                    fontWeight={500}
-                    tick={{ fill: 'hsl(var(--foreground))' }}
-                  />
-                  <YAxis 
-                    stroke="hsl(var(--foreground))"
-                    fontSize={13}
-                    fontWeight={500}
-                    tick={{ fill: 'hsl(var(--foreground))' }}
-                    tickFormatter={(value) => value.toLocaleString()}
-                  />
-                  <Tooltip
-                    contentStyle={{
-                      backgroundColor: "hsl(var(--card))",
-                      border: "2px solid hsl(var(--border))",
-                      borderRadius: "12px",
-                      padding: "12px",
-                      boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)"
-                    }}
-                    labelStyle={{
-                      color: "hsl(var(--foreground))",
-                      fontWeight: "bold",
-                      marginBottom: "8px"
-                    }}
-                    formatter={(value: number, name: string) => [
-                      value.toLocaleString() + " units",
-                      name
-                    ]}
-                  />
-                  <Legend 
-                    wrapperStyle={{
-                      paddingTop: "20px"
-                    }}
-                    iconType="circle"
-                  />
-                  <Bar 
-                    dataKey="delivered" 
-                    fill="url(#deliveredGradientStore)" 
-                    name="Delivered"
-                    radius={[8, 8, 0, 0]}
-                    maxBarSize={60}
-                  />
-                  <Line 
-                    type="monotone" 
-                    dataKey="sold" 
-                    stroke="hsl(var(--success-green))" 
-                    strokeWidth={4}
-                    name="Sold"
-                    dot={{ 
-                      fill: "hsl(var(--success-green))", 
-                      r: 6,
-                      strokeWidth: 2,
-                      stroke: "hsl(var(--background))"
-                    }}
-                    activeDot={{ r: 8 }}
-                  />
-                  <Line 
-                    type="monotone" 
-                    dataKey="wasted" 
-                    stroke="hsl(var(--warning-orange))" 
-                    strokeWidth={4}
-                    name="Wasted"
-                    dot={{ 
-                      fill: "hsl(var(--warning-orange))", 
-                      r: 6,
-                      strokeWidth: 2,
-                      stroke: "hsl(var(--background))"
-                    }}
-                    activeDot={{ r: 8 }}
-                    strokeDasharray="5 5"
-                  />
-                </ComposedChart>
-              </ResponsiveContainer>
-              
-              {/* Summary Statistics */}
-              <div className="mt-8 grid grid-cols-3 gap-4">
-                <div className="p-4 rounded-lg border hover-scale" style={{ backgroundColor: 'hsl(var(--brand-peach) / 0.1)', borderColor: 'hsl(var(--brand-peach) / 0.3)' }}>
-                  <div className="flex items-center gap-3">
-                    <div className="h-12 w-12 rounded-lg flex items-center justify-center" style={{ backgroundColor: 'hsl(var(--brand-peach) / 0.2)' }}>
-                      <Package className="h-6 w-6" style={{ color: 'hsl(var(--brand-peach))' }} />
-                    </div>
-                    <div>
-                      <div className="text-xs text-muted-foreground font-medium">Total Delivered</div>
-                      <div className="text-2xl font-bold text-foreground">
-                        {weeklyTrendDataStore.reduce((sum, d) => sum + d.delivered, 0).toLocaleString()}
-                      </div>
-                      <div className="text-xs text-muted-foreground">units this week</div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="p-4 rounded-lg bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-800 hover-scale">
-                  <div className="flex items-center gap-3">
-                    <div className="h-12 w-12 rounded-lg" style={{ backgroundColor: 'hsl(var(--success-green) / 0.2)' }}>
-                      <div className="h-full w-full flex items-center justify-center">
-                        <CheckCircle className="h-6 w-6" style={{ color: 'hsl(var(--success-green))' }} />
-                      </div>
-                    </div>
-                    <div>
-                      <div className="text-xs text-muted-foreground font-medium">Total Sold</div>
-                      <div className="text-2xl font-bold" style={{ color: 'hsl(var(--success-green))' }}>
-                        {weeklyTrendDataStore.reduce((sum, d) => sum + d.sold, 0).toLocaleString()}
-                      </div>
-                      <div className="text-xs text-muted-foreground">
-                        {((weeklyTrendDataStore.reduce((sum, d) => sum + d.sold, 0) / 
-                          weeklyTrendDataStore.reduce((sum, d) => sum + d.delivered, 0)) * 100).toFixed(1)}% of delivered
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="p-4 rounded-lg bg-orange-50 dark:bg-orange-950/20 border border-orange-200 dark:border-orange-800 hover-scale">
-                  <div className="flex items-center gap-3">
-                    <div className="h-12 w-12 rounded-lg" style={{ backgroundColor: 'hsl(var(--warning-orange) / 0.2)' }}>
-                      <div className="h-full w-full flex items-center justify-center">
-                        <Trash2 className="h-6 w-6" style={{ color: 'hsl(var(--warning-orange))' }} />
-                      </div>
-                    </div>
-                    <div>
-                      <div className="text-xs text-muted-foreground font-medium">Total Wasted</div>
-                      <div className="text-2xl font-bold" style={{ color: 'hsl(var(--warning-orange))' }}>
-                        {weeklyTrendDataStore.reduce((sum, d) => sum + d.wasted, 0).toLocaleString()}
-                      </div>
-                      <div className="text-xs text-muted-foreground">
-                        {((weeklyTrendDataStore.reduce((sum, d) => sum + d.wasted, 0) / 
-                          weeklyTrendDataStore.reduce((sum, d) => sum + d.delivered, 0)) * 100).toFixed(1)}% of delivered
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Best Day Badge */}
-              <div className="mt-4 p-3 rounded-lg bg-primary/10 border border-primary/30 flex items-center gap-2">
-                <TrendingUp className="h-5 w-5 text-primary" />
-                <span className="text-sm text-foreground">
-                  <strong>Best performing day:</strong> {
-                    weeklyTrendDataStore.reduce((prev, current) => 
-                      current.sold > prev.sold ? current : prev
-                    ).day
-                  } with {
-                    weeklyTrendDataStore.reduce((prev, current) => 
-                      current.sold > prev.sold ? current : prev
-                    ).sold.toLocaleString()
-                  } units sold
-                </span>
-              </div>
-            </CardContent>
-          </Card>
-
         </>
       )}
     </div>
