@@ -331,17 +331,23 @@ export default function Production() {
   };
 
   const updateFinalOrder = async (productId: string, storeId: string, delta: number) => {
+    // If in aggregated view (By Total), update all stores for this product
+    const isAggregated = storeId === 'aggregated';
+    
     const updatedProducts = products.map(p => 
-      p.id === productId && p.storeId === storeId
-        ? { ...p, finalOrder: Math.max(0, p.finalOrder + delta) }
-        : p
+      isAggregated
+        ? (p.id === productId ? { ...p, finalOrder: Math.max(0, p.finalOrder + delta) } : p)
+        : (p.id === productId && p.storeId === storeId ? { ...p, finalOrder: Math.max(0, p.finalOrder + delta) } : p)
     );
     setProducts(updatedProducts);
 
-    // Find the updated product and save to database
-    const updatedProduct = updatedProducts.find(p => p.id === productId && p.storeId === storeId);
-    if (updatedProduct) {
-      await savePendingAllocations([updatedProduct]);
+    // Save updated products to database
+    const productsToSave = isAggregated
+      ? updatedProducts.filter(p => p.id === productId)
+      : updatedProducts.filter(p => p.id === productId && p.storeId === storeId);
+    
+    if (productsToSave.length > 0) {
+      await savePendingAllocations(productsToSave);
     }
   };
 
@@ -479,7 +485,7 @@ export default function Production() {
               <span className="text-white font-semibold text-sm">AI-Powered Suggestions</span>
             </div>
           </div>
-          <h1 className="text-4xl font-bold text-primary mb-2">Suggested Production Plan</h1>
+          <h1 className="text-4xl font-bold text-primary mb-2">Production Plan</h1>
           <p className="text-xl text-primary/90">
             {viewMode === "hq" ? "All Stores" : selectedStore} - {formattedDate}
           </p>
