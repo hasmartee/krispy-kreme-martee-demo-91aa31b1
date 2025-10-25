@@ -492,10 +492,10 @@ export default function ManufacturingProduction() {
                               min="0"
                               value={product.manufacturedQuantity}
                               onChange={(e) => updateManufacturedQuantity(product.productSku, parseInt(e.target.value) || 0)}
-                              disabled={product.isLocked}
+                              disabled={product.isLocked || viewMode === 'byCategory'}
                               className={cn(
                                 "w-32 text-center font-bold text-lg",
-                                product.isLocked 
+                                (product.isLocked || viewMode === 'byCategory')
                                   ? "bg-muted cursor-not-allowed" 
                                   : "border-2 border-[#f8b29c] focus:border-[#f6a389] shadow-lg bg-white focus:ring-2 focus:ring-[#f8b29c]/30"
                               )}
