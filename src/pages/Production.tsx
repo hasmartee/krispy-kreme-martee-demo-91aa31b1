@@ -549,32 +549,32 @@ export default function Production() {
   }
 
   return (
-    <div className="flex-1 space-y-6 p-6">
+    <div className="flex-1 space-y-4 sm:space-y-6 p-4 sm:p-6">
       {/* Hero Section */}
       <div 
-        className="relative h-48 rounded-2xl overflow-hidden bg-cover bg-center shadow-2xl"
+        className="relative h-36 sm:h-48 rounded-2xl overflow-hidden bg-cover bg-center shadow-2xl"
         style={{ backgroundImage: `url(${heroImage})` }}
       >
         <div className="absolute inset-0 bg-gradient-to-r from-green-900/80 via-green-800/60 to-green-700/40" />
-        <div className="absolute inset-0 flex flex-col justify-center px-8">
-          <div className="flex items-center gap-3 mb-3">
-            <div className="flex items-center gap-2 bg-[#ff914d]/20 backdrop-blur-sm px-4 py-2 rounded-full border border-[#ff914d]/30">
-              <Sparkles className="h-5 w-5 text-[#ff914d] animate-pulse" />
-              <span className="text-white font-semibold text-sm">AI-Powered Suggestions</span>
+        <div className="absolute inset-0 flex flex-col justify-center px-4 sm:px-8">
+          <div className="flex items-center gap-3 mb-2 sm:mb-3">
+            <div className="flex items-center gap-2 bg-[#ff914d]/20 backdrop-blur-sm px-3 sm:px-4 py-1.5 sm:py-2 rounded-full border border-[#ff914d]/30">
+              <Sparkles className="h-4 w-4 sm:h-5 sm:w-5 text-[#ff914d] animate-pulse" />
+              <span className="text-white font-semibold text-xs sm:text-sm">AI-Powered Suggestions</span>
             </div>
           </div>
-          <h1 className="text-4xl font-bold text-white mb-2">Production Plan</h1>
-          <p className="text-xl text-white/90">
-            {viewMode === "hq" ? "All Stores" : selectedStore} - {formattedDate}
+          <h1 className="text-2xl sm:text-4xl font-bold text-white mb-1 sm:mb-2">Production Plan</h1>
+          <p className="text-base sm:text-xl text-white/90">
+            {viewMode === "hq" ? "All Stores" : selectedStore} - <span className="hidden sm:inline">{formattedDate}</span><span className="sm:hidden">{format(selectedDate, "MMM d, yyyy")}</span>
           </p>
         </div>
       </div>
 
       {/* 14-Day Production Forecast */}
       <div className="space-y-4">
-        <div>
-          <h2 className="text-2xl font-bold">14-Day Production Forecast</h2>
-          <p className="text-muted-foreground">Your rolling production plan, updated daily with additional data</p>
+        <div className="px-1">
+          <h2 className="text-xl sm:text-2xl font-bold">14-Day Production Forecast</h2>
+          <p className="text-sm sm:text-base text-muted-foreground">Your rolling production plan, updated daily with additional data</p>
         </div>
         
         {/* Horizontal Date Selector */}
@@ -619,96 +619,95 @@ export default function Production() {
       </div>
 
       {/* Controls */}
-      <div className="flex items-center justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
-          <span>Selected: {format(selectedDate, "EEEE, MMMM d, yyyy")}</span>
+          <span className="truncate">Selected: {format(selectedDate, "EEEE, MMMM d, yyyy")}</span>
         </div>
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2">
-            {viewMode === "hq" && (
-              <>
-                {selectedProducts.size > 0 && (
-                  <Dialog>
-                    <DialogTrigger asChild>
-                      <Button 
-                        size="sm"
-                        className="gap-2 bg-[#7ea058] hover:bg-[#7ea058]/90 text-white"
-                      >
-                        <Percent className="h-4 w-4" />
-                        Bulk Edit ({selectedProducts.size})
-                      </Button>
-                    </DialogTrigger>
-                    <DialogContent className="sm:max-w-md">
-                      <DialogHeader>
-                        <DialogTitle>Bulk Adjust Quantities</DialogTitle>
-                        <DialogDescription>
-                          Adjust {selectedProducts.size} selected products by a percentage
-                        </DialogDescription>
-                      </DialogHeader>
-                      <div className="space-y-4 py-4">
-                        <div className="flex items-center justify-center gap-2">
-                          <Percent className="h-5 w-5 text-[#7ea058]" />
-                          <Input
-                            type="number"
-                            min="1"
-                            max="100"
-                            value={bulkAdjustmentPercent}
-                            onChange={(e) => setBulkAdjustmentPercent(Number(e.target.value))}
-                            className="w-24 text-center text-lg font-semibold"
-                          />
-                          <span className="text-muted-foreground">%</span>
-                        </div>
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-4">
+          {viewMode === "hq" && (
+            <>
+              {selectedProducts.size > 0 && (
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button 
+                      size="sm"
+                      className="gap-2 bg-[#7ea058] hover:bg-[#7ea058]/90 text-white w-full sm:w-auto"
+                    >
+                      <Percent className="h-4 w-4" />
+                      Bulk Edit ({selectedProducts.size})
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="sm:max-w-md">
+                    <DialogHeader>
+                      <DialogTitle>Bulk Adjust Quantities</DialogTitle>
+                      <DialogDescription>
+                        Adjust {selectedProducts.size} selected products by a percentage
+                      </DialogDescription>
+                    </DialogHeader>
+                    <div className="space-y-4 py-4">
+                      <div className="flex items-center justify-center gap-2">
+                        <Percent className="h-5 w-5 text-[#7ea058]" />
+                        <Input
+                          type="number"
+                          min="1"
+                          max="100"
+                          value={bulkAdjustmentPercent}
+                          onChange={(e) => setBulkAdjustmentPercent(Number(e.target.value))}
+                          className="w-24 text-center text-lg font-semibold"
+                        />
+                        <span className="text-muted-foreground">%</span>
                       </div>
-                      <DialogFooter className="flex-row gap-2 sm:justify-center">
-                        <Button
-                          onClick={() => applyBulkAdjustment(false)}
-                          variant="outline"
-                          className="gap-2 flex-1 border-[#7ea058]/30 hover:bg-[#7ea058]/10"
-                        >
-                          <Minus className="h-4 w-4" />
-                          Decrease
-                        </Button>
-                        <Button
-                          onClick={() => applyBulkAdjustment(true)}
-                          className="gap-2 flex-1 bg-[#7ea058] hover:bg-[#7ea058]/90 text-white"
-                        >
-                          <Plus className="h-4 w-4" />
-                          Increase
-                        </Button>
-                      </DialogFooter>
-                    </DialogContent>
-                  </Dialog>
-                )}
-                <div className="flex items-center gap-2 bg-muted/50 rounded-lg p-1">
-                  <Button
-                    size="sm"
-                    variant={!groupByProduct ? "default" : "ghost"}
-                    onClick={() => setGroupByProduct(false)}
-                    className="h-8"
-                  >
-                    By Store
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant={groupByProduct ? "default" : "ghost"}
-                    onClick={() => setGroupByProduct(true)}
-                    className="h-8"
-                  >
-                    By Total
-                  </Button>
-                </div>
-              </>
-            )}
-            <Button 
-              onClick={handleRefresh}
-              size="sm"
-              variant="outline"
-              disabled={isRefreshing}
-            >
-              <RefreshCw className={`h-4 w-4 mr-2 ${isRefreshing ? 'animate-spin' : ''}`} />
-              Refresh
-            </Button>
-          </div>
+                    </div>
+                    <DialogFooter className="flex-row gap-2 sm:justify-center">
+                      <Button
+                        onClick={() => applyBulkAdjustment(false)}
+                        variant="outline"
+                        className="gap-2 flex-1 border-[#7ea058]/30 hover:bg-[#7ea058]/10"
+                      >
+                        <Minus className="h-4 w-4" />
+                        Decrease
+                      </Button>
+                      <Button
+                        onClick={() => applyBulkAdjustment(true)}
+                        className="gap-2 flex-1 bg-[#7ea058] hover:bg-[#7ea058]/90 text-white"
+                      >
+                        <Plus className="h-4 w-4" />
+                        Increase
+                      </Button>
+                    </DialogFooter>
+                  </DialogContent>
+                </Dialog>
+              )}
+              <div className="flex items-center gap-2 bg-muted/50 rounded-lg p-1">
+                <Button
+                  size="sm"
+                  variant={!groupByProduct ? "default" : "ghost"}
+                  onClick={() => setGroupByProduct(false)}
+                  className="h-8 flex-1 sm:flex-none"
+                >
+                  By Store
+                </Button>
+                <Button
+                  size="sm"
+                  variant={groupByProduct ? "default" : "ghost"}
+                  onClick={() => setGroupByProduct(true)}
+                  className="h-8 flex-1 sm:flex-none"
+                >
+                  By Total
+                </Button>
+              </div>
+            </>
+          )}
+          <Button 
+            onClick={handleRefresh}
+            size="sm"
+            variant="outline"
+            disabled={isRefreshing}
+            className="w-full sm:w-auto"
+          >
+            <RefreshCw className={`h-4 w-4 mr-2 ${isRefreshing ? 'animate-spin' : ''}`} />
+            Refresh
+          </Button>
         </div>
       </div>
 
@@ -720,7 +719,7 @@ export default function Production() {
         <CardHeader className={cn(
           format(selectedDate, 'yyyy-MM-dd') !== format(new Date(), 'yyyy-MM-dd') && "bg-muted/30"
         )}>
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
               <CardTitle className="text-xl flex items-center gap-2">
                 Daily Production Plan
@@ -732,20 +731,19 @@ export default function Production() {
                 AI-powered production quantities for tomorrow's service
               </CardDescription>
             </div>
-            <div className="flex items-center gap-2">
-              <Button 
-                onClick={handleExportCSV}
-                size="sm"
-                variant="outline"
-              >
-                <Download className="h-4 w-4 mr-2" />
-                Export CSV
-              </Button>
-            </div>
+            <Button 
+              onClick={handleExportCSV}
+              size="sm"
+              variant="outline"
+              className="w-full sm:w-auto"
+            >
+              <Download className="h-4 w-4 mr-2" />
+              Export CSV
+            </Button>
           </div>
         </CardHeader>
-        <CardContent>
-          <Table key={groupByProduct ? 'total' : 'store'}>
+        <CardContent className="overflow-x-auto">
+          <Table key={groupByProduct ? 'total' : 'store'} className="min-w-[800px]">
             <TableHeader>
               <TableRow>
                 {viewMode === "hq" && (
