@@ -1149,52 +1149,20 @@ export default function StoreManagement() {
         </Card>
       </div>
 
-      {/* Search and Brand Filter */}
-      {viewMode === "hq" ? (
-        <Card className="shadow-card">
-          <CardContent className="p-4">
-            <div className="space-y-4">
-              {/* Brand Filter - Higher Level */}
-              <div className="flex items-center gap-4">
-                <label className="text-sm font-medium">My Brand:</label>
-                <Select value={selectedBrand} onValueChange={setSelectedBrand}>
-                  <SelectTrigger className="w-[200px] h-9 border-[#7e9f57] focus:ring-[#7e9f57] font-semibold">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Ole and Steen">Ole and Steen</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              {/* Search */}
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input
-                  placeholder="Search stores by name, ID, or postcode..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-9"
-                />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      ) : (
-        <Card className="shadow-card">
-          <CardContent className="p-4">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Search stores by name, ID, or postcode..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-9"
-              />
-            </div>
-          </CardContent>
-        </Card>
-      )}
+      {/* Search */}
+      <Card className="shadow-card">
+        <CardContent className="p-4">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Search stores by name, ID, or postcode..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-9"
+            />
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Stores Table */}
       <Card className="shadow-card">
