@@ -233,10 +233,14 @@ export default function StockAdjustments() {
         </div>
 
         {/* Adjustment Form */}
-        <div className="bg-card rounded-lg border shadow-sm p-6">
+        <div className="bg-gradient-to-br from-orange-50 to-amber-50 dark:from-orange-950/20 dark:to-amber-950/20 rounded-lg border-2 border-orange-200 dark:border-orange-800 shadow-lg p-6">
           <h2 className="text-2xl font-semibold mb-6 flex items-center gap-2">
-            <Package className="h-6 w-6 text-primary" />
-            Log New Adjustment
+            <div className="h-10 w-10 rounded-lg bg-orange-200 dark:bg-orange-800 flex items-center justify-center">
+              <Package className="h-6 w-6 text-orange-700 dark:text-orange-300" />
+            </div>
+            <span className="bg-gradient-to-r from-orange-600 to-amber-600 bg-clip-text text-transparent">
+              Log New Adjustment
+            </span>
           </h2>
           
           <form onSubmit={handleSubmit} className="space-y-6">
@@ -328,7 +332,7 @@ export default function StockAdjustments() {
             <Button
               type="submit"
               disabled={submitting || !selectedProduct || !adjustmentType || quantity === 0}
-              className="w-full md:w-auto bg-[#ff914d] hover:bg-[#ff914d]/90"
+              className="w-full md:w-auto bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white shadow-md font-semibold"
             >
               {submitting ? "Recording..." : "Confirm Adjustment"}
             </Button>
