@@ -299,6 +299,15 @@ export default function Home() {
       path: "/daily-waste",
       completed: false,
     },
+    {
+      id: "3",
+      title: "Log Stock Adjustments",
+      description: "Record any stock discrepancies or adjustments",
+      time: "As Needed",
+      icon: Package,
+      path: "/stock-adjustments",
+      completed: false,
+    },
   ]);
 
   const toggleTask = (taskId: string) => {
@@ -307,9 +316,27 @@ export default function Home() {
         const newCompleted = !task.completed;
         
         if (newCompleted) {
+          // Create celebration effect
+          const celebrationElement = document.createElement('div');
+          celebrationElement.className = 'celebration-burst';
+          celebrationElement.innerHTML = '⭐✨🎉✨⭐';
+          celebrationElement.style.cssText = `
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 3rem;
+            z-index: 9999;
+            pointer-events: none;
+            animation: celebrate 1s ease-out forwards;
+          `;
+          document.body.appendChild(celebrationElement);
+          
+          setTimeout(() => celebrationElement.remove(), 1000);
+          
           toast({
             title: "✓ Task Completed!",
-            description: "Great work!",
+            description: "Great work! Keep it up! 🌟",
           });
         }
         
