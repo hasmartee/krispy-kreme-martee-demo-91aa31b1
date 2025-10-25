@@ -330,15 +330,31 @@ export default function Home() {
     const dayName = date.toLocaleDateString('en-US', { weekday: 'short' });
     const dateStr = date.toLocaleDateString('en-US', { day: 'numeric', month: 'short' });
     
+    const glazed = Math.floor(2500 + Math.random() * 500);
+    const iced = Math.floor(1800 + Math.random() * 400);
+    const filled = Math.floor(1500 + Math.random() * 300);
+    const cake = Math.floor(1200 + Math.random() * 300);
+    const specialty = Math.floor(1000 + Math.random() * 200);
+    
     return {
       day: `${dayName} ${dateStr}`,
-      Glazed: Math.floor(2500 + Math.random() * 500),
-      Iced: Math.floor(1800 + Math.random() * 400),
-      Filled: Math.floor(1500 + Math.random() * 300),
-      Cake: Math.floor(1200 + Math.random() * 300),
-      Specialty: Math.floor(1000 + Math.random() * 200),
+      Glazed: glazed,
+      Iced: iced,
+      Filled: filled,
+      Cake: cake,
+      Specialty: specialty,
+      total: glazed + iced + filled + cake + specialty,
     };
   });
+
+  // Last 7 days production data for manufacturing view
+  const last7DaysData = {
+    planned: 58500,
+    produced: 54200,
+  };
+  const variance = last7DaysData.produced - last7DaysData.planned;
+  const variancePercent = ((variance / last7DaysData.planned) * 100).toFixed(1);
+  const fidelityLevel = Math.abs(parseFloat(variancePercent)) < 3 ? 'high' : Math.abs(parseFloat(variancePercent)) < 7 ? 'medium' : 'low';
 
   return (
     <div className="flex-1 space-y-6 p-6">
@@ -355,42 +371,116 @@ export default function Home() {
       {/* Manufacturing View */}
       {viewMode === "manufacturing" && (
         <>
-          {/* Actions Section */}
-          <div>
-            <h2 className="text-xl font-semibold text-foreground mb-4">Quick Actions</h2>
-            <div className="grid gap-4 md:grid-cols-2">
-              <Card 
-                className="border-2 border-primary/20 hover:border-primary/40 transition-all cursor-pointer hover-scale bg-gradient-to-br from-primary/5 to-transparent"
+          {/* My Actions Section */}
+          <div className="space-y-3">
+            <h2 className="text-xl font-semibold text-foreground">My Actions</h2>
+            <div className="grid gap-3">
+              <Card
+                className="bg-gradient-to-r from-orange-100 to-amber-100 hover:from-orange-200 hover:to-amber-200 hover:shadow-lg shadow-md transition-all duration-200 border-orange-200 cursor-pointer"
                 onClick={() => navigate("/manufacturing-production")}
               >
-                <CardContent className="p-6">
+                <CardContent className="p-4">
                   <div className="flex items-center gap-4">
-                    <div className="h-14 w-14 rounded-lg bg-primary/20 flex items-center justify-center">
-                      <ClipboardCheck className="h-7 w-7 text-primary" />
+                    <div className="flex-shrink-0 w-10 h-10 bg-orange-200 rounded-full flex items-center justify-center">
+                      <ClipboardCheck className="h-5 w-5 text-orange-700" />
                     </div>
-                    <div className="flex-1">
-                      <h3 className="font-semibold text-lg text-foreground mb-1">Log Today's Production</h3>
-                      <p className="text-sm text-muted-foreground">Record daily production quantities</p>
+                    <div className="flex-1 min-w-0">
+                      <h3 className="text-base font-semibold text-foreground mb-1">
+                        Log Today's Production
+                      </h3>
+                      <p className="text-sm text-muted-foreground">
+                        Record daily production quantities
+                      </p>
                     </div>
-                    <ArrowRight className="h-5 w-5 text-primary" />
+                    <ArrowRight className="h-5 w-5 text-orange-700 shrink-0" />
                   </div>
                 </CardContent>
               </Card>
 
               <Card 
-                className="border-2 border-primary/20 hover:border-primary/40 transition-all cursor-pointer hover-scale bg-gradient-to-br from-accent/5 to-transparent"
-                onClick={() => navigate("/production")}
+                className="bg-gradient-to-r from-orange-100 to-amber-100 hover:from-orange-200 hover:to-amber-200 hover:shadow-lg shadow-md transition-all duration-200 border-orange-200 cursor-pointer"
+                onClick={() => {
+                  const forecastElement = document.getElementById('production-forecast');
+                  if (forecastElement) {
+                    forecastElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                  }
+                }}
               >
-                <CardContent className="p-6">
+                <CardContent className="p-4">
                   <div className="flex items-center gap-4">
-                    <div className="h-14 w-14 rounded-lg bg-accent/20 flex items-center justify-center">
-                      <BrainCircuit className="h-7 w-7 text-accent-foreground" />
+                    <div className="flex-shrink-0 w-10 h-10 bg-orange-200 rounded-full flex items-center justify-center">
+                      <BrainCircuit className="h-5 w-5 text-orange-700" />
                     </div>
-                    <div className="flex-1">
-                      <h3 className="font-semibold text-lg text-foreground mb-1">Review Production Plans</h3>
-                      <p className="text-sm text-muted-foreground">View 14-day production forecast</p>
+                    <div className="flex-1 min-w-0">
+                      <h3 className="text-base font-semibold text-foreground mb-1">
+                        Review Production Plans
+                      </h3>
+                      <p className="text-sm text-muted-foreground">
+                        View 14-day production forecast
+                      </p>
                     </div>
-                    <ArrowRight className="h-5 w-5 text-accent-foreground" />
+                    <ArrowRight className="h-5 w-5 text-orange-700 shrink-0" />
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+
+          {/* Last 7 Days Performance */}
+          <div>
+            <h2 className="text-xl font-semibold text-foreground mb-4">Last 7 Days</h2>
+            <div className="grid gap-4 md:grid-cols-3">
+              <Card className="shadow-md border-2 border-primary/20">
+                <CardContent className="p-6">
+                  <div className="space-y-2">
+                    <div className="text-sm text-muted-foreground font-medium">Planned Volume</div>
+                    <div className="text-3xl font-bold text-foreground">
+                      {last7DaysData.planned.toLocaleString()}
+                    </div>
+                    <div className="text-xs text-muted-foreground">units scheduled</div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="shadow-md border-2 border-primary/20">
+                <CardContent className="p-6">
+                  <div className="space-y-2">
+                    <div className="text-sm text-muted-foreground font-medium">Produced Volume</div>
+                    <div className="text-3xl font-bold text-foreground">
+                      {last7DaysData.produced.toLocaleString()}
+                    </div>
+                    <div className="text-xs text-muted-foreground">units produced</div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className={`shadow-md border-2 ${
+                fidelityLevel === 'high' ? 'border-green-200 bg-green-50/50 dark:bg-green-950/20' :
+                fidelityLevel === 'medium' ? 'border-amber-200 bg-amber-50/50 dark:bg-amber-950/20' :
+                'border-red-200 bg-red-50/50 dark:bg-red-950/20'
+              }`}>
+                <CardContent className="p-6">
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <div className="text-sm text-muted-foreground font-medium">Variance</div>
+                      <Badge variant={
+                        fidelityLevel === 'high' ? 'default' :
+                        fidelityLevel === 'medium' ? 'secondary' : 'destructive'
+                      } className="text-xs">
+                        {fidelityLevel === 'high' ? 'High Fidelity' :
+                         fidelityLevel === 'medium' ? 'Medium Fidelity' : 'Low Fidelity'}
+                      </Badge>
+                    </div>
+                    <div className={`text-3xl font-bold ${
+                      fidelityLevel === 'high' ? 'text-green-600' :
+                      fidelityLevel === 'medium' ? 'text-amber-600' :
+                      'text-red-600'
+                    }`}>
+                      {variance >= 0 ? '+' : ''}{variance.toLocaleString()}
+                    </div>
+                    <div className="text-xs text-muted-foreground">
+                      {variancePercent}% {variance >= 0 ? 'over' : 'under'} plan
+                    </div>
                   </div>
                 </CardContent>
               </Card>
@@ -398,7 +488,7 @@ export default function Home() {
           </div>
 
           {/* 14-Day Production Forecast Chart */}
-          <Card className="shadow-lg border-2 border-primary/20 animate-fade-in">
+          <Card id="production-forecast" className="shadow-lg border-2 border-primary/20 animate-fade-in scroll-mt-6">
             <CardHeader className="pb-4 bg-gradient-to-r from-primary/5 to-accent/5 rounded-t-lg">
               <div className="flex items-center justify-between">
                 <div>
@@ -470,10 +560,39 @@ export default function Home() {
                       fontWeight: "bold",
                       marginBottom: "8px"
                     }}
-                    formatter={(value: number, name: string) => [
-                      value.toLocaleString() + " units",
-                      name
-                    ]}
+                    formatter={(value: number, name: string, props: any) => {
+                      if (name === 'Total') {
+                        return [value.toLocaleString() + " units", "Total Volume"];
+                      }
+                      return [value.toLocaleString() + " units", name];
+                    }}
+                    content={({ active, payload, label }) => {
+                      if (active && payload && payload.length) {
+                        const total = payload.reduce((sum: number, entry: any) => sum + (entry.value || 0), 0);
+                        return (
+                          <div style={{
+                            backgroundColor: "hsl(var(--card))",
+                            border: "2px solid hsl(var(--border))",
+                            borderRadius: "12px",
+                            padding: "12px",
+                            boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)"
+                          }}>
+                            <p style={{ color: "hsl(var(--foreground))", fontWeight: "bold", marginBottom: "8px" }}>{label}</p>
+                            {payload.map((entry: any, index: number) => (
+                              <p key={index} style={{ color: entry.color, margin: "4px 0" }}>
+                                {entry.name}: {entry.value.toLocaleString()} units
+                              </p>
+                            ))}
+                            <div style={{ borderTop: "1px solid hsl(var(--border))", marginTop: "8px", paddingTop: "8px" }}>
+                              <p style={{ color: "hsl(var(--foreground))", fontWeight: "bold" }}>
+                                Total: {total.toLocaleString()} units
+                              </p>
+                            </div>
+                          </div>
+                        );
+                      }
+                      return null;
+                    }}
                   />
                   <Legend 
                     wrapperStyle={{
