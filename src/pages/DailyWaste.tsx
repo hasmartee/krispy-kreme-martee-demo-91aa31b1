@@ -232,10 +232,10 @@ export default function DailyWaste() {
               <span className="text-white font-semibold text-sm">Waste Tracking</span>
             </div>
           </div>
-          <h1 className="text-4xl font-bold text-white mb-2">
+          <h1 className="text-4xl font-bold text-cream-foreground mb-2">
             Daily Waste Log
           </h1>
-          <p className="text-xl text-white/90">
+          <p className="text-xl text-cream-foreground">
             {selectedStore} - {formattedDate}
           </p>
         </div>

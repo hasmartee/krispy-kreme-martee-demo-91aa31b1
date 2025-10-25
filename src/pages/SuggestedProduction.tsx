@@ -608,8 +608,8 @@ export default function SuggestedProduction() {
         >
           <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/60 to-black/40" />
           <div className="absolute inset-0 flex flex-col justify-center px-8">
-            <h1 className="text-4xl font-bold text-white mb-2">Store Deliveries</h1>
-            <p className="text-xl text-white/90">{selectedStore} - {formattedDate}</p>
+            <h1 className="text-4xl font-bold text-cream-foreground mb-2">Store Deliveries</h1>
+            <p className="text-xl text-cream-foreground">{selectedStore} - {formattedDate}</p>
           </div>
         </div>
 
@@ -791,8 +791,8 @@ export default function SuggestedProduction() {
               </Badge>
             )}
           </div>
-          <h1 className="text-4xl font-bold text-white mb-2">Production Plan</h1>
-          <p className="text-xl text-white/90">All Stores - {formattedDate}</p>
+          <h1 className="text-4xl font-bold text-cream-foreground mb-2">Production Plan</h1>
+          <p className="text-xl text-cream-foreground">All Stores - {formattedDate}</p>
         </div>
       </div>
 
