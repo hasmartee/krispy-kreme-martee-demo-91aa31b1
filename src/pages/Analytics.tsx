@@ -23,7 +23,7 @@ const clusterPerformanceData = [
     revenue: 524000,
     grossProfit: 471600,
     target: 500000,
-    waste: 5240,
+    waste: 157200,
     topProduct: "Classic BLT",
     avgRevenue: 43667,
   },
@@ -34,7 +34,7 @@ const clusterPerformanceData = [
     revenue: 382000,
     grossProfit: 343800,
     target: 360000,
-    waste: 3820,
+    waste: 114600,
     topProduct: "Coffee & Pastry Combo",
     avgRevenue: 47750,
   },
@@ -45,7 +45,7 @@ const clusterPerformanceData = [
     revenue: 685000,
     grossProfit: 616500,
     target: 650000,
-    waste: 6850,
+    waste: 205500,
     topProduct: "Mediterranean Salad",
     avgRevenue: 45667,
   },
@@ -56,7 +56,7 @@ const clusterPerformanceData = [
     revenue: 458000,
     grossProfit: 412200,
     target: 480000,
-    waste: 4580,
+    waste: 137400,
     topProduct: "Avocado Toast",
     avgRevenue: 30533,
   },
@@ -64,45 +64,45 @@ const clusterPerformanceData = [
 
 // Mock store performance data
 const mockStorePerformance = [
-  { id: "OS001", name: "Kings Cross Station", revenue: 412000, target: 400000, variance: 3.0, grossProfit: 370800, grossProfitMargin: 90.0, waste: 8900, wastePercentage: 2.2, topProduct: "Almond Croissant" },
-  { id: "OS002", name: "Liverpool Street Station", revenue: 385000, target: 370000, variance: 4.1, grossProfit: 346500, grossProfitMargin: 90.0, waste: 8200, wastePercentage: 2.1, topProduct: "BLT Sandwich" },
-  { id: "OS003", name: "St Pancras International", revenue: 428000, target: 410000, variance: 4.4, grossProfit: 385200, grossProfitMargin: 90.0, waste: 9100, wastePercentage: 2.1, topProduct: "Pain au Chocolat" },
-  { id: "OS004", name: "Canary Wharf Plaza", revenue: 352000, target: 340000, variance: 3.5, grossProfit: 316800, grossProfitMargin: 90.0, waste: 6800, wastePercentage: 1.9, topProduct: "Caesar Wrap" },
-  { id: "OS005", name: "Bond Street", revenue: 326000, target: 310000, variance: 5.2, grossProfit: 293400, grossProfitMargin: 90.0, waste: 7200, wastePercentage: 2.2, topProduct: "Ham & Cheese Croissant" },
-  { id: "OS006", name: "Bank Station", revenue: 368000, target: 355000, variance: 3.7, grossProfit: 331200, grossProfitMargin: 90.0, waste: 7500, wastePercentage: 2.0, topProduct: "Salmon Bagel" },
+  { id: "OS001", name: "Kings Cross Station", revenue: 412000, target: 400000, variance: 3.0, grossProfit: 370800, grossProfitMargin: 90.0, waste: 123600, wastePercentage: 30.0, topProduct: "Almond Croissant" },
+  { id: "OS002", name: "Liverpool Street Station", revenue: 385000, target: 370000, variance: 4.1, grossProfit: 346500, grossProfitMargin: 90.0, waste: 115500, wastePercentage: 30.0, topProduct: "BLT Sandwich" },
+  { id: "OS003", name: "St Pancras International", revenue: 428000, target: 410000, variance: 4.4, grossProfit: 385200, grossProfitMargin: 90.0, waste: 128400, wastePercentage: 30.0, topProduct: "Pain au Chocolat" },
+  { id: "OS004", name: "Canary Wharf Plaza", revenue: 352000, target: 340000, variance: 3.5, grossProfit: 316800, grossProfitMargin: 90.0, waste: 105600, wastePercentage: 30.0, topProduct: "Caesar Wrap" },
+  { id: "OS005", name: "Bond Street", revenue: 326000, target: 310000, variance: 5.2, grossProfit: 293400, grossProfitMargin: 90.0, waste: 97800, wastePercentage: 30.0, topProduct: "Ham & Cheese Croissant" },
+  { id: "OS006", name: "Bank Station", revenue: 368000, target: 355000, variance: 3.7, grossProfit: 331200, grossProfitMargin: 90.0, waste: 110400, wastePercentage: 30.0, topProduct: "Salmon Bagel" },
 ];
 
 // Mock product performance data
 const mockProductPerformance = [
-  { id: "OS101", name: "Almond Croissant", soldUnits: 28500, revenue: 114000, margin: 89.5, waste: 950, wastePercentage: 3.2, trend: "up" },
-  { id: "OS102", name: "Pain au Chocolat", soldUnits: 26200, revenue: 104800, margin: 91.2, waste: 880, wastePercentage: 3.1, trend: "up" },
-  { id: "OS103", name: "BLT Sandwich", soldUnits: 19400, revenue: 106700, margin: 88.2, waste: 720, wastePercentage: 3.6, trend: "up" },
-  { id: "OS104", name: "Chicken Caesar Wrap", soldUnits: 16800, revenue: 100800, margin: 90.8, waste: 580, wastePercentage: 3.3, trend: "up" },
-  { id: "OS105", name: "Mediterranean Salad Bowl", soldUnits: 14200, revenue: 92200, margin: 91.8, waste: 680, wastePercentage: 4.6, trend: "down" },
-  { id: "OS106", name: "Salmon Cream Bagel", soldUnits: 12800, revenue: 96000, margin: 92.2, waste: 480, wastePercentage: 3.7, trend: "up" },
-  { id: "OS107", name: "Ham & Cheese Croissant", soldUnits: 21800, revenue: 98100, margin: 88.8, waste: 860, wastePercentage: 3.8, trend: "up" },
-  { id: "OS108", name: "Avocado Hummus Wrap", soldUnits: 15200, revenue: 91200, margin: 90.5, waste: 620, wastePercentage: 3.9, trend: "down" },
+  { id: "OS101", name: "Almond Croissant", soldUnits: 28500, revenue: 114000, margin: 89.5, waste: 12200, wastePercentage: 30.0, trend: "up" },
+  { id: "OS102", name: "Pain au Chocolat", soldUnits: 26200, revenue: 104800, margin: 91.2, waste: 11200, wastePercentage: 30.0, trend: "up" },
+  { id: "OS103", name: "BLT Sandwich", soldUnits: 19400, revenue: 106700, margin: 88.2, waste: 8300, wastePercentage: 30.0, trend: "up" },
+  { id: "OS104", name: "Chicken Caesar Wrap", soldUnits: 16800, revenue: 100800, margin: 90.8, waste: 7200, wastePercentage: 30.0, trend: "up" },
+  { id: "OS105", name: "Mediterranean Salad Bowl", soldUnits: 14200, revenue: 92200, margin: 91.8, waste: 6100, wastePercentage: 30.0, trend: "down" },
+  { id: "OS106", name: "Salmon Cream Bagel", soldUnits: 12800, revenue: 96000, margin: 92.2, waste: 5500, wastePercentage: 30.0, trend: "up" },
+  { id: "OS107", name: "Ham & Cheese Croissant", soldUnits: 21800, revenue: 98100, margin: 88.8, waste: 9400, wastePercentage: 30.0, trend: "up" },
+  { id: "OS108", name: "Avocado Hummus Wrap", soldUnits: 15200, revenue: 91200, margin: 90.5, waste: 6500, wastePercentage: 30.0, trend: "down" },
 ];
 
 // Weekly trend data for Week Overview graph
 const weeklyTrendData = [
-  { day: "Mon", delivered: 87500, sold: 81000, wasted: 4200 },
-  { day: "Tue", delivered: 89500, sold: 83000, wasted: 3850 },
-  { day: "Wed", delivered: 92000, sold: 86500, wasted: 3600 },
-  { day: "Thu", delivered: 88800, sold: 82500, wasted: 4100 },
-  { day: "Fri", delivered: 95000, sold: 91000, wasted: 3800 },
-  { day: "Sat", delivered: 98000, sold: 94500, wasted: 3400 },
-  { day: "Sun", delivered: 91000, sold: 85200, wasted: 3950 },
+  { day: "Mon", delivered: 87500, sold: 61250, wasted: 26250 },
+  { day: "Tue", delivered: 89500, sold: 62650, wasted: 26850 },
+  { day: "Wed", delivered: 92000, sold: 64400, wasted: 27600 },
+  { day: "Thu", delivered: 88800, sold: 62160, wasted: 26640 },
+  { day: "Fri", delivered: 95000, sold: 66500, wasted: 28500 },
+  { day: "Sat", delivered: 98000, sold: 68600, wasted: 29400 },
+  { day: "Sun", delivered: 91000, sold: 63700, wasted: 27300 },
 ];
 
 const weeklyTrendDataStore = [
-  { day: "Mon", delivered: 3200, sold: 2980, wasted: 180 },
-  { day: "Tue", delivered: 3050, sold: 2820, wasted: 160 },
-  { day: "Wed", delivered: 3350, sold: 3150, wasted: 140 },
-  { day: "Thu", delivered: 3100, sold: 2890, wasted: 150 },
-  { day: "Fri", delivered: 3600, sold: 3450, wasted: 120 },
-  { day: "Sat", delivered: 3850, sold: 3700, wasted: 130 },
-  { day: "Sun", delivered: 3400, sold: 3180, wasted: 160 },
+  { day: "Mon", delivered: 3200, sold: 2240, wasted: 960 },
+  { day: "Tue", delivered: 3050, sold: 2135, wasted: 915 },
+  { day: "Wed", delivered: 3350, sold: 2345, wasted: 1005 },
+  { day: "Thu", delivered: 3100, sold: 2170, wasted: 930 },
+  { day: "Fri", delivered: 3600, sold: 2520, wasted: 1080 },
+  { day: "Sat", delivered: 3850, sold: 2695, wasted: 1155 },
+  { day: "Sun", delivered: 3400, sold: 2380, wasted: 1020 },
 ];
 
 export default function Analytics() {
@@ -143,10 +143,10 @@ export default function Analytics() {
   const storeData = {
     revenue: 12860,
     grossProfit: 11574,
-    waste: 450,
+    waste: 3858,
     soldQty: 3420,
-    wastedQty: 180,
-    deliveredQty: 3600,
+    wastedQty: 1470,
+    deliveredQty: 4890,
     revenueComparisonData: [
       { date: "Mon", predicted: 1700, actual: 1650, variance: -2.9 },
       { date: "Tue", predicted: 1550, actual: 1480, variance: -4.5 },
@@ -162,9 +162,9 @@ export default function Analytics() {
   const hqData = {
     revenue: 2100000,
     grossProfit: 1890000,
-    waste: 31500,
-    soldQty: 600000,
-    wastedQty: 9000,
+    waste: 630000,
+    soldQty: 426300,
+    wastedQty: 182700,
     deliveredQty: 609000,
     revenueComparisonData: [
       { date: "Mon", predicted: 290000, actual: 288000, variance: -0.8 },
