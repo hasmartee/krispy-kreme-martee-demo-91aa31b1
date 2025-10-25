@@ -272,8 +272,8 @@ export default function DailyWaste() {
                 <TableRow>
                   <TableHead className="w-[20%]">Product</TableHead>
                   <TableHead className="text-center w-[12%]">Delivered</TableHead>
-                  <TableHead className="text-center w-[12%]">Sold</TableHead>
                   <TableHead className="text-center w-[13%]">Stock Adjustments</TableHead>
+                  <TableHead className="text-center w-[12%]">Sold</TableHead>
                   <TableHead className="text-center w-[13%]">Expected Waste</TableHead>
                   <TableHead className="text-center w-[20%] bg-gradient-to-r from-[#ff914d]/20 to-[#ff914d]/10 border-l-4 border-l-[#ff914d]">
                     <div className="flex items-center justify-center gap-2 py-1">
@@ -300,15 +300,15 @@ export default function DailyWaste() {
                       <span className="font-mono font-semibold">{product.deliveredQty}</span>
                     </TableCell>
                     <TableCell className="text-center">
-                      <span className="font-mono font-semibold text-green-600">{product.soldQty}</span>
-                    </TableCell>
-                    <TableCell className="text-center">
                       <span className={cn(
                         "font-mono font-semibold",
                         product.stockAdjustments > 0 ? "text-blue-600" : product.stockAdjustments < 0 ? "text-red-600" : "text-muted-foreground"
                       )}>
                         {product.stockAdjustments > 0 ? '+' : ''}{product.stockAdjustments}
                       </span>
+                    </TableCell>
+                    <TableCell className="text-center">
+                      <span className="font-mono font-semibold text-green-600">{product.soldQty}</span>
                     </TableCell>
                     <TableCell className="text-center bg-muted/30">
                       <span className="font-mono font-bold text-lg">{product.expectedWaste}</span>
