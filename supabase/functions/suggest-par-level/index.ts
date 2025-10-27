@@ -1,9 +1,19 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { z } from "https://deno.land/x/zod@v3.22.4/mod.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
+
+// Input validation schema
+const parLevelInputSchema = z.object({
+  productName: z.string().trim().min(1).max(200, "Product name too long"),
+  category: z.string().trim().max(100).optional(),
+  dayOfWeek: z.number().int().min(0).max(6, "Day of week must be 0-6"),
+  month: z.number().int().min(1).max(12, "Month must be 1-12"),
+  historicalData: z.number().positive().optional(),
+});
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -11,7 +21,10 @@ serve(async (req) => {
   }
 
   try {
-    const { productName, category, dayOfWeek, month, historicalData } = await req.json();
+    // Parse and validate input
+    const rawBody = await req.json();
+    const validated = parLevelInputSchema.parse(rawBody);
+    const { productName, category, dayOfWeek, month, historicalData } = validated;
     
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) {
@@ -121,6 +134,21 @@ What should the par level be for this product on this day and month?`;
     );
   } catch (error) {
     console.error("Error in suggest-par-level:", error);
+    
+    // Handle validation errors
+    if (error instanceof z.ZodError) {
+      return new Response(
+        JSON.stringify({ 
+          error: "Invalid input data",
+          details: error.errors
+        }),
+        { 
+          status: 400, 
+          headers: { ...corsHeaders, "Content-Type": "application/json" } 
+        }
+      );
+    }
+    
     return new Response(
       JSON.stringify({ error: error instanceof Error ? error.message : "Unknown error" }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
