@@ -1,0 +1,7 @@
+project_id = "bzcmzcvmfueqlwwfiifr"
+
+[functions.ingredient-insights]
+verify_jwt = true
+
+[functions.suggest-par-level]
+verify_jwt = true
