@@ -679,28 +679,28 @@ export default function Home() {
       {viewMode === "store_manager" && (
         <>
           {/* My Tasks Section - Store Manager Only */}
-          <div className="space-y-3">
+          <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <h2 className="text-xl font-semibold text-foreground">My Tasks</h2>
-              <div className="text-right">
-                <div className="text-lg font-bold text-primary">
+              <h2 className="text-2xl font-bold bg-gradient-brand bg-clip-text text-transparent">My Tasks</h2>
+              <div className="text-right bg-gradient-brand p-3 rounded-lg shadow-brand">
+                <div className="text-xl font-bold text-secondary">
                   {completedCount}/{totalCount}
                 </div>
-                <div className="text-xs text-muted-foreground">Completed</div>
+                <div className="text-xs text-secondary/80 font-medium">Completed</div>
               </div>
             </div>
 
             {/* Progress Bar */}
-            <Card className="shadow-md bg-gradient-to-r from-background to-primary/5 border-orange-200">
-              <CardContent className="p-4">
-                <div className="space-y-2">
+            <Card className="shadow-soft bg-gradient-subtle border-primary/40 overflow-hidden">
+              <CardContent className="p-5">
+                <div className="space-y-3">
                   <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium">Daily Progress</span>
-                    <span className="text-sm font-medium text-primary">
+                    <span className="text-base font-semibold text-secondary">Today's Progress</span>
+                    <span className="text-lg font-bold text-primary">
                       {Math.round(progressPercentage)}%
                     </span>
                   </div>
-                  <Progress value={progressPercentage} className="h-2" />
+                  <Progress value={progressPercentage} className="h-3" />
                 </div>
               </CardContent>
             </Card>
@@ -710,10 +710,10 @@ export default function Home() {
               {tasks.map((task) => (
                 <Card 
                   key={task.id}
-                  className={`transition-all duration-200 border-orange-200 ${
+                  className={`transition-all duration-300 ${
                     task.completed 
-                      ? "opacity-60 bg-gradient-to-r from-green-50 to-emerald-50" 
-                      : "bg-gradient-to-r from-orange-100 to-amber-100 hover:from-orange-200 hover:to-amber-200 hover:shadow-lg shadow-md"
+                      ? "opacity-70 bg-gradient-to-br from-accent/20 to-success/10 border-accent/50" 
+                      : "bg-gradient-brand border-primary/60 hover:scale-[1.02] hover:shadow-brand shadow-soft"
                   }`}
                 >
                   <CardContent className="p-4">
@@ -725,11 +725,15 @@ export default function Home() {
                           className="mt-1"
                         />
                       </div>
-                      <div className="flex-shrink-0 w-10 h-10 bg-orange-200 rounded-full flex items-center justify-center">
-                        <task.icon className="h-5 w-5 text-orange-700" />
+                      <div className={`flex-shrink-0 w-12 h-12 rounded-xl flex items-center justify-center shadow-sm ${
+                        task.completed 
+                          ? "bg-accent/30" 
+                          : "bg-gradient-to-br from-secondary to-brand-green-medium"
+                      }`}>
+                        <task.icon className={`h-6 w-6 ${task.completed ? "text-accent" : "text-primary"}`} />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <h3 className={`text-base font-semibold text-foreground mb-1 ${task.completed ? "line-through" : ""}`}>
+                        <h3 className={`text-base font-semibold text-secondary mb-1 ${task.completed ? "line-through opacity-70" : ""}`}>
                           {task.title}
                         </h3>
                         <p className="text-sm text-muted-foreground">
@@ -737,7 +741,7 @@ export default function Home() {
                         </p>
                       </div>
                       <div className="flex items-center gap-3 shrink-0">
-                        <div className="flex items-center gap-1 text-muted-foreground">
+                        <div className="flex items-center gap-1 text-muted-foreground bg-background/50 px-2 py-1 rounded-md">
                           <Clock className="h-4 w-4" />
                           <span className="text-sm font-medium">{task.time}</span>
                         </div>
@@ -746,7 +750,7 @@ export default function Home() {
                             size="sm" 
                             variant="outline"
                             onClick={() => navigate(task.path)}
-                            className="border-orange-300 hover:bg-orange-300"
+                            className="border-secondary/30 hover:bg-secondary hover:text-primary font-semibold"
                           >
                             Go
                             <ArrowRight className="h-4 w-4 ml-1" />
