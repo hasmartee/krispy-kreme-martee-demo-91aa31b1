@@ -1,2 +1,0 @@
--- Delete non-Krispy Kreme products (keeping only Donuts, Iced, Cake, and Filled categories)
-DELETE FROM products WHERE category IN ('Pastries', 'Breakfast', 'Sandwiches', 'Wraps', 'Salads', 'Breads');
